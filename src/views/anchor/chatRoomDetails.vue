@@ -163,6 +163,8 @@
                 v-if="(!item.channel || item.channel === channel || (!channel && item.channel==='000'))"
                 class="other-side"
               >
+              {{item.pic !== ''}}
+              
                 <div class="msg-box">
                   <div class="msg-container">
                     <div class="msg-content" @click.stop="showControl(index)">
@@ -170,7 +172,7 @@
                       <div
                         class="text-name"
                       >{{item.sender_nickname}}:</div>
-                      <template v-if="item.pic&&!item.text">
+                      <template v-if="item.pic !== ''">
                         <el-image
                           :preview-src-list="[item.pic]"
                           fit="cover"
@@ -1241,6 +1243,7 @@ export default {
         }
       }
       if (data.action === "send") {
+        console.log(data)
         // let list = this.msgList;
 					// list.push(data);
 					//自己发送的消息不渲染到列表
