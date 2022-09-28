@@ -178,7 +178,7 @@
                           class="pic-info"
                         />
                       </template>
-                      <template v-if="item.pic&&item.text">
+                      <template v-if="item.pic && item.text">
                         <div class="thumb-container" @click.stop="openLink(item.link)">
                           <img class="thumb-pic" :src="item.pic|picFilter" />
                           <div class="thumb-title">{{item.title}}</div>
@@ -212,8 +212,8 @@
             @click="isShowEmoji = !isShowEmoji"
             class="emoji-btn"
             style="max-height:30px;"
-            width="30"
-            height="30"
+            width="20"
+            height="20"
             fill="#c1c1c1"
             viewBox="0 0 106.059 106.059"
           >
@@ -221,11 +221,11 @@
               d="M90.544 90.542c20.687-20.684 20.685-54.341.002-75.024-20.688-20.689-54.347-20.689-75.031-.006-20.688 20.687-20.686 54.346.002 75.034 20.682 20.684 54.341 20.684 75.027-.004zM21.302 21.3c17.494-17.493 45.959-17.495 63.457.002 17.494 17.494 17.492 45.963-.002 63.455-17.494 17.494-45.96 17.496-63.455.003-17.498-17.498-17.496-45.966 0-63.46zM27 69.865s-2.958-11.438 6.705-8.874c0 0 17.144 9.295 38.651 0 9.662-2.563 6.705 8.874 6.705 8.874C73.539 86.824 53.03 85.444 53.03 85.444S32.521 86.824 27 69.865zm6.24-31.194a6.202 6.202 0 1 1 12.399.001 6.202 6.202 0 0 1-12.399-.001zm28.117 0a6.202 6.202 0 1 1 12.403.001 6.202 6.202 0 0 1-12.403-.001z"
             />
           </svg>
-          <el-button-group class="msg-type-container"  v-if="ctp != 0">
-            <!-- <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button> -->
-            <!-- <el-button type="primary" round size="mini"  icon="el-icon-picture" @click="sendImg(2)"></el-button> -->
-            <img src="./../../assets/images/image.png" alt="" @click="uploadImgShow = true" />
-          </el-button-group>
+          <img v-if="ctp != 0" class="uploadImg" src="./../../assets/images/image.png" alt="" @click="uploadImgShow = true" />
+          <!-- <el-button-group class="msg-type-container"  v-if="ctp != 0">
+            <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button>
+            <el-button type="primary" round size="mini"  icon="el-icon-picture" @click="sendImg(2)"></el-button>
+          </el-button-group> -->
         </div>
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
@@ -242,33 +242,33 @@
             </div>
           </div>
         </div>
-
-        <textarea
-          v-if="msgType==1"
-          id="msg"
-          type="text"
-          placeholder="请输入聊天内容"
-          rows="1"
-          v-model="msgText"
-          ref="msg"
-          v-on:keyup.enter="sendMsg"
-        ></textarea>
-        <div v-if="msgType==2" class="add-img-container">
-          <form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
-            <input type="file" id="fileUp" name="pic" @change="changeFile" />
-          </form>
-          <span v-if="!prevImg" class="add-img">添加图片</span>
-          <img v-else :src="prevImg" />
-        </div>
         <div class="control-footer">
-       <!--    <el-button-group class="quick-container">
-            <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
-            <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
-          </el-button-group> -->
-          <div
-            :class="[ctp == 0 &&  !token ? 'no_send' :  'send']"
-            @click="sendMsg"
-          >发送</div>
+          <textarea
+            id="msg"
+            type="text"
+            placeholder="请输入聊天内容"
+            rows="1"
+            v-model="msgText"
+            ref="msg"
+            v-on:keyup.enter="sendMsg"
+          ></textarea>
+          <!-- <div v-if="msgType==2" class="add-img-container">
+            <form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
+              <input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
+            </form>
+            <span v-if="!prevImg" class="add-img">添加图片</span>
+            <img v-else :src="prevImg" />
+          </div> -->
+          <div >
+            <!--<el-button-group class="quick-container">
+              <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
+              <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
+            </el-button-group> -->
+            <div
+              :class="[ctp == 0 &&  !token ? 'no_send' :  'send']"
+              @click="sendMsg"
+            >发送</div>
+          </div>  
         </div>
       </div>
       <div class="emoji-box">
@@ -291,7 +291,7 @@
       <el-upload
         class="upload-demo"
         action="#"
-        :on-change="uploadImg"
+        :on-change="changeFile"
         :on-remove="handleRemove"
         :on-exceed="limitCheck"
         :auto-upload="false"
@@ -307,7 +307,7 @@
         <el-button class="background-gray" @click="closeModel()"
             >取消</el-button
           >
-          <el-button class="background-orange" @click="submitAvatar()"
+          <el-button class="background-orange" @click="sendMsg"
             >确认</el-button
           >
       </span>
@@ -396,6 +396,7 @@ export default {
       leaveVid:"",
       type0_local_msg_list: [],
       type2_local_msg_list: [],
+      fileList:[],
       uploadImgShow:false,
       fullscreenLoading: false,
 
@@ -531,6 +532,11 @@ export default {
     });
   },
   methods: {
+    closeModel(){
+      this.fileList = [];
+      this.uploadImgShow = false;
+      this.fullscreenLoading = false;
+    },      
     handleRemove(file, fileList) {
       this.fileList = fileList
     },
@@ -551,10 +557,6 @@ export default {
     limitCheck() {
       this.$message({ message: "最多只能上传1张图片", type: "warning" });
     },
-    // 取得圖片
-    uploadImg(file, fileList) {
-      this.fileList = fileList;
-    },    
     resend(item){
 				// console.log(item)
 				this.handleLocalMsgList(this.ctp).map((val,index)=>{
@@ -568,9 +570,11 @@ export default {
     sendImg(e) {
       this.msgType = e;
     },
-    changeFile() {
-      const fileUp = document.querySelector("#fileUp");
-      const file = fileUp.files[0];
+    //取得圖片
+    changeFile(fileList) {
+      this.msgType = 2
+      // const fileUp = document.querySelector("#fileUp");
+      const file = fileList.raw;
       this.formData.pic = file;
       var reader = new FileReader();
       reader.readAsDataURL(file);
@@ -916,7 +920,7 @@ export default {
           channel: this.channel
         })
         .then(res => {
-          console.log(res, "res=======");
+          // console.log(res, "res=======");
           this.parmUserInfo.vid = res.data.vid;
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
@@ -1094,6 +1098,7 @@ export default {
         data.receiver = getQueryString().uid;
       }
       if (this.msgType == 2) {
+        console.log('type',2)
         var formData = new FormData();
         formData.append("vid", this.parmUserInfo.vid);
         formData.append("fd", this.fd);
@@ -1123,6 +1128,7 @@ export default {
         }
         this.msgText = "";
         this.formData.pic = "";
+        this.uploadImgShow = false
         this.toBottom();
       }).catch((error)=>{
 					this.handleLocalMsgList(this.ctp).find(function(item){return item.uiCode == uiCode}).isError = true
@@ -1140,6 +1146,7 @@ export default {
       if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType == 2) {
           let text = this.msgText;
+          console.log('type',text)
           // console.log(this.msgText,text,"=======this.msgText")
           this.msgText = '';
           //  console.log(this.msgText,text,"=======this.msgText2")
@@ -1331,6 +1338,7 @@ export default {
 				if(type==2) {
 					if(m == 'init'){
 						this.msgList_2 = data
+            console.log(this.msgList_2)
 					}
 					if(m == 'push') {
 						this.msgList_2.push(data)
@@ -1459,12 +1467,13 @@ form {
     height: 100% !important;
   }
 }
-.msg-type-container {
-  position: absolute;
-  left: 60px;
-  img{
-    height:1.5em;
-  }
+.uploadImg {
+  height:20px;
+  margin-left:10px;
+  position: relative;
+  top: -6px;
+  left: 7px;
+  cursor: pointer;
 }
 
 .pic-info {
@@ -1591,9 +1600,9 @@ form {
   border: 1px solid #d8ad66;
   border-radius: 4px;
   padding: 6px;
-  width: 100%;
-  line-height: 32px;
-  margin-top: 38px;
+  width: 75%;
+  line-height: 20px;
+  // margin-top: 38px;
 }
 
 .el-drawer__header {
@@ -1604,9 +1613,9 @@ form {
   height: auto;
 }
 .emoji-btn {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  position: relative;
+  // left: 10px;
+  // top: 10px;
   cursor: pointer;
 }
 .emoji-box {
@@ -1625,7 +1634,7 @@ form {
   position: relative;
   min-width: 334px;
   .send-container {
-    height: 140px;
+    height: 110px;
     position: absolute;
     bottom: 0;
     min-width: 335px;
@@ -1676,21 +1685,22 @@ form {
     }
 
     .control-footer {
-      position: absolute;
-      bottom: 0;
+      // position: absolute;
+      // bottom: 0;
       width: 96%;
-      height: 50px;
+      display: flex;
+      height: 35px;
+      align-content: center;
+
       .send {
-        display: inline-block;
         padding: 0 20px;
-        position: absolute;
-        right: 6px;
-        bottom: 10px;
+        position: relative;
+        right: -12px;
         border-radius: 6px;
         color: #fff;
         background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-        height: 30px;
-        line-height: 30px;
+        height: 34px;
+        line-height: 34px;
         &:hover {
           cursor: pointer;
         }
@@ -1711,7 +1721,7 @@ form {
   }
   .chat-window {
     background: #f3f3f3;
-    height: 371px;
+    height: 401px;
     padding-top: 46px;
     overflow-y: auto;
     overflow-x: hidden;
