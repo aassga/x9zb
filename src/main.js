@@ -2,66 +2,64 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import * as  common from './utils/common.js'
-// 引入echarts
-import echarts from 'echarts'
-import '@/styles/index.scss' // global css
-import '@/styles/fonts.css' // ledD css
-import "@/styles/element-ui/index.scss";
-// import VueSocketIO from 'vue-socket.io'
-import VideoPlayer from 'vue-videojs7'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-// 注册滚动条加载触发事件v-loadmore绑定
-import {selectLoadMore} from './directives.js';
-import '@/permission' // permission control
-import hls from 'videojs-contrib-hls';
-// import VideoPlayer from 'vue-video-player';
-import "video.js/dist/video-js.css"
-import "vue-video-player/src/custom-theme.css"
-import "./element-variables.scss"
-// import VueAwesomeSwiper from 'vue-awesome-swiper'
-// import 'swiper/swiper-bundle.css'
-import websocket from './utils/websocket.js'
-
-// 图片预览插件 vue-photo-preview
-import preview from 'vue-photo-preview'
-import 'vue-photo-preview/dist/skin.css'
-const Base64 = require('js-base64').Base64
-import COS from "cos-js-sdk-v5";
+import Element from 'element-ui'
+// import MintUI from 'mint-ui'
+// import VueTouch from 'vue-touch'
+import 'element-ui/lib/theme-chalk/index.css'
+import '@/assets/icon/style.css'
+import './elmentui.scss'
+import 'mint-ui/lib/style.css'
+import common from './utils/common.js'
+import global from '@/websocket/global.js'
+import moment from 'moment'
 import VEmojiPicker from 'v-emoji-picker'
+// 视频播放部分
+import VideoPlayer from 'vue-video-player'
 
-// let options = {
-//   SDKAppID: 1400699788// 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
-// };
-// 创建 SDK 实例，`TIM.create()`方法对于同一个 `SDKAppID` 只会返回同一份实例
-// let tim = TIM.create(options); 1
-// SDK 实例通常用 tim 表示
-// 设置 SDK 日志输出级别，详细分级请参见 setLogLevel 接口的说明
-// tim.setLogLevel(1); 1
- // 普通级别，日志量较多，接入时建议使用
-// tim.setLogLevel(1); // release 级别，SDK 输出关键信息，生产环境时建议使用
-// 注册 COS SDK 插件
-// tim.registerPlugin({'cos-js-sdk': COS}); 1
-
-
-
-
-// Vue.directive('selectLoadMore', { bind: selectLoadMore });
-Vue.use(hls)
-Vue.use(preview)
-Vue.use(ElementUI);
+import VueI18n from 'vue-i18n'
+Vue.prototype.$moment = moment
+Vue.prototype.$global = global
+require('video.js/dist/video-js.css')
+require('vue-video-player/src/custom-theme.css')
 Vue.use(VideoPlayer)
-Vue.use(selectLoadMore)
-Vue.use(VEmojiPicker)
+const hls = require('videojs-contrib-hls')
+Vue.use(hls)
+
+// 添加自定义属性   给点击的元素添加此指令可使当前元素防抖
+Vue.directive('noMoreClick', {
+  inserted (el) {
+    el.addEventListener('click', e => {
+      el.calssList.add('is-disabled')
+      el.disabled = true
+      setTimeout(() => {
+        el.disabled = false
+        el.calssList.remove('is-disabled')
+      }, 2000)
+    })
+  }
+})
+
+// 将通用方法工具函数插件 common 设置为全局变量
+Vue.prototype.$common = common
 
 Vue.config.productionTip = false
-Vue.prototype.$common = common;
-Vue.prototype.$echarts = echarts;
-Vue.prototype.$WebSocket = websocket
+Vue.use(Element)
+// Vue.use(MintUI)
+Vue.use(VEmojiPicker)
+// Vue.use(VueTouch, {name: 'v-touch'})
+Vue.use(VueI18n)
+const i18n = new VueI18n({
+  locale: localStorage.getItem('locale') || 'en',
+  messages: {
+    cn: require('./common/lang/cn'),
+    en: require('./common/lang/en'),
+    tc: require('./common/lang/tc')
+  }
+})
+
 new Vue({
   router,
   store,
-  Base64,
-  render: h => h(App)
+  i18n,
+  render: function (h) { return h(App) }
 }).$mount('#app')

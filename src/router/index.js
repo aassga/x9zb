@@ -1,229 +1,237 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import HomeView from '../views/home/Index.vue'
+import MenuView from '../views/menu/Index.vue'
+import UpLoadImg from '@/views/uploadImage'
+import UploadPic from '@/views/uploadImage/uploadpic.vue'
+import VideoAuto from '@/views/video/index.vue'
+import BulkUploadImg from '@/components/bulkUploadImg/post.vue'
+import PostDetail from '@/views/postDetail/index.vue'
+import PostDetailX from '@/views/postDetail/x.vue'
 
+import Fans from '@/views/personalCenter/fans.vue'
+import AttentionDetail from '@/views/personalCenter/attentionDetail.vue'
+import store from '../store'
 Vue.use(VueRouter)
 
-import Layout from '@/layout'
-import Nested from './modules/nested';
+// 解决路由的push方法 页面自跳转报错
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const routes = [
-	// 首页
-	// {
-	//   path: '/',
-	//   component: () => import('@/views/main/index'),
-	//   hidden: true
-	// },
-	{
-		path: '/',
-		component: Layout,
-		redirect: '/main',
-		children: [{
-				path: 'main',
-				name: 'main',
-				component: () => import('@/views/main/index'),
-				meta: {
-					index:0,
-					title: '首页',
-					icon: 'el-icon-s-home'
-				}
-			},
-			{
-				path: '/login',
-				name: 'login',
-				component: () => import('@/views/login/index'),
-				// meta: { title: '首页', icon: 'el-icon-s-home' }
-			},
-			{
-				path: '/dome',
-				name: 'dome',
-				component: () => import('@/views/dome'),
-				// meta: { title: '首页', icon: 'el-icon-s-home' }
-			},
-			{
-				path: '/basketball',
-				name: 'basketball',
-				component: () => import('@/views/score/basketball'),
-				meta: { title: '篮球', icon: 'el-icon-s-home',index:1 }
-			},
-			{
-				path: '/football',
-				name: 'football',
-				component: () => import('@/views/score/football'),
-				meta: { title: '足球', icon: 'el-icon-s-home',index:1 }
-			},
-			{
-				path: '/anchor',
-				name: 'anchor',
-				component: () => import('@/views/anchor/index'),
-				meta: { title: '直播', icon: 'el-icon-s-home',index:2 }
-			},
-			{
-				path: '/schedule',
-				name: 'schedule',
-				component: () => import('@/views/anchor/schedule'),
-				meta: { title: '赛程', icon: 'el-icon-s-home',index:3 }
-			},
-			{
-				path: '/rank',
-				name: 'rank',
-				component: () => import('@/views/anchor/anchor-rank'),
-				meta: { title: '榜单', icon: 'el-icon-s-home',index:2 }
-			},
-			{
-				path: '/attention',
-				name: 'attention',
-				component: () => import('@/views/anchor/attention'),
-				meta: { title: '关注', icon: 'el-icon-s-home',index:2 }
-			},
-			{
-				path: '/reserve',
-				name: 'reserve',
-				component: () => import('@/views/anchor/reserve'),
-				meta: { title: '预约', icon: 'el-icon-s-home',index:2 }
-			},
-			{
-				path: '/foresight',
-				name: 'foresight',
-				component: () => import('@/views/foresight/index'),
-				meta: { title: '情报中心', icon: 'el-icon-s-home',index:9 }
-			},
-			{
-				path: '/news',
-				name: 'news',
-				component: () => import('@/views/news/news'),
-				meta: { title: '头条', icon: 'el-icon-s-home',index:4 }
-			},
-			{
-				path: '/base-football',
-				name: 'base-football',
-				component: () => import('@/views/database/football'),
-				meta: { title: '足球资料库', icon: 'el-icon-s-home',index:6 }
-			},
-			{
-				path: '/base-basketball',
-				name: 'base-basketball',
-				component: () => import('@/views/database/basketball'),
-				meta: { title: '篮球资料库', icon: 'el-icon-s-home',index:6 }
-			},
-			{
-				path: '/circle',
-				name: 'circle',
-				component: () => import('@/views/circle/circle'),
-				meta: { title: '社区', icon: 'el-icon-s-home',index:5 }
-			},
-			{
-				path: '/circle-detail',
-				name: 'circle-detail',
-				component: () => import('@/views/circle/detail'),
-				meta: { title: '帖子详情', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/downLoad',
-				name: 'downLoad',
-				component: () => import('@/views/downLoad/downLoad'),
-				meta: { title: '下载', icon: 'el-icon-s-home',index:7 }
-			},
-			{
-				path: '/live',
-				name: 'live',
-				component: () => import('@/views/anchor/live'),
-				meta: { title: '直播间', icon: 'el-icon-s-home',index:2 }
-			},
-			{
-				path: '/score-live',
-				name: 'score-live',
-				component: () => import('@/views/score/live'),
-				meta: { title: '直播间', icon: 'el-icon-s-home',index:1 }
-			},
-			{
-				path: '/score-detail',
-				name: '/score-detail',
-				component: () => import('@/views/score/detail'),
-				meta: { title: '比分', icon: 'el-icon-s-home',index:1 }
-			},
-			
-			{
-				path: '/search',
-				name: 'search',
-				component: () => import('@/views/search/search'),
-				meta: { title: '搜索', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/member',
-				name: 'member',
-				component: () => import('@/views/member/index'),
-				meta: { title: '个人资料', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/detail',
-				name: 'detail',
-				component: () => import('@/views/news/detail'),
-				meta: { title: '详情', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/persona',
-				name: 'persona',
-				component: () => import('@/views/persona/index'),
-				meta: { title: '个人空间', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/comment',
-				name: 'comment',
-				component: () => import('@/views/comment/index'),
-				meta: { title: '评论', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/about-user',
-				name: 'about-user',
-				component: () => import('@/views/about/about-user'),
-				meta: { title: '关于我们', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/demo',
-				name: 'demo',
-				component: () => import('@/views/demo'),
-				meta: { title: '测试页面', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/new_file',
-				name: 'new_file',
-				component: () => import('@/views/new_file'),
-				meta: { title: '测试页面', icon: 'el-icon-s-home',index:null }
-			},
-			{
-				path: '/trophy/home',
-				name: 'trophy',
-				component: () => import('@/views/trophy/home'),
-				meta: { title: '世界杯', icon: 'el-icon-s-home',index:null }
-			},
-		]
-	},
-	// 登录
-	// {
-	//   path: '/login',
-	//   component: () => import('@/views/login/index'),
-	//   hidden: true
-	// },
-	// 404
-	{
-		path: '/404',
-		component: () => import('@/views/404'),
-		hidden: true
-	},
+  {
+    path: '/',
+    name: 'menu',
+    redirect: '/menu'
+  },
+  {
+    path: '/menu',
+    name: 'menu',
+    component: MenuView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+    // component: () => import(/* webpackChunkName: "ChatDetails" */ '../views/information/ChatDetails.vue')
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import(/* webpackChunkName: "about" */ '../views/register/Index.vue')
+  },
+  {
+    path: '/discover',
+    name: 'discover',
+    component: () => import(/* webpackChunkName: "about" */ '../views/discover/Index.vue')
+  },
+  {
+    path: '/release',
+    name: 'release',
+    meta: {
+      keepAlive: true
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/release/Index.vue')
+  },
+  {
+    path: '/information',
+    name: 'information',
+    component: () => import(/* webpackChunkName: "information" */ '../views/information/Index.vue')
+  },
+  {
+    path: '/ChatDetails',
+    name: 'ChatDetails',
+    component: () => import(/* webpackChunkName: "ChatDetails" */ '../views/information/ChatDetails.vue')
+  },
+  {
+    path: '/RoomContainer',
+    name: 'RoomContainer',
+    component: () => import(/* webpackChunkName: "RoomContainer" */ '../views/information/RoomContainer.vue')
+  },
+  {
+    path: '/my',
+    name: 'my',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/Index.vue')
+  },
+  {
+    path: '/userInfo/:uid',
+    name: 'userInfo',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/Index.vue')
+  },
+  {
+    path: '/username/:username',
+    name: 'username',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/Index.vue')
+  },
+  {
+    path: '/RegisterModel',
+    name: 'RegisterModel',
+    component: () => import(/* webpackChunkName: "about" */ '../views/my/RegisterModel.vue')
+  },
+  {
+    path: '/AccountSet',
+    name: 'AccountSet',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/AccountSet.vue')
+  },
+  {
+    path: '/AddCard',
+    name: 'AddCard',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/AddCard.vue')
+  },
+  {
+    path: '/HelpCenter',
+    name: 'HelpCenter',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/HelpCenter.vue')
+  },
+  {
+    path: '/HelpInfo',
+    name: 'HelpInfo',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/HelpInfo.vue')
+  },
+  {
+    path: '/ForestPwd',
+    name: 'ForestPwd',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/ForestPwd.vue')
+  },
+  {
+    path: '/Book',
+    name: 'Book',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/Book.vue')
+  },
+  {
+    path: '/NoticeSet',
+    name: 'NoticeSet',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/NoticeSet.vue')
+  },
+  {
+    path: '/Pripacy',
+    name: 'Pripacy',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/Pripacy.vue')
+  },
+  {
+    path: '/openComment',
+    name: 'openComment',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/OpenComment.vue')
+  },
+  {
+    path: '/lockObject',
+    name: 'lockObject',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/LockObject.vue')
+  },
+  {
+    path: '/sidebarLaunch',
+    name: 'sidebarLaunch',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/Launch.vue')
+  },
+  {
+    path: '/Recharge',
+    name: 'Recharge',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/Recharge.vue')
+  },
+  {
+    path: '/Withdarw',
+    name: 'Withdarw',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/Withdarw.vue')
+  },
+  {
+    path: '/AddAccount',
+    name: 'AddAccount',
+    component: () => import(/* webpackChunkName: "about" */ '../views/sidebar/AddAccount.vue')
+  },
+  {
+    path: '/launch',
+    name: 'launch',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Launch.vue')
+  },
+  {
+    path: '/upLoadImg',
+    name: 'upLoadImg',
+    component: UpLoadImg
+  },
+  {
+    path: '/upLoadImg/editImg',
+    name: 'editImg',
+    component: UploadPic
+  },
+  {
+    path: '/uploadVideo',
+    name: 'uploadVideo',
+    component: VideoAuto
 
-	// 非上述路由跳转404
-	{
-		path: '*',
-		redirect: '/404',
-		hidden: true
-	}
-
+  },
+  {
+    path: '/bulkUploadImg',
+    name: 'bulkUploadImg',
+    component: BulkUploadImg
+  },
+  // 发帖详情
+  {
+    path: '/p/:tshare',
+    name: 'postDetail',
+    component: PostDetail
+  },
+  // 发帖详情
+  {
+    path: '/x/:tshare',
+    name: 'postDetailX',
+    component: PostDetailX
+  },
+  // 粉丝列表页面
+  {
+    path: '/fans',
+    name: 'fans',
+    component: Fans
+  },
+  // 关注列表页面
+  {
+    path: '/attentionDetail',
+    name: 'attentionDetail',
+    component: AttentionDetail
+  }
 ]
 
 const router = new VueRouter({
-	mode: 'history',
-	base: process.env.BASE_URL,
-	routes
+  routes
+})
+
+// 路由导航守卫
+router.beforeEach((to, form, next) => {
+  // console.log(localStorage.getItem('token'))
+  // console.log(to.name != 'login' && to.name != 'register' && !localStorage.getItem('token'));
+  // 设置路由登录权限的跳转
+
+  if (to.name != 'login' && to.name != 'register' && !localStorage.getItem('token')) {
+    // router.replace({path:'/login'})
+    next()
+  } else {
+    if (form.name == 'register') {
+      next()
+      router.go(0)
+    }
+    next()
+  }
 })
 
 export default router
