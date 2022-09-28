@@ -1,0 +1,11 @@
+{
+    "id": "silencc-msgbar",
+    "name": "多行滚动通知 支持无线滚动",
+    "version": "0.66",
+    "description": "消息、广告通知 上下滚动通知，支持无限滚动",
+    "keywords": [
+        "notice",
+        "通知",
+        "滚动"
+    ]
+}
