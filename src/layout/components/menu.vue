@@ -103,7 +103,7 @@
 		},
 		methods:{
 			setTabIndex(type,e){
-				console.log(type,e);
+				// console.log(type,e);
 				if(type == 0){
 					this.tabIndex = 4
 				}else if(type == 1){

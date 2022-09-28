@@ -1252,7 +1252,7 @@
 				let  abnormalTime =  this.$refs.complete4.getBoundingClientRect().top
 				/* 未开始 */
 				let  notStart =  this.$refs.complete2.getBoundingClientRect().top
-				console.log(notStart);
+				// console.log(notStart);
 				if(endTime < 1000 && !this.isEndTime) {
 					this.isEndTime = true
 				}

@@ -173,7 +173,7 @@
 		},
 		watch:{
 			list(e){
-				console.log(e)
+				// console.log(e)
 				let _this = this
 				let home_list = e.home_player
 				let away_list = e.away_player

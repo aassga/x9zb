@@ -229,14 +229,14 @@
 							}
 						}).catch(res1 => {})
 					}).catch(res1 => {
-						console.log('失败' + res1);
+						// console.log('失败' + res1);
 					})
 				} else {
 					register(_this.database).then(res => {
 						_this.type = 'code'
 						_this.$message.success('注册成功')
 					}).catch(res => {
-						console.log('失败' + res);
+						// console.log('失败' + res);
 					})
 				}
 			},
@@ -292,7 +292,7 @@
 						forgotPassword(data).then(res => {
 							this.type = 'code'
 						}).catch(res => {
-							console.log('失败' + res);
+							// console.log('失败' + res);
 						})
 						// this.verificationCode(data)
 					} else { //注册
@@ -314,7 +314,7 @@
 							_this.type = 'code'
 							_this.$message.success('注册成功')
 						}).catch(res => {
-							console.log('失败' + res);
+							// console.log('失败' + res);
 						})
 					}
 					
@@ -348,7 +348,7 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					console.log('失败' + res);
+					// console.log('失败' + res);
 				})
 			},
 
@@ -356,7 +356,7 @@
 			getCount() {
 				const TIME_COUNT = 60;
 				if (!this.timer) {
-					console.log(1);
+					// console.log(1);
 					this.count = TIME_COUNT;
 					this.show = false;
 					this.timer = setInterval(() => {

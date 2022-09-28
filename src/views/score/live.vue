@@ -920,7 +920,7 @@
 				}
 				ranking(data).then(res => {
 					this.rankingList = res.data
-					console.log(res.data);
+					// console.log(res.data);
 				}).catch(res => {})
 			},
 			// 获取头条
@@ -1029,7 +1029,7 @@
 			// 1相等 ， 2 大于 ，3小于
 			setExp(num1, num2) {
 				if (num1 == num2) {
-					console.log("true: ",true);
+					// console.log("true: ",true);
 					return 0
 				} else {
 					return 1

@@ -156,7 +156,7 @@
 			}
 		},
 		mounted() {
-			console.log(this.id,this.type)
+			// console.log(this.id,this.type)
 			if(this.type == 'eu'){
 				this.titleIndex = 0
 			}else if(this.type == 'asia'){
@@ -185,13 +185,13 @@
 			
 			// 获取足球
 			footballOddsDetail(item){
-				console.log(this.typeList[this.titleIndex])
+				// console.log(this.typeList[this.titleIndex])
 				footballOddsDetail({id:item.id,type:this.typeList[this.titleIndex]}).then(res=>{
 					// this.list = res.data
 					res.data.forEach(item1=>{
 					// console.log(item1.company_id,item.id)
 						if(item1.company_id == this.id){
-							console.log(item1)
+							// console.log(item1)
 							this.baseList = item1.list
 							this.hostAndguest(item1.list)
 						}
@@ -201,7 +201,7 @@
 			},
 			setData(){
 				let _this = this
-				console.log(this.typeList[this.titleIndex])
+				// console.log(this.typeList[this.titleIndex])
 				this.list[this.typeList[this.titleIndex]].forEach(item=>{
 					if(item.company_id == this.id){
 						// 赋值给列表
@@ -211,7 +211,7 @@
 						// early 初
 						// guest 客
 						// 主队
-						console.log(item)
+						// console.log(item)
 						this.hostAndguest(item.list)
 						// return this.baseList = item.list
 					}
@@ -220,7 +220,7 @@
 			},
 			
 			hostAndguest(item){
-				console.log(item)
+				// console.log(item)
 				let host = []
 				let guest = []
 				let early = []

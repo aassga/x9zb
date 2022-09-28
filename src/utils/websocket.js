@@ -28,7 +28,7 @@ export default {
         info: "web",
         type: "register"
       }
-      console.log('console.log(store);');
+      // console.log('console.log(store);');
       this.ws.send(JSON.stringify(item));
       if (store.state.type == 1) {//足球
         this.ws.send(JSON.stringify({ type: "toggle", company_id: store.state.company_id }));

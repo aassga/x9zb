@@ -222,8 +222,9 @@
             />
           </svg>
           <el-button-group class="msg-type-container"  v-if="ctp != 0">
-            <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button>
-            <el-button type="primary" round size="mini"  icon="el-icon-picture" @click="sendImg(2)"></el-button>
+            <!-- <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button> -->
+            <!-- <el-button type="primary" round size="mini"  icon="el-icon-picture" @click="sendImg(2)"></el-button> -->
+            <img src="./../../assets/images/image.png" alt="" @click="uploadImgShow = true" />
           </el-button-group>
         </div>
         <div class="msg-arr" v-if="dialogVisible">
@@ -274,6 +275,43 @@
         <VEmojiPicker @select="selectEmoji" v-show="isShowEmoji" />
       </div>
     </div>
+    <el-dialog
+      title="上传图片"
+      :before-close="closeModel"
+      :visible.sync="uploadImgShow"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+      :append-to-body="false"
+      v-loading.fullscreen.lock="fullscreenLoading"
+      width="100%"
+      class="el-upload-img el-dialog-loginOut"
+      element-loading-text="圖片上传中"
+      center
+    >
+      <el-upload
+        class="upload-demo"
+        action="#"
+        :on-change="uploadImg"
+        :on-remove="handleRemove"
+        :on-exceed="limitCheck"
+        :auto-upload="false"
+        :file-list="fileList"
+        list-type="picture"
+        multiple
+        :limit="1"
+      >
+        <el-button type="primary">点击上传</el-button>
+      </el-upload>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button class="background-gray" @click="closeModel()"
+            >取消</el-button
+          >
+          <el-button class="background-orange" @click="submitAvatar()"
+            >确认</el-button
+          >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -357,7 +395,10 @@ export default {
       initTab:true,
       leaveVid:"",
       type0_local_msg_list: [],
-      type2_local_msg_list: []
+      type2_local_msg_list: [],
+      uploadImgShow:false,
+      fullscreenLoading: false,
+
     };
   },
   props: ["hideChat","qsVid"],
@@ -371,10 +412,10 @@ export default {
   watch: {
     msgList2: {
       handler(newV, oldV) {
-        console.log("未读消息列表数据变化");
-        console.log(newV);
-        console.log("消息列表的数据");
-        console.log(this.messageList);
+        // console.log("未读消息列表数据变化");
+        // console.log(newV);
+        // console.log("消息列表的数据");
+        // console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
         // this.list2 = this.mapList(this.list2, newV);
         // if (this.activeIndex == 1) {
@@ -424,10 +465,10 @@ export default {
     const _that = this;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", e => {
-      console.log(
-        domScroll.scrollTop ,
-        "domScroll.scrollTop-domScroll.offsetHeight==="
-      );
+      // console.log(
+      //   domScroll.scrollTop ,
+      //   "domScroll.scrollTop-domScroll.offsetHeight==="
+      // );
       if (domScroll.scrollTop<=2 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
@@ -437,7 +478,7 @@ export default {
         this.getChatHistoryMsg(this.initTab?1:"");
       }
     });
-    console.log(this.qsVid,"this.qsVid==============")
+    // console.log(this.qsVid,"this.qsVid==============")
     this.vid = this.qsVid || "";
     let userid = "";
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -490,12 +531,36 @@ export default {
     });
   },
   methods: {
+    handleRemove(file, fileList) {
+      this.fileList = fileList
+    },
+    handleChange(file, fileList) {
+      let fileFilter = file.name.substring(file.name.lastIndexOf('.')+1)      
+      if(file.name.length > 50){
+        this.$message.error("档案名称过长无法传送");
+        fileList.splice(-1,1)
+        return false;
+      }else if(["exe","apk","ipa"].includes(fileFilter)){
+        this.$message.error("不支援exe、apk、ipa档案格式上传");
+        fileList.splice(-1,1)
+        return false;
+      }      
+      this.fileData = fileList
+    },  
+    // 选择的文件超出限制的文件总数量时触发
+    limitCheck() {
+      this.$message({ message: "最多只能上传1张图片", type: "warning" });
+    },
+    // 取得圖片
+    uploadImg(file, fileList) {
+      this.fileList = fileList;
+    },    
     resend(item){
-				console.log(item)
+				// console.log(item)
 				this.handleLocalMsgList(this.ctp).map((val,index)=>{
 					if(val == item) {
 					this.handleLocalMsgList(this.ctp).splice(index,1)
-					console.log(this.msgList)
+					// console.log(this.msgList)
 					}
 				})
 				this.msgText = item.text
@@ -553,8 +618,8 @@ export default {
         }
       }
 
-      console.log("新消息变更之后的数组");
-      console.log(menuList);
+      // console.log("新消息变更之后的数组");
+      // console.log(menuList);
 
       return menuList;
     },
@@ -582,8 +647,8 @@ export default {
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
       if (type == 0) {
-        console.log("默认的未读消息数组");
-        console.log(msgList);
+        // console.log("默认的未读消息数组");
+        // console.log(msgList);
         this.msgList2 = msgList;
       } else {
         let falg = true;
@@ -600,8 +665,8 @@ export default {
         if (falg) {
           arr.push(msgList);
         }
-        console.log("我接受到了新消息");
-        console.log(arr);
+        // console.log("我接受到了新消息");
+        // console.log(arr);
         this.msgList2 = arr;
         this.msgCount += 1;
       }
@@ -685,8 +750,8 @@ export default {
           let element = res.data[index];
           element.unread_count = 0;
         }
-        console.log("请求拿到的数据");
-        console.log(res.data);
+        // console.log("请求拿到的数据");
+        // console.log(res.data);
         if (this.msgList2.length > 0) {
           res.data = this.mapList(res.data, this.msgList2);
           // this.list2 = this.mapList(this.list2, newV);
@@ -744,7 +809,7 @@ export default {
     },
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, "item-info=======");
+      // console.log(item, "item-info=======");
       this.page = 1;
       this.handleLocalMsgList(this.ctp,'empty')
       this.roomInfo = item;
@@ -861,7 +926,7 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      console.log(iniPage,"========getChatHistoryMsg")
+      // console.log(iniPage,"========getChatHistoryMsg")
       const _that = this;
       this.showLoading = true;
       let params = 
@@ -884,7 +949,7 @@ export default {
             return;
           }
           // _that.msgList.unshift(...dataList);
-          console.log(params.page)
+          // console.log(params.page)
 					this.handleLocalMsgList((params.type == 2 && this.ctp == 1) ? 1 : params.type,params.page!=1?'unshift':'init',dataList)
         });
     },
@@ -916,16 +981,18 @@ export default {
       });
     },
     newSocket(data) {
-      const wsprotocol =
-        window.location.protocol == "http:" ? "ws://" : "wss://";
-      this.WSURL = `${wsprotocol}${
-        window.location.hostname.includes("10")
-          ? "10.83.107.92:9021"
-          : window.location.hostname
-        // "10.83.107.92:9021"
-      }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${
-        data.token
-      }&tokenid=${data.id}&vid=${this.qsVid}`;
+      // console.log('ws',data)
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`
+      // const wsprotocol =
+      //   window.location.protocol == "http:" ? "ws://" : "wss://";
+      // this.WSURL = `${wsprotocol}${
+      //   window.location.hostname.includes("10")
+      //     ? "10.83.107.92:9021"
+      //     : window.location.hostname
+      //   // "10.83.107.92:9021"
+      // }${window.location.protocol === "http:" ? "/wss/" : "/wss/"}?token=${
+      //   data.token
+      // }&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       // this.$global.setWs(this.ws);
       //
@@ -950,13 +1017,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      console.log("出现错误");
+      // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      console.log("断开连接", e);
+      // console.log("断开连接", e);
       this.ws.close();
       //重连
       this.reconnect();
@@ -1073,9 +1140,9 @@ export default {
       if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType == 2) {
           let text = this.msgText;
-          console.log(this.msgText,text,"=======this.msgText")
+          // console.log(this.msgText,text,"=======this.msgText")
           this.msgText = '';
-           console.log(this.msgText,text,"=======this.msgText2")
+          //  console.log(this.msgText,text,"=======this.msgText2")
           this.sendMsgByApi(null,text);
         }
         return;
@@ -1241,8 +1308,8 @@ export default {
     },
     //解耦合
 			handleLocalMsgList(type,m,data){
-        console.log(type,m,data)
-        console.log('ddddddddddddddddddddddddd')
+        // console.log(type,m,data)
+        // console.log('ddddddddddddddddddddddddd')
 				if(type != this.ctp) {
 					return
 				}
@@ -1395,6 +1462,9 @@ form {
 .msg-type-container {
   position: absolute;
   left: 60px;
+  img{
+    height:1.5em;
+  }
 }
 
 .pic-info {
@@ -1748,4 +1818,5 @@ form {
   z-index: 99;
   word-break: break-all;
 }
+
 </style>

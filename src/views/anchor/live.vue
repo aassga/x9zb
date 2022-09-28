@@ -603,7 +603,7 @@
 					this.base = {...this.base,...e}
 				} else if (e.type == 'football_exponent' && this.query.id == e.sourceid) {
 					// console.log(e.exponent);
-					console.log('指数');
+					// console.log('指数');
 					this.base.exponent[e.name][e.name1] = e.exponent[e.name][e.name1]
 					// this.base.exponent = {
 					// 	...this.base.exponent,
@@ -771,7 +771,7 @@
 		        range.selectNode(qrUrlContent)
 		        selection.addRange(range)
 		        qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-		        console.log(window.location.href,"========");
+		        // console.log(window.location.href,"========");
 		        let isSucess = document.execCommand('copy');
 		        if (isSucess) {
 		        	this.$alert('复制成功',"提示")
@@ -811,7 +811,7 @@
 			    let player = new SVGA.Player("#demoCanvas");
 			    let parser = new SVGA.Parser("#demoCanvas");
 			    // this.imageUrl 定义一个参数接收url
-				console.log(player,parser);
+				// console.log(player,parser);
 			    parser.load(url, function (videoItem) {
 					// console.log(url,videoItem);
 			      player.setVideoItem(videoItem);
@@ -823,7 +823,7 @@
 				this.gifMask = true
 				if (this.offsetLeft == this.$refs.gifli[index].offsetLeft) return
 				this.gifItem = e
-				console.log(this.num * 450);
+				// console.log(this.num * 450);
 				this.offsetLeft = this.$refs.gifli[index].offsetLeft+this.num * 450
 				// console.log(this.$refs.gifli[index].offsetLeft);
 				// console.log(e);
@@ -944,7 +944,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					console.log(res,"res.data==========")
+					// console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)
@@ -1044,7 +1044,7 @@
 						 });
 						 that.userData.title = value
 					}).catch(res=>{})
-				 console.log(value);
+				//  console.log(value);
 				}).catch(() => {
 				 //  this.$message({
 					// type: 'info',

@@ -347,7 +347,7 @@
 				this.timeType = this.dateTime[e]
 			},
 			listType1(e) {
-				console.log(e)
+				// console.log(e)
 				this.listType1 = e
 			}
 		},
@@ -375,7 +375,7 @@
 			// 获取收藏的条数
 			this.getList()
 			this.$store.state.type = 2
-			console.log('切换篮球');
+			// console.log('切换篮球');
 			this.$WebSocket.send({type:"classify",classify_type:1},'','')
 			window.addEventListener('scroll',this.handleScroll,true)
 		},
@@ -436,7 +436,7 @@
 				// 	this.id = item.id
 				// 	this.boxLi = item.name
 				// }else 
-				console.log();
+				// console.log();
 				if(type == 1){
 					this.match_id = item.id
 					this.selectId = item.id
@@ -568,7 +568,7 @@
 			
 			
 			getShow() {
-				console.log('9ij')
+				// console.log('9ij')
 				// console.log(this.$refs.tiemPick)
 				this.$refs.abc.focus()
 			},
@@ -584,14 +584,14 @@
 			},
 			// 选中的日期
 			change(e) {
-				console.log(e)
+				// console.log(e)
 				let data = {
 					day: e,
 				}
 
 				this.timeType = data
 				this.timeIndex = null
-				console.log(data)
+				// console.log(data)
 			},
 			
 			// 修改三个状态高度
@@ -655,7 +655,7 @@
 					this.screen.count_1--
 				}
 				
-				console.log(item.check);
+				// console.log(item.check);
 			},
 			
 			// 调用筛选
