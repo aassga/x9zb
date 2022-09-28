@@ -901,14 +901,14 @@ export default {
   font-size: 12px;
   color: #6c757d;
 }
-/deep/ .dynamiccustomClass {
+ .dynamiccustomClass {
   width: 250px !important;
 }
-/deep/ .dynamicconfirmButtonClass {
+ .dynamicconfirmButtonClass {
   background-color: #f46fe0;
   border-color: #f46fe0;
 }
-/deep/ .dynamiccancelButtonClass {
+ .dynamiccancelButtonClass {
   color: #f46fe0;
 }
 </style>

@@ -34,7 +34,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog {
+.el-dialog {
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);

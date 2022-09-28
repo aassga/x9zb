@@ -89,7 +89,7 @@ export default {
 </script>
 
 <style lang="scss">
-/deep/.el-dialog__header {
+.el-dialog__header {
   display: none;
 }
 #dynamic-setting-modal {

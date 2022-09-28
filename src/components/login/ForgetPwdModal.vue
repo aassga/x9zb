@@ -60,7 +60,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/.el-dialog__header{
+.el-dialog__header{
     display: none;
 }
 #register_forgetPwd {

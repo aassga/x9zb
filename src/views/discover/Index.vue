@@ -181,7 +181,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/.el-tabs__nav {
+.el-tabs__nav {
   width: 100%;
   display: flex;
   background-color: #f1f0ef;

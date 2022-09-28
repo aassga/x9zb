@@ -1475,7 +1475,7 @@ export default {
   top: -9px;
 }
 
-/deep/ .el-drawer__header {
+ .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }

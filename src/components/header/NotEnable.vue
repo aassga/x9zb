@@ -25,10 +25,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
+.el-dialog{
     margin-top: 20vh!important;
 }
-/deep/.el-dialog__header{
+.el-dialog__header{
     display: none;
 }
 #user_address {

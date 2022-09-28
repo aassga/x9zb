@@ -655,7 +655,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/ .el-drawer__header {
+ .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }
