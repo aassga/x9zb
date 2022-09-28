@@ -36,7 +36,7 @@ export default {
  min-height: 46px;
   left: 0;
   width: 100%;
-  background-color: #ececec;
+  
   overflow-y: scroll;
   overflow-x: hidden;
   &::-webkit-scrollbar{
@@ -53,6 +53,7 @@ export default {
     font-size: 14px;
     box-sizing: border-box;
     border-bottom: 1px solid #dcd8d8;
+    background-color: #ececec;
     .HuyaXWebhMessageinfo_title_icon {
       position: absolute;
       left: 15px;

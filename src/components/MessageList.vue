@@ -151,12 +151,13 @@ export default {
       }
       .HuyaXWebhMessagelist_i_context_b {
         line-height: 20px;
-        width: 100%;
+        width: 75%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         height: 20px;
-        font-size: 16px;
+        font-size: 14px;
+        margin-top: 10px;
         color: #a5a5a5;
       }
     }
