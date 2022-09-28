@@ -29,7 +29,7 @@ import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
 const Base64 = require('js-base64').Base64
 import COS from "cos-js-sdk-v5";
-import VEmojiPicker from 'v-emoji-picker'
+// import VEmojiPicker from 'v-emoji-picker'
 
 // let options = {
 //   SDKAppID: 1400699788// 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
@@ -53,7 +53,7 @@ Vue.use(preview)
 Vue.use(ElementUI);
 Vue.use(VideoPlayer)
 Vue.use(selectLoadMore)
-Vue.use(VEmojiPicker)
+// Vue.use(VEmojiPicker)
 
 Vue.config.productionTip = false
 Vue.prototype.$common = common;
