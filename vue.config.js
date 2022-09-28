@@ -28,13 +28,13 @@ module.exports = {
   productionSourceMap: false,
   // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
   devServer: {
-    before: require('./mock/index.js'),
+    // before: require('./mock/index.js'),
     port: port,
     open: true, // npm run serve后自动打开页面
     disableHostCheck : true,
     proxy:{
       'opc':{
-        target : "http://lukee.pc.com/", //实际请求服务器地址
+        target : "https://www.x9zb.live/", //实际请求服务器地址
         changeOrigin : true,
         secure : false,
         pathRewrite : {
