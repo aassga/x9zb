@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="buildDate" content="<%= new Date() %>">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+
+  <link rel="stylesheet" href="<%= BASE_URL %>css/iconfont/iconfont.css">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <!-- <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script> -->
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <script>
+    var isMobile = ('DeviceOrientationEvent' in window || 'orientation' in window);
+    let url = window.location.hash
+    let room=window.location.pathname.split("/")[1]
+    let uid=window.location.pathname.split("/")[2]
+    let code=getQueryString().c
+    const channel = location.search && location.search.split('?')[1].split('&')[location.search.split('?')[1].split('&').length - 1]
+    const channel_name = channel.split('=')[0]
+    const channel_code = channel.split('=')[1]
+    if (/Windows NT|Macintosh|Mac OS X|Linux/i.test(navigator.userAgent)) isMobile = false;
+    if (/Mobile|Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent)) isMobile = true;
+    if (isMobile) {
+      // 如果是在协议页面  则跳转H5协议
+      if (window.location.href.indexOf('about-user') > -1) {
+        if (channel_name === 'channel_code') {
+        location.replace(location.protocol + "//" + window.location.host + "/m/#/pages/prococol/privacy?channel_code=" + channel_code);
+      }
+      else {
+        location.replace(location.protocol + "//" + window.location.host + "/m/#/pages/prococol/privacy");
+      }
+      }else{
+        if (channel_name === 'channel_code') {
+        location.replace(location.protocol + "//" + window.location.host + "/m/#/?channel_code=" + channel_code);
+      }
+      else {
+        // location.replace(location.protocol + "//" + window.location.host + "/m/#/");
+        if(room=="room"){
+							// console.log(4444444444444)
+							// console.log(location.protocol + "//" + window.location.host+"/m/#/pages/live/detail"+"?id="+uid+"&channel_code="+code)
+              location.replace( location.protocol + "//" +window.location.host+"/m/#/pages/live/detail"+"?id="+uid+"&channel_code="+code)
+						}else{
+              location.replace(location.protocol + "//" +window.location.host+"/m/#/")
+						}
+        }
+      }
+
+
+
+    }
+    function getQueryString() {
+        const result = {};
+        const param = window.location.href.split("?")[1];
+        const search = decodeURIComponent("?" + param);
+        const arr = search !== '' ? search.substr(1).split('&') : [];
+        arr.forEach((item) => {
+            if (item) {
+                const itemArr = item.split('=');
+                result[itemArr[0]] = itemArr[1]
+            }
+        })
+        return result;
+    }
+  </script>
+  <!-- built files will be auto injected -->
+</body>
+<script type="text/javascript" src="https://v1.cnzz.com/z_stat.php?id=1281163974&web_id=1281163974"></script>
+</html>
