@@ -400,11 +400,11 @@
           'add-img-container': current != 0,
         }"
       >
-			<form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
-				<input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
-			</form>
-			<span v-if="!prevImg" class="add-img">添加图片</span>
-			<img v-else :src="prevImg" />
+				<form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
+					<input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
+				</form>
+				<span v-if="!prevImg" class="add-img">添加图片</span>
+				<img v-else :src="prevImg" />
       </div>
 		</u-popup>
 
@@ -759,17 +759,18 @@
       // }
     },
 		//取得圖片
-		changeFile(fileList) {
+		changeFile() {
 			const fileUp = document.querySelector("#fileUp");
-			const file = fileList.raw;
-			this.formData.pic = file;
-			var reader = new FileReader();
-			reader.readAsDataURL(file);
-			const _that = this;
-			reader.onload = function (e) {
-				var newUrl = this.result;
-				_that.prevImg = newUrl;
-			};
+			console.log(fileUp)
+			// const file = fileUp.raw;
+			// this.formData.pic = file;
+			// var reader = new FileReader();
+			// reader.readAsDataURL(file);
+			// const _that = this;
+			// reader.onload = function (e) {
+			// 	var newUrl = this.result;
+			// 	_that.prevImg = newUrl;
+			// };
 		},
 			 openLink(link){
 		      window.open(link)
@@ -1606,9 +1607,9 @@ form {
   z-index: -1;
   opacity: 0;
   border: 1px dashed #ababab;
-  height: 40px;
-  position: absolute;
-  width: 80px;
+  width: 160px;
+  height: 160px;
+  position: relative;
   top: 45px;
   input {
     position: absolute;
