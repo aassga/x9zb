@@ -83,9 +83,9 @@
               >
                 <div class="msg-box">
                   <div class="msg-container">
-                    <div class="msg-content" :style="item.text ==='进入直播间' ?'text-align:center':''">
+                    <div class="msg-content" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'text-align:center':''">
                       <!-- <span class="level-1">Lv1</span> -->
-                      <div class="text-name" :style="item.text ==='进入直播间' ?'color: rgba(0 0 0 / 20%);':''">{{ item.sender_nickname }} <span v-if="item.text !=='进入直播间'">:</span></div>
+                      <div class="text-name" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'color: rgba(0 0 0 / 20%);':''">{{ item.sender_nickname }} <span v-if="item.text !=='进入直播间' || !item.text.includes('进入直播间')">:</span></div>
                       <template v-if="item.pic && !item.text">
                         <el-image
                           :preview-src-list="[item.pic]"
