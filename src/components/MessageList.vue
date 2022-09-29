@@ -82,7 +82,7 @@ export default {
     padding-left: 10px;
     box-sizing: border-box;
     width: 100%;
-    height: 100px;
+    height: 80px;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -95,7 +95,7 @@ export default {
     }
     .HuyaXWebhMessagelist_i_avater_box {
       width: 25%;
-      height: 100px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,11 +107,11 @@ export default {
       }
       .HuyaXWebhMessagelist_i_avater_tips {
         position: absolute;
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
-        right: 3px;
-        top: 13px;
+        right: 8px;
+        top: 12px;
         background-color: red;
         color: #fff;
         display: flex;
@@ -122,7 +122,7 @@ export default {
     .HuyaXWebhMessagelist_i_context {
       border-bottom: 1px solid #dcd8d8;
       width: 75%;
-      height: 100px;
+      height: 80px;
       display: flex;
       flex-direction: column;
       justify-content: center;

@@ -185,9 +185,14 @@
 			}
 		},
 		computed: {
-			loginStatus() {
-				return this.$store.state.user.showLoginMask
+			loginStatus:{
+				get(){
+					return this.$store.state.user.showLoginMask
+				},
 			},
+			// loginStatus() {
+			// 	return this.$store.state.user.showLoginMask
+			// },
 			// options(){
 			// 	return this.$store.state.user.system
 			// }

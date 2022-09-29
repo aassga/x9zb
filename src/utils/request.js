@@ -69,14 +69,14 @@ service.interceptors.response.use(
 		let _this = this
 		const res = response.data
 		// if the custom code is not 20000, it is judged as an error.
-		if(res.msg!="connection error"&&res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="登录成功"){
+		if (res.msg != "connection error" && res.msg != "成功" && res.msg != "success" && res.msg != "" && res.msg != "操作成功" && res.msg != "登录成功") {
 			Message({
 				message: res.msg || 'Error',
 				type: 'error',
 				duration: 5 * 1000
 			})
 		}
-		if (res.code == 1&&res.msg!="connection error") {
+		if (res.code == 1 && res.msg != "connection error") {
 			Message({
 				message: res.msg || 'Error',
 				type: 'error',
@@ -98,16 +98,16 @@ service.interceptors.response.use(
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else if (res.code == 700) { //登录过期
-			
+
 			// 控制弹窗1s内出现一次
 			i++
-			if(i>1) return
-			if(i==1){
-				setTimeout(res=>{
+			if (i > 1) return
+			if (i == 1) {
+				setTimeout(res => {
 					i = 0
-				},2000)
+				}, 2000)
 			}
-			
+
 			// router.app.fullPath = '/main'
 			localStorage.setItem('index', 0)
 			// store.dispatch('delToken','')
@@ -127,9 +127,9 @@ service.interceptors.response.use(
 			// location.reload()
 			// this.$
 		} else if (res.code != 700 && res.code != 1 && res.code !== 0) { //其它状态
-			
+
 			return res
-			
+
 		} else {
 			return res
 		}

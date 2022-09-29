@@ -25,11 +25,13 @@
           @click="changeType(item.id)"
         >
           {{ item.name }}
-          <i v-show="oneChat && oneChat > 0 && ctp == 2" class="new-msg-icon">{{
-            oneChat > 99 ? "99+" : oneChat
-          }}</i>
           <i
-            v-show="msgCount && msgCount > 0 && ctp == 1"
+            v-show="oneChat && oneChat > 0 && item.id == 2"
+            class="new-msg-icon"
+            >{{ oneChat > 99 ? "99+" : oneChat }}</i
+          >
+          <i
+            v-show="msgCount && msgCount > 0 && item.id == 1"
             class="new-msg-icon"
             >{{ msgCount > 99 ? "99+" : msgCount }}</i
           >
@@ -56,7 +58,7 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div class="chat-window" @click="clearStatus()">
+      <div class="chat-window" :style="ctp === 2 ?'padding:0':''" @click="clearStatus()">
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" />
           <div class="animation-loading" />
@@ -292,15 +294,15 @@
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
             一键回复
-            <i class="el-icon-close" @click.stop="dialogVisible = false" />
+            <i class="el-icon-close" @click.stop="dialogVisible = false" ></i>
           </div>
           <div v-for="(item, index) in modalMsgList" :key="index">
             <div @click.stop="setMsg(item)">
               {{ JSON.parse(item.content).text }}
               <i
                 class="el-icon-delete-solid"
-                @click.stop="delQuickReply(item)"
-              />
+                @click.stop="delQuickReply(item)">
+              </i>
             </div>
           </div>
         </div>
@@ -336,7 +338,7 @@
         </div>
       </div>
       <div class="emoji-box">
-        <VEmojiPicker @select="selectEmoji" v-show="isShowEmoji" />
+        <VEmojiPicker :showSearch="false" :showCategories="false" :emojisByRow="10" @select="selectEmoji" v-show="isShowEmoji" />
       </div>
     </div>
     <el-dialog
@@ -912,7 +914,7 @@ export default {
       }
     },
     changeType(e) {
-      console.log(e);
+      console.log('num',e);
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -1154,7 +1156,6 @@ export default {
         data.receiver = getQueryString().uid;
       }
       if (this.msgType == 2) {
-        console.log("type", 2);
         var formData = new FormData();
         formData.append("vid", this.parmUserInfo.vid);
         formData.append("fd", this.fd);
@@ -1207,7 +1208,6 @@ export default {
       if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType == 2) {
           let text = this.msgText;
-          console.log("type", text);
           // console.log(this.msgText,text,"=======this.msgText")
           this.msgText = "";
           //  console.log(this.msgText,text,"=======this.msgText2")
@@ -1302,7 +1302,6 @@ export default {
         }
       }
       if (data.action === "send") {
-        console.log(data);
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
@@ -1410,7 +1409,6 @@ export default {
       if (type == 2) {
         if (m == "init") {
           this.msgList_2 = data;
-          console.log(this.msgList_2);
         }
         if (m == "push") {
           this.msgList_2.push(data);
@@ -1550,7 +1548,7 @@ form {
 
 .pic-info {
   max-height: 80px;
-  max-width: 100%;
+  max-width: 80px;
 }
 .thumb-container {
   padding: 10px 10px 10px 90px;
@@ -1692,8 +1690,11 @@ form {
 }
 .emoji-box {
   position: absolute;
-  bottom: 139px;
-  right: 25px;
+  bottom: 110px;
+  right: 20px;
+  .emoji-picker{
+    width: 300px;
+  }
 }
 .switch-box {
   text-align: right;

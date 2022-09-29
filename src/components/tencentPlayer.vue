@@ -315,7 +315,7 @@ export default {
 }
 .tencent_player_container {
   position: relative;
-  min-height: 500px;
+  min-height: 628px;
   background: #14092a;
   .layout-anchor-nostart-content {
     padding-top: 24%;
