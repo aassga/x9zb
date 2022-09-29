@@ -726,12 +726,14 @@
 					`api/chat/getChatToken?user_id=${data.user_id}&type=${this.parmUserInfo.type||1}&username=${data.username}`
 				).then(
 					res => {
+						console.log(1234567)
 						_that.imUserInfo = res;
 						_that.$emit("onHandleGetImUserInfo", res);
 						_that.newSocket(res);
-						if (initSec) {
-							_that.inviteRoom();
-						}
+						_that.inviteRoom();
+
+						// if (initSec) {
+						// }
 					})
 			},
 			getChatHistoryMsg(iniPage) {
