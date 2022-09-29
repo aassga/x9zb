@@ -294,7 +294,7 @@
             @click="sendImg(2)"
             >图片</span
           > -->
-					<svg width="25" height="25" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="!hidevideo" @click="sendImg(2)">
+					<svg width="25" height="25" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="!hidevideo" @click="uploadImg = true">
 						<path fill-rule="evenodd" clip-rule="evenodd" d="M0.166687 6.06669C0.166687 2.80822 2.8082 0.166687 6.06669 0.166687H33.9333C37.1918 0.166687 39.8334 2.8082 39.8334 6.06669V33.9333C39.8334 37.1918 37.1918 39.8334 33.9334 39.8334H6.06669C5.99387 39.8334 5.92134 39.832 5.84915 39.8294C5.70403 39.8399 5.55771 39.8293 5.41507 39.7978C2.46321 39.4735 0.166687 36.9716 0.166687 33.9334V6.06669ZM9.36188 36.8334H33.9334C35.535 36.8334 36.8334 35.535 36.8334 33.9333V26.7326L28.148 18.0472L9.36188 36.8334ZM36.8334 22.49L29.2086 14.8653C28.9273 14.584 28.5458 14.4259 28.148 14.4259C27.7502 14.4259 27.3686 14.584 27.0873 14.8653L5.23905 36.7135C4.04067 36.3573 3.16669 35.2474 3.16669 33.9334V6.06669C3.16669 4.46507 4.46506 3.16669 6.06669 3.16669H33.9333C35.535 3.16669 36.8334 4.46506 36.8334 6.06669V22.49ZM12.8704 11.3148C12.0113 11.3148 11.3149 12.0113 11.3149 12.8704C11.3149 13.7295 12.0113 14.4259 12.8704 14.4259C13.7295 14.4259 14.426 13.7295 14.426 12.8704C14.426 12.0113 13.7295 11.3148 12.8704 11.3148ZM8.31488 12.8704C8.31488 10.3544 10.3545 8.31483 12.8704 8.31483C15.3864 8.31483 17.426 10.3544 17.426 12.8704C17.426 15.3863 15.3864 17.4259 12.8704 17.4259C10.3545 17.4259 8.31488 15.3863 8.31488 12.8704Z" fill="black" fill-opacity="0.4"/>
 					</svg>
         </div>
@@ -336,8 +336,8 @@
 
       </div>
 			<div class="footer-box">
-				<!-- v-if="msgType != 2" -->
 				<textarea
+					v-if="msgType != 2"
 					id="msg"
 					type="text"
 					@blur="toTop"
@@ -351,7 +351,7 @@
 				<span class="send" @click="sendMsg">发送</span>
 			</div>
 
-      <!-- <div
+      <div
         id="add-img"
         :class="{
           'show-img-container': msgType == 2,
@@ -361,7 +361,7 @@
         <div id="inputContent" ref="inputContent"></div>
         <span v-if="!prevImg && current != 0" class="add-img">添加图片</span>
         <img v-else :src="prevImg" />
-      </div> -->
+      </div>
     </div>
     <u-popup border-radius="20" mode="bottom" v-model="reportListShow">
       <scroll-view class="reportList">
@@ -393,19 +393,8 @@
       </view>
     </u-popup>
 		<u-popup v-model="uploadImg" mode="center" border-radius="20" :closeable="true">
-			<div
-        id="add-img"
-        :class="{
-          'show-img-container': msgType == 2,
-          'add-img-container': current != 0,
-        }"
-      >
-				<form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
-					<input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
-				</form>
-				<span v-if="!prevImg" class="add-img">添加图片</span>
-				<img v-else :src="prevImg" />
-      </div>
+			<u-upload ref="uUpload" :auto-upload="false" :multiple="false" :maxCount="1"></u-upload>
+			<u-button @click="submit">上傳</u-button>
 		</u-popup>
 
   </div>
@@ -438,8 +427,6 @@
 				msgList0: [],
 				msgList1: [],
 				msgList2: [],
-
-				
 				prevImg:"",
 				myUserinfo: {
 					uid: ""
@@ -644,7 +631,19 @@
 			});
 		},
 		methods: {
-
+			submit() {
+				let files = [];
+				// 通过filter，筛选出上传进度为100的文件(因为某些上传失败的文件，进度值不为100，这个是可选的操作)
+				files = this.$refs.uUpload.lists.filter(val => {
+					return val.progress == 100;
+				})
+				// 如果您不需要进行太多的处理，直接如下即可
+				files = this.$refs.uUpload.lists;
+				console.log(files)
+				this.msgType = 2
+				let currentDate = new Date().getTime()
+				this.sendMsgByApi(currentDate);
+			},
 			addDom(){
 				var input =document.createElement("input");
 			input.type = "file";
@@ -750,28 +749,25 @@
 
 			},
 	sendImg(e){
-		this.msgType=e;
-		this.uploadImg = true;
-      // if(e==2){
-      // 	var dol = document.getElementById("add-img");
-      // 	// console.log(dol,'dol--------')
-      // 	dol.innerHtml += '<div>666</div>'
-      // }
+      this.msgType=e;
+      if(e==2){
+      	var dol = document.getElementById("add-img");
+      	// console.log(dol,'dol--------')
+      	dol.innerHtml += '<div>666</div>'
+      }
     },
-		//取得圖片
-		changeFile() {
-			const fileUp = document.querySelector("#fileUp");
-			console.log(fileUp)
-			// const file = fileUp.raw;
-			// this.formData.pic = file;
-			// var reader = new FileReader();
-			// reader.readAsDataURL(file);
-			// const _that = this;
-			// reader.onload = function (e) {
-			// 	var newUrl = this.result;
-			// 	_that.prevImg = newUrl;
-			// };
-		},
+   changeFile() {
+      const fileUp = document.querySelector("#fileUp");
+      const file = fileUp.files[0];
+      this.formData.pic=file;
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      const _that = this;
+      reader.onload = function(e) {
+        var newUrl = this.result;
+        _that.prevImg = newUrl;
+      }
+    },
 			 openLink(link){
 		      window.open(link)
 		    },
@@ -1607,9 +1603,9 @@ form {
   z-index: -1;
   opacity: 0;
   border: 1px dashed #ababab;
-  width: 160px;
-  height: 160px;
-  position: relative;
+  height: 40px;
+  position: absolute;
+  width: 80px;
   top: 45px;
   input {
     position: absolute;
@@ -1866,7 +1862,10 @@ form {
 #chat-models {
   height: calc(100% - 128px);
 }
-
+/deep/.u-list-item{
+	width: 160px !important;
+  height: 160px !important;
+}
 .send-container {
   height: 160rpx;
   position: fixed;
@@ -1877,7 +1876,7 @@ form {
   padding: 20rpx;
   border-top: 1px solid #f1f1f1;
   text-align: left;
-  z-index: 999999;
+  z-index: 2;
   .inputcover {
     position: absolute;
     height: 33px;
