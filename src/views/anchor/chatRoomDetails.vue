@@ -58,7 +58,7 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div class="chat-window" :style="ctp === 2 ?'padding:0':''" @click="clearStatus()">
+      <div class="chat-window" :style="ctp === 2 || !pinInfo ? 'padding:0':''" @click="clearStatus()">
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" />
           <div class="animation-loading" />
@@ -66,8 +66,8 @@
           <div class="animation-loading" />
           <div class="animation-loading" />
         </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 0">
-          <div v-for="(item, index) in msgList_0" :key="index">
+        <div class="chat-detail-main" ref="content-list">
+          <div v-for="(item, index) in msgList" :key="index">
             <!--   <div class="system-tips" v-if="item.action === 'system'">
               {{item.text}}
             </div>-->
@@ -76,15 +76,16 @@
                 v-if="
                   !item.channel ||
                   item.channel === channel ||
-                  (!channel && item.channel === '000')
+                  (!channel && item.channel === '000') ||
+                  item.channel === 'null'
                 "
                 class="other-side"
               >
                 <div class="msg-box">
                   <div class="msg-container">
-                    <div class="msg-content">
+                    <div class="msg-content" :style="item.text ==='进入直播间' ?'text-align:center':''">
                       <!-- <span class="level-1">Lv1</span> -->
-                      <div class="text-name">{{ item.sender_nickname }}:</div>
+                      <div class="text-name" :style="item.text ==='进入直播间' ?'color: rgba(0 0 0 / 20%);':''">{{ item.sender_nickname }} <span v-if="item.text !=='进入直播间'">:</span></div>
                       <template v-if="item.pic && !item.text">
                         <el-image
                           :preview-src-list="[item.pic]"
@@ -106,6 +107,7 @@
                       </template>
                       <div
                         class="text-info"
+                        :style="item.text ==='进入直播间' ?'color: rgba(0 0 0 / 20%);':''"
                         v-else
                         v-html="getText(item.text)"
                         @click.stop="showControl(index)"
@@ -131,11 +133,8 @@
             </template>
           </div>
         </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 1">
+        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 1">
           <div v-for="(item, index) in msgList_1" :key="index">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
             <template>
               <div
                 v-if="
@@ -149,7 +148,6 @@
                 <div class="msg-box">
                   <div class="msg-container">
                     <div class="msg-content">
-                      <!-- <span class="level-1">Lv1</span> -->
                       <div class="text-name">{{ item.sender_nickname }}:</div>
                       <template v-if="item.pic && !item.text">
                         <el-image
@@ -199,9 +197,6 @@
         </div>
         <div class="chat-detail-main" ref="content-list" v-if="ctp == 2">
           <div v-for="(item, index) in msgList_2" :key="index">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
             <template>
               <div
                 v-if="
@@ -215,7 +210,6 @@
                 <div class="msg-box">
                   <div class="msg-container">
                     <div class="msg-content">
-                      <!-- <span class="level-1">Lv1</span> -->
                       <div class="text-name">{{ item.sender_nickname }}:</div>
                       <template v-if="item.pic && !item.text">
                         <el-image
@@ -262,7 +256,7 @@
               </div>
             </template>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="send-container">
         <div>
@@ -407,6 +401,7 @@ export default {
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
+      msgList:[],
       msgList_0: [],
       msgList_1: [],
       msgList_2: [],
@@ -1000,6 +995,7 @@ export default {
 
       this.$store.dispatch("getChatHistory", params).then((res) => {
         let dataList = res.data.reverse();
+        console.log('historyMsg',dataList)
         this.showLoading = false;
         this.initTab = false;
         if (dataList.length === 0) {
@@ -1386,56 +1382,75 @@ export default {
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
-      // console.log(type,m,data)
       // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;
       }
-      if (type == 0) {
-        if (m == "init") {
-          this.msgList_0 = data;
-        }
-        if (m == "push") {
-          this.msgList_0.push(data);
-        }
-        if (m == "unshift") {
-          this.msgList_0.unshift(data);
-        }
-        if (m == "empty") {
-          this.msgList_0 = [];
-        }
-        return this.msgList_0;
+      switch (m) {
+        case "init":
+          this.msgList = data;
+          break;
+        case "push":
+          this.msgList.push(data);
+          break;
+        case "unshift":
+          data.forEach((el) => {
+            this.msgList.unshift(el);
+          });
+          break;
+        case "empty":
+          this.msgList = [];
+          break;  
+        default:
+          break;
       }
-      if (type == 2) {
-        if (m == "init") {
-          this.msgList_2 = data;
-        }
-        if (m == "push") {
-          this.msgList_2.push(data);
-        }
-        if (m == "unshift") {
-          // this.msgList_2.unshift(data)
-        }
-        if (m == "empty") {
-          this.msgList_2 = [];
-        }
-        return this.msgList_2;
-      }
-      if (type == 1) {
-        if (m == "init") {
-          this.msgList_1 = data;
-        }
-        if (m == "push") {
-          this.msgList_1.push(data);
-        }
-        if (m == "unshift") {
-          this.msgList_1.unshift(data);
-        }
-        if (m == "empty") {
-          this.msgList_1 = [];
-        }
-        return this.msgList_1;
-      }
+      this.toBottom()
+      return this.msgList;
+      // if (type == 0) {
+      //   if (m == "init") {
+      //     this.msgList_0 = data;
+      //   }
+      //   if (m == "push") {
+      //     this.msgList_0.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     this.msgList_0.unshift(data);
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList_0 = [];
+      //   }
+      //   return this.msgList_0;
+      // }
+      // if (type == 2) {
+      //   if (m == "init") {
+      //     this.msgList_2 = data;
+      //   }
+      //   if (m == "push") {
+      //     this.msgList_2.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     this.msgList_2.unshift(data)
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList_2 = [];
+      //   }
+      //   return this.msgList_2;
+      // }
+      // if (type == 1) {
+      //   if (m == "init") {
+      //     this.msgList_1 = data;
+      //   }
+      //   if (m == "push") {
+      //     this.msgList_1.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     this.msgList_1.unshift(data);
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList_1 = [];
+      //   }
+      //   return this.msgList_1;
+      // }
       // this.toBottom()
     },
   },
@@ -1475,7 +1490,7 @@ export default {
   margin-left: 5px;
 }
 .el-icon-message-solid {
-  color: #f4951f;
+  color: #C41D48;
   font-size: 16px;
   position: absolute;
   top: 10px;
@@ -1484,7 +1499,7 @@ export default {
 }
 .text-name {
   display: inline-block;
-  color: #666;
+	color: rgb(0 0 0 / 40%);
 }
 .level-1 {
   background: #69c331;
@@ -1498,7 +1513,7 @@ export default {
 }
 .text-info {
   display: initial;
-  color: #000;
+	color: rgb(0 0 0 / 80%);
 }
 form {
   position: absolute;
@@ -1573,13 +1588,13 @@ form {
 
 .new-msg-icon {
   font-style: normal;
-  width: 40px;
-  z-index: 99;
+  width: 20px;
+  z-index: 1;
   height: 20px;
   border-radius: 20px;
   position: absolute;
-  right: -7px;
-  top: -9px;
+  right: 19px;
+  top: 1px;
   font-size: 10px;
   background-color: red;
   color: #fff;
@@ -1661,13 +1676,14 @@ form {
       cursor: pointer;
     }
     &.on {
-      background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
-        linear-gradient(#000000, #000000);
+      // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
+      //   linear-gradient(#000000, #000000);
+      background-color: #C41D48 ;
     }
   }
 }
 #msg {
-  border: 1px solid #d8ad66;
+  border: 1px solid #C41D48;
   border-radius: 4px;
   padding: 6px;
   width: 75%;
@@ -1771,7 +1787,8 @@ form {
         right: -12px;
         border-radius: 6px;
         color: #fff;
-        background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
+        // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
+        background-color: #C41D48;
         height: 34px;
         line-height: 34px;
         &:hover {
@@ -1795,7 +1812,7 @@ form {
   .chat-window {
     background: #f3f3f3;
     height: 401px;
-    padding-top: 46px;
+    padding-top: 80px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;

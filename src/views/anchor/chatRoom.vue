@@ -3,7 +3,7 @@
 		<div class="anchor-live-chatroom">
 			<div>
 				<div class="top-message"><img class="img-icon"
-						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABUhJREFUWAnlV39I3VUUv/f73nM6zYVTCUOGpAUt2BqBMJj90WhSMYet1z+FtYoRBUX/VBix1pZB2NaPPwq2RW3hcM0VbbKC/tnoJ47SstpcRg0n6Hhu8+We73vvPZ1z7r3P51fTNPprV67nfM+99/z4nHPPVSGu9iH/CwCZ375er6RpCaTsXlqztmMxuhblQObsV7WhCNvBwEYpUQWIsKQosUxWr72yUCfiCzkAA9+Ujuv0C5Nq4ikQooC8NziRJtIZWYLs/+MAAATjpz9/+LK69Aryld5pZ5ydCGIFXrwgGsy3O9V/fN2l/u4eHYZ7tAorQSth3PQ8USHSc6pCx+XFX4/dBtCTyN/IKYCB7tKLV8LVxsSK4ihRpE9qidhugTBzH3I88iDnb8A8cAkgxYyw7J9+jfV+8izqa0v1DXWhM5uxdvhUfKzvcEMqPXEElZUJiaWVRRVkiZZpeqvuEwmLidJgLcSMz+2AMea8rRjRnOrteglPvEjHgjAbvq21KjNGCYbUUQtvaGU6RNiRxzVPic+fs6UAej8rJiM0ytc0f4DK9jkdraneg7eQPBBGrRSUQ5y06CnzoK0MKR7m3Htq64Acs06Rsvwx8t2BrtHs6MjIqY51Xr68UD4OoAeNCgOVUa+SPKAPip4nReqipEhxjSNmijx77yg7aJyDSKMDHbveKLXUZDOHL3/7/nJalyuTWal1q0P37pFT+2sDUpSb2ioEosznUTLGaXCUHCTUHI2mIBboJ4QOFRhd8ZdSz3sHy+sLDyEKF3AKyGSb0AGC1kbKEbIR65TP99S63Utn/DlP05FbWFH/SA8aaWcdOmwB6IwxCjKpMc1HCQW81hsYfvpYaNHlUHMI+gjzacyIvRgdpbV8+OTYKr8GEP7AjoFaEQDn1EZklRLv0+L5mRHbyNytwACiKSBjFQ1bz+K+LNtQmWrvgFH6vLNVFaei4wcFV7FBME+Uhm8HRHlEBb5P8HZG2O/MUUqRHSbXMrDfSLpYOCDOntgduZ7jDeb3etpCrRHwhygNzxMVYgnL8n8NffF6HSLAHQrdO+fXdNZUAb4ggZDDccqRVUAI4BbU7QCY4p1Hc65HqxBV6TDzKAAbulC1obVXCHsZjAlXkxEt5R+BzyUXIuWeCtLXgOddkbLcy/L3oiw6fj+2vR77xzOuwN/DNBOgaLczhrJ7OPWgjsfpLtODwsMhwIjSZpy0RNSO6RKqHV83IjY9BRBOvgNSxATIkVhhnLse6Rg8+uP9eC1sY5KJj+MCFKHkXXCGpswR5x3wzvjN02okMT7trMFmg+/dBASyubpxR4r1dL+5ZHByaIehXEr56YqmnYMBwvETpcFOe61sf7ep4G7nUsLpQt7vp5R4WaQPiRs2td1ZGpjrapvavvSeDUz8+S4+fDVCY5uV6jmSx0GqJ8HIIxhnGVff1AOPy5GY6dOHTafpZtF+pDI9/Tl2730OljOdTz8EhjoiiFgQvFy3affPpCK48d43TgQlugbhuh2fxkaEpJEoVuJdGOEh32o56hmPE3Y518hma0RkwA/Arkd7EbKPajfv2u7lPp3+ewY98+HWBqzx3YjOrVFEPFhE44mCyrrkW6MzFDgBwLbg9MHhNTfF7vheJvE9cGNeB2gfHf7lwLkt2C92YlXjH6WuLImQBqQFRcVzOkB6Zhvz/lFKh6TcZm5+cO+eAllcJyB8DWHM8nNNTyo929xXo2U4m7mZsn+FQPRY//4HatGFduwCGy0IMrz2mspl1cldC/6/YFEOeIf69iXXCy1asK67Vz3Wsah/zbyuq5f+DS7iU2NBe5NrAAAAAElFTkSuQmCC"
+						src="./../../assets/images/volume.png"
 						alt="gg">
 					<div id="headScroll" class="top-text">
 						<span class="top-text-scroll">{{system.announcement}}</span>
@@ -18,16 +18,18 @@
 			<div class="layout-contribution-list">
 				<div class="chatroom-contribution-list-comp" style="height: 220px;">
 					<div class="contribution-header">
-						<div class="title">
+						<div class="title" v-for="(item,index) in paiData" :key="index">
+							<span class="text" :class="{'active':paiIndex === index}" @click="paiIndex = index">{{item.name}}</span>
+							<i class="el-icon-caret-top jiantou" v-if="paiIndex === index"></i>
+						</div>
+						<!-- <div class="title">
 							<span class="text" :class="paiIndex == 0?'active':''" @click="paiIndex = 0">贡献日榜</span>
-							<img class="jiantou" v-if="paiIndex == 0"
-								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAGCAYAAAARx7TFAAAAAXNSR0IArs4c6QAAAJxJREFUCB1jYEAC/5+d4fp0Y+8qEI0kzMCCzHn74v60///+hf76+vYrUDwRJscIYzw/Oj3h35//8xkZGRn+///PwMTImChpl7kAJA9W9HBbmxYDw7/T/xkY4NYAJb4xMDCZyntVXWN8trmB68v3T0AF/7WAhgBNAeqEms/IwHSNm4PXlOXDm3vT/jEyAk0CApgKEA0GjFq/v7yeBgAU8D21crZj/QAAAABJRU5ErkJggg==">
+							<i class="el-icon-caret-top jiantou" v-if="paiIndex == 0"></i>
 						</div>
 						<div class="title">
 							<span class=" text" :class="paiIndex == 1?'active':''" @click="paiIndex = 1">贡献周榜</span>
-							<img class="jiantou" v-if="paiIndex == 1"
-								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAGCAYAAAARx7TFAAAAAXNSR0IArs4c6QAAAJxJREFUCB1jYEAC/5+d4fp0Y+8qEI0kzMCCzHn74v60///+hf76+vYrUDwRJscIYzw/Oj3h35//8xkZGRn+///PwMTImChpl7kAJA9W9HBbmxYDw7/T/xkY4NYAJb4xMDCZyntVXWN8trmB68v3T0AF/7WAhgBNAeqEms/IwHSNm4PXlOXDm3vT/jEyAk0CApgKEA0GjFq/v7yeBgAU8D21crZj/QAAAABJRU5ErkJggg==">
-						</div>
+							<i class="el-icon-caret-top jiantou" v-if="paiIndex == 1"></i>
+						</div> -->
 					</div>
 					<div class="contribution-main">
 						<div>
@@ -581,6 +583,10 @@
 			return {
 				colorL: ['rgb(26, 143, 250)', 'rgb(168, 229, 94)', 'rgb(255, 202, 1)', 'rgb(185, 129, 238)',
 					'rgb(250, 105, 162)'
+				],
+				paiData:[
+					{name:"贡献日榜"},
+					{name:"贡献周榜"}
 				],
 				paiIndex: 0,
 				nobilityIndex: 0,

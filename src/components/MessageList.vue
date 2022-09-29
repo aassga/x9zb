@@ -67,7 +67,7 @@ export default {
 <style lang="scss" scoped>
 .HuyaXWebhMessagelist {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   top: 38px;
   left: 0;
   width: 100%;
