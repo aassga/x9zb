@@ -1,214 +1,412 @@
 <!-- 聊天 -->
 <template>
-	<div class="detail" v-show="showMsgInfo||current!=1" :class="{'app-version':hidevideo,'add-margin':current==1,'is-ios':iosDevice}">
-		<div v-if="false"  class="animation-loading-container">
-		         <div  class="animation-loading" v-for="i in 10"/>
-		</div>
-		<div class="announcement">
-			<div class="announcement-icon">
-				<img  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABUhJREFUWAnlV39I3VUUv/f73nM6zYVTCUOGpAUt2BqBMJj90WhSMYet1z+FtYoRBUX/VBix1pZB2NaPPwq2RW3hcM0VbbKC/tnoJ47SstpcRg0n6Hhu8+We73vvPZ1z7r3P51fTNPprV67nfM+99/z4nHPPVSGu9iH/CwCZ375er6RpCaTsXlqztmMxuhblQObsV7WhCNvBwEYpUQWIsKQosUxWr72yUCfiCzkAA9+Ujuv0C5Nq4ikQooC8NziRJtIZWYLs/+MAAATjpz9/+LK69Aryld5pZ5ydCGIFXrwgGsy3O9V/fN2l/u4eHYZ7tAorQSth3PQ8USHSc6pCx+XFX4/dBtCTyN/IKYCB7tKLV8LVxsSK4ihRpE9qidhugTBzH3I88iDnb8A8cAkgxYyw7J9+jfV+8izqa0v1DXWhM5uxdvhUfKzvcEMqPXEElZUJiaWVRRVkiZZpeqvuEwmLidJgLcSMz+2AMea8rRjRnOrteglPvEjHgjAbvq21KjNGCYbUUQtvaGU6RNiRxzVPic+fs6UAej8rJiM0ytc0f4DK9jkdraneg7eQPBBGrRSUQ5y06CnzoK0MKR7m3Htq64Acs06Rsvwx8t2BrtHs6MjIqY51Xr68UD4OoAeNCgOVUa+SPKAPip4nReqipEhxjSNmijx77yg7aJyDSKMDHbveKLXUZDOHL3/7/nJalyuTWal1q0P37pFT+2sDUpSb2ioEosznUTLGaXCUHCTUHI2mIBboJ4QOFRhd8ZdSz3sHy+sLDyEKF3AKyGSb0AGC1kbKEbIR65TP99S63Utn/DlP05FbWFH/SA8aaWcdOmwB6IwxCjKpMc1HCQW81hsYfvpYaNHlUHMI+gjzacyIvRgdpbV8+OTYKr8GEP7AjoFaEQDn1EZklRLv0+L5mRHbyNytwACiKSBjFQ1bz+K+LNtQmWrvgFH6vLNVFaei4wcFV7FBME+Uhm8HRHlEBb5P8HZG2O/MUUqRHSbXMrDfSLpYOCDOntgduZ7jDeb3etpCrRHwhygNzxMVYgnL8n8NffF6HSLAHQrdO+fXdNZUAb4ggZDDccqRVUAI4BbU7QCY4p1Hc65HqxBV6TDzKAAbulC1obVXCHsZjAlXkxEt5R+BzyUXIuWeCtLXgOddkbLcy/L3oiw6fj+2vR77xzOuwN/DNBOgaLczhrJ7OPWgjsfpLtODwsMhwIjSZpy0RNSO6RKqHV83IjY9BRBOvgNSxATIkVhhnLse6Rg8+uP9eC1sY5KJj+MCFKHkXXCGpswR5x3wzvjN02okMT7trMFmg+/dBASyubpxR4r1dL+5ZHByaIehXEr56YqmnYMBwvETpcFOe61sf7ep4G7nUsLpQt7vp5R4WaQPiRs2td1ZGpjrapvavvSeDUz8+S4+fDVCY5uV6jmSx0GqJ8HIIxhnGVff1AOPy5GY6dOHTafpZtF+pDI9/Tl2730OljOdTz8EhjoiiFgQvFy3affPpCK48d43TgQlugbhuh2fxkaEpJEoVuJdGOEh32o56hmPE3Y518hma0RkwA/Arkd7EbKPajfv2u7lPp3+ewY98+HWBqzx3YjOrVFEPFhE44mCyrrkW6MzFDgBwLbg9MHhNTfF7vheJvE9cGNeB2gfHf7lwLkt2C92YlXjH6WuLImQBqQFRcVzOkB6Zhvz/lFKh6TcZm5+cO+eAllcJyB8DWHM8nNNTyo929xXo2U4m7mZsn+FQPRY//4HatGFduwCGy0IMrz2mspl1cldC/6/YFEOeIf69iXXCy1asK67Vz3Wsah/zbyuq5f+DS7iU2NBe5NrAAAAAElFTkSuQmCC">
-			</div>
-			<div class="announcement-item">{{$store.state.system.announcement}}</div>
-		</div>
-		<div id="chat-models">
-			<input id="cp-input" />
-			<div class="ChatDetails_container">
-			  
-				<div v-if="pinInfo" class="pin-info">
-					{{pinInfo.text}}
-				</div>
-				<div class="chat-window" :class="{'chat-pin':pinInfo }">
-				   
-					<div class="chat-detail-main current0" ref="content-list" v-if="current == 0">
-						<div v-for="(item,index) in msgList0" :key="index">
-							<div class="system-tips" v-if="item.action === 'system'">
-								{{item.text}}
-							</div>
-							<template v-else>
-								<div class="other-side " v-if="(item.channel=='null'||!item.channel || item.channel === channel || (!channel && item.channel === '000'))" >
-									<div class="msg-box">
-										<div class="msg-container">
-											<div class="msg-content" @click.stop="showControl(index)">
-												<div class="msg-footer">
-													<span>{{item.sender_nickname||"我"}}:</span>
-												</div>
-												<template v-if="item.pic&&!item.text">
-													<img @click.stop="onHandleClickImg(item.pic)" :src="item.pic|picFilter" class="pic-info" />
-												</template>
-												<template v-if="item.pic&&item.text">
-													<div class="thumb-container" @click.stop="openAppUrl(item.link)">
-														<img class="thumb-pic" :src="item.pic|picFilter">
-														<div class="thumb-title">
-														{{item.title}}
-														</div>
-														<br/>
-														<div class="thumb-text">
-															{{item.text}}
-														</div>
-													</div>
-												</template>
-												<div v-else @click="openAppUrl(item.text)" class="text-info" v-html="getText(item.text)"></div>
-												<i class="el-icon-warning error-msg" v-if="item.isError" @click="resend(item)">重新发送</i>
-												<div v-if="controlIndex===index" class="msg-control other">
-													<!--  <div @click="mute(item)">禁言</div>
+  <div
+    class="detail"
+    v-show="showMsgInfo || current != 1"
+    :class="{
+      'app-version': hidevideo,
+      'add-margin': current == 1,
+      'is-ios': iosDevice,
+    }"
+  >
+    <div v-if="false" class="animation-loading-container">
+      <div class="animation-loading" v-for="i in 10" />
+    </div>
+    <div class="announcement">
+      <div class="announcement-icon">
+        <img
+          src="./../../../static/images/live/volume.png"
+        />
+      </div>
+      <div class="announcement-item">
+        {{ $store.state.system.announcement }}
+      </div>
+    </div>
+    <div id="chat-models">
+      <input id="cp-input" />
+      <div class="ChatDetails_container">
+        <div v-if="pinInfo" class="pin-info">
+          {{ pinInfo.text }}
+        </div>
+        <div class="chat-window" :class="{ 'chat-pin': pinInfo }">
+          <div
+            class="chat-detail-main current0"
+            ref="content-list"
+            v-if="current == 0"
+          >
+            <div v-for="(item, index) in msgList0" :key="index">
+              <div class="system-tips" v-if="item.action === 'system'">
+                {{ item.text }}
+              </div>
+              <template v-else>
+                <div
+                  class="other-side"
+                  v-if="
+                    item.channel == 'null' ||
+                    !item.channel ||
+                    item.channel === channel ||
+                    (!channel && item.channel === '000')
+                  "
+                >
+                  <div class="msg-box">
+                    <div class="msg-container">
+                      <div class="msg-content" @click.stop="showControl(index)" :style="item.text === '进入直播间' || item.text.includes('进入直播间') ? 'text-align:center':''">
+                        <div class="msg-footer">
+                          <span :style="item.text === '进入直播间' || item.text.includes('进入直播间') ? 'color:rgba(0 0 0 /20%)':''">{{ item.sender_nickname || "我" }}<span v-if="item.text !== '进入直播间' || !item.text.includes('进入直播间')">:</span></span>
+                        </div>
+                        <template v-if="item.pic && !item.text">
+                          <img
+                            @click.stop="onHandleClickImg(item.pic)"
+                            :src="item.pic | picFilter"
+                            class="pic-info"
+                          />
+                        </template>
+                        <template v-if="item.pic && item.text">
+                          <div
+                            class="thumb-container"
+                            @click.stop="openAppUrl(item.link)"
+                          >
+                            <img
+                              class="thumb-pic"
+                              :src="item.pic | picFilter"
+                            />
+                            <div class="thumb-title">
+                              {{ item.title }}
+                            </div>
+                            <br />
+                            <div class="thumb-text">
+                              {{ item.text }}
+                            </div>
+                          </div>
+                        </template>
+                        <div
+                          v-else
+                          @click="openAppUrl(item.text)"
+                          class="text-info"
+                          v-html="getText(item.text)"
+													:style="item.text === '进入直播间' ? 'color:rgba(0 0 0 /20%)':''"
+                        ></div>
+                        <i
+                          class="el-icon-warning error-msg"
+                          v-if="item.isError"
+                          @click="resend(item)"
+                          >重新发送</i
+                        >
+                        <div
+                          v-if="controlIndex === index"
+                          class="msg-control other"
+                        >
+                          <!--  <div @click="mute(item)">禁言</div>
 														<div @click="freeze(item)">冻结</div> -->
-													<div @click="copyText(item)">复制</div>
-													<div v-if="system.report == 1" @click="onHandleReportShow(item)">举报</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</template>
-						</div>
-					</div>
-					<div class="chat-detail-main current1" ref="content-list" v-if="current == 1">
-						<div v-for="(item,index) in msgList1" :key="index">
-							<div class="system-tips" v-if="item.action === 'system'">
-								{{item.text}}
-							</div>
-							<template v-else>
-								<div class="other-side " v-if="(item.channel=='null'||!item.channel || item.channel === channel || (!channel && item.channel === '000'))" >
-									<div class="msg-box">
-										<div class="msg-container">
-											<div class="msg-content" @click.stop="showControl(index)">
-												<div class="msg-footer">
-													<span>{{item.sender_nickname||"我"}}:</span>
-												</div>
-												<template v-if="item.pic&&!item.text">
-													<img @click.stop="onHandleClickImg(item.pic)" :src="item.pic|picFilter" class="pic-info" />
-												</template>
-												<template v-if="item.pic&&item.text">
-													<div class="thumb-container" @click.stop="openAppUrl(item.link)">
-														<img class="thumb-pic" :src="item.pic|picFilter">
-														<div class="thumb-title">
-														{{item.title}}
-														</div>
-														<br/>
-														<div class="thumb-text">
-															{{item.text}}
-														</div>
-													</div>
-												</template>
-												<div v-else @click="openAppUrl(item.text)" class="text-info" v-html="getText(item.text)"></div>
-												<i class="el-icon-warning error-msg" v-if="item.isError" @click="resend(item)">重新发送</i>
-												<div v-if="controlIndex===index" class="msg-control other">
-														<div @click="freeze(item)">冻结</div>
-													<div @click="copyText(item)">复制</div>
-													<div v-if="system.report == 1" @click="onHandleReportShow(item)">举报</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</template>
-						</div>
-					</div>
-					<div class="chat-detail-main current2" ref="content-list" v-if="current == 2">
-						<div v-for="(item,index) in msgList2" :key="index">
-							<div class="system-tips" v-if="item.action === 'system'">
-								{{item.text}}
-							</div>
-							<template v-else>
-								<div class="other-side " v-if="(item.channel=='null'||!item.channel || item.channel === channel || (!channel && item.channel === '000'))" >
-									<div class="msg-box">
-										<div class="msg-container">
-											<div class="msg-content" @click.stop="showControl(index)">
-												<div class="msg-footer">
-													<span>{{item.sender_nickname||"我"}}:</span>
-												</div>
-												<template v-if="item.pic&&!item.text">
-													<img @click.stop="onHandleClickImg(item.pic)" :src="item.pic|picFilter" class="pic-info" />
-												</template>
-												<template v-if="item.pic&&item.text">
-													<div class="thumb-container" @click.stop="openAppUrl(item.link)">
-														<img class="thumb-pic" :src="item.pic|picFilter">
-														<div class="thumb-title">
-														{{item.title}}
-														</div>
-														<br/>
-														<div class="thumb-text">
-															{{item.text}}
-														</div>
-													</div>
-												</template>
-												<div v-else @click="openAppUrl(item.text)" class="text-info" v-html="getText(item.text)"></div>
-												<i class="el-icon-warning error-msg" v-if="item.isError" @click="resend(item)">重新发送</i>
-												<div v-if="controlIndex===index" class="msg-control other">
-													<div @click="copyText(item)">复制</div>
-													<div v-if="system.report == 1" @click="onHandleReportShow(item)">举报</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</template>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="send-container" v-show="showMsgInfo||current!=1">
-			
-				<div v-if="isShowEmoji" class="emoji-box">
-					<VEmojiPicker @select="selectEmoji" v-show="isShowEmoji" />
-				</div>
-					<div class="quick-reply-list">
-						<div v-if="current!=0" class="send-type-container">
-							<span :class="{'active-status':msgType==1}" @click="sendImg(1)">文字</span>
-							<span v-if="!hidevideo" :class="{'active-status':msgType==2}"  @click="sendImg(2)">图片</span>
-						</div>
-						<!-- <i v-for="(item,index) in modalMsgList " :key="`msg_${index}`">
+                          <div @click="copyText(item)">复制</div>
+                          <div
+                            v-if="system.report == 1"
+                            @click="onHandleReportShow(item)"
+                          >
+                            举报
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div
+            class="chat-detail-main current1"
+            ref="content-list"
+            v-if="current == 1"
+          >
+            <div v-for="(item, index) in msgList1" :key="index">
+              <div class="system-tips" v-if="item.action === 'system'">
+                {{ item.text }}
+              </div>
+              <template v-else>
+                <div
+                  class="other-side"
+                  v-if="
+                    item.channel == 'null' ||
+                    !item.channel ||
+                    item.channel === channel ||
+                    (!channel && item.channel === '000')
+                  "
+                >
+                  <div class="msg-box">
+                    <div class="msg-container">
+                      <div class="msg-content" @click.stop="showControl(index)">
+                        <div class="msg-footer">
+                          <span>{{ item.sender_nickname || "我" }}:</span>
+                        </div>
+                        <template v-if="item.pic && !item.text">
+                          <img
+                            @click.stop="onHandleClickImg(item.pic)"
+                            :src="item.pic | picFilter"
+                            class="pic-info"
+                          />
+                        </template>
+                        <template v-if="item.pic && item.text">
+                          <div
+                            class="thumb-container"
+                            @click.stop="openAppUrl(item.link)"
+                          >
+                            <img
+                              class="thumb-pic"
+                              :src="item.pic | picFilter"
+                            />
+                            <div class="thumb-title">
+                              {{ item.title }}
+                            </div>
+                            <br />
+                            <div class="thumb-text">
+                              {{ item.text }}
+                            </div>
+                          </div>
+                        </template>
+                        <div
+                          v-else
+                          @click="openAppUrl(item.text)"
+                          class="text-info"
+                          v-html="getText(item.text)"
+                        ></div>
+                        <i
+                          class="el-icon-warning error-msg"
+                          v-if="item.isError"
+                          @click="resend(item)"
+                          >重新发送</i
+                        >
+                        <div
+                          v-if="controlIndex === index"
+                          class="msg-control other"
+                        >
+                          <div @click="freeze(item)">冻结</div>
+                          <div @click="copyText(item)">复制</div>
+                          <div
+                            v-if="system.report == 1"
+                            @click="onHandleReportShow(item)"
+                          >
+                            举报
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div
+            class="chat-detail-main current2"
+            ref="content-list"
+            v-if="current == 2"
+          >
+            <div v-for="(item, index) in msgList2" :key="index">
+              <div class="system-tips" v-if="item.action === 'system'">
+                {{ item.text }}
+              </div>
+              <template v-else>
+                <div
+                  class="other-side"
+                  v-if="
+                    item.channel == 'null' ||
+                    !item.channel ||
+                    item.channel === channel ||
+                    (!channel && item.channel === '000')
+                  "
+                >
+                  <div class="msg-box">
+                    <div class="msg-container">
+                      <div class="msg-content" @click.stop="showControl(index)">
+                        <div class="msg-footer">
+                          <span>{{ item.sender_nickname || "我" }}:</span>
+                        </div>
+                        <template v-if="item.pic && !item.text">
+                          <img
+                            @click.stop="onHandleClickImg(item.pic)"
+                            :src="item.pic | picFilter"
+                            class="pic-info"
+                          />
+                        </template>
+                        <template v-if="item.pic && item.text">
+                          <div
+                            class="thumb-container"
+                            @click.stop="openAppUrl(item.link)"
+                          >
+                            <img
+                              class="thumb-pic"
+                              :src="item.pic | picFilter"
+                            />
+                            <div class="thumb-title">
+                              {{ item.title }}
+                            </div>
+                            <br />
+                            <div class="thumb-text">
+                              {{ item.text }}
+                            </div>
+                          </div>
+                        </template>
+                        <div
+                          v-else
+                          @click="openAppUrl(item.text)"
+                          class="text-info"
+                          v-html="getText(item.text)"
+                        ></div>
+                        <i
+                          class="el-icon-warning error-msg"
+                          v-if="item.isError"
+                          @click="resend(item)"
+                          >重新发送</i
+                        >
+                        <div
+                          v-if="controlIndex === index"
+                          class="msg-control other"
+                        >
+                          <div @click="copyText(item)">复制</div>
+                          <div
+                            v-if="system.report == 1"
+                            @click="onHandleReportShow(item)"
+                          >
+                            举报
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="send-container" v-show="showMsgInfo || current != 1">
+      <div v-if="isShowEmoji" class="emoji-box">
+        <VEmojiPicker :showSearch="false" :showCategories="false" :emojisByRow="10" @select="selectEmoji" v-show="isShowEmoji" />
+      </div>
+      <div class="quick-reply-list">
+        <div v-if="current != 0" class="send-type-container">
+          <!-- <span :class="{ 'active-status': msgType == 1 }" @click="sendImg(1)"
+            >文字</span
+          > -->
+          <!-- <span
+            v-if="!hidevideo"
+            :class="{ 'active-status': msgType == 2 }"
+            @click="sendImg(2)"
+            >图片</span
+          > -->
+					<svg width="25" height="25" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="!hidevideo" @click="sendImg(2)">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M0.166687 6.06669C0.166687 2.80822 2.8082 0.166687 6.06669 0.166687H33.9333C37.1918 0.166687 39.8334 2.8082 39.8334 6.06669V33.9333C39.8334 37.1918 37.1918 39.8334 33.9334 39.8334H6.06669C5.99387 39.8334 5.92134 39.832 5.84915 39.8294C5.70403 39.8399 5.55771 39.8293 5.41507 39.7978C2.46321 39.4735 0.166687 36.9716 0.166687 33.9334V6.06669ZM9.36188 36.8334H33.9334C35.535 36.8334 36.8334 35.535 36.8334 33.9333V26.7326L28.148 18.0472L9.36188 36.8334ZM36.8334 22.49L29.2086 14.8653C28.9273 14.584 28.5458 14.4259 28.148 14.4259C27.7502 14.4259 27.3686 14.584 27.0873 14.8653L5.23905 36.7135C4.04067 36.3573 3.16669 35.2474 3.16669 33.9334V6.06669C3.16669 4.46507 4.46506 3.16669 6.06669 3.16669H33.9333C35.535 3.16669 36.8334 4.46506 36.8334 6.06669V22.49ZM12.8704 11.3148C12.0113 11.3148 11.3149 12.0113 11.3149 12.8704C11.3149 13.7295 12.0113 14.4259 12.8704 14.4259C13.7295 14.4259 14.426 13.7295 14.426 12.8704C14.426 12.0113 13.7295 11.3148 12.8704 11.3148ZM8.31488 12.8704C8.31488 10.3544 10.3545 8.31483 12.8704 8.31483C15.3864 8.31483 17.426 10.3544 17.426 12.8704C17.426 15.3863 15.3864 17.4259 12.8704 17.4259C10.3545 17.4259 8.31488 15.3863 8.31488 12.8704Z" fill="black" fill-opacity="0.4"/>
+					</svg>
+        </div>
+				<svg width="25" height="25" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" @click="getshare">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M30.2778 3.16669C28.0237 3.16669 26.2222 4.97173 26.2222 7.16669C26.2222 7.86403 26.4041 8.52201 26.7245 9.09526C26.744 9.12418 26.7626 9.15398 26.7803 9.18464C26.7935 9.20744 26.806 9.23045 26.8178 9.25363C27.5284 10.3979 28.8067 11.1667 30.2778 11.1667C32.5319 11.1667 34.3334 9.36165 34.3334 7.16669C34.3334 4.97173 32.5319 3.16669 30.2778 3.16669ZM25.0793 11.8997C26.3713 13.2948 28.2254 14.1667 30.2778 14.1667C34.1602 14.1667 37.3334 11.0469 37.3334 7.16669C37.3334 3.28652 34.1602 0.166687 30.2778 0.166687C26.3954 0.166687 23.2222 3.28652 23.2222 7.16669C23.2222 7.91616 23.3406 8.63727 23.5596 9.31301L13.2541 15.267C11.9621 13.8719 10.1079 13 8.05556 13C4.17313 13 1 16.1199 1 20C1 23.8802 4.17313 27 8.05556 27C10.1082 27 11.9627 26.1279 13.2546 24.7324L23.5623 30.6789C23.3416 31.357 23.2222 32.0809 23.2222 32.8334C23.2222 36.7135 26.3954 39.8334 30.2778 39.8334C34.1602 39.8334 37.3334 36.7135 37.3334 32.8334C37.3334 28.9532 34.1602 25.8334 30.2778 25.8334C28.2285 25.8334 26.3769 26.7026 25.0852 28.094L14.774 22.1455C14.9928 21.47 15.1111 20.7492 15.1111 20C15.1111 19.2505 14.9927 18.5294 14.7737 17.8537L25.0793 11.8997ZM11.5156 17.9133C11.5274 17.9364 11.5399 17.9593 11.5531 17.9821C11.5707 18.0127 11.5893 18.0424 11.6088 18.0713C11.9292 18.6446 12.1111 19.3026 12.1111 20C12.1111 20.6974 11.9293 21.3554 11.6088 21.9287C11.5892 21.9579 11.5704 21.9879 11.5526 22.0188C11.5396 22.0413 11.5273 22.064 11.5156 22.0868C10.805 23.2311 9.52669 24 8.05556 24C5.80149 24 4 22.195 4 20C4 17.8051 5.80149 16 8.05556 16C9.52671 16 10.8051 16.7689 11.5156 17.9133ZM26.2222 32.8334C26.2222 32.1747 26.3844 31.5512 26.6724 31.001C26.7186 30.943 26.7611 30.8808 26.7993 30.8146C26.8317 30.7584 26.8601 30.701 26.8845 30.6427C27.6067 29.5559 28.8516 28.8334 30.2778 28.8334C32.5319 28.8334 34.3334 30.6384 34.3334 32.8334C34.3334 35.0283 32.5319 36.8334 30.2778 36.8334C28.0237 36.8334 26.2222 35.0283 26.2222 32.8334Z" fill="black" fill-opacity="0.4"/>
+				</svg>
+        <!-- <i v-for="(item,index) in modalMsgList " :key="`msg_${index}`">
 							<template>
 								<b @click="setMsg(item)">{{JSON.parse(item.content).text}}</b>
 							</template>
 						</i> -->
-						<img class="share-icon" @click="getshare" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkBAMAAAATLoWrAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAwUExURUdwTK6415ifspafs5aesZifs5afsZWesZWespaesJWdsP///8HG0dDU3K+1w/Dx9KZK7GEAAAAKdFJOUwAFUD7HJZy6kekfUjrLAAAA7klEQVQoz2NgoBCIGikHooqozVq1amUSsojJKjBwRohIrIKCRpiIYBVMaLkAVEgczF0HIgqhQl1godOvgMQKiAgzRNPpPSDSACzEAhXafQpIOoCFtCBCt3eDlC0CC2WBDf+9e/fuW6tWLQOJMM6CiezeC/QCyBmsEF1gALQ0AGrh2t1wIZCVTAhFIPMVIEJrgNz/QNNOQYWAGlfv/vsK6C64W4HG3/4D1gxSBDYe6Ii/YNfvA5FgRwCdegvubYhTYR6CgEXI3oYAB+TAgQAD5CAEgxUoAb0KOaAZMaMDS6Rhi1psCQBbMgHaQWJSAwCTmOCA8HHYJQAAAABJRU5ErkJggg==">
-						<div v-if="current == 0 && system.report == 1" @click="onHandleReportShow(false)" class="quick-reply-list-btn">举报</div>
-						<!-- v-if="current == 0 && system.report == 1" -->
-					</div>
-					<div>
-						<svg @click="isShowEmoji = !isShowEmoji" class="emoji-btn" style="max-height:30px;" width="30"
-							height="30" fill="#c1c1c1" viewBox="0 0 106.059 106.059">
-							<path
-								d="M90.544 90.542c20.687-20.684 20.685-54.341.002-75.024-20.688-20.689-54.347-20.689-75.031-.006-20.688 20.687-20.686 54.346.002 75.034 20.682 20.684 54.341 20.684 75.027-.004zM21.302 21.3c17.494-17.493 45.959-17.495 63.457.002 17.494 17.494 17.492 45.963-.002 63.455-17.494 17.494-45.96 17.496-63.455.003-17.498-17.498-17.496-45.966 0-63.46zM27 69.865s-2.958-11.438 6.705-8.874c0 0 17.144 9.295 38.651 0 9.662-2.563 6.705 8.874 6.705 8.874C73.539 86.824 53.03 85.444 53.03 85.444S32.521 86.824 27 69.865zm6.24-31.194a6.202 6.202 0 1 1 12.399.001 6.202 6.202 0 0 1-12.399-.001zm28.117 0a6.202 6.202 0 1 1 12.403.001 6.202 6.202 0 0 1-12.403-.001z" />
-						</svg>
-					</div>
-			<textarea v-if="msgType!=2" id="msg" type="text" @blur="toTop" placeholder="请输入内容" rows="1" v-model="msgText" ref="msg"
-				v-on:keyup.enter="sendMsg"> </textarea>
-			<span class="send" @click="sendMsg">发送</span>
-			 <div  id="add-img" :class="{'show-img-container':msgType==2,'add-img-container': current!=0}" >
-			 		<div id="inputContent" ref="inputContent">
+        <!-- <img
+          class="share-icon"
+          @click="getshare"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkBAMAAAATLoWrAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAwUExURUdwTK6415ifspafs5aesZifs5afsZWesZWespaesJWdsP///8HG0dDU3K+1w/Dx9KZK7GEAAAAKdFJOUwAFUD7HJZy6kekfUjrLAAAA7klEQVQoz2NgoBCIGikHooqozVq1amUSsojJKjBwRohIrIKCRpiIYBVMaLkAVEgczF0HIgqhQl1godOvgMQKiAgzRNPpPSDSACzEAhXafQpIOoCFtCBCt3eDlC0CC2WBDf+9e/fuW6tWLQOJMM6CiezeC/QCyBmsEF1gALQ0AGrh2t1wIZCVTAhFIPMVIEJrgNz/QNNOQYWAGlfv/vsK6C64W4HG3/4D1gxSBDYe6Ii/YNfvA5FgRwCdegvubYhTYR6CgEXI3oYAB+TAgQAD5CAEgxUoAb0KOaAZMaMDS6Rhi1psCQBbMgHaQWJSAwCTmOCA8HHYJQAAAABJRU5ErkJggg=="
+        /> -->
+        <div
+          v-if="current == 0 && system.report == 1"
+          @click="onHandleReportShow(false)"
+          class="quick-reply-list-btn"
+        >
+          举报
+        </div>
+        <!-- v-if="current == 0 && system.report == 1" -->
+      </div>
+      <div>
+				<svg           
+					@click="isShowEmoji = !isShowEmoji"
+          class="emoji-btn"
+          style="max-height: 30px"
+					width="25" height="25" 
+					viewBox="0 0 40 40"
+					fill="none">
+					<circle cx="20" cy="20" r="18.3333" stroke="black" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.6667 23.6667C12.6667 23.6667 15.4167 27.3334 20 27.3334C24.5834 27.3334 27.3334 23.6667 27.3334 23.6667" stroke="black" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M14.5 14.5H14.5184" stroke="black" stroke-opacity="0.4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M25.5 14.5H25.5184" stroke="black" stroke-opacity="0.4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
 
-			 		 </div>	
-	          <span v-if="!prevImg&&current!=0" class="add-img">添加图片</span>
-	          <img v-else :src="prevImg" />
-        	</div>
-		</div>
-		<u-popup border-radius="20" mode="bottom" v-model="reportListShow" >
-			<scroll-view class="reportList" >
-				<div  class="reportList_context">
-				<div class="reportList_title">
-					<div class="reportList_title_close" @click="coloseReport">取消</div>
-					<div class="reportList_title_confirm" @click="confirmReport" >确认</div>
-				</div>
-				<u-radio-group wrap v-model="reportValue" @change="radioChange" >
-						<u-radio v-for="(item,index) in reportList" :key="index" :name="item.id" >{{item.name}}</u-radio>
-				</u-radio-group>
-				</div>
-			
-			</scroll-view>
+      </div>
+			<div class="footer-box">
+				<!-- v-if="msgType != 2" -->
+				<textarea
+					id="msg"
+					type="text"
+					@blur="toTop"
+					placeholder="请输入内容"
+					rows="1"
+					v-model="msgText"
+					ref="msg"
+					v-on:keyup.enter="sendMsg"
+				>
+				</textarea>
+				<span class="send" @click="sendMsg">发送</span>
+			</div>
+
+      <!-- <div
+        id="add-img"
+        :class="{
+          'show-img-container': msgType == 2,
+          'add-img-container': current != 0,
+        }"
+      >
+        <div id="inputContent" ref="inputContent"></div>
+        <span v-if="!prevImg && current != 0" class="add-img">添加图片</span>
+        <img v-else :src="prevImg" />
+      </div> -->
+    </div>
+    <u-popup border-radius="20" mode="bottom" v-model="reportListShow">
+      <scroll-view class="reportList">
+        <div class="reportList_context">
+          <div class="reportList_title">
+            <div class="reportList_title_close" @click="coloseReport">取消</div>
+            <div class="reportList_title_confirm" @click="confirmReport">
+              确认
+            </div>
+          </div>
+          <u-radio-group wrap v-model="reportValue" @change="radioChange">
+            <u-radio
+              v-for="(item, index) in reportList"
+              :key="index"
+              :name="item.id"
+              >{{ item.name }}</u-radio
+            >
+          </u-radio-group>
+        </div>
+      </scroll-view>
+    </u-popup>
+    <u-popup v-model="share" mode="center" border-radius="20" :closeable="true">
+      <view class="share-box">
+        <view class="share-box-title">分享直播间</view>
+        <view class="share-box-row">
+          <input type="text" v-model="shareUrl" disabled />
+          <text class="share-box-copy" @click="copyUrl()">复制链接</text>
+        </view>
+      </view>
+    </u-popup>
+		<u-popup v-model="uploadImg" mode="center" border-radius="20" :closeable="true">
+			<div
+        id="add-img"
+        :class="{
+          'show-img-container': msgType == 2,
+          'add-img-container': current != 0,
+        }"
+      >
+        <div id="inputContent" ref="inputContent"></div>
+        <span v-if="!prevImg && current != 0" class="add-img">添加图片</span>
+        <img v-else :src="prevImg" />
+      </div>
 		</u-popup>
-		<u-popup v-model="share" mode="center" border-radius="20" :closeable="true">
-			<view class="share-box">
-				<view class="share-box-title">分享直播间</view>
-				<view class="share-box-row">
-					<input type="text" v-model="shareUrl" disabled>
-					<text class="share-box-copy" @click="copyUrl()">复制链接</text>
-				</view>
-			</view>
-		</u-popup>
-	</div>
+
+  </div>
 </template>
 
 <script>
@@ -218,10 +416,13 @@
 	import {
 		getUUID
 	} from '@/common/uuid'
+	import { VEmojiPicker } from 'v-emoji-picker'
 	export default {
 		name: "information-detail",
 		props: ["roomDetailData", "current", "roomInfo", "showMsgInfo","qsVid"],
-		components: {},
+		components: {
+			VEmojiPicker
+		},
 		data() {
 			return {
 				reportListShow:false,
@@ -230,10 +431,13 @@
 				url: window.location.href,
 				modalMsgList: [],
 				isReadOnly: false,
+				uploadImg:false,
 				msgText: "",
 				msgList0: [],
 				msgList1: [],
 				msgList2: [],
+
+				
 				prevImg:"",
 				myUserinfo: {
 					uid: ""
@@ -366,7 +570,7 @@
 				}
 			},
 			'showMsgInfo'(newVal, oldVal) {
-				console.log(123123,newVal,"newVal=====")
+				// console.log(123123,newVal,"newVal=====")
 				if (this.roomDetailData.room_type == 2 && newVal == false) {
 					this.leaveRoom();
 					this.$emit("leaveRoom");
@@ -393,16 +597,16 @@
 			this.addDom();
 			if(window.ws){
 				window.ws.close();
-				console.log("close init")
+				// console.log("close init")
 			}
 			this.getReportList();
 			this.initInfo(true);
 			const domScroll = document.querySelector(".chat-window");
 			domScroll.addEventListener("scroll", e => {
-		      console.log( domScroll.scrollTop,
-		        domScroll.scrollTop - domScroll.offsetHeight,
-		        "domScroll.scrollTop-domScroll.offsetHeight==="
-		      );
+		      // console.log( domScroll.scrollTop,
+		      //   domScroll.scrollTop - domScroll.offsetHeight,
+		      //   "domScroll.scrollTop-domScroll.offsetHeight==="
+		      // );
 		      if (domScroll.scrollTop<=2) {
 		      	this.reconnectStatus = false;
 		        this.page++;
@@ -438,7 +642,8 @@
 			});
 		},
 		methods: {
-				addDom(){
+
+			addDom(){
 				var input =document.createElement("input");
 			input.type = "file";
 			input.name = "pic";
@@ -457,7 +662,7 @@
 			formContainer.appendChild(input);
 			},
 			onHandleClickImg(img){
-				console.log('我是点击图片事件')
+				// console.log('我是点击图片事件')
 				let url = img
 				if(img.indexOf('/') == 0){
 				   url = window.location.origin + img
@@ -483,7 +688,7 @@
 					this.isScroller= false;
 			},
 			resend(item){
-				console.log(item)
+				// console.log(item)
 				this.handleLocalMsgList(this.current).map((val,index)=>{
 					if(val == item) {
 					this.handleLocalMsgList(this.current).splice(index,1)
@@ -506,8 +711,8 @@
 			getReportList(){
 				const _this = this;
 				this.$u.get("api/report/classifyList").then(res=>{
-					console.log('举报列表')
-					console.log(res)
+					// console.log('举报列表')
+					// console.log(res)
 					_this.reportList = res;
 					if(res.length > 0){
 						_this.reportValue = res[0].id;
@@ -543,10 +748,11 @@
 
 			},
 	sendImg(e){
-      this.msgType=e;
+		this.msgType=e;
+		this.uploadImg = true;
       if(e==2){
       	var dol = document.getElementById("add-img");
-      	console.log(dol,'dol--------')
+      	// console.log(dol,'dol--------')
       	dol.innerHtml += '<div>666</div>'
       }
     },
@@ -632,7 +838,7 @@
 					})
 					.then(res => {
 						this.modalMsgList = res;
-						console.log(this.modalMsgList, "this.modalMsgList======")
+						// console.log(this.modalMsgList, "this.modalMsgList======")
 						this.controlIndex = -1;
 					});
 			},
@@ -666,15 +872,15 @@
 				str = str.match(reg)[0];
 				let data = {"action":"blank","message":str};
 				if(this.hidevideo){
-					console.log("开始调用======")
-					console.log("Android======",JSON.stringify(data),data)
+					// console.log("开始调用======")
+					// console.log("Android======",JSON.stringify(data),data)
 					if(getQueryString().device=='iphone'){
-						console.log("开始调用IOS======",data)
+						// console.log("开始调用IOS======",data)
 						window.webkit.messageHandlers.interOp.postMessage(data);
 						return;
 					}
 					if(typeof AndroidInterface !== undefined){
-						console.log("Android======",JSON.stringify(data),data)
+						// console.log("Android======",JSON.stringify(data),data)
 						AndroidInterface.postmaessage((JSON.stringify(data)))
 					}
 				}else{
@@ -726,18 +932,16 @@
 					`api/chat/getChatToken?user_id=${data.user_id}&type=${this.parmUserInfo.type||1}&username=${data.username}`
 				).then(
 					res => {
-						console.log(1234567)
 						_that.imUserInfo = res;
 						_that.$emit("onHandleGetImUserInfo", res);
 						_that.newSocket(res);
-						_that.inviteRoom();
-
-						// if (initSec) {
-						// }
+						if (initSec) {
+							_that.inviteRoom();
+						}
 					})
 			},
 			getChatHistoryMsg(iniPage) {
-				console.log(this.reconnectStatus,"this.reconnectStatus========")
+				// console.log(this.reconnectStatus,"this.reconnectStatus========")
 				if(this.parmUserInfo.vid==null||this.parmUserInfo.vid==""||this.reconnectStatus){
 					return;
 				}
@@ -753,7 +957,7 @@
 				if(!iniPage&&this.page==1){
 					return;
 				}
-				console.log(this.roomDetailData,"this.roomDetailData======")
+				// console.log(this.roomDetailData,"this.roomDetailData======")
 				this.showLoading = true;
 				this.$u.get(
 					`api/chat/getChatHistory?type=${params.type}&user_id=${params.user_id}&vid=${params.vid}&limit=${params.limit}&page=${params.page}&channel_code=${this.channel_code?this.channel_code:""}&channel=${this.channel_code?this.channel_code:""}`
@@ -771,14 +975,14 @@
 						this.isMore = false;
 						return;
 					}
-					console.log(params,"======params",dataList)
+					// console.log(params,"======params",dataList)
 					this.handleLocalMsgList((params.type == 2 && this.current == 1) ? 1 : params.type,params.page!=1?'unshift':'init',dataList)
-					console.log('///////////////////')
+					// console.log('///////////////////')
 					// _that.msgList.unshift(...dataList);
 				})
 			},
 			showControl(index) {
-				console.log('我是点击消息事件')
+				// console.log('我是点击消息事件')
 				this.controlIndex = index;
 			},
 			mute(item) {
@@ -837,7 +1041,7 @@
 				this.$u.post('api/chat/deleteMessage', data).then(res => {
 					this.controlIndex = "";
 					this.getChatHistoryMsg();
-					console.log('shanchu')
+					// console.log('shanchu')
 				})
 			},
 			inviteRoom() {
@@ -916,13 +1120,14 @@
 				})
 			},
 			newSocket(data) {
-				const wsprotocol = window.location.protocol == "http:" ? "ws://" : "wss://"
-				this.WSURL = `${wsprotocol}${
-					window.location.hostname.includes('10')
-						? '10.83.107.92:9021'
-						: window.location.hostname
-					// '10.83.107.92:9021'
-				}${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
+				// const wsprotocol = window.location.protocol == "http:" ? "ws://" : "wss://"
+				// this.WSURL = `${wsprotocol}${
+				// 	window.location.hostname.includes('10')
+				// 		? '10.83.107.92:9021'
+				// 		: window.location.hostname
+				// 	// '10.83.107.92:9021'
+				// }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
+				this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 				this.ws = new WebSocket(this.WSURL);
 				window.ws = this.ws;
 				// this.$global.setWs(this.ws);
@@ -948,13 +1153,13 @@
 			},
 			// 通信发生错误时触发
 			websocketonerror() {
-				console.log("出现错误");
+				// console.log("出现错误");
 				this.reconnect();
 			},
 			// 连接关闭时触发
 			websocketclose(e) {
 				//关闭
-				console.log("断开连接", e);
+				// console.log("断开连接", e);
 				// this.ws.close()
 				//重连
 				this.reconnect();
@@ -1153,7 +1358,7 @@
 				if (data.action === "send") {
 					// let list = this.msgList;
 					// list.push(data);
-					console.log( this.senderid,"123123",data," this.info======")
+					// console.log( this.senderid,"123123",data," this.info======")
 					//自己发送的消息不渲染到列表
 					if(data.sender == this.senderid) {
 						return
@@ -1253,7 +1458,7 @@
 			},
 			//解耦合
 			handleLocalMsgList(type,m,data){
-				console.log(type,m,data,"========2222")
+				// console.log(type,m,data,"========2222")
 				if(type != this.current) {
 					return
 				}
@@ -1270,6 +1475,7 @@
 					if(m == 'empty') {
 						this.msgList0=[]
 					}
+					console.log('this.msgList0',this.msgList0)
 					return this.msgList0
 				}
 				if(type==2) {
@@ -1309,654 +1515,660 @@
 	};
 </script>
 <style lang="scss" scoped>
-.show-img-container{
-	opacity:1!important;
-	z-index:99;
+.show-img-container {
+  opacity: 1 !important;
+  z-index: 99;
 }
-#fileUp{
-	width: 100px;
-    height: 100px;
-    position: absolute;
-    z-index: 999;
-
+#fileUp {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  z-index: 999;
 }
-.send-type-container{
-	display:inline-block;
-	span{
-		display:inline-block;
-		padding:0 8px;
-		margin: 0 4px;
-		color:#fff;
-		background:#c1c1c1;
-		border-radius:4px;
-		&.active-status{
-				background:#d8ad66;
-		}
-	}
+.send-type-container {
+  display: inline-block;
+	margin-right: 15px;
+  span {
+    display: inline-block;
+    padding: 0 8px;
+    margin: 0 4px;
+    color: #fff;
+    background: #c1c1c1;
+    border-radius: 4px;
+    &.active-status {
+      background: #d8ad66;
+    }
+  }
 }
-@-webkit-keyframes el-skeleton-loading{0%{background-position:100% 50%}100%{background-position:0 50%}}
-.animation-loading-container{
-  position:absolute;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:9999;
-  background:#fbfbfb;
-  overflow:scroll;
+@-webkit-keyframes el-skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
-.animation-loading{
+.animation-loading-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: #fbfbfb;
+  overflow: scroll;
+}
+.animation-loading {
   margin-bottom: 30px;
-  position:relative;
-  width:100%;
-  height:50px;
-  z-index:9999;
-  background: linear-gradient(90deg,#f2f2f2 25%,#e6e6e6 37%,#f2f2f2 63%);
-  background-size:400% 100%;
-  animation:el-skeleton-loading 1.4s ease infinite;
+  position: relative;
+  width: 100%;
+  height: 50px;
+  z-index: 9999;
+  background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+  background-size: 400% 100%;
+  animation: el-skeleton-loading 1.4s ease infinite;
 }
 .error-msg {
-  font-size:12px;
+  font-size: 12px;
   color: red;
   display: inline-block;
   margin-left: 5px;
 }
-form{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index:99;
-    opacity:0;
+form {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  opacity: 0;
 }
-.add-img{
-  font-size:14px;
-   width:100%!important;
-    height:100%!important;
-    text-align:center;
-    left:0;
-    top:0!important;
-    display:inline-block;
-    opacity:0;
+.add-img {
+  font-size: 14px;
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center;
+  left: 0;
+  top: 0 !important;
+  display: inline-block;
+  opacity: 0;
 }
-.add-img-container img{
-    width:100%!important;
-    height:100%!important;
-    position: absolute;
-    left: 0;
-    top: 0;
+.add-img-container img {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
-.add-img-container{
-	z-index:-1;
-	opacity:0;
-    border:1px dashed #ababab ;
-    height: 40px;
+.add-img-container {
+  z-index: -1;
+  opacity: 0;
+  border: 1px dashed #ababab;
+  height: 40px;
+  position: absolute;
+  width: 80px;
+  top: 45px;
+  input {
     position: absolute;
-    width: 80px;
-    top: 45px;
-    input{
-    position:absolute;
-    width:100%!important;
-    height:100%!important;
+    width: 100% !important;
+    height: 100% !important;
   }
 }
-.msg-type-container{
-    position: absolute;
-    left: 60px;
+.msg-type-container {
+  position: absolute;
+  left: 60px;
 }
 
-.pic-info{
-  max-height:80px;
-  max-width:100%;
+.pic-info {
+  max-height: 80px;
+  max-width: 100%;
 }
-.reportList{
-	width: 750rpx;
-	min-height: 400rpx;
-	.reportList_context{
-		width:750rpx;
-			display: flex;
-	flex-direction: column;
-	align-items: center;
-	}
-	.reportList_title{
-		width: 750rpx;
-		height: 80rpx;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0 30rpx;
-		box-sizing: border-box;
-		font-size: 26rpx;
-		border-bottom: 1px solid #f6f6f6;
-		.reportList_title_close{
-			width: 120rpx;
-			height: 60rpx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: rgb(48, 49, 51);
-		}
-		.reportList_title_confirm{
-			width: 120rpx;
-			height: 60rpx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: rgb(227, 172, 114);
-		}
-	}
-	.u-radio-group{
-		margin-top: 30rpx;
-		justify-content: center;
-		width: 500rpx;
-		.u-radio{
-			height: 70rpx;
-			justify-content: space-between
-		}
-	}
+.reportList {
+  width: 750rpx;
+  min-height: 400rpx;
+  .reportList_context {
+    width: 750rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .reportList_title {
+    width: 750rpx;
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+    box-sizing: border-box;
+    font-size: 26rpx;
+    border-bottom: 1px solid #f6f6f6;
+    .reportList_title_close {
+      width: 120rpx;
+      height: 60rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgb(48, 49, 51);
+    }
+    .reportList_title_confirm {
+      width: 120rpx;
+      height: 60rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgb(227, 172, 114);
+    }
+  }
+  .u-radio-group {
+    margin-top: 30rpx;
+    justify-content: center;
+    width: 500rpx;
+    .u-radio {
+      height: 70rpx;
+      justify-content: space-between;
+    }
+  }
 }
-.thumb-container{
-  padding:10px 10px 10px 90px;
-   min-height: 70px;
-    position: relative;
-    background: #fff;
-    box-shadow: 0 0 5px 2px #d9d9d9;
+.thumb-container {
+  padding: 10px 10px 10px 90px;
+  min-height: 70px;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 0 5px 2px #d9d9d9;
   .thumb-pic {
-    width:70px;
-    height:70px;
-    display:inline-block;
-    position:absolute;
-    left:10px;
+    width: 70px;
+    height: 70px;
+    display: inline-block;
+    position: absolute;
+    left: 10px;
   }
-  .thumb-title{
-    font-weight:bold;
-    font-size:14px;
+  .thumb-title {
+    font-weight: bold;
+    font-size: 14px;
   }
-  .thumb-text{
-     font-size:12px;
+  .thumb-text {
+    font-size: 12px;
   }
 }
 
-	.emoji-picker{
-		position: absolute;
-		top: 0;
-		left: 0;
-		width:100% !important;
-		height: 440rpx;
-		background:#fff;
-	}
+.emoji-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 440rpx;
+  background: #fff;
+}
 
-	.detail {
-		height: calc(100% - 80rpx);
-		overflow-y: scroll;
-		background: #e9e9f5;
-	}
-	.add-margin{
-		margin-top:40px;
-		height: calc(100vh - 300px)!important;
-		width:100%;
-		position:fixed;
-	}
-	.detail.app-version {
-		height: calc(100vh - 82px) !important;
-		padding-bottom: 40px;
+.detail {
+  height: calc(100% - 80rpx);
+  overflow-y: scroll;
+  background: #e9e9f5;
+}
+.add-margin {
+  margin-top: 40px;
+  height: calc(100vh - 300px) !important;
+  width: 100%;
+  position: fixed;
+}
+.detail.app-version {
+  height: calc(100vh - 82px) !important;
+  padding-bottom: 40px;
+}
 
-	}
+.detail.is-ios {
+  height: calc(100vh - 82px) !important;
+}
 
-	.detail.is-ios {
-		height: calc(100vh - 82px) !important;
-	}
+.detail.app-version {
+  .chat-window {
+    height: 65vh !important;
+  }
+}
 
-	.detail.app-version {
-		.chat-window {
-			height: 65vh !important;
-		}
-	}
+.quick-reply-list {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  overflow-x: scroll;
+  padding-left: 40px;
 
-	.quick-reply-list {
-		position: relative;
-		width: 100%;
-		height: 30px;
-		line-height: 30px;
-		overflow-x: scroll;
-		padding-left: 30px;
+  i {
+    margin-right: 10px;
+    height: 30px;
+    line-height: 30px;
+    font-style: normal;
+    padding: 4px 8px;
+    border-radius: 10px;
+    border: 1px solid #e9e9f5;
+  }
 
-		i {
-			margin-right: 10px;
-			height: 30px;
-			line-height: 30px;
-			font-style: normal;
-			padding: 4px 8px;
-			border-radius: 10px;
-			border: 1px solid #e9e9f5;
-		}
+  .quick-reply-list-btn {
+    position: absolute;
+    right: 160rpx;
+    top: 10rpx;
+    display: inline-block;
+    padding: 0 20rpx;
+    margin-left: auto;
+    border-radius: 8rpx;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
+    height: 40rpx !important;
+    line-height: 40rpx;
+    font-size: 26rpx;
+  }
+}
 
-		.quick-reply-list-btn {
-			position: absolute;
-			right: 160rpx;
-			top: 10rpx;
-			display: inline-block;
-			padding: 0 20rpx;
-			margin-left: auto;
-			border-radius: 8rpx;
-			text-align: center;
-			color: #fff;
-			background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-			height: 40rpx !important;
-			line-height: 40rpx;
-			font-size: 26rpx;
-		}
-	}
+.top-text-scroll {
+  display: inline-block;
+  /*inline样式不能使用动画*/
+  animation: scroll 5s linear infinite;
+}
 
-	.top-text-scroll {
-		display: inline-block;
-		/*inline样式不能使用动画*/
-		animation: scroll 5s linear infinite;
-	}
+.top-text-scroll:after {
+  position: absolute;
+  left: 100%;
+  content: attr(data-text);
+  margin-left: 4em;
+}
 
-	.top-text-scroll:after {
-		position: absolute;
-		left: 100%;
-		content: attr(data-text);
-		margin-left: 4em;
-	}
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
 
-	@keyframes scroll {
-		from {
-			transform: translateX(0);
-		}
+  to {
+    transform: translateX(calc(-100% - 4em));
+    /*总长再加上margin-left*/
+  }
+}
 
-		to {
-			transform: translateX(calc(-100% - 4em));
-			/*总长再加上margin-left*/
-		}
-	}
+.quick-container {
+  position: relative;
+  bottom: 0;
+}
 
-	.quick-container {
-		position: relative;
-		bottom: 0;
-	}
+.msg-arr {
+  position: absolute;
+  background: #ffe9c7;
+  border-radius: 6px;
+  bottom: 40px;
+  padding: 10px;
+  z-index: 99;
+  height: 240px;
+  width: 96%;
+  overflow-y: scroll;
 
-	.msg-arr {
-		position: absolute;
-		background: #ffe9c7;
-		border-radius: 6px;
-		bottom: 40px;
-		padding: 10px;
-		z-index: 99;
-		height: 240px;
-		width: 96%;
-		overflow-y: scroll;
+  & > div {
+    cursor: pointer;
+    width: 100%;
+    border-bottom: 1px solid #c9c9c9;
+    position: relative;
 
-		&>div {
-			cursor: pointer;
-			width: 100%;
-			border-bottom: 1px solid #c9c9c9;
-			position: relative;
+    i {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+  }
+}
 
-			i {
-				position: absolute;
-				right: 20px;
-				top: 20px;
-			}
-		}
-	}
+#cp-input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
 
-	#cp-input {
-		position: absolute;
-		z-index: -1;
-		opacity: 0;
-	}
+.header-list {
+  height: 45px;
 
-	.header-list {
-		height: 45px;
+  span {
+    color: #fff;
+    line-height: 45px;
+    background: #6363b5;
+    text-align: center;
+    display: inline-block;
+    margin-right: 1px;
+    width: 33%;
 
-		span {
-			color: #fff;
-			line-height: 45px;
-			background: #6363b5;
-			text-align: center;
-			display: inline-block;
-			margin-right: 1px;
-			width: 33%;
+    &.on {
+      background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
+        linear-gradient(#000000, #000000);
+    }
+  }
+}
 
-			&.on {
-				background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%), linear-gradient(#000000, #000000);
-			}
-		}
-	}
+.footer-box{
+	display: flex;
+	justify-content: space-around;
+	margin-top:10px;
+}
+#msg {
+  border: 1px solid #C41D48;
+  border-radius: 4px;
+  padding: 6px;
+  width: 80%;
+  height: 25px;
+  // bottom: -6px;
+  line-height: 25px;
+}
 
-	#msg {
-		border: 1px solid #d8ad66;
-		border-radius: 4px;
-		padding: 6px;
-		width: 80%;
-		height: 30px;
-		bottom: -6px;
-		line-height: 32px;
-	}
+/deep/ .el-drawer__header {
+  margin-bottom: 0;
+  padding-top: 2vw;
+}
 
-	/deep/ .el-drawer__header {
-		margin-bottom: 0;
-		padding-top: 2vw;
-	}
+#chat-models {
+  height: calc(100% - 128px);
+}
 
-	#chat-models {
-		height: calc(100% - 128px);
-	}
+.send-container {
+  height: 160rpx;
+  position: fixed;
+  bottom: 0;
+  width: 95%;
+  line-height: 100rpx;
+  background: #fff;
+  padding: 20rpx;
+  border-top: 1px solid #f1f1f1;
+  text-align: left;
+  z-index: 999999;
+  .inputcover {
+    position: absolute;
+    height: 33px;
+    width: calc(100% - 185px);
+    margin: 5px 10px 0 0;
+    z-index: 1000;
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.5);
+    padding-left: 10px;
+    position: absolute;
+    border-color: #f1f1f1;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    -webkit-appearance: none;
+    width: calc(100% - 185px);
+    line-height: 33px;
+  }
 
-	.send-container {
-		height: 160rpx;
-		position: fixed;
-		bottom: 0;
-		width: 95%;
-		line-height: 100rpx;
-		background: #fff;
-		padding: 20rpx;
-		border-top: 1px solid #f1f1f1;
-		text-align: left;
-		z-index:999999;
-		.inputcover {
-			position: absolute;
-			height: 33px;
-			width: calc(100% - 185px);
-			margin: 5px 10px 0 0;
-			z-index: 1000;
-			border-radius: 17px;
-			background: rgba(255, 255, 255, 0.5);
-			padding-left: 10px;
-			position: absolute;
-			border-color: #f1f1f1;
-			border: 1px solid #ccc;
-			font-size: 14px;
-			outline: none;
-			-webkit-appearance: none;
-			width: calc(100% - 185px);
-			line-height: 33px;
-		}
+  input {
+    height: 33px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0 10px;
+    position: absolute;
+    top: 4px;
+    height: 66px;
+    border-color: #f1f1f1;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    -webkit-appearance: none;
+    width: 85%;
+  }
 
-		input {
-			height: 33px;
-			border-radius: 6px;
-			background: rgba(255, 255, 255, 0.5);
-			padding: 0 10px;
-			position: absolute;
-			top: 4px;
-			height: 66px;
-			border-color: #f1f1f1;
-			border: 1px solid #ccc;
-			font-size: 14px;
-			outline: none;
-			-webkit-appearance: none;
-			width: 85%;
-		}
+  .control-footer {
+    position: absolute;
+    bottom: 0;
+    width: 96%;
+    height: 50px;
+  }
+}
 
+.send {
+  display: inline-block;
+  padding: 0 14px;
+  position: relative;
+  // right: 10px;
+  // bottom: 10px;
+  border-radius: 4px;
+  text-align: center;
+  color: #fff;
+  // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
+	background-color: #C41D48;
+	height: 39px;
+  line-height: 39px;
+}
 
+.el-drawer.btt {
+  height: auto;
+}
 
-		.control-footer {
-			position: absolute;
-			bottom: 0;
-			width: 96%;
-			height: 50px;
+.emoji-btn {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  cursor: pointer;
+}
 
+.emoji-box {
+  position: absolute;
+  top: -444rpx;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 182rpx);
+}
 
-		}
-	}
+.switch-box {
+  text-align: right;
+  padding-bottom: 2vh;
+  padding-right: 2vw;
+}
 
-	.send {
-		display: inline-block;
-		padding: 0 14px;
-		position: absolute;
-		right: 10px;
-		bottom: 10px;
-		border-radius: 6px;
-		text-align: center;
-		color: #fff;
-		background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-		height: 44px !important;
-		line-height: 44px;
-	}
+.ChatDetails_container {
+  background: #e9e9f5;
+  height: 100%;
+  position: relative;
 
-	.el-drawer.btt {
-		height: auto;
-	}
+  .chat-window {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    box-sizing: border-box;
+    padding-top: 5px;
+  }
 
-	.emoji-btn {
-		position: absolute;
-		left: 10px;
-		top: 10px;
-		cursor: pointer;
-	}
+  .chat-pin {
+    padding-top: 43px;
+  }
 
-	.emoji-box {
-		position: absolute;
-		top: -444rpx;
-		left: 0;
-		width: 100%;
-		height: calc(100vh - 182rpx);
-	}
+  .chat-detail-main {
+    background: #e9e9f5;
+    padding: 0 10px 60px 10px;
+    .msg-container {
+      color: #363636;
 
-	.switch-box {
-		text-align: right;
-		padding-bottom: 2vh;
-		padding-right: 2vw;
-	}
+      .msg-content-header {
+        position: relative;
 
-	.ChatDetails_container {
-		background: #e9e9f5;
-		height: 100%;
-		position: relative;
+        .price-tag {
+          background-image: linear-gradient(90deg, #f46fe0 0%, #f8a9ec 100%);
+          color: #fff;
+          padding: 8px 10px;
+          position: absolute;
+          right: 10px;
+          top: 10px;
+          border-radius: 8px;
+          font-size: 12px;
+        }
+      }
+    }
 
+    .system-tips {
+      padding: 4px 2px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #000;
+    }
 
-		.chat-window {
-			height: 100%;
-			overflow-y: auto;
-			overflow-x: hidden;
-			position: relative;
-			box-sizing: border-box;
-			padding-top: 5px;
-		}
-		
-		.chat-pin {
-			padding-top: 43px;
-		}
+    .msg-content {
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 15px;
+      word-break: break-all;
+    }
+    .text-info {
+      display: initial;
+      font-size: 12px;
+      color: #000;
+    }
+    .msg-footer {
+      font-size: 15px;
+      color: #707070;
+      text-align: right;
+      display: inline-block;
+      span {
+        margin-right: 4px;
+        font-size: 12px;
+        color: #666;
+      }
+    }
 
-		.chat-detail-main {
-			background: #e9e9f5;
-			padding: 0 10px 60px 10px;
-			.msg-container {
-				color: #363636;
+    .other-side {
+      position: relative;
+      text-align: left;
 
-				.msg-content-header {
-					position: relative;
+      .model-img {
+        width: 100%;
+      }
 
-					.price-tag {
-						background-image: linear-gradient(90deg, #f46fe0 0%, #f8a9ec 100%);
-						color: #fff;
-						padding: 8px 10px;
-						position: absolute;
-						right: 10px;
-						top: 10px;
-						border-radius: 8px;
-						font-size: 12px;
-					}
-				}
-			}
+      .msg-thumb {
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        position: absolute;
+        left: 0;
+        top: -8px;
+        line-height: 40px;
+        text-align: center;
+        color: #fff;
+        background: orange;
+      }
+    }
 
-			.system-tips {
-				padding: 4px 2px;
-				border-radius: 4px;
-				font-size: 12px;
-				color: #000;
-			}
+    .is-self {
+      padding-right: 50px;
+      position: relative;
+      text-align: left;
 
-			.msg-content {
-				padding: 4px;
-				border-radius: 4px;
-				font-size: 15px;
-				word-break: break-all;
-			}
-			.text-info{
-				display:initial;
-				font-size: 12px;
-				color:#000;
-			}
-			.msg-footer {
-				font-size: 15px;
-				color: #707070;
-				text-align: right;
-				display: inline-block;
-				span {
-					margin-right:4px;
-					font-size: 12px;
-					color:#666;
-				}
-			}
+      .msg-thumb {
+        color: #fff;
+        text-align: center;
+        line-height: 40px;
+        background: orange;
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        position: absolute;
+        right: 0;
+        top: -8px;
+      }
+    }
+  }
+}
 
-			.other-side {
-				position: relative;
-				text-align: left;
+.msg-control {
+  display: inline-block;
+  position: absolute;
+  background: #5b5b5b;
+  padding: 10px;
+  z-index: 99;
+  bottom: -46px;
+  border-radius: 6px;
 
-				.model-img {
-					width: 100%;
-				}
+  div {
+    padding: 4px 0;
+    color: #fff;
 
-				.msg-thumb {
-					width: 40px;
-					height: 40px;
-					border-radius: 40px;
-					position: absolute;
-					left: 0;
-					top: -8px;
-					line-height: 40px;
-					text-align: center;
-					color: #fff;
-					background: orange;
-				}
+    &:hover {
+      cursor: pointer;
+    }
+  }
 
+  &.other {
+    bottom: -46px;
+  }
+}
+.announcement {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  background: #DDE7FF;
+  &-icon {
+    background: #DDE7FF;
+    width: 28px;
+    height: 28px;
+    position: absolute;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  &-item {
+    white-space: nowrap;
+    animation: scroll 10s linear infinite;
+    font-size: 13px;
+    margin: 5px 0 5px 28px;
+  }
+}
+.pin-info {
+  background: #f4e8d3;
+  padding: 0 5px 5px;
+  text-align: left;
+  border-radius: 4px;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  z-index: 99;
+  word-break: break-all;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+.share-icon {
+  position: absolute;
+  right: 52rpx;
+  width: 60rpx;
+  height: 60rpx;
+  z-index: 10;
+}
+.share-box {
+  width: 80vw;
+  height: 100px;
+  padding: 15px;
 
-			}
-
-			.is-self {
-				padding-right: 50px;
-				position: relative;
-				text-align: left;
-
-				.msg-thumb {
-					color: #fff;
-					text-align: center;
-					line-height: 40px;
-					background: orange;
-					width: 40px;
-					height: 40px;
-					border-radius: 40px;
-					position: absolute;
-					right: 0;
-					top: -8px;
-				}
-			}
-		}
-	}
-
-	.msg-control {
-		display: inline-block;
-		position: absolute;
-		background: #5b5b5b;
-		padding: 10px;
-		z-index: 99;
-		bottom: -46px;
-		border-radius: 6px;
-
-		div {
-			padding: 4px 0;
-			color: #fff;
-
-			&:hover {
-				cursor: pointer;
-			}
-		}
-
-		&.other {
-			bottom: -46px;
-		}
-	}
-	.announcement {
-		display: flex;
-		justify-content: space-between;
-		width: 100%;
-		box-sizing: border-box;
-		background: #F4E8D3;
-		&-icon {
-			background: #F4E8D3;
-			width: 28px;
-			height: 28px;
-			position: absolute;
-			left: 0;
-			z-index: 10;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			img {
-				width: 16px;
-				height: 16px;
-			}
-		}
-		&-item {
-			white-space: nowrap;
-			animation: scroll 10s linear infinite;
-			font-size: 13px;
-			margin: 5px  0 5px 28px;
-		}
-	}
-	.pin-info {
-		background: #F4E8D3;
-		padding: 0 5px 5px;
-		text-align: left;
-		border-radius: 4px;
-		position: absolute;
-		width: 100%;
-		left: 0;
-		z-index: 99;
-		word-break: break-all;
-		box-sizing: border-box;
-		font-size: 13px;
-	}
-	.share-icon {
-		position: absolute;
-		right: 52rpx;
-		width: 60rpx;
-		height: 60rpx;
-		z-index: 10;
-	}
-	.share-box {
-		width: 80vw;
-		height: 100px;
-		padding: 15px;
-		
-		&-title {
-			font-size: 20px;
-			font-weight: bold;
-		}
-		&-row {
-			display: flex;
-			justify-content: space-between;
-			margin-top: 15px;
-			input {
-				border: 1px solid gray;
-				font-size: 15px;
-				padding: 5px;
-				width: 50vw;
-			}
-		}
-		&-copy {
-			background: linear-gradient(90deg, #FFDFAB 0%, #E3AC72 100%);
-			color: white;
-			font-size: 15px;
-			padding: 5px 0;
-			width: 25vw;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	}
+  &-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  &-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    input {
+      border: 1px solid gray;
+      font-size: 15px;
+      padding: 5px;
+      width: 50vw;
+    }
+  }
+  &-copy {
+    background: linear-gradient(90deg, #ffdfab 0%, #e3ac72 100%);
+    color: white;
+    font-size: 15px;
+    padding: 5px 0;
+    width: 25vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 </style>
