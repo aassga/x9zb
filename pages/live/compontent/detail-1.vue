@@ -400,9 +400,11 @@
           'add-img-container': current != 0,
         }"
       >
-        <div id="inputContent" ref="inputContent"></div>
-        <span v-if="!prevImg && current != 0" class="add-img">添加图片</span>
-        <img v-else :src="prevImg" />
+			<form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
+				<input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
+			</form>
+			<span v-if="!prevImg" class="add-img">添加图片</span>
+			<img v-else :src="prevImg" />
       </div>
 		</u-popup>
 
@@ -750,24 +752,25 @@
 	sendImg(e){
 		this.msgType=e;
 		this.uploadImg = true;
-      if(e==2){
-      	var dol = document.getElementById("add-img");
-      	// console.log(dol,'dol--------')
-      	dol.innerHtml += '<div>666</div>'
-      }
+      // if(e==2){
+      // 	var dol = document.getElementById("add-img");
+      // 	// console.log(dol,'dol--------')
+      // 	dol.innerHtml += '<div>666</div>'
+      // }
     },
-   changeFile() {
-      const fileUp = document.querySelector("#fileUp");
-      const file = fileUp.files[0];
-      this.formData.pic=file;
-      var reader = new FileReader();
-      reader.readAsDataURL(file);
-      const _that = this;
-      reader.onload = function(e) {
-        var newUrl = this.result;
-        _that.prevImg = newUrl;
-      }
-    },
+		//取得圖片
+		changeFile(fileList) {
+			const fileUp = document.querySelector("#fileUp");
+			const file = fileList.raw;
+			this.formData.pic = file;
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			const _that = this;
+			reader.onload = function (e) {
+				var newUrl = this.result;
+				_that.prevImg = newUrl;
+			};
+		},
 			 openLink(link){
 		      window.open(link)
 		    },
