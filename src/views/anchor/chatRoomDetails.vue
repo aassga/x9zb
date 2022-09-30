@@ -58,7 +58,11 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div class="chat-window" :style="ctp === 2 || !pinInfo ? 'padding:0':''" @click="clearStatus()">
+      <div
+        class="chat-window"
+        :style="ctp === 2 || !pinInfo ? 'margin-top:0' : ''"
+        @click="clearStatus()"
+      >
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" />
           <div class="animation-loading" />
@@ -67,6 +71,7 @@
           <div class="animation-loading" />
         </div>
         <div class="chat-detail-main" ref="content-list">
+          {{msgList.length}}
           <div v-for="(item, index) in msgList" :key="index">
             <!--   <div class="system-tips" v-if="item.action === 'system'">
               {{item.text}}
@@ -83,9 +88,34 @@
               >
                 <div class="msg-box">
                   <div class="msg-container">
-                    <div class="msg-content" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'text-align:center':''">
+                    <div
+                      class="msg-content"
+                      :style="
+                        item.text === '进入直播间' ||
+                        item.text.includes('进入直播间')
+                          ? 'text-align:center'
+                          : ''
+                      "
+                    >
                       <!-- <span class="level-1">Lv1</span> -->
-                      <div class="text-name" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'color: rgba(0 0 0 / 20%);':''">{{ item.sender_nickname }} <span v-if="item.text !=='进入直播间' || !item.text.includes('进入直播间')">:</span></div>
+                      <div
+                        class="text-name"
+                        :style="
+                          item.text === '进入直播间' ||
+                          item.text.includes('进入直播间')
+                            ? 'color: rgba(0 0 0 / 20%);'
+                            : ''
+                        "
+                      >
+                        {{ item.sender_nickname }}
+                        <span
+                          v-if="
+                            item.text !== '进入直播间' ||
+                            !item.text.includes('进入直播间')
+                          "
+                          >:</span
+                        >
+                      </div>
                       <template v-if="item.pic && !item.text">
                         <el-image
                           :preview-src-list="[item.pic]"
@@ -107,7 +137,11 @@
                       </template>
                       <div
                         class="text-info"
-                        :style="item.text ==='进入直播间' ?'color: rgba(0 0 0 / 20%);':''"
+                        :style="
+                          item.text === '进入直播间'
+                            ? 'color: rgba(0 0 0 / 20%);'
+                            : ''
+                        "
                         v-else
                         v-html="getText(item.text)"
                         @click.stop="showControl(index)"
@@ -288,14 +322,12 @@
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
             一键回复
-            <i class="el-icon-close" @click.stop="dialogVisible = false" ></i>
+            <i class="el-icon-close" @click.stop="dialogVisible = false"></i>
           </div>
           <div v-for="(item, index) in modalMsgList" :key="index">
             <div @click.stop="setMsg(item)">
               {{ JSON.parse(item.content).text }}
-              <i
-                class="el-icon-delete-solid"
-                @click.stop="delQuickReply(item)">
+              <i class="el-icon-delete-solid" @click.stop="delQuickReply(item)">
               </i>
             </div>
           </div>
@@ -332,7 +364,13 @@
         </div>
       </div>
       <div class="emoji-box">
-        <VEmojiPicker :showSearch="false" :showCategories="false" :emojisByRow="10" @select="selectEmoji" v-show="isShowEmoji" />
+        <VEmojiPicker
+          :showSearch="false"
+          :showCategories="false"
+          :emojisByRow="10"
+          @select="selectEmoji"
+          v-show="isShowEmoji"
+        />
       </div>
     </div>
     <el-dialog
@@ -401,7 +439,7 @@ export default {
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
-      msgList:[],
+      msgList: [],
       msgList_0: [],
       msgList_1: [],
       msgList_2: [],
@@ -909,7 +947,7 @@ export default {
       }
     },
     changeType(e) {
-      console.log('num',e);
+      console.log("num", e);
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -995,7 +1033,6 @@ export default {
 
       this.$store.dispatch("getChatHistory", params).then((res) => {
         let dataList = res.data.reverse();
-        console.log('historyMsg',dataList)
         this.showLoading = false;
         this.initTab = false;
         if (dataList.length === 0) {
@@ -1182,6 +1219,7 @@ export default {
             }).isError = true;
           }
           this.msgText = "";
+          this.msgType = 1;
           this.formData.pic = "";
           this.uploadImgShow = false;
           this.toBottom();
@@ -1301,7 +1339,10 @@ export default {
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
-        if (data.sender_nickname == this.info.user_nickname) {
+        if (data.pic !==undefined){
+          this.handleLocalMsgList(this.ctp, "push", data);
+        }
+        if (data.sender_nickname === this.info.user_nickname) {
           return;
         }
         if (data.sender_nickname.includes("游客") && this.ctp == 0) {
@@ -1380,6 +1421,17 @@ export default {
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
     },
+    unique(arr, key) {
+      if (!arr) return arr;
+      if (key === undefined) return [...new Set(arr)];
+      const map = {
+        string: (e) => e[key],
+        function: (e) => key(e),
+      };
+      const fn = map[typeof key];
+      const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {});
+      return Object.values(obj);
+    },
     //解耦合
     handleLocalMsgList(type, m, data) {
       // console.log('ddddddddddddddddddddddddd')
@@ -1391,6 +1443,9 @@ export default {
           this.msgList = data;
           break;
         case "push":
+          if (data.pic !== undefined) {
+            data.pic = "http://www.x9zb.live" + data.pic;
+          }
           this.msgList.push(data);
           break;
         case "unshift":
@@ -1400,11 +1455,11 @@ export default {
           break;
         case "empty":
           this.msgList = [];
-          break;  
+          break;
         default:
           break;
       }
-      this.toBottom()
+      this.toBottom();
       return this.msgList;
       // if (type == 0) {
       //   if (m == "init") {
@@ -1490,7 +1545,7 @@ export default {
   margin-left: 5px;
 }
 .el-icon-message-solid {
-  color: #C41D48;
+  color: #c41d48;
   font-size: 16px;
   position: absolute;
   top: 10px;
@@ -1499,7 +1554,7 @@ export default {
 }
 .text-name {
   display: inline-block;
-	color: rgb(0 0 0 / 40%);
+  color: rgb(0 0 0 / 40%);
 }
 .level-1 {
   background: #69c331;
@@ -1513,7 +1568,7 @@ export default {
 }
 .text-info {
   display: initial;
-	color: rgb(0 0 0 / 80%);
+  color: rgb(0 0 0 / 80%);
 }
 form {
   position: absolute;
@@ -1678,12 +1733,12 @@ form {
     &.on {
       // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
       //   linear-gradient(#000000, #000000);
-      background-color: #C41D48 ;
+      background-color: #c41d48;
     }
   }
 }
 #msg {
-  border: 1px solid #C41D48;
+  border: 1px solid #c41d48;
   border-radius: 4px;
   padding: 6px;
   width: 75%;
@@ -1708,7 +1763,7 @@ form {
   position: absolute;
   bottom: 110px;
   right: 20px;
-  .emoji-picker{
+  .emoji-picker {
     width: 300px;
   }
 }
@@ -1788,7 +1843,7 @@ form {
         border-radius: 6px;
         color: #fff;
         // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-        background-color: #C41D48;
+        background-color: #c41d48;
         height: 34px;
         line-height: 34px;
         &:hover {
@@ -1812,7 +1867,8 @@ form {
   .chat-window {
     background: #f3f3f3;
     height: 401px;
-    padding-top: 80px;
+    // padding-top: 80px;
+    margin-top: 79px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
