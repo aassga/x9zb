@@ -33,7 +33,7 @@
 			// 获取协议
 			async getList (){
 				let res = await this.$u.get('/api/Portal_post/getList2?id=26');
-				console.log(res)
+				// console.log(res)
 				if(res.length && res.length > 0){
 					this.html = res[0].post_content;
 				}

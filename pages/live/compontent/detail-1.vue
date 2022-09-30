@@ -10,7 +10,7 @@
     }"
   >
     <div v-if="false" class="animation-loading-container">
-      <div class="animation-loading" v-for="i in 10" />
+      <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
     <div class="announcement">
       <div class="announcement-icon">
@@ -1438,32 +1438,14 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-
-      this.handleLocalMsgList(this.current).push(msgItem);
-      this.sendMsgByApi(currentDate);
-			
-      this.isShowEmoji = false;
-      if (this.ctp == 0 && !this.token) {
-        this.$message({
-          type: "error",
-          message: "未登录不能在直播间发言~",
-        });
-        return;
+      if(this.info.user_nickname === undefined){
+        this.$u.toast("游客不可在直播间发话报成功");
+        this.msgText=""
+        return
+      }else{
+        this.handleLocalMsgList(this.current).push(msgItem);
+        this.sendMsgByApi(currentDate);
       }
-      if (!this.isAllowedSendMsg || this.msgText == "") {
-        if (this.msgType == 2) {
-          let text = this.msgText;
-          // console.log(this.msgText,text,"=======this.msgText")
-          this.msgText = "";
-          //  console.log(this.msgText,text,"=======this.msgText2")
-          this.sendMsgByApi(null, text);
-        }
-        return;
-      }
-
-      this.handleLocalMsgList(this.ctp).push(msgItem);
-      this.sendMsgByApi(currentDate, this.msgText);
-      this.msgText = "";
       return;
       let msg = {
         action: "system",
@@ -1649,7 +1631,6 @@ export default {
         if (m == "empty") {
           this.msgList0 = [];
         }
-        console.log(this.msgList0)
         return this.msgList0;
       }
       if (type == 2) {

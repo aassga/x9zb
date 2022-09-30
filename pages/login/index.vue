@@ -281,8 +281,9 @@
 				// console.log();
 			},
 			back(){
+				console.log(this.type)
 				if(this.type == 1){
-					this.$u.route({type:'back'})
+					this.$router.back(-1);
 				}else {
 					this.type = 1
 					this.tabList = [
