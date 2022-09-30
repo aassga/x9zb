@@ -58,7 +58,11 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div class="chat-window" :style="ctp === 2 || !pinInfo ? 'padding:0':''" @click="clearStatus()">
+      <div
+        class="chat-window"
+        :style="ctp === 2 || !pinInfo ? 'padding:0' : ''"
+        @click="clearStatus()"
+      >
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" />
           <div class="animation-loading" />
@@ -83,9 +87,34 @@
               >
                 <div class="msg-box">
                   <div class="msg-container">
-                    <div class="msg-content" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'text-align:center':''">
+                    <div
+                      class="msg-content"
+                      :style="
+                        item.text === '进入直播间' ||
+                        item.text.includes('进入直播间')
+                          ? 'text-align:center'
+                          : ''
+                      "
+                    >
                       <!-- <span class="level-1">Lv1</span> -->
-                      <div class="text-name" :style="item.text ==='进入直播间' || item.text.includes('进入直播间') ?'color: rgba(0 0 0 / 20%);':''">{{ item.sender_nickname }} <span v-if="item.text !=='进入直播间' || !item.text.includes('进入直播间')">:</span></div>
+                      <div
+                        class="text-name"
+                        :style="
+                          item.text === '进入直播间' ||
+                          item.text.includes('进入直播间')
+                            ? 'color: rgba(0 0 0 / 20%);'
+                            : ''
+                        "
+                      >
+                        {{ item.sender_nickname }}
+                        <span
+                          v-if="
+                            item.text !== '进入直播间' ||
+                            !item.text.includes('进入直播间')
+                          "
+                          >:</span
+                        >
+                      </div>
                       <template v-if="item.pic && !item.text">
                         <el-image
                           :preview-src-list="[item.pic]"
@@ -107,7 +136,11 @@
                       </template>
                       <div
                         class="text-info"
-                        :style="item.text ==='进入直播间' ?'color: rgba(0 0 0 / 20%);':''"
+                        :style="
+                          item.text === '进入直播间'
+                            ? 'color: rgba(0 0 0 / 20%);'
+                            : ''
+                        "
                         v-else
                         v-html="getText(item.text)"
                         @click.stop="showControl(index)"
@@ -288,14 +321,12 @@
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
             一键回复
-            <i class="el-icon-close" @click.stop="dialogVisible = false" ></i>
+            <i class="el-icon-close" @click.stop="dialogVisible = false"></i>
           </div>
           <div v-for="(item, index) in modalMsgList" :key="index">
             <div @click.stop="setMsg(item)">
               {{ JSON.parse(item.content).text }}
-              <i
-                class="el-icon-delete-solid"
-                @click.stop="delQuickReply(item)">
+              <i class="el-icon-delete-solid" @click.stop="delQuickReply(item)">
               </i>
             </div>
           </div>
@@ -332,7 +363,13 @@
         </div>
       </div>
       <div class="emoji-box">
-        <VEmojiPicker :showSearch="false" :showCategories="false" :emojisByRow="10" @select="selectEmoji" v-show="isShowEmoji" />
+        <VEmojiPicker
+          :showSearch="false"
+          :showCategories="false"
+          :emojisByRow="10"
+          @select="selectEmoji"
+          v-show="isShowEmoji"
+        />
       </div>
     </div>
     <el-dialog
@@ -401,7 +438,7 @@ export default {
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
-      msgList:[],
+      msgList: [],
       msgList_0: [],
       msgList_1: [],
       msgList_2: [],
@@ -909,7 +946,7 @@ export default {
       }
     },
     changeType(e) {
-      console.log('num',e);
+      console.log("num", e);
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -995,7 +1032,7 @@ export default {
 
       this.$store.dispatch("getChatHistory", params).then((res) => {
         let dataList = res.data.reverse();
-        console.log('historyMsg',dataList)
+        console.log("historyMsg", dataList);
         this.showLoading = false;
         this.initTab = false;
         if (dataList.length === 0) {
@@ -1193,37 +1230,6 @@ export default {
         });
     },
     sendMsg() {
-      this.isShowEmoji = false;
-      if (this.ctp == 0 && !this.token) {
-        this.$message({
-          type: "error",
-          message: "未登录不能在直播间发言~",
-        });
-        return;
-      }
-      if (!this.isAllowedSendMsg || this.msgText == "") {
-        if (this.msgType == 2) {
-          let text = this.msgText;
-          // console.log(this.msgText,text,"=======this.msgText")
-          this.msgText = "";
-          //  console.log(this.msgText,text,"=======this.msgText2")
-          this.sendMsgByApi(null, text);
-        }
-        return;
-      }
-      let currentDate = new Date().getTime();
-      let msgItem = {
-        sender: this.parmUserInfo.user_id,
-        sender_nickname: this.info.user_nickname,
-        text: this.msgText,
-        uiCode: currentDate,
-        isError: false,
-      };
-
-      this.handleLocalMsgList(this.ctp).push(msgItem);
-      this.sendMsgByApi(currentDate, this.msgText);
-      this.msgText = "";
-
       return;
       let msg = {
         action: "system",
@@ -1400,11 +1406,11 @@ export default {
           break;
         case "empty":
           this.msgList = [];
-          break;  
+          break;
         default:
           break;
       }
-      this.toBottom()
+      this.toBottom();
       return this.msgList;
       // if (type == 0) {
       //   if (m == "init") {
@@ -1490,7 +1496,7 @@ export default {
   margin-left: 5px;
 }
 .el-icon-message-solid {
-  color: #C41D48;
+  color: #c41d48;
   font-size: 16px;
   position: absolute;
   top: 10px;
@@ -1499,7 +1505,7 @@ export default {
 }
 .text-name {
   display: inline-block;
-	color: rgb(0 0 0 / 40%);
+  color: rgb(0 0 0 / 40%);
 }
 .level-1 {
   background: #69c331;
@@ -1513,7 +1519,7 @@ export default {
 }
 .text-info {
   display: initial;
-	color: rgb(0 0 0 / 80%);
+  color: rgb(0 0 0 / 80%);
 }
 form {
   position: absolute;
@@ -1678,12 +1684,12 @@ form {
     &.on {
       // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
       //   linear-gradient(#000000, #000000);
-      background-color: #C41D48 ;
+      background-color: #c41d48;
     }
   }
 }
 #msg {
-  border: 1px solid #C41D48;
+  border: 1px solid #c41d48;
   border-radius: 4px;
   padding: 6px;
   width: 75%;
@@ -1708,7 +1714,7 @@ form {
   position: absolute;
   bottom: 110px;
   right: 20px;
-  .emoji-picker{
+  .emoji-picker {
     width: 300px;
   }
 }
@@ -1788,7 +1794,7 @@ form {
         border-radius: 6px;
         color: #fff;
         // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-        background-color: #C41D48;
+        background-color: #c41d48;
         height: 34px;
         line-height: 34px;
         &:hover {

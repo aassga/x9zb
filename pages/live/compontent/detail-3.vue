@@ -63,17 +63,18 @@
 		width: 320rpx;
 		margin: 24rpx auto;
 		border-radius: 12rpx;
-		border: 2rpx solid #E3AC72;
+		border: 2rpx solid #c41d48;
 		view {
 			flex: 1;
-			color: #E3AC72;
+			color: #c41d48;
 			font-size: 28rpx;
 			text-align: center;
 			padding: 16rpx 24rpx;
 		}
 		.numerical-active {
 			color: #fff;
-			background: linear-gradient(91deg, #FFDFAB 0%, #E3AC72 100%);
+			// background: linear-gradient(91deg, #FFDFAB 0%, #E3AC72 100%);
+			background-color:#c41d48
 		}
 	}
 	.detail-list {
