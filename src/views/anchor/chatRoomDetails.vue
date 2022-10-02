@@ -60,7 +60,7 @@
       </template>
       <div
         class="chat-window"
-        :style="ctp === 2 || !pinInfo ? 'margin-top:0' : ''"
+        :style="ctp === 2 || !pinInfo ? 'margin-top:0; height: 401px;' : ''"
         @click="clearStatus()"
       >
         <div v-if="false" class="animation-loading-container">
@@ -71,7 +71,6 @@
           <div class="animation-loading" />
         </div>
         <div class="chat-detail-main" ref="content-list">
-          {{msgList.length}}
           <div v-for="(item, index) in msgList" :key="index">
             <!--   <div class="system-tips" v-if="item.action === 'system'">
               {{item.text}}
@@ -138,7 +137,8 @@
                       <div
                         class="text-info"
                         :style="
-                          item.text === '进入直播间'
+                          item.text === '进入直播间'||
+                          item.text.includes('进入直播间')
                             ? 'color: rgba(0 0 0 / 20%);'
                             : ''
                         "
@@ -947,7 +947,6 @@ export default {
       }
     },
     changeType(e) {
-      console.log("num", e);
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -1866,9 +1865,9 @@ form {
   }
   .chat-window {
     background: #f3f3f3;
-    height: 401px;
+    height: 325px;
     // padding-top: 80px;
-    margin-top: 79px;
+    // margin-top: 76px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
@@ -1964,11 +1963,11 @@ form {
   padding: 10px;
   text-align: left;
   border-radius: 4px;
-  position: absolute;
+  position: relative;
   color: #7d4628;
   width: 100%;
   left: 0;
-  top: 38px;
+  // top: 38px;
   font-size: 12px;
   padding-left: 30px;
   z-index: 1;
