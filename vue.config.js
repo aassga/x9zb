@@ -34,8 +34,9 @@ module.exports = {
     disableHostCheck : true,
     proxy:{
       'opc':{
-        target : "https://www.x9zb.live/", //实际请求服务器地址
-        changeOrigin : true,
+        target : "http://huyapre.oxldkm.com/", //实际请求服务器地址
+        changeOrigin: true,
+        ws:true,
         secure : false,
         pathRewrite : {
             "^/opc" : ""

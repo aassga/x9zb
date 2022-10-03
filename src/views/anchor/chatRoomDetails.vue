@@ -1,5 +1,5 @@
 <template>
-  <div id="chat-models">
+  <div id="chat-models" style="height: 100%">
     <input id="cp-input" />
     <div class="ChatDetails_container">
       <div class="header-list">
@@ -60,15 +60,11 @@
       </template>
       <div
         class="chat-window"
-        :style="ctp === 2 || !pinInfo ? 'margin-top:0; height: 401px;' : ''"
+        :style="ctp === 2 || !pinInfo ? 'margin-top:0; height: 25em;' : ''"
         @click="clearStatus()"
       >
         <div v-if="false" class="animation-loading-container">
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
+          <div class="animation-loading" v-for="i in 4" :key="i" />
         </div>
         <div class="chat-detail-main" ref="content-list">
           <div v-for="(item, index) in msgList" :key="index">
@@ -109,7 +105,7 @@
                         {{ item.sender_nickname }}
                         <span
                           v-if="
-                            item.text !== '进入直播间' ||
+                            item.text !== '进入直播间' &&
                             !item.text.includes('进入直播间')
                           "
                           >:</span
@@ -137,7 +133,7 @@
                       <div
                         class="text-info"
                         :style="
-                          item.text === '进入直播间'||
+                          item.text === '进入直播间' ||
                           item.text.includes('进入直播间')
                             ? 'color: rgba(0 0 0 / 20%);'
                             : ''
@@ -335,12 +331,12 @@
         <div class="control-footer">
           <textarea
             id="msg"
+            ref="msg"
             type="text"
-            placeholder="请输入聊天内容"
             rows="1"
             v-model="msgText"
-            ref="msg"
             v-on:keyup.enter="sendMsg"
+            placeholder="请输入聊天内容"
           ></textarea>
           <!-- <div v-if="msgType==2" class="add-img-container">
             <form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
@@ -522,20 +518,18 @@ export default {
       deep: true,
     },
     showLoading(newV, oldV) {
-      if (!newV) {
-        this.toBottom();
-      }
+      !newV ? this.toBottom() : false
     },
 
     ctp(newV, oldV) {
-      if (newV == 1) {
+      if(newV === 1){
         this.getMessageList(); // 获取聊天列表
       }
-      if (newV != oldV) {
+      if(newV != oldV){
         this.initTab = true;
       }
-      if (oldV == 2) {
-        this.leaveRoom(2);
+      if(newV === 2){
+        // this.leaveRoom(2);
       }
     },
   },
@@ -544,12 +538,13 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          ? "http://lukee.huya.com/upload/"
+          ? "http://huyapre.oxldkm.com/"
           : window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       } else {
         return newUrl;
       }
+      console.log(newUrl)
     },
   },
   updated() {
@@ -565,7 +560,7 @@ export default {
           this.initChatTab = false;
           return;
         }
-        this.getChatHistoryMsg(this.initTab ? 1 : "");
+        // this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
     // console.log(this.qsVid,"this.qsVid==============")
@@ -1076,7 +1071,7 @@ export default {
     },
     newSocket(data) {
       // console.log('ws',data)
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // const wsprotocol =
       //   window.location.protocol == "http:" ? "ws://" : "wss://";
       // this.WSURL = `${wsprotocol}${
@@ -1220,6 +1215,7 @@ export default {
           this.msgText = "";
           this.msgType = 1;
           this.formData.pic = "";
+          this.fileList = []
           this.uploadImgShow = false;
           this.toBottom();
         })
@@ -1338,7 +1334,7 @@ export default {
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
-        if (data.pic !==undefined){
+        if (data.pic !== undefined) {
           this.handleLocalMsgList(this.ctp, "push", data);
         }
         if (data.sender_nickname === this.info.user_nickname) {
@@ -1443,7 +1439,7 @@ export default {
           break;
         case "push":
           if (data.pic !== undefined) {
-            data.pic = "http://www.x9zb.live" + data.pic;
+            data.pic = "http://huyapre.oxldkm.com" + data.pic;
           }
           this.msgList.push(data);
           break;
@@ -1776,8 +1772,9 @@ form {
   min-height: 549px;
   position: relative;
   min-width: 334px;
+  height: 100%;
   .send-container {
-    height: 110px;
+    height: 122px;
     position: absolute;
     bottom: 0;
     min-width: 335px;
@@ -1839,7 +1836,7 @@ form {
         padding: 0 20px;
         position: relative;
         right: -12px;
-        border-radius: 6px;
+        border-radius: 4px;
         color: #fff;
         // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
         background-color: #c41d48;
@@ -1850,22 +1847,20 @@ form {
         }
       }
       .no_send {
-        display: inline-block;
         padding: 0 20px;
-        position: absolute;
-        right: 6px;
-        bottom: 10px;
-        border-radius: 6px;
+        position: relative;
+        right: -12px;
+        border-radius: 4px;
         background-color: rgba(149, 152, 230, 0.1);
         color: #959db0;
-        height: 30px;
-        line-height: 30px;
+        height: 34px;
+        line-height: 34px;
       }
     }
   }
   .chat-window {
     background: #f3f3f3;
-    height: 325px;
+    height: 27.3em;
     // padding-top: 80px;
     // margin-top: 76px;
     overflow-y: auto;
