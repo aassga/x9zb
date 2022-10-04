@@ -52,7 +52,8 @@
                         class="msg-content"
                         @click.stop="showControl(index)"
                         :style="
-                          item.text === '进入直播间'
+                          item.text === '进入直播间'||
+                          item.text.includes('进入直播间')
                             ? 'text-align:center'
                             : ''
                         "
@@ -60,14 +61,15 @@
                         <div class="msg-footer">
                           <span
                             :style="
-                              item.text === '进入直播间'
+                              item.text === '进入直播间' ||
+                              item.text.includes('进入直播间')
                                 ? 'color:rgba(0 0 0 /20%)'
                                 : ''
                             "
                             >{{ item.sender_nickname || "我"
                             }}<span
                               v-if="
-                                item.text !== '进入直播间' 
+                                item.text !== '进入直播间' && !item.text.includes('进入直播间')
                               "
                               >:</span
                             ></span
@@ -1389,7 +1391,7 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        xhr.open("POST","http://www.x9zb.live/api/chat/sendMessage");
+        xhr.open("POST","http://huyapre.oxldkm.com/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
