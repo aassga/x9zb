@@ -620,6 +620,9 @@ export default {
       }
     },
     closeModel() {
+      this.msgText = "";
+      this.msgType = 1;
+      this.formData.pic = "";
       this.fileList = [];
       this.uploadImgShow = false;
       this.fullscreenLoading = false;
