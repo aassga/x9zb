@@ -299,4 +299,7 @@ export default {
 .mt0{
   margin-top: 0;
 }
+.el-image{
+  height: 8em;
+}
 </style>
