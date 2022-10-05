@@ -1275,8 +1275,8 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-
-      this.handleLocalMsgList(this.ctp).push(msgItem);
+      console.log(this.ctp)
+      this.handleLocalMsgList(this.ctp,"push",msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
       return;
@@ -1439,6 +1439,7 @@ export default {
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
+      console.log(type, m, data)
       // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;

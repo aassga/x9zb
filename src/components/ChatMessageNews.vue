@@ -78,7 +78,7 @@
                       item.text === '进入直播间' ||
                       item.text.includes('进入直播间')
                         ? 'color: rgba(0 0 0 / 20%);'
-                        : ''
+                        : 'width: 200px;'
                     "
                     v-else
                     v-html="getText(item.text)"
