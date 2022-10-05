@@ -66,11 +66,14 @@
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" v-for="i in 4" :key="i" />
         </div>
-        <div class="chat-detail-main" ref="content-list">
-          <div v-for="(item, index) in msgList" :key="index">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
+        <chat-message-new
+          :msgList="msgList"
+          :controlIndex="controlIndex"
+          @controlNumber="controlNumber"
+          @msgAction="msgAction"
+        />
+        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 0">
+          <div v-for="(item, index) in msgList_0" :key="index">
             <template>
               <div
                 v-if="
@@ -92,7 +95,6 @@
                           : ''
                       "
                     >
-                      <!-- <span class="level-1">Lv1</span> -->
                       <div
                         class="text-name"
                         :style="
@@ -162,7 +164,8 @@
               </div>
             </template>
           </div>
-        </div>
+        </div> -->
+
         <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 1">
           <div v-for="(item, index) in msgList_1" :key="index">
             <template>
@@ -224,8 +227,9 @@
               </div>
             </template>
           </div>
-        </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 2">
+        </div> -->
+
+        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 2">
           <div v-for="(item, index) in msgList_2" :key="index">
             <template>
               <div
@@ -411,12 +415,14 @@
 import { getQueryString } from "@/utils/Qs";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
+import ChatMessageNew from "@/components/ChatMessageNews";
 // import { mapGetters } from "vuex";
 export default {
   name: "ChatDetails",
   components: {
     MessageList,
     MessageInfo,
+    ChatMessageNew,
   },
   data() {
     return {
@@ -518,17 +524,17 @@ export default {
       deep: true,
     },
     showLoading(newV, oldV) {
-      !newV ? this.toBottom() : false
+      !newV ? this.toBottom() : false;
     },
 
     ctp(newV, oldV) {
-      if(newV === 1){
+      if (newV === 1) {
         this.getMessageList(); // 获取聊天列表
       }
-      if(newV != oldV){
+      if (newV != oldV) {
         this.initTab = true;
       }
-      if(newV === 2){
+      if (newV === 2) {
         // this.leaveRoom(2);
       }
     },
@@ -544,7 +550,7 @@ export default {
       } else {
         return newUrl;
       }
-      console.log(newUrl)
+      console.log(newUrl);
     },
   },
   updated() {
@@ -563,6 +569,8 @@ export default {
         // this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
+    
+    
     // console.log(this.qsVid,"this.qsVid==============")
     this.vid = this.qsVid || "";
     let userid = "";
@@ -612,6 +620,18 @@ export default {
     });
   },
   methods: {
+    controlNumber(num) {
+      this.controlIndex = num;
+    },
+    msgAction(item) {
+      this.handleLocalMsgList(this.ctp).map((val, index) => {
+        if (val == item) {
+          this.handleLocalMsgList(this.ctp).splice(index, 1);
+          // console.log(this.msgList)
+        }
+      });
+      this.msgText = item.text;
+    },
     relationsFilter(data) {
       if (this.hideChat) {
         return data.filter((el) => el.id !== 2);
@@ -647,16 +667,16 @@ export default {
     limitCheck() {
       this.$message({ message: "最多只能上传1张图片", type: "warning" });
     },
-    resend(item) {
-      // console.log(item)
-      this.handleLocalMsgList(this.ctp).map((val, index) => {
-        if (val == item) {
-          this.handleLocalMsgList(this.ctp).splice(index, 1);
-          // console.log(this.msgList)
-        }
-      });
-      this.msgText = item.text;
-    },
+    // resend(item) {
+    //   // console.log(item)
+    //   this.handleLocalMsgList(this.ctp).map((val, index) => {
+    //     if (val == item) {
+    //       this.handleLocalMsgList(this.ctp).splice(index, 1);
+    //       // console.log(this.msgList)
+    //     }
+    //   });
+    //   this.msgText = item.text;
+    // },
     sendImg(e) {
       this.msgType = e;
     },
@@ -765,9 +785,9 @@ export default {
         this.msgCount += 1;
       }
     },
-    openLink(link) {
-      window.open(link);
-    },
+    // openLink(link) {
+    //   window.open(link);
+    // },
     // 已读事件
     readItem(item) {
       let msgList2 = this.msgList2;
@@ -928,22 +948,22 @@ export default {
       };
       this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
-    copyText(item) {
-      const str = item.text;
-      const qrUrlContent = document.getElementById("cp-input");
-      qrUrlContent.value = str;
-      qrUrlContent.select();
-      let range = document.createRange();
-      let selection = document.getSelection();
-      range.selectNode(qrUrlContent);
-      selection.addRange(range);
-      qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-      let isSucess = document.execCommand("copy");
-      if (isSucess) {
-        this.$alert("复制成功", "提示");
-        this.tipsId = "";
-      }
-    },
+    // copyText(item) {
+    //   const str = item.text;
+    //   const qrUrlContent = document.getElementById("cp-input");
+    //   qrUrlContent.value = str;
+    //   qrUrlContent.select();
+    //   let range = document.createRange();
+    //   let selection = document.getSelection();
+    //   range.selectNode(qrUrlContent);
+    //   selection.addRange(range);
+    //   qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
+    //   let isSucess = document.execCommand("copy");
+    //   if (isSucess) {
+    //     this.$alert("复制成功", "提示");
+    //     this.tipsId = "";
+    //   }
+    // },
     changeType(e) {
       this.pinInfo = "";
       if (this.showLoading) {
@@ -1045,13 +1065,13 @@ export default {
         );
       });
     },
-    showControl(index) {
-      if (this.controlIndex == index) {
-        this.controlIndex = -1;
-        return;
-      }
-      this.controlIndex = index;
-    },
+    // showControl(index) {
+    //   if (this.controlIndex == index) {
+    //     this.controlIndex = -1;
+    //     return;
+    //   }
+    //   this.controlIndex = index;
+    // },
     inRoomInfo(fd) {
       if (this.ctp == 1 || this.ctp == 2) {
         this.leaveVid = this.parmUserInfo.vid;
@@ -1218,7 +1238,7 @@ export default {
           this.msgText = "";
           this.msgType = 1;
           this.formData.pic = "";
-          this.fileList = []
+          this.fileList = [];
           this.uploadImgShow = false;
           this.toBottom();
         })
@@ -1259,20 +1279,7 @@ export default {
       this.handleLocalMsgList(this.ctp).push(msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
-
       return;
-      let msg = {
-        action: "system",
-        server: "notice",
-        uid: this.uid,
-        fd: this.fd,
-        txt: this.msgText,
-        method: "notice",
-      };
-
-      this.$global.ws.send(JSON.stringify(msg));
-      this.msgText = "";
-      this.toBottom();
     },
     // 客户端接收服务端数据时触发
     websocketonmessage(e) {
@@ -1418,6 +1425,9 @@ export default {
       let main = document.querySelector(".chat-window");
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
+      console.log('main',main)
+      console.log('content',content)
+      console.log('main.scrollTop',main.scrollTop)
     },
     unique(arr, key) {
       if (!arr) return arr;
@@ -1450,6 +1460,7 @@ export default {
           data.forEach((el) => {
             this.msgList.unshift(el);
           });
+          this.toBottom();
           break;
         case "empty":
           this.msgList = [];
@@ -1458,7 +1469,6 @@ export default {
           break;
       }
       this.toBottom();
-      return this.msgList;
       // if (type == 0) {
       //   if (m == "init") {
       //     this.msgList_0 = data;
