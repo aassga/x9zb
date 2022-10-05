@@ -1,96 +1,108 @@
 <template>
-  <div class="chat-detail-main" ref="content-list">
-    <div v-for="(item, index) in msgList" :key="index">
-      <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
-      <template>
-        <div
-          v-if="
-            !item.channel ||
-            item.channel === channel ||
-            (!channel && item.channel === '000') ||
-            item.channel === 'null'
-          "
-          class="other-side"
-        >
-          <div class="msg-box">
-            <div class="msg-container">
-              <div
-                class="msg-content"
-                :style="
-                  item.text === '进入直播间' || item.text.includes('进入直播间')
-                    ? 'justify-content: center;'
-                    : ''
-                "
-              >
-                <!-- <span class="level-1">Lv1</span> -->
+  <div
+    class="chat-window"
+    :class="{mt0:ctp === 2 || !pinInfo}"
+    :style="{'height':reversedHeight + 'px'}"
+    @click="clearStatus()"
+  >
+    <div v-if="false" class="animation-loading-container">
+      <div class="animation-loading" v-for="i in 4" :key="i" />
+    </div>
+
+    <div class="chat-detail-main" ref="content-list">
+      <div v-for="(item, index) in msgList" :key="index">
+        <!--   <div class="system-tips" v-if="item.action === 'system'">
+                {{item.text}}
+              </div>-->
+        <template>
+          <div
+            v-if="
+              !item.channel ||
+              item.channel === channel ||
+              (!channel && item.channel === '000') ||
+              item.channel === 'null'
+            "
+            class="other-side"
+          >
+            <div class="msg-box">
+              <div class="msg-container">
                 <div
-                  class="text-name"
+                  class="msg-content"
                   :style="
-                    item.text === '进入直播间' ||
-                    item.text.includes('进入直播间')
-                      ? 'color: rgba(0 0 0 / 20%);'
+                    item.text === '进入直播间' || item.text.includes('进入直播间')
+                      ? 'justify-content: center;'
                       : ''
                   "
                 >
-                  {{ item.sender_nickname }}
-                  <span
-                    v-if="
-                      item.text !== '进入直播间' &&
-                      !item.text.includes('进入直播间')
-                    "
-                    >:</span
-                  >
-                </div>
-                <template v-if="item.pic && !item.text">
-                  <el-image
-                    :preview-src-list="[item.pic]"
-                    fit="cover"
-                    :src="item.pic | picFilter"
-                    class="pic-info"
-                  />
-                </template>
-                <template v-if="item.pic && item.text">
+                  <!-- <span class="level-1">Lv1</span> -->
                   <div
-                    class="thumb-container"
-                    @click.stop="openLink(item.link)"
+                    class="text-name"
+                    :style="
+                      item.text === '进入直播间' ||
+                      item.text.includes('进入直播间')
+                        ? 'color: rgba(0 0 0 / 20%);'
+                        : ''
+                    "
                   >
-                    <img class="thumb-pic" :src="item.pic | picFilter" />
-                    <div class="thumb-title">{{ item.title }}</div>
-                    <br />
-                    <div class="thumb-text">{{ item.text }}</div>
+                    {{ item.sender_nickname }}
+                    <span
+                      v-if="
+                        item.text !== '进入直播间' &&
+                        !item.text.includes('进入直播间')
+                      "
+                      >:</span
+                    >
                   </div>
-                </template>
-                <div
-                  class="text-info"
-                  :style="
-                    item.text === '进入直播间' ||
-                    item.text.includes('进入直播间')
-                      ? 'color: rgba(0 0 0 / 20%);'
-                      : ''
-                  "
-                  v-else
-                  v-html="getText(item.text)"
-                  @click.stop="showControl(index)"
-                ></div>
-                <i
-                  class="el-icon-warning error-msg"
-                  v-if="item.isError"
-                  @click="resend(item)"
-                ></i>
-                <div v-if="controlIndex === index" class="msg-control other">
-                  <div @click="copyText(item)">
-                    复制
-                    <i />
+                  <template v-if="item.pic && !item.text">
+                    <el-image
+                      :preview-src-list="[item.pic]"
+                      fit="cover"
+                      :src="item.pic | picFilter"
+                      class="pic-info"
+                    />
+                  </template>
+                  <template v-if="item.pic && item.text">
+                    <div
+                      class="thumb-container"
+                      @click.stop="openLink(item.link)"
+                    >
+                      <img class="thumb-pic" :src="item.pic | picFilter" />
+                      <div class="thumb-title">{{ item.title }}</div>
+                      <br />
+                      <div class="thumb-text">{{ item.text }}</div>
+                    </div>
+                  </template>
+                  <div
+                    class="text-info"
+                    :style="
+                      item.text === '进入直播间' ||
+                      item.text.includes('进入直播间')
+                        ? 'color: rgba(0 0 0 / 20%);'
+                        : ''
+                    "
+                    v-else
+                    v-html="getText(item.text)"
+                    @click.stop="showControl(index)"
+                  ></div>
+                  <i
+                    class="el-icon-warning error-msg"
+                    v-if="item.isError"
+                    @click="resend(item)"
+                  ></i>
+                  <div v-if="controlIndex === index" class="msg-control other">
+                    <div @click="copyText(item)">
+                      复制
+                      <i />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -101,16 +113,53 @@ export default {
     msgList: {
       type: Array,
     },
+    chatMsgHight:{
+      type:Number,
+    },
     controlIndex:{
       type:Number,
+    },
+    ctp:{
+      type:Number,
+    },
+    pinInfo:{
+      type:Boolean
+    },
+    roomInfo:{
+      type:null
     }
+  },
+  computed:{
+    reversedHeight: function() {
+      if(this.roomInfo.name !==undefined){
+        return this.chatMsgHight - 40
+      }else{
+        return this.chatMsgHight
+      }
+    },
+
   },
   data() {
     return {
-      
     }
   },
+  filters: {
+    picFilter(url) {
+      let newUrl = url;
+      if (url.includes("base64")) {
+        let split = window.location.hostname.includes("10")
+          ? "http://huyapre.oxldkm.com/"
+          : window.location.origin + "/";
+        newUrl = newUrl.replace(split, "");
+      } else {
+        return newUrl;
+      }
+    },
+  },
   methods: {
+    clearStatus() {
+      this.$emit('controlNumber',-1)
+    },
     // 聊天框滚动到最底部
     openLink(link) {
       window.open(link);
@@ -246,5 +295,8 @@ export default {
   &.other {
     bottom: -40px;
   }
+}
+.mt0{
+  margin-top: 0;
 }
 </style>

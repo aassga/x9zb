@@ -3,25 +3,10 @@
     <input id="cp-input" />
     <div class="ChatDetails_container">
       <div class="header-list">
-        <!-- <span @click="changeType(0)" :class="{on:ctp==0}">广场</span>
-        <span v-if="!hideChat" @click="changeType(2)" :class="{on:ctp==2}">
-          主播私聊
-          <i
-            v-show="oneChat && oneChat > 0"
-            class="new-msg-icon"
-          >{{oneChat > 99 ? '99+' : oneChat}}</i>
-        </span>
-        <span @click="changeType(1)" :class="{on:ctp==1}">
-          聊天
-          <i
-            v-show="msgCount && msgCount > 0"
-            class="new-msg-icon"
-          >{{msgCount > 99 ? '99+' : msgCount}}</i>
-        </span> -->
         <span
           v-for="(item, index) in relationsFilter(relations)"
           :key="index"
-          :class="{ on: ctp == item.id }"
+          :class="{ 'on': ctp == item.id }"
           @click="changeType(item.id)"
         >
           {{ item.name }}
@@ -58,20 +43,25 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div
+      <chat-message-new
+        :msgList="msgList"
+        :controlIndex="controlIndex"
+        :ctp="ctp"
+        :pinInfo="pinInfo"
+        :roomInfo="roomInfo"
+        :chatMsgHight="chatMsgHight"
+        @controlNumber="controlNumber"
+        @msgAction="msgAction"
+      />
+      <!-- <div
         class="chat-window"
         :style="ctp === 2 || !pinInfo ? 'margin-top:0; height: 25em;' : ''"
         @click="clearStatus()"
       >
         <div v-if="false" class="animation-loading-container">
           <div class="animation-loading" v-for="i in 4" :key="i" />
-        </div>
-        <chat-message-new
-          :msgList="msgList"
-          :controlIndex="controlIndex"
-          @controlNumber="controlNumber"
-          @msgAction="msgAction"
-        />
+        </div> -->
+
         <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 0">
           <div v-for="(item, index) in msgList_0" :key="index">
             <template>
@@ -291,7 +281,7 @@
             </template>
           </div>
         </div> -->
-      </div>
+      <!-- </div> -->
       <div class="send-container">
         <div>
           <svg
@@ -503,6 +493,8 @@ export default {
       fileList: [],
       uploadImgShow: false,
       fullscreenLoading: false,
+      chatMsgHight:0,
+      HuyaXBox:0
     };
   },
   props: ["hideChat", "qsVid"],
@@ -539,20 +531,19 @@ export default {
       }
     },
   },
-  filters: {
-    picFilter(url) {
-      let newUrl = url;
-      if (url.includes("base64")) {
-        let split = window.location.hostname.includes("10")
-          ? "http://huyapre.oxldkm.com/"
-          : window.location.origin + "/";
-        newUrl = newUrl.replace(split, "");
-      } else {
-        return newUrl;
-      }
-      console.log(newUrl);
-    },
-  },
+  // filters: {
+  //   picFilter(url) {
+  //     let newUrl = url;
+  //     if (url.includes("base64")) {
+  //       let split = window.location.hostname.includes("10")
+  //         ? "http://huyapre.oxldkm.com/"
+  //         : window.location.origin + "/";
+  //       newUrl = newUrl.replace(split, "");
+  //     } else {
+  //       return newUrl;
+  //     }
+  //   },
+  // },
   updated() {
     this.toBottom();
   },
@@ -570,7 +561,16 @@ export default {
       }
     });
     
-    
+    let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
+    let headerBox = document.querySelector(".header-list").clientHeight;
+    if(this.pinInfo){
+      this.pinBox = document.querySelector(".pin-info").clientHeight;
+    }else{
+      this.pinBox = 0
+    }
+    let senBox = document.querySelector(".send-container").clientHeight;
+    this.chatMsgHight = chatBox - headerBox - this.pinBox - senBox
+
     // console.log(this.qsVid,"this.qsVid==============")
     this.vid = this.qsVid || "";
     let userid = "";
@@ -849,7 +849,7 @@ export default {
         .then((res) => {
           this.modalMsgList = res.data;
           this.dialogVisible = true;
-          this.controlIndex = "";
+          this.controlIndex = -1;
         });
     },
     async getMessageList() {
@@ -1005,9 +1005,9 @@ export default {
         }
       }
     },
-    clearStatus() {
-      this.controlIndex = -1;
-    },
+    // clearStatus() {
+    //   this.controlIndex = -1;
+    // },
     inviteRoom() {
       if (!this.fd) {
         return;
@@ -1033,7 +1033,7 @@ export default {
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           // localStorage.setItem("vid", res.data.vid);
           this.inRoomInfo(this.fd);
-          this.controlIndex = "";
+          this.controlIndex = -1;
         });
     },
     getChatHistoryMsg(iniPage) {
@@ -1425,9 +1425,6 @@ export default {
       let main = document.querySelector(".chat-window");
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
-      console.log('main',main)
-      console.log('content',content)
-      console.log('main.scrollTop',main.scrollTop)
     },
     unique(arr, key) {
       if (!arr) return arr;

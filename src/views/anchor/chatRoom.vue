@@ -204,9 +204,9 @@
 
       <div
         class="pc-chat-room-container"
-        style="height: -webkit-fill-available"
+        style="height: 100%"
       >
-        <ChatDetails :qsVid="qsVid" />
+        <ChatDetails :qsVid="qsVid"/>
       </div>
 
       <!-- 	<div class="message-text">
