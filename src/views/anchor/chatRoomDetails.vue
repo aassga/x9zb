@@ -53,235 +53,6 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <!-- <div
-        class="chat-window"
-        :style="ctp === 2 || !pinInfo ? 'margin-top:0; height: 25em;' : ''"
-        @click="clearStatus()"
-      >
-        <div v-if="false" class="animation-loading-container">
-          <div class="animation-loading" v-for="i in 4" :key="i" />
-        </div> -->
-
-        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 0">
-          <div v-for="(item, index) in msgList_0" :key="index">
-            <template>
-              <div
-                v-if="
-                  !item.channel ||
-                  item.channel === channel ||
-                  (!channel && item.channel === '000') ||
-                  item.channel === 'null'
-                "
-                class="other-side"
-              >
-                <div class="msg-box">
-                  <div class="msg-container">
-                    <div
-                      class="msg-content"
-                      :style="
-                        item.text === '进入直播间' ||
-                        item.text.includes('进入直播间')
-                          ? 'text-align:center'
-                          : ''
-                      "
-                    >
-                      <div
-                        class="text-name"
-                        :style="
-                          item.text === '进入直播间' ||
-                          item.text.includes('进入直播间')
-                            ? 'color: rgba(0 0 0 / 20%);'
-                            : ''
-                        "
-                      >
-                        {{ item.sender_nickname }}
-                        <span
-                          v-if="
-                            item.text !== '进入直播间' &&
-                            !item.text.includes('进入直播间')
-                          "
-                          >:</span
-                        >
-                      </div>
-                      <template v-if="item.pic && !item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic | picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic && item.text">
-                        <div
-                          class="thumb-container"
-                          @click.stop="openLink(item.link)"
-                        >
-                          <img class="thumb-pic" :src="item.pic | picFilter" />
-                          <div class="thumb-title">{{ item.title }}</div>
-                          <br />
-                          <div class="thumb-text">{{ item.text }}</div>
-                        </div>
-                      </template>
-                      <div
-                        class="text-info"
-                        :style="
-                          item.text === '进入直播间' ||
-                          item.text.includes('进入直播间')
-                            ? 'color: rgba(0 0 0 / 20%);'
-                            : ''
-                        "
-                        v-else
-                        v-html="getText(item.text)"
-                        @click.stop="showControl(index)"
-                      ></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div
-                        v-if="controlIndex === index"
-                        class="msg-control other"
-                      >
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div> -->
-
-        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 1">
-          <div v-for="(item, index) in msgList_1" :key="index">
-            <template>
-              <div
-                v-if="
-                  !item.channel ||
-                  item.channel === channel ||
-                  (!channel && item.channel === '000') ||
-                  item.channel === 'null'
-                "
-                class="other-side"
-              >
-                <div class="msg-box">
-                  <div class="msg-container">
-                    <div class="msg-content">
-                      <div class="text-name">{{ item.sender_nickname }}:</div>
-                      <template v-if="item.pic && !item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic | picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic && item.text">
-                        <div
-                          class="thumb-container"
-                          @click.stop="openLink(item.link)"
-                        >
-                          <img class="thumb-pic" :src="item.pic | picFilter" />
-                          <div class="thumb-title">{{ item.title }}</div>
-                          <br />
-                          <div class="thumb-text">{{ item.text }}</div>
-                        </div>
-                      </template>
-                      <div
-                        class="text-info"
-                        v-else
-                        v-html="getText(item.text)"
-                        @click.stop="showControl(index)"
-                      ></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div
-                        v-if="controlIndex === index"
-                        class="msg-control other"
-                      >
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div> -->
-
-        <!-- <div class="chat-detail-main" ref="content-list" v-if="ctp == 2">
-          <div v-for="(item, index) in msgList_2" :key="index">
-            <template>
-              <div
-                v-if="
-                  !item.channel ||
-                  item.channel === channel ||
-                  (!channel && item.channel === '000') ||
-                  item.channel === 'null'
-                "
-                class="other-side"
-              >
-                <div class="msg-box">
-                  <div class="msg-container">
-                    <div class="msg-content">
-                      <div class="text-name">{{ item.sender_nickname }}:</div>
-                      <template v-if="item.pic && !item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic | picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic && item.text">
-                        <div
-                          class="thumb-container"
-                          @click.stop="openLink(item.link)"
-                        >
-                          <img class="thumb-pic" :src="item.pic | picFilter" />
-                          <div class="thumb-title">{{ item.title }}</div>
-                          <br />
-                          <div class="thumb-text">{{ item.text }}</div>
-                        </div>
-                      </template>
-                      <div
-                        class="text-info"
-                        v-else
-                        v-html="getText(item.text)"
-                        @click.stop="showControl(index)"
-                      ></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div
-                        v-if="controlIndex === index"
-                        class="msg-control other"
-                      >
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div> -->
-      <!-- </div> -->
       <div class="send-container">
         <div>
           <svg
@@ -304,10 +75,6 @@
             alt=""
             @click="uploadImgShow = true"
           />
-          <!-- <el-button-group class="msg-type-container"  v-if="ctp != 0">
-            <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button>
-            <el-button type="primary" round size="mini"  icon="el-icon-picture" @click="sendImg(2)"></el-button>
-          </el-button-group> -->
         </div>
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
@@ -332,15 +99,8 @@
             v-on:keyup.enter="sendMsg"
             placeholder="请输入聊天内容"
           ></textarea>
-          <!-- <div v-if="msgType==2" class="add-img-container">
-            <form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
-              <input type="file" id="fileUp" name="piconsole.log('type',text)c" @change="changeFile" />
-            </form>
-            <span v-if="!prevImg" class="add-img">添加图片</span>
-            <img v-else :src="prevImg" />
-          </div> -->
           <div>
-            <!--<el-button-group class="quick-container">
+            <!-- <el-button-group class="quick-container">
               <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
               <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
             </el-button-group> -->
@@ -561,16 +321,7 @@ export default {
       }
     });
     
-    let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
-    let headerBox = document.querySelector(".header-list").clientHeight;
-    if(this.pinInfo){
-      this.pinBox = document.querySelector(".pin-info").clientHeight;
-    }else{
-      this.pinBox = 0
-    }
-    let senBox = document.querySelector(".send-container").clientHeight;
-    this.chatMsgHight = chatBox - headerBox - this.pinBox - senBox
-
+    
     // console.log(this.qsVid,"this.qsVid==============")
     this.vid = this.qsVid || "";
     let userid = "";
@@ -608,6 +359,7 @@ export default {
     }
     this.getMessageList(); // 获取聊天列表
     this.initToken();
+    this.changeHeight()
   },
   created() {
     this.uid = this.$route.query.id;
@@ -964,7 +716,18 @@ export default {
     //     this.tipsId = "";
     //   }
     // },
+    changeHeight(){
+      setTimeout(() => {
+        let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
+        let headerBox = document.querySelector(".header-list").clientHeight;
+        this.pinBox = this.pinInfo ? document.querySelector(".pin-info").clientHeight : 0
+        let senBox = document.querySelector(".send-container").clientHeight;
+        this.chatMsgHight = chatBox - headerBox - this.pinBox - senBox
+      }, 1000);
+    },
     changeType(e) {
+      console.log(e)
+      this.changeHeight()
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -1095,6 +858,7 @@ export default {
     newSocket(data) {
       // console.log('ws',data)
       this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // const wsprotocol =
       //   window.location.protocol == "http:" ? "ws://" : "wss://";
       // this.WSURL = `${wsprotocol}${
@@ -1439,7 +1203,6 @@ export default {
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
-      console.log(type, m, data)
       // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;
@@ -1451,6 +1214,7 @@ export default {
         case "push":
           if (data.pic !== undefined) {
             data.pic = "http://huyapre.oxldkm.com" + data.pic;
+            // data.pic = "https://www.x9zb.live" + data.pic;
           }
           this.msgList.push(data);
           break;
@@ -1467,52 +1231,6 @@ export default {
           break;
       }
       this.toBottom();
-      // if (type == 0) {
-      //   if (m == "init") {
-      //     this.msgList_0 = data;
-      //   }
-      //   if (m == "push") {
-      //     this.msgList_0.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     this.msgList_0.unshift(data);
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList_0 = [];
-      //   }
-      //   return this.msgList_0;
-      // }
-      // if (type == 2) {
-      //   if (m == "init") {
-      //     this.msgList_2 = data;
-      //   }
-      //   if (m == "push") {
-      //     this.msgList_2.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     this.msgList_2.unshift(data)
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList_2 = [];
-      //   }
-      //   return this.msgList_2;
-      // }
-      // if (type == 1) {
-      //   if (m == "init") {
-      //     this.msgList_1 = data;
-      //   }
-      //   if (m == "push") {
-      //     this.msgList_1.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     this.msgList_1.unshift(data);
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList_1 = [];
-      //   }
-      //   return this.msgList_1;
-      // }
-      // this.toBottom()
     },
   },
 };
@@ -1561,6 +1279,7 @@ export default {
 .text-name {
   display: inline-block;
   color: rgb(0 0 0 / 40%);
+  width: 130px;
 }
 .level-1 {
   background: #69c331;
@@ -1771,6 +1490,15 @@ form {
   right: 20px;
   .emoji-picker {
     width: 300px;
+    .Emojis{
+      .container-emoji{
+        .grid-emojis{
+          .emoji{
+            font-size: 21px;
+          }
+        }
+      }
+    }
   }
 }
 .switch-box {

@@ -1,7 +1,7 @@
 <template>
   <div
     class="chat-window"
-    :class="{mt0:ctp === 2 || !pinInfo}"
+
     :style="{'height':reversedHeight + 'px'}"
     @click="clearStatus()"
   >
@@ -44,7 +44,7 @@
                         : ''
                     "
                   >
-                    {{ item.sender_nickname }}
+                    {{ item.sender_nickname.length > 10 ? item.sender_nickname.substr(0,7) : item.sender_nickname }}
                     <span
                       v-if="
                         item.text !== '进入直播间' &&
@@ -78,7 +78,7 @@
                       item.text === '进入直播间' ||
                       item.text.includes('进入直播间')
                         ? 'color: rgba(0 0 0 / 20%);'
-                        : 'width: 200px;'
+                        : 'width: 180px;'
                     "
                     v-else
                     v-html="getText(item.text)"
@@ -123,7 +123,7 @@ export default {
       type:Number,
     },
     pinInfo:{
-      type:Boolean
+      type:null
     },
     roomInfo:{
       type:null
@@ -149,6 +149,7 @@ export default {
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
           ? "http://huyapre.oxldkm.com/"
+          // ? "https://www.x9zb.live/"
           : window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       } else {

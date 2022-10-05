@@ -35,6 +35,7 @@ module.exports = {
     proxy:{
       'opc':{
         target : "http://huyapre.oxldkm.com/", //实际请求服务器地址
+        // target : "https://www.x9zb.live/", //实际请求服务器地址
         changeOrigin: true,
         ws:true,
         secure : false,

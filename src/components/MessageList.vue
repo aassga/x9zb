@@ -71,7 +71,7 @@ export default {
   top: 38px;
   left: 0;
   width: 100%;
-  height: 32em;
+  height: -webkit-fill-available;
   background-color: #fff;
   overflow-y: scroll;
   overflow-x: hidden;
