@@ -656,7 +656,7 @@ export default {
         this.msgText.substring(0, startpos) +
         emoji.data +
         this.msgText.substring(endpos);
-      this.isShowEmoji = false;
+      // this.isShowEmoji = false;
       this.msgText = result;
     },
     getText(str) {
@@ -857,7 +857,9 @@ export default {
     },
     newSocket(data) {
       // console.log('ws',data)
-      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://${window.location.host}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // const wsprotocol =
       //   window.location.protocol == "http:" ? "ws://" : "wss://";
@@ -1213,7 +1215,9 @@ export default {
           break;
         case "push":
           if (data.pic !== undefined) {
-            data.pic = "http://huyapre.oxldkm.com" + data.pic;
+            // data.pic = window.location.origin + data.pic;
+            // data.pic = "http://huyapre.oxldkm.com" + data.pic;
+            data.pic = "http://huyapretest.oxldkm.com" + data.pic;
             // data.pic = "https://www.x9zb.live" + data.pic;
           }
           this.msgList.push(data);
@@ -1484,18 +1488,16 @@ form {
   // top: 10px;
   cursor: pointer;
 }
-.emoji-box {
+::v-deep.emoji-box {
   position: absolute;
   bottom: 110px;
   right: 20px;
   .emoji-picker {
     width: 300px;
-    .Emojis{
-      .container-emoji{
-        .grid-emojis{
-          .emoji{
-            font-size: 21px;
-          }
+    .container-emoji{
+      .grid-emojis{
+        .emoji{
+          font-size: 21px !important;
         }
       }
     }

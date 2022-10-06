@@ -148,7 +148,9 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          ? "http://huyapre.oxldkm.com/"
+          // ? window.location.origin + '/' 
+          // ? "http://huyapre.oxldkm.com/"
+          ? "http://huyapretest.oxldkm.com/"
           // ? "https://www.x9zb.live/"
           : window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
