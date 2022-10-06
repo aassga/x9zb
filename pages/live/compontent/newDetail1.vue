@@ -17,7 +17,7 @@
 						{{item.last_msg ? item.last_msg.creation_time : '未知'}}</div>
 				</div>
 				<div class="HuyaXWebhMessagelist_i_context_b" v-if="item.last_msg.text !==''">{{item.last_msg ? item.last_msg.text : '未知'}}</div>
-				<div class="HuyaXWebhMessagelist_i_context_b" v-else-if="item.pic !== null">图片已传送</div>
+				<div class="HuyaXWebhMessagelist_i_context_b" v-else>图片已传送</div>
 			</div>
 		</div>
 		<!-- <div class="HuyaXWebhMessagelist_i_context_live" >

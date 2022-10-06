@@ -12,7 +12,7 @@
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div class="announcement" v-if="current !== 2">
+    <div class="announcement" v-if="current !== 2 || $store.state.system.announcement === undefined">
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -646,8 +646,8 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          ? "https://www.x9zb.live/upload/"
-          : // ? "http://huyapreadmin.oxldkm.com/upload/"
+          // ? "https://www.x9zb.live/upload/"
+          // : // ? "http://huyapreadmin.oxldkm.com/upload/"
             window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       }
@@ -1254,8 +1254,8 @@ export default {
       // 		: window.location.hostname
       // 	// '10.83.107.92:9021'
       // }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1382,8 +1382,8 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
+        xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
+        // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
@@ -1615,12 +1615,18 @@ export default {
       }
       switch (m) {
         case "init":
+          data.forEach((el) => {
+            if(el.pic !== undefined && el.pic !== ""){
+            // el.pic = "https://www.x9zb.live" + el.pic;
+              el.pic =  "http://huyapreadmin.oxldkm.com" + el.pic
+            }
+          });
           this.messageDataList = data;
           break;
         case "push":
           if (data.pic !== undefined) {
-            data.pic = "https://www.x9zb.live" + data.pic;
-            // data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
+            // data.pic = "https://www.x9zb.live" + data.pic;
+            data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
           }
           this.messageDataList.push(data);
           break;
@@ -1894,6 +1900,7 @@ form {
   height: calc(100vh - 300px) !important;
   width: 100%;
   position: fixed;
+  border-top: 1px solid #dcd8d8;
 }
 .detail.app-version {
   height: calc(100vh - 82px) !important;
