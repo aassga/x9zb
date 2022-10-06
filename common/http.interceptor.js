@@ -7,6 +7,7 @@ const install = (Vue, vm) => {
 	Vue.prototype.$u.http.setConfig({
 		// baseUrl: '/opc',  //dev测试
 		baseUrl: 'https://www.x9zb.live/',  //dev测试
+		// baseUrl: 'http://huyapreadmin.oxldkm.com/', //pre環境
 		// baseUrl: window.location.origin+"/",//master打包上线
 		loadingText: '努力加载中~',
 		loadingTime: 1000,

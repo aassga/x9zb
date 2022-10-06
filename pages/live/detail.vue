@@ -118,7 +118,6 @@
     <!-- <view class="activity">
 			<image v-for="(item,index) in 4" :src="'/static/images/live/icon'+(index+1)+'.png'" mode="aspectFill" @click="getShow(index)"></image>
 		</view> -->
-
     <template v-if="chat_msg_close == '0'">
       <view
         :class="['tabs_context', show1 && !hidevideo ? '' : 'tabs_context_max']"
@@ -128,13 +127,13 @@
           :activeIndex="activeIndex2"
           @onHandleClickItem="onHandleClickItem"
           :current="current"
-          v-if="current == 1 && showTabs.includes(current) && !showMsgInfo"
+          v-if="current == 2 && showTabs.includes(current) && !showMsgInfo"
           :list="messageList"
         ></newDetail1>
         <MessageInfo
           :headShow="show1 && !hidevideo"
           @close="onHandleMsgInfoBack"
-          v-if="current == 1 && showMsgInfo"
+          v-if="current == 2 && showMsgInfo"
           :current="current"
           :roomInfo="roomInfo"
         >
@@ -285,7 +284,7 @@ export default {
     if (tabList) {
       newTabList = tabList.split(",").reverse();
     } else {
-      newTabList = ["2", "1", "0"];
+      newTabList = ["1", "2", "0"];
     }
     newTabList.forEach((item) => {
       if (item === "0") {
@@ -377,7 +376,7 @@ export default {
       this.play(4);
     },
     current(e) {
-      if (e == 1) {
+      if (e == 2) {
         this.getMessageList(); // 获取聊天列表
       }
     },
@@ -505,7 +504,7 @@ export default {
     // console.log('this.parmUserInfo')
     // console.log(this.parmUserInfo)
     // console.log(this.userInfo)
-    this.getMessageList();
+    // this.getMessageList();
   },
   methods: {
     // 列表已读未读比对事件
@@ -803,7 +802,6 @@ export default {
     },
 
     change(e) {
-      // console.log(e,"e==========")
       this.current = e;
       this.showMsgInfo = false;
       if (e == 4) {
@@ -1157,7 +1155,7 @@ export default {
   flex-wrap: wrap;
   text-align: center;
   // padding: 0 28rpx;
-  background: #C41D48;
+  background: #c41d48;
 
   image {
     width: 28rpx;

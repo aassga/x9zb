@@ -2,17 +2,17 @@
 <template>
   <div
     class="detail"
-    v-show="showMsgInfo || current != 1"
+    v-show="showMsgInfo || current != 2"
     :class="{
       'app-version': hidevideo,
-      'add-margin': current == 1,
+      'add-margin': current == 2,
       'is-ios': iosDevice,
     }"
   >
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div class="announcement">
+    <div class="announcement" v-if="current !== 2">
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -27,12 +27,9 @@
           {{ pinInfo.text }}
         </div>
         <div class="chat-window" :class="{ 'chat-pin': pinInfo }">
-          <div
-            class="chat-detail-main current0"
-            ref="content-list"
-            v-if="current == 0"
-          >
-            <div v-for="(item, index) in msgList0" :key="index">
+          <div class="chat-detail-main current0" ref="content-list">
+            <!-- v-if="current == 0" -->
+            <div v-for="(item, index) in messageDataList" :key="index">
               <div class="system-tips" v-if="item.action === 'system'">
                 {{ item.text }}
               </div>
@@ -43,7 +40,8 @@
                     item.channel == 'null' ||
                     !item.channel ||
                     item.channel === channel ||
-                    (!channel && item.channel === '000')
+                    (!channel && item.channel === '000') ||
+                    item.channel === null
                   "
                 >
                   <div class="msg-box">
@@ -52,7 +50,7 @@
                         class="msg-content"
                         @click.stop="showControl(index)"
                         :style="
-                          item.text === '进入直播间'||
+                          item.text === '进入直播间' ||
                           item.text.includes('进入直播间')
                             ? 'text-align:center'
                             : ''
@@ -69,7 +67,8 @@
                             >{{ item.sender_nickname || "我"
                             }}<span
                               v-if="
-                                item.text !== '进入直播间' && !item.text.includes('进入直播间')
+                                item.text !== '进入直播间' &&
+                                !item.text.includes('进入直播间')
                               "
                               >:</span
                             ></span
@@ -138,12 +137,12 @@
               </template>
             </div>
           </div>
-          <div
+          <!-- <div
             class="chat-detail-main current1"
             ref="content-list"
             v-if="current == 1"
           >
-            <div v-for="(item, index) in msgList1" :key="index">
+            <div v-for="(item, index) in messageDataList" :key="index">
               <div class="system-tips" v-if="item.action === 'system'">
                 {{ item.text }}
               </div>
@@ -225,7 +224,7 @@
             ref="content-list"
             v-if="current == 2"
           >
-            <div v-for="(item, index) in msgList2" :key="index">
+            <div v-for="(item, index) in messageDataList" :key="index">
               <div class="system-tips" v-if="item.action === 'system'">
                 {{ item.text }}
               </div>
@@ -300,11 +299,11 @@
                 </div>
               </template>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
-    <div class="send-container" v-show="showMsgInfo || current != 1">
+    <div class="send-container" v-show="showMsgInfo || current != 2">
       <div v-if="isShowEmoji" class="emoji-box">
         <VEmojiPicker
           :showSearch="false"
@@ -316,15 +315,6 @@
       </div>
       <div class="quick-reply-list">
         <div v-if="current != 0" class="send-type-container">
-          <!-- <span :class="{ 'active-status': msgType == 1 }" @click="sendImg(1)"
-            >文字</span
-          > -->
-          <!-- <span
-            v-if="!hidevideo"
-            :class="{ 'active-status': msgType == 2 }"
-            @click="sendImg(2)"
-            >图片</span
-          > -->
           <svg
             width="25"
             height="25"
@@ -359,16 +349,6 @@
             fill-opacity="0.4"
           />
         </svg>
-        <!-- <i v-for="(item,index) in modalMsgList " :key="`msg_${index}`">
-							<template>
-								<b @click="setMsg(item)">{{JSON.parse(item.content).text}}</b>
-							</template>
-						</i> -->
-        <!-- <img
-          class="share-icon"
-          @click="getshare"
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkBAMAAAATLoWrAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAwUExURUdwTK6415ifspafs5aesZifs5afsZWesZWespaesJWdsP///8HG0dDU3K+1w/Dx9KZK7GEAAAAKdFJOUwAFUD7HJZy6kekfUjrLAAAA7klEQVQoz2NgoBCIGikHooqozVq1amUSsojJKjBwRohIrIKCRpiIYBVMaLkAVEgczF0HIgqhQl1godOvgMQKiAgzRNPpPSDSACzEAhXafQpIOoCFtCBCt3eDlC0CC2WBDf+9e/fuW6tWLQOJMM6CiezeC/QCyBmsEF1gALQ0AGrh2t1wIZCVTAhFIPMVIEJrgNz/QNNOQYWAGlfv/vsK6C64W4HG3/4D1gxSBDYe6Ii/YNfvA5FgRwCdegvubYhTYR6CgEXI3oYAB+TAgQAD5CAEgxUoAb0KOaAZMaMDS6Rhi1psCQBbMgHaQWJSAwCTmOCA8HHYJQAAAABJRU5ErkJggg=="
-        /> -->
         <div
           v-if="current == 0 && system.report == 1"
           @click="onHandleReportShow(false)"
@@ -518,6 +498,7 @@ export default {
       isReadOnly: false,
       uploadImg: false,
       msgText: "",
+      messageDataList: [],
       msgList0: [],
       msgList1: [],
       msgList2: [],
@@ -584,7 +565,7 @@ export default {
   watch: {
     page(newVal, oldVal) {
       if (newVal != oldVal) {
-        if (newVal == 1 && this.reconnectStatus) {
+        if (newVal == 2 && this.reconnectStatus) {
           return;
         }
         this.getChatHistoryMsg();
@@ -641,7 +622,7 @@ export default {
         this.parmUserInfo.vid = qVid;
         this.inRoomInfo(this.fd);
       }
-      if (newVal == 2) {
+      if (newVal == 1) {
         const qVid = this.qsVid;
         let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
         if (!vInfo.hasOwnProperty(qVid)) {
@@ -665,8 +646,9 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          ? "http://lukee.huya.com/upload/"
-          : window.location.origin + "/";
+          ? "https://www.x9zb.live/upload/"
+          : // ? "http://huyapreadmin.oxldkm.com/upload/"
+            window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       }
       return newUrl;
@@ -712,7 +694,8 @@ export default {
           break;
       }
     }
-    this.shareUrl = window.location.origin + "/room/" + getQueryString().id;
+    // this.shareUrl = window.location.origin + "/room/" + getQueryString().id;
+    this.shareUrl = window.location.href;
   },
   created() {
     this.uid = this.$route.query.id;
@@ -733,7 +716,6 @@ export default {
       });
       // 如果您不需要进行太多的处理，直接如下即可
       files = this.$refs.uUpload.lists;
-      console.log(this.msgType);
       const file = files[0].file;
       this.formData.pic = file;
       var reader = new FileReader();
@@ -767,12 +749,14 @@ export default {
     // formContainer.appendChild(input);
     // },
     onHandleClickImg(img) {
-      // console.log('我是点击图片事件')
+      console.log('我是点击图片事件')
       let url = img;
       if (img.indexOf("/") == 0) {
         url = window.location.origin + img;
       }
       uni.previewImage({
+        indicator:"number",
+        loop:true,
         urls: [url],
       });
     },
@@ -972,23 +956,25 @@ export default {
       this.msgText = result;
     },
     openAppUrl(str) {
-      var reg = /(https?:\/\/[^\s]+)/g;
-      str = str.match(reg)[0];
-      let data = { action: "blank", message: str };
-      if (this.hidevideo) {
-        // console.log("开始调用======")
-        // console.log("Android======",JSON.stringify(data),data)
-        if (getQueryString().device == "iphone") {
-          // console.log("开始调用IOS======",data)
-          window.webkit.messageHandlers.interOp.postMessage(data);
-          return;
-        }
-        if (typeof AndroidInterface !== undefined) {
+      var strRegex = /(https?:\/\/[^\s]+)/g;
+      var re = new RegExp(strRegex);
+      if (re.test(str)) {
+        let data = { action: "blank", message: str };
+        if (this.hidevideo) {
+          // console.log("开始调用======")
           // console.log("Android======",JSON.stringify(data),data)
-          AndroidInterface.postmaessage(JSON.stringify(data));
+          if (getQueryString().device == "iphone") {
+            // console.log("开始调用IOS======",data)
+            window.webkit.messageHandlers.interOp.postMessage(data);
+            return;
+          }
+          if (typeof AndroidInterface !== undefined) {
+            // console.log("Android======",JSON.stringify(data),data)
+            AndroidInterface.postmaessage(JSON.stringify(data));
+          }
+        } else {
+          window.open(str);
         }
-      } else {
-        window.open(str);
       }
     },
     getText(str) {
@@ -1070,7 +1056,11 @@ export default {
         page: iniPage || this.page,
         limit: 50,
         type:
-          this.current == 1 ? this.roomDetailData.room_type : this.current || 0,
+          this.current == 2
+            ? this.roomDetailData.room_type
+            : this.current === 1
+            ? 2
+            : this.current || 0,
         vid: this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id,
       };
@@ -1188,7 +1178,7 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-          type: this.current,
+          type: this.current === 1 ? 2 : this.current,
           is_new: 1,
           token: this.imUserInfo.token,
           // vid:this.parmUserInfo.vid,
@@ -1265,6 +1255,7 @@ export default {
       // 	// '10.83.107.92:9021'
       // }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
       this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1353,11 +1344,11 @@ export default {
       }, this.timeout);
     },
     sendMsgByApi(uiCode) {
-      console.log(uiCode);
-      console.log(this.msgType);
       let type =
         this.roomDetailData && this.roomDetailData.room_type
           ? this.roomDetailData.room_type
+          : this.current === 1
+          ? 2
           : this.current || 0;
       let data = {
         vid: this.parmUserInfo.vid,
@@ -1391,14 +1382,16 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        xhr.open("POST","http://huyapre.oxldkm.com/api/chat/sendMessage");
+        // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
+        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
-        this.uploadImg = false
-        const fileUp = document.querySelector("#fileUp");
-        const file = fileUp.files[0];
-        file = "";
+        this.uploadImg = false;
+        this.msgType = 1;
+        // const fileUp = document.querySelector("#fileUp");
+        // const file = fileUp.files[0];
+        // file = "";
         return;
       }
       this.$u
@@ -1440,12 +1433,12 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-      if(this.info.user_nickname === undefined){
+      if (this.info.user_nickname === undefined) {
         this.$u.toast("游客不可在直播间发话报成功");
-        this.msgText=""
-        return
-      }else{
-        this.handleLocalMsgList(this.current).push(msgItem);
+        this.msgText = "";
+        return;
+      } else {
+        this.handleLocalMsgList(this.current,"push",msgItem)
         this.sendMsgByApi(currentDate);
       }
       return;
@@ -1503,7 +1496,6 @@ export default {
         // this.$emit('getMessageList')
         // this.$emit('onHandleUnRead',msgList, 1);
       }
-
       if (data.action === "pin") {
         this.pinInfo = JSON.parse(data.data);
       }
@@ -1512,6 +1504,9 @@ export default {
         // list.push(data);
         // console.log( this.senderid,"123123",data," this.info======")
         //自己发送的消息不渲染到列表
+        if (data.pic !== undefined) {
+          this.handleLocalMsgList(this.current, "push", data);
+        }
         if (data.sender == this.senderid) {
           return;
         }
@@ -1525,7 +1520,7 @@ export default {
         if (data.text.includes("进入直播间") && this.current != 0) {
           return;
         }
-        this.handleLocalMsgList(this.current).push(data);
+        this.handleLocalMsgList(this.current, "push", data);
         this.toBottom();
       }
       if (data.status == 200) {
@@ -1618,57 +1613,87 @@ export default {
       if (type != this.current) {
         return;
       }
-      if (type == 0) {
-        if (m == "init") {
-          this.msgList0 = data;
-        }
-        if (m == "push") {
-          this.msgList0.push(data);
-        }
-        if (m == "unshift") {
+      switch (m) {
+        case "init":
+          this.messageDataList = data;
+          break;
+        case "push":
+          if (data.pic !== undefined) {
+            data.pic = "https://www.x9zb.live" + data.pic;
+            // data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
+          }
+          this.messageDataList.push(data);
+          break;
+        case "unshift":
           data.forEach((el) => {
-            this.msgList0.unshift(el);   
+            this.messageDataList.unshift(el);
           });
-        }
-        if (m == "empty") {
-          this.msgList0 = [];
-        }
-        return this.msgList0;
+          break;
+        case "empty":
+          this.messageDataList = [];
+          break;
+
+        default:
+          break;
       }
-      if (type == 2) {
-        if (m == "init") {
-          this.msgList2 = data;
-        }
-        if (m == "push") {
-          this.msgList2.push(data);
-        }
-        if (m == "unshift") {
-          data.forEach((el) => {
-            this.msgList2.unshift(el);   
-          });
-        }
-        if (m == "empty") {
-          this.msgList2 = [];
-        }
-        return this.msgList2;
-      }
-      if (type == 1) {
-        if (m == "init") {
-          this.msgList1 = data;
-        }
-        if (m == "push") {
-          this.msgList1.push(data);
-        }
-        if (m == "unshift") {
-          data.forEach((el) => {
-            this.msgList1.unshift(el);   
-          });
-        }
-        if (m == "empty") {
-          this.msgList1 = [];
-        }
-        return this.msgList1;
-      }
+      this.toBottom();
+
+      // if (type == 0) {
+      //   if (m == "init") {
+      //     this.msgList0 = data;
+      //   }
+      //   if (m == "push") {
+      //     this.msgList0.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     data.forEach((el) => {
+      //       this.msgList0.unshift(el);
+      //     });
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList0 = [];
+      //   }
+      //   return this.msgList0;
+      // }
+      // if (type == 2) {
+      //   if (m == "init") {
+      //     this.msgList2 = data;
+      //   }
+      //   if (m == "push") {
+      //     this.msgList2.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     data.forEach((el) => {
+      //       this.msgList2.unshift(el);
+      //     });
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList2 = [];
+      //   }
+      //   return this.msgList2;
+      // }
+      // if (type == 1) {
+      //   if (m == "init") {
+      //     this.msgList1 = data;
+      //   }
+      //   if (m == "push") {
+      //     if(data.pic !== undefined){
+      //       data.pic =  "https://www.x9zb.live" + data.pic
+      //       // data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
+      //     }
+      //     this.msgList1.push(data);
+      //   }
+      //   if (m == "unshift") {
+      //     data.forEach((el) => {
+      //       this.msgList1.unshift(el);
+      //     });
+      //   }
+      //   if (m == "empty") {
+      //     this.msgList1 = [];
+      //   }
+      //   console.log(this.msgList1)
+      //   return this.msgList1;
+      // }
       // this.toBottom()
     },
   },
@@ -2165,7 +2190,7 @@ form {
       border-radius: 4px;
       font-size: 12px;
       text-align: center;
-      color:rgba(0, 0 ,0 ,0.2)
+      color: rgba(0, 0, 0, 0.2);
     }
 
     .msg-content {
@@ -2177,11 +2202,11 @@ form {
     .text-info {
       display: initial;
       font-size: 12px;
-      color: rgba(0, 0 ,0 ,0.8);
+      color: rgba(0, 0, 0, 0.8);
     }
     .msg-footer {
       font-size: 15px;
-      color: rgba(0, 0 ,0 ,0.4);
+      color: rgba(0, 0, 0, 0.4);
       text-align: right;
       display: inline-block;
       span {
