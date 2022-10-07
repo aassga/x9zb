@@ -624,7 +624,7 @@
 			}
 			this.shareUrl = window.location.origin +"/room/"+ getQueryString().uid+"?&c="+getQueryString().channel_code
 			// item.type==0?'football':'basketball'
-			this.getRoomInfo(getRoomInfo)
+			this.getRoomInfo()
 			
 			
 			this.getGiftList()

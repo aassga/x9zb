@@ -148,14 +148,14 @@
         multiple
         :limit="1"
       >
-        <el-button type="primary">点击上传</el-button>
+        <el-button type="danger" class="red">点击上传</el-button>
       </el-upload>
 
       <span slot="footer" class="dialog-footer">
-        <el-button class="background-gray" @click="closeModel()"
+        <el-button @click="closeModel()"
           >取消</el-button
         >
-        <el-button class="background-orange" @click="sendMsg">确认</el-button>
+        <el-button @click="sendMsg">发送</el-button>
       </span>
     </el-dialog>
   </div>
@@ -357,7 +357,7 @@ export default {
         };
       }
     }
-    this.getMessageList(); // 获取聊天列表
+    // this.getMessageList(); // 获取聊天列表
     this.initToken();
     this.changeHeight()
   },
@@ -727,7 +727,7 @@ export default {
     },
     changeType(e) {
       console.log(e)
-      this.changeHeight()
+      
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -742,6 +742,7 @@ export default {
         this.newMsg.groupChat = false;
         this.showChatList = true;
       } else {
+        console.log(123)
         this.backList();
       }
       const qVid = this.qsVid;
@@ -749,7 +750,6 @@ export default {
       if (e == 0) {
         this.parmUserInfo.vid = qVid;
         this.inRoomInfo(this.fd);
-
         this.handleLocalMsgList(0);
       } else {
         if (e == 2) {
@@ -767,10 +767,8 @@ export default {
           this.inviteRoom();
         }
       }
-    },
-    // clearStatus() {
-    //   this.controlIndex = -1;
-    // },
+      this.changeHeight()
+    },    
     inviteRoom() {
       if (!this.fd) {
         return;
@@ -1708,5 +1706,13 @@ form {
   padding-left: 30px;
   z-index: 1;
   word-break: break-all;
+}
+.el-button--danger{
+  background-color: #c41d48;
+
+}
+.el-button--danger:hover, 
+.el-button--danger:focus{
+  background-color: #c41d47a1;
 }
 </style>

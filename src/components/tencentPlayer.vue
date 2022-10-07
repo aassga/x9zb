@@ -128,7 +128,7 @@ export default {
   mounted() {
     let query = this.$route.query;
     this.query = query;
-    this.getRoomInfo(getRoomInfo);
+    this.getRoomInfo();
     this.eventAdd();
     // this.Iime()
   },
