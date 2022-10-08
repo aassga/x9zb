@@ -26,7 +26,7 @@
         <div v-if="pinInfo" class="pin-info">
           {{ pinInfo.text }}
         </div>
-        <div class="chat-window" :class="{ 'chat-pin': pinInfo }">
+        <div class="chat-window" :class="{ 'chat-pin': pinInfo }" @click="clearStatus()">
           <div class="chat-detail-main current0" ref="content-list">
             <!-- v-if="current == 0" -->
             <div v-for="(item, index) in messageDataList" :key="index">
@@ -117,11 +117,8 @@
                           >重新发送</i
                         >
                         <div
-                          v-if="controlIndex === index"
-                          class="msg-control other"
+                          v-if="controlIndex === index" class="msg-control other"
                         >
-                          <!--  <div @click="mute(item)">禁言</div>
-														<div @click="freeze(item)">冻结</div> -->
                           <div @click="copyText(item)">复制</div>
                           <div
                             v-if="system.report == 1"
@@ -578,8 +575,6 @@ export default {
           return;
         }else if(this.historyData.length < 50 ){
           return;
-        }else if(newVal == 2){
-          this.getChatHistoryMsg(1);
         }else{
           this.getChatHistoryMsg();
         }
@@ -694,7 +689,7 @@ export default {
           this.getChatHistoryMsg()
           return
         }
-        this.page++;
+        this.debounce(this.addPage(),2000)
         this.isScroller = true;
       }
     });
@@ -729,6 +724,21 @@ export default {
     });
   },
   methods: {
+    addPage(){
+      return this.page ++ ;
+    },
+    debounce(fn,delay){
+      let timer = null;
+      return function () {
+        if(timer){
+          clearTimeout(timer)
+        }
+        timer = setTimeout(fn,delay)
+      }
+    },
+    clearStatus(){
+      this.controlIndex = -1
+    },
     submit() {
       let files = [];
       // 通过filter，筛选出上传进度为100的文件(因为某些上传失败的文件，进度值不为100，这个是可选的操作)
@@ -1037,7 +1047,7 @@ export default {
       if (isSucess) {
         this.$u.toast("复制成功");
         this.tipsId = "";
-        this.controlIndex = -1;
+        this.controlIndex = -1
       }
     },
     getImToken(initSec = false) {
@@ -1126,8 +1136,6 @@ export default {
           );
           // console.log('///////////////////')
           // _that.msgList.unshift(...dataList);
-        }).catch((err)=>{
-          this.isErrorMsg = false
         })
     },
     showControl(index) {
@@ -1243,7 +1251,7 @@ export default {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
         fd: fd,
-        type: this.current || 0,
+        type: this.current === 1 ? 2 : this.current || 0,
         channel: this.channel,
         channel_code: this.channel_code ? this.channel_code : "",
       };

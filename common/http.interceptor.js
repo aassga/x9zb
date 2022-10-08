@@ -54,7 +54,7 @@ const install = (Vue, vm) => {
 	// 响应拦截，判断状态码是否通过
 	Vue.prototype.$u.http.interceptor.response = (res) => {
 		 if(res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="参数错误"){
- 			vm.$u.toast(res.msg);
+ 			// vm.$u.toast(res.msg);
     	}
 		if(res.code == 0) {
 			// res为服务端返回值，可能有code，result等字段
