@@ -295,6 +295,7 @@ export default {
       if (item === "1") {
         this.tabList.unshift({
           name: "聊天",
+          
         });
       }
       if (item === "2") {
@@ -327,7 +328,7 @@ export default {
       this.recordUsageTime();
     }, 60000);
     this.Iime();
-    // this.getMessageList(); // 获取聊天列表
+    this.getMessageList(); // 获取聊天列表
   },
   onUnload() {
     // this.player = null

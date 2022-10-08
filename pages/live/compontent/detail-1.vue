@@ -314,52 +314,8 @@
         />
       </div>
       <div class="quick-reply-list">
-        <div v-if="current != 0" class="send-type-container">
+        <div class="send-type-container">
           <svg
-            width="25"
-            height="25"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            v-if="!hidevideo"
-            @click="uploadImg = true"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M0.166687 6.06669C0.166687 2.80822 2.8082 0.166687 6.06669 0.166687H33.9333C37.1918 0.166687 39.8334 2.8082 39.8334 6.06669V33.9333C39.8334 37.1918 37.1918 39.8334 33.9334 39.8334H6.06669C5.99387 39.8334 5.92134 39.832 5.84915 39.8294C5.70403 39.8399 5.55771 39.8293 5.41507 39.7978C2.46321 39.4735 0.166687 36.9716 0.166687 33.9334V6.06669ZM9.36188 36.8334H33.9334C35.535 36.8334 36.8334 35.535 36.8334 33.9333V26.7326L28.148 18.0472L9.36188 36.8334ZM36.8334 22.49L29.2086 14.8653C28.9273 14.584 28.5458 14.4259 28.148 14.4259C27.7502 14.4259 27.3686 14.584 27.0873 14.8653L5.23905 36.7135C4.04067 36.3573 3.16669 35.2474 3.16669 33.9334V6.06669C3.16669 4.46507 4.46506 3.16669 6.06669 3.16669H33.9333C35.535 3.16669 36.8334 4.46506 36.8334 6.06669V22.49ZM12.8704 11.3148C12.0113 11.3148 11.3149 12.0113 11.3149 12.8704C11.3149 13.7295 12.0113 14.4259 12.8704 14.4259C13.7295 14.4259 14.426 13.7295 14.426 12.8704C14.426 12.0113 13.7295 11.3148 12.8704 11.3148ZM8.31488 12.8704C8.31488 10.3544 10.3545 8.31483 12.8704 8.31483C15.3864 8.31483 17.426 10.3544 17.426 12.8704C17.426 15.3863 15.3864 17.4259 12.8704 17.4259C10.3545 17.4259 8.31488 15.3863 8.31488 12.8704Z"
-              fill="black"
-              fill-opacity="0.4"
-            />
-          </svg>
-        </div>
-        <svg
-          width="25"
-          height="25"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          @click="getshare"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M30.2778 3.16669C28.0237 3.16669 26.2222 4.97173 26.2222 7.16669C26.2222 7.86403 26.4041 8.52201 26.7245 9.09526C26.744 9.12418 26.7626 9.15398 26.7803 9.18464C26.7935 9.20744 26.806 9.23045 26.8178 9.25363C27.5284 10.3979 28.8067 11.1667 30.2778 11.1667C32.5319 11.1667 34.3334 9.36165 34.3334 7.16669C34.3334 4.97173 32.5319 3.16669 30.2778 3.16669ZM25.0793 11.8997C26.3713 13.2948 28.2254 14.1667 30.2778 14.1667C34.1602 14.1667 37.3334 11.0469 37.3334 7.16669C37.3334 3.28652 34.1602 0.166687 30.2778 0.166687C26.3954 0.166687 23.2222 3.28652 23.2222 7.16669C23.2222 7.91616 23.3406 8.63727 23.5596 9.31301L13.2541 15.267C11.9621 13.8719 10.1079 13 8.05556 13C4.17313 13 1 16.1199 1 20C1 23.8802 4.17313 27 8.05556 27C10.1082 27 11.9627 26.1279 13.2546 24.7324L23.5623 30.6789C23.3416 31.357 23.2222 32.0809 23.2222 32.8334C23.2222 36.7135 26.3954 39.8334 30.2778 39.8334C34.1602 39.8334 37.3334 36.7135 37.3334 32.8334C37.3334 28.9532 34.1602 25.8334 30.2778 25.8334C28.2285 25.8334 26.3769 26.7026 25.0852 28.094L14.774 22.1455C14.9928 21.47 15.1111 20.7492 15.1111 20C15.1111 19.2505 14.9927 18.5294 14.7737 17.8537L25.0793 11.8997ZM11.5156 17.9133C11.5274 17.9364 11.5399 17.9593 11.5531 17.9821C11.5707 18.0127 11.5893 18.0424 11.6088 18.0713C11.9292 18.6446 12.1111 19.3026 12.1111 20C12.1111 20.6974 11.9293 21.3554 11.6088 21.9287C11.5892 21.9579 11.5704 21.9879 11.5526 22.0188C11.5396 22.0413 11.5273 22.064 11.5156 22.0868C10.805 23.2311 9.52669 24 8.05556 24C5.80149 24 4 22.195 4 20C4 17.8051 5.80149 16 8.05556 16C9.52671 16 10.8051 16.7689 11.5156 17.9133ZM26.2222 32.8334C26.2222 32.1747 26.3844 31.5512 26.6724 31.001C26.7186 30.943 26.7611 30.8808 26.7993 30.8146C26.8317 30.7584 26.8601 30.701 26.8845 30.6427C27.6067 29.5559 28.8516 28.8334 30.2778 28.8334C32.5319 28.8334 34.3334 30.6384 34.3334 32.8334C34.3334 35.0283 32.5319 36.8334 30.2778 36.8334C28.0237 36.8334 26.2222 35.0283 26.2222 32.8334Z"
-            fill="black"
-            fill-opacity="0.4"
-          />
-        </svg>
-        <div
-          v-if="current == 0 && system.report == 1"
-          @click="onHandleReportShow(false)"
-          class="quick-reply-list-btn"
-        >
-          举报
-        </div>
-        <!-- v-if="current == 0 && system.report == 1" -->
-      </div>
-      <div>
-        <svg
           @click="isShowEmoji = !isShowEmoji"
           class="emoji-btn"
           style="max-height: 30px"
@@ -402,23 +358,72 @@
             stroke-linecap="round"
             stroke-linejoin="round"
           />
-        </svg>
-      </div>
-      <div class="footer-box">
-        <!-- v-if="msgType != 2" -->
-        <textarea
-          id="msg"
-          type="text"
-          @blur="toTop"
-          placeholder="请输入内容"
-          rows="1"
-          v-model="msgText"
-          ref="msg"
-          v-on:keyup.enter="sendMsg"
+          </svg>           
+        </div>
+      
+        <div v-if="current != 0" class="send-type-container">
+          <svg
+            width="25"
+            height="25"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            v-if="!hidevideo"
+            @click="uploadImg = true"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M0.166687 6.06669C0.166687 2.80822 2.8082 0.166687 6.06669 0.166687H33.9333C37.1918 0.166687 39.8334 2.8082 39.8334 6.06669V33.9333C39.8334 37.1918 37.1918 39.8334 33.9334 39.8334H6.06669C5.99387 39.8334 5.92134 39.832 5.84915 39.8294C5.70403 39.8399 5.55771 39.8293 5.41507 39.7978C2.46321 39.4735 0.166687 36.9716 0.166687 33.9334V6.06669ZM9.36188 36.8334H33.9334C35.535 36.8334 36.8334 35.535 36.8334 33.9333V26.7326L28.148 18.0472L9.36188 36.8334ZM36.8334 22.49L29.2086 14.8653C28.9273 14.584 28.5458 14.4259 28.148 14.4259C27.7502 14.4259 27.3686 14.584 27.0873 14.8653L5.23905 36.7135C4.04067 36.3573 3.16669 35.2474 3.16669 33.9334V6.06669C3.16669 4.46507 4.46506 3.16669 6.06669 3.16669H33.9333C35.535 3.16669 36.8334 4.46506 36.8334 6.06669V22.49ZM12.8704 11.3148C12.0113 11.3148 11.3149 12.0113 11.3149 12.8704C11.3149 13.7295 12.0113 14.4259 12.8704 14.4259C13.7295 14.4259 14.426 13.7295 14.426 12.8704C14.426 12.0113 13.7295 11.3148 12.8704 11.3148ZM8.31488 12.8704C8.31488 10.3544 10.3545 8.31483 12.8704 8.31483C15.3864 8.31483 17.426 10.3544 17.426 12.8704C17.426 15.3863 15.3864 17.4259 12.8704 17.4259C10.3545 17.4259 8.31488 15.3863 8.31488 12.8704Z"
+              fill="black"
+              fill-opacity="0.4"
+            />
+          </svg>
+        </div>
+        <div class="send-type-container">
+          <svg
+            width="25"
+            height="25"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            @click="getshare"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M30.2778 3.16669C28.0237 3.16669 26.2222 4.97173 26.2222 7.16669C26.2222 7.86403 26.4041 8.52201 26.7245 9.09526C26.744 9.12418 26.7626 9.15398 26.7803 9.18464C26.7935 9.20744 26.806 9.23045 26.8178 9.25363C27.5284 10.3979 28.8067 11.1667 30.2778 11.1667C32.5319 11.1667 34.3334 9.36165 34.3334 7.16669C34.3334 4.97173 32.5319 3.16669 30.2778 3.16669ZM25.0793 11.8997C26.3713 13.2948 28.2254 14.1667 30.2778 14.1667C34.1602 14.1667 37.3334 11.0469 37.3334 7.16669C37.3334 3.28652 34.1602 0.166687 30.2778 0.166687C26.3954 0.166687 23.2222 3.28652 23.2222 7.16669C23.2222 7.91616 23.3406 8.63727 23.5596 9.31301L13.2541 15.267C11.9621 13.8719 10.1079 13 8.05556 13C4.17313 13 1 16.1199 1 20C1 23.8802 4.17313 27 8.05556 27C10.1082 27 11.9627 26.1279 13.2546 24.7324L23.5623 30.6789C23.3416 31.357 23.2222 32.0809 23.2222 32.8334C23.2222 36.7135 26.3954 39.8334 30.2778 39.8334C34.1602 39.8334 37.3334 36.7135 37.3334 32.8334C37.3334 28.9532 34.1602 25.8334 30.2778 25.8334C28.2285 25.8334 26.3769 26.7026 25.0852 28.094L14.774 22.1455C14.9928 21.47 15.1111 20.7492 15.1111 20C15.1111 19.2505 14.9927 18.5294 14.7737 17.8537L25.0793 11.8997ZM11.5156 17.9133C11.5274 17.9364 11.5399 17.9593 11.5531 17.9821C11.5707 18.0127 11.5893 18.0424 11.6088 18.0713C11.9292 18.6446 12.1111 19.3026 12.1111 20C12.1111 20.6974 11.9293 21.3554 11.6088 21.9287C11.5892 21.9579 11.5704 21.9879 11.5526 22.0188C11.5396 22.0413 11.5273 22.064 11.5156 22.0868C10.805 23.2311 9.52669 24 8.05556 24C5.80149 24 4 22.195 4 20C4 17.8051 5.80149 16 8.05556 16C9.52671 16 10.8051 16.7689 11.5156 17.9133ZM26.2222 32.8334C26.2222 32.1747 26.3844 31.5512 26.6724 31.001C26.7186 30.943 26.7611 30.8808 26.7993 30.8146C26.8317 30.7584 26.8601 30.701 26.8845 30.6427C27.6067 29.5559 28.8516 28.8334 30.2778 28.8334C32.5319 28.8334 34.3334 30.6384 34.3334 32.8334C34.3334 35.0283 32.5319 36.8334 30.2778 36.8334C28.0237 36.8334 26.2222 35.0283 26.2222 32.8334Z"
+              fill="black"
+              fill-opacity="0.4"
+            />
+          </svg>
+        </div>
+
+        <div
+          v-if="current == 0 && system.report == 1"
+          @click="onHandleReportShow(false)"
+          class="quick-reply-list-btn"
         >
-        </textarea>
-        <span class="send" @click="sendMsg">发送</span>
+          举报
+        </div>
+        <div class="footer-box">
+          <!-- v-if="msgType != 2" -->
+          <textarea
+            id="msg"
+            :style="current !== 0 ? 'width:11.5em':'width:14em'"
+            type="text"
+            @blur="toTop"
+            placeholder="请输入内容"
+            rows="1"
+            v-model="msgText"
+            ref="msg"
+            v-on:keyup.enter="sendMsg"
+          >
+          </textarea>
+          <span class="send" @click="sendMsg">发送</span>
+        </div>
       </div>
+
 
       <!-- <div
         id="add-img"
@@ -481,10 +486,11 @@
 <script>
 import { getQueryString } from "@/common/Qs";
 import { getUUID } from "@/common/uuid";
+import _assertThisInitialized from "@babel/runtime/helpers/assertThisInitialized";
 import { VEmojiPicker } from "v-emoji-picker";
 export default {
   name: "information-detail",
-  props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
+  props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid",],
   components: {
     VEmojiPicker,
   },
@@ -493,6 +499,7 @@ export default {
       reportListShow: false,
       reportList: [],
       reportValue: "",
+      isErrorMsg:true,
       url: window.location.href,
       modalMsgList: [],
       isReadOnly: false,
@@ -554,6 +561,8 @@ export default {
       info: null,
       type0_local_msg_list: [],
       type2_local_msg_list: [],
+      historyData:[],
+      initInvite:true,
     };
   },
   computed: {
@@ -567,17 +576,23 @@ export default {
       if (newVal != oldVal) {
         if (newVal == 2 && this.reconnectStatus) {
           return;
+        }else if(this.historyData.length < 50 ){
+          return;
+        }else if(newVal == 2){
+          this.getChatHistoryMsg(1);
+        }else{
+          this.getChatHistoryMsg();
         }
-        this.getChatHistoryMsg();
       }
     },
+
     fd(newVal, oldVal) {
       if (newVal != oldVal) {
-        // if (this.current == 2) {
-        // 	this.inviteRoom();
-        // } else {
+        if (this.current == 0) {
+        	this.inviteRoom();
+        } 
         this.inRoomInfo(newVal);
-        // }
+        
       }
     },
     showLoading(newV, oldV) {
@@ -599,12 +614,12 @@ export default {
       }
     },
     current(newVal, oldVal) {
+      this.messageDataList = []
       this.initBase();
       if (oldVal == 2) {
         this.leaveRoom();
         this.$emit("leaveRoom");
       }
-
       if (newVal != oldVal) {
         //this.addDom();
         this.msgType = 1;
@@ -646,9 +661,9 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          // ? "https://www.x9zb.live/upload/"
-          // : // ? "http://huyapreadmin.oxldkm.com/upload/"
-            window.location.origin + "/";
+          ? "https://www.x9zb.live/upload/"
+          // ? "http://huyapreadmin.oxldkm.com/upload/"
+          : // window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       }
       return newUrl;
@@ -674,6 +689,11 @@ export default {
       // );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
+        if(!this.isErrorMsg){
+          this.isErrorMsg = true
+          this.getChatHistoryMsg()
+          return
+        }
         this.page++;
         this.isScroller = true;
       }
@@ -699,6 +719,7 @@ export default {
   },
   created() {
     this.uid = this.$route.query.id;
+
   },
   beforeDestroy() {
     this.$store.dispatch("chatInOut", {
@@ -749,7 +770,7 @@ export default {
     // formContainer.appendChild(input);
     // },
     onHandleClickImg(img) {
-      console.log('我是点击图片事件')
+      // console.log('我是点击图片事件')
       let url = img;
       if (img.indexOf("/") == 0) {
         url = window.location.origin + img;
@@ -781,7 +802,6 @@ export default {
       this.handleLocalMsgList(this.current).map((val, index) => {
         if (val == item) {
           this.handleLocalMsgList(this.current).splice(index, 1);
-          console.log(this.msgList);
         }
       });
       this.msgText = item.text;
@@ -1088,6 +1108,7 @@ export default {
             return;
           }
           let dataList = res.reverse();
+          this.historyData = res
           this.lockPage = true;
           if (dataList.length <= 10) {
             this.isScroller = true;
@@ -1105,7 +1126,9 @@ export default {
           );
           // console.log('///////////////////')
           // _that.msgList.unshift(...dataList);
-        });
+        }).catch((err)=>{
+          this.isErrorMsg = false
+        })
     },
     showControl(index) {
       // console.log('我是点击消息事件')
@@ -1178,7 +1201,8 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-          type: this.current === 1 ? 2 : this.current,
+          // type: this.current === 1 ? 2 : this.current,
+          type: 2,
           is_new: 1,
           token: this.imUserInfo.token,
           // vid:this.parmUserInfo.vid,
@@ -1189,6 +1213,12 @@ export default {
           channel_code: this.channel_code ? this.channel_code : "",
         })
         .then((res) => {
+          if(this.initInvite){
+            this.initInvite = false
+            roomInfo[roomId] = res.vid;
+            localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+            return
+          }
           roomInfo[roomId] = res.vid;
           this.parmUserInfo.vid = res.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
@@ -1226,6 +1256,11 @@ export default {
           this.initInfo(true);
           return;
         }
+        if(res.pinData && res.pinData !== ""){
+          _that.pinInfo = {
+            text:res.pinData
+          }
+        }
         _that.getChatHistoryMsg(1);
       });
     },
@@ -1254,8 +1289,8 @@ export default {
       // 		: window.location.hostname
       // 	// '10.83.107.92:9021'
       // }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1305,6 +1340,7 @@ export default {
       this.timeoutnum = setTimeout(() => {
         //新连接
         // this.initBase();
+        this.initInvite = true
         this.initInfo(true);
         this.lockReconnect = false;
       }, 5000);
@@ -1382,8 +1418,8 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-        // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
+        // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
+        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
@@ -1613,24 +1649,18 @@ export default {
       if (type != this.current) {
         return;
       }
+      const set = new Set();
       switch (m) {
         case "init":
           data.forEach((el) => {
-            if(el.pic !== undefined && el.pic !== ""){
-            // el.pic = "https://www.x9zb.live" + el.pic;
-              el.pic =  "http://huyapreadmin.oxldkm.com" + el.pic
-            }
           });
-          this.messageDataList = data;
+          this.messageDataList = data
           break;
         case "push":
-          if (data.pic !== undefined) {
-            // data.pic = "https://www.x9zb.live" + data.pic;
-            data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
-          }
           this.messageDataList.push(data);
           break;
         case "unshift":
+  
           data.forEach((el) => {
             this.messageDataList.unshift(el);
           });
@@ -1920,10 +1950,11 @@ form {
 .quick-reply-list {
   position: relative;
   width: 100%;
-  height: 30px;
-  line-height: 30px;
-  overflow-x: scroll;
-  padding-left: 40px;
+  // height: 30px;
+  // line-height: 30px;
+  display: flex;
+  align-content: center;
+  margin-top: 5px;
 
   i {
     margin-right: 10px;
@@ -2034,16 +2065,17 @@ form {
 .footer-box {
   display: flex;
   justify-content: space-around;
-  margin-top: 10px;
+  // margin-top: 10px;
 }
 #msg {
   border: 1px solid #c41d48;
   border-radius: 4px;
   padding: 6px;
-  width: 80%;
+  // width: 80%;
   height: 25px;
   // bottom: -6px;
   line-height: 25px;
+  margin: 0 10px 0 0;
 }
 
 /deep/ .el-drawer__header {
@@ -2059,11 +2091,11 @@ form {
   height: 160px !important;
 }
 .send-container {
-  height: 160rpx;
+  height: 50px;
+  line-height: 50px;
   position: fixed;
   bottom: 0;
   width: 95%;
-  line-height: 100rpx;
   background: #fff;
   padding: 20rpx;
   border-top: 1px solid #f1f1f1;
@@ -2132,9 +2164,9 @@ form {
 }
 
 .emoji-btn {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  // position: absolute;
+  // left: 10px;
+  // top: 10px;
   cursor: pointer;
 }
 
