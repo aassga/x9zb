@@ -872,12 +872,13 @@ export default {
     },
     newSocket(data) {
       // console.log('ws',data)
-      // this.WSURL = `ws://${window.location.host}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      const wsprotocol = window.location.protocol === "http:" ? "ws://" : "wss://";
+      const windowHost = window.location.hostname
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // const wsprotocol =
-      //   window.location.protocol == "http:" ? "ws://" : "wss://";
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+
       // this.WSURL = `${wsprotocol}${
       //   window.location.hostname.includes("10")
       //     ? "10.83.107.92:9021"
@@ -1233,10 +1234,10 @@ export default {
           break;
         case "push":
           if (data.pic !== undefined) {
-            // data.pic = window.location.origin + data.pic;
+            data.pic = window.location.origin + data.pic;
             // data.pic = "http://huyapre.oxldkm.com" + data.pic;
             // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
-            data.pic = "https://www.x9zb.live" + data.pic;
+            // data.pic = "https://www.x9zb.live" + data.pic;
           }
           this.msgList.push(data);
           break;
