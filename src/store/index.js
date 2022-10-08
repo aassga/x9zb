@@ -113,6 +113,7 @@ const store = new Vuex.Store({
 
 	 getImToken({ commit }, params) {
 		return HomedApi.getImToken(params).then((res) => {
+
 		 return res
 		});
 	  },
@@ -168,10 +169,13 @@ const store = new Vuex.Store({
 		});
 	},
 	getMessageList({ commit }, params) {
-        return HomedApi.getMessageList(params).then((res) => {
-            return res
-        });
-    },
+		return HomedApi.getMessageList(params).then((res) => {
+				return res
+		}).catch((err)=>{
+			localStorage.clear();
+			window.location.reload()
+		})
+  },
 	addQuickReply({ commit }, params) {
 		return HomedApi.addQuickReply(params).then((res) => {
 			return res
@@ -207,6 +211,10 @@ const store = new Vuex.Store({
 	  // 用户信息
 	  getUserInfo(state){
 		  info().then(res=>{
+				if(res === undefined){
+					localStorage.clear();
+					window.location.reload()
+				}
 			  state.state.infos = res.data
 			  // this.updateMyProfile(res.data)
 		  }).catch(res=>{})

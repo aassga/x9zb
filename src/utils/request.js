@@ -70,11 +70,11 @@ service.interceptors.response.use(
 		const res = response.data
 		// if the custom code is not 20000, it is judged as an error.
 		if (res.msg != "connection error" && res.msg != "成功" && res.msg != "success" && res.msg != "" && res.msg != "操作成功" && res.msg != "登录成功") {
-			Message({
-				message: res.msg || 'Error',
-				type: 'error',
-				duration: 5 * 1000
-			})
+			// Message({
+			// 	message: res.msg || 'Error',
+			// 	type: 'error',
+			// 	duration: 5 * 1000
+			// })
 		}
 		if (res.code == 1 && res.msg != "connection error") {
 			Message({

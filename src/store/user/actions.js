@@ -293,7 +293,7 @@ export default {
     getMessageList({ commit }, params) {
         return HomedApi.getMessageList(params).then((res) => {
             return res
-        });
+        })
     },
     sendMessage({ commit }, params) {
         return HomedApi.sendMessage(params).then((res) => {

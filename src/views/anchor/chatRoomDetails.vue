@@ -1,5 +1,5 @@
 <template>
-  <div id="chat-models" style="height: 100%">
+  <div id="chat-models" style="height: 100%" >
     <input id="cp-input" />
     <div class="ChatDetails_container">
       <div class="header-list">
@@ -11,9 +11,9 @@
         >
           {{ item.name }}
           <i
-            v-show="oneChat && oneChat > 0 && item.id == 2"
+            v-show="(oneChat && oneChat > 0 && item.id == 2 && !hideChat) || inviteCount"
             class="new-msg-icon"
-            >{{ oneChat > 99 ? "99+" : oneChat }}</i
+            >{{ oneChat > 99 ? "99+" : inviteCount ? 1 :oneChat }}</i
           >
           <i
             v-show="msgCount && msgCount > 0 && item.id == 1"
@@ -211,6 +211,7 @@ export default {
       targetUserInfo: {},
       isAllowedSendMsg: true,
       hasSendMsgCount: 0,
+
       needBuy: false,
       that: this,
       active: 0,
@@ -235,6 +236,7 @@ export default {
       pinInfo: "",
       page: 1,
       ctp: 0,
+      inviteCount:0,
       prevImg: null,
       showChatList: false,
       isMore: true,
@@ -268,6 +270,10 @@ export default {
   watch: {
     msgList2: {
       handler(newV, oldV) {
+        console.log("未读消息列表数据变化");
+        console.log(newV);
+        console.log("消息列表的数据");
+        console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
         this.onHandleGroupMsgChange(this.messageList);
         // 刷新视图
@@ -311,15 +317,16 @@ export default {
     const _that = this;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop <= 2 && this.isMore) {
+      if (domScroll.scrollTop <= 25 && domScroll.scrollTop !== 0 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
-        // this.getChatHistoryMsg(this.initTab ? 1 : "");
+        this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
+
     
     
     // console.log(this.qsVid,"this.qsVid==============")
@@ -357,7 +364,7 @@ export default {
         };
       }
     }
-    // this.getMessageList(); // 获取聊天列表
+    this.getMessageList(); // 获取聊天列表
     this.initToken();
     this.changeHeight()
   },
@@ -501,6 +508,7 @@ export default {
       this.msgCount = num;
     },
     onHandleMsgChange(list) {
+      console.log(list)
       let num = 0;
       for (let index = 0; index < list.length; index++) {
         const element = list[index];
@@ -553,9 +561,14 @@ export default {
     },
     initToken() {
       const _that = this;
-      this.$store.dispatch("getImToken", this.parmUserInfo).then((res) => {
+      this.$store.dispatch("getImToken", this.parmUserInfo)
+      .then((res) => {
         _that.imUserInfo = res.data;
         _that.newSocket(res.data);
+      })
+      .catch((err) => {
+        localStorage.clear();
+				window.location.reload()
       });
     },
     backList() {
@@ -726,8 +739,6 @@ export default {
       }, 1000);
     },
     changeType(e) {
-      console.log(e)
-      
       this.pinInfo = "";
       if (this.showLoading) {
         return;
@@ -753,6 +764,7 @@ export default {
         this.handleLocalMsgList(0);
       } else {
         if (e == 2) {
+          this.inviteCount = 0
           this.handleLocalMsgList(2);
           this.newMsg.oneChat = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
@@ -810,6 +822,7 @@ export default {
       };
 
       this.$store.dispatch("getChatHistory", params).then((res) => {
+        
         let dataList = res.data.reverse();
         this.showLoading = false;
         this.initTab = false;
@@ -824,7 +837,11 @@ export default {
           params.page != 1 ? "unshift" : "init",
           dataList
         );
-      });
+      })
+      .catch(err => {
+        localStorage.clear();
+				window.location.reload()
+      })
     },
     // showControl(index) {
     //   if (this.controlIndex == index) {
@@ -857,8 +874,8 @@ export default {
       // console.log('ws',data)
       // this.WSURL = `ws://${window.location.host}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // const wsprotocol =
       //   window.location.protocol == "http:" ? "ws://" : "wss://";
       // this.WSURL = `${wsprotocol}${
@@ -872,6 +889,7 @@ export default {
       this.ws = new WebSocket(this.WSURL);
       // this.$global.setWs(this.ws);
       //
+
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 通信发生错误时触发
@@ -1014,6 +1032,14 @@ export default {
     },
     sendMsg() {
       this.isShowEmoji = false;
+      var strRegex =
+          /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+      var re = new RegExp(strRegex);
+      if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
+        this.$message.error("无法发送超连结");
+        this.msgText = "";
+        return false;
+      }
       if (this.ctp == 0 && !this.token) {
         this.$message({
           type: "error",
@@ -1039,7 +1065,6 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-      console.log(this.ctp)
       this.handleLocalMsgList(this.ctp,"push",msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
@@ -1051,6 +1076,7 @@ export default {
       if (data.fd !== null && data.action === "open") {
         this.fd = data.fd;
         this.inRoomInfo(data.fd);
+        // this.inviteRoom()  
       }
 
       if (data.action === "delmsg") {
@@ -1065,6 +1091,9 @@ export default {
         this.handleLocalMsgList(this.ctp, "empty");
       }
       if (data.action === "newRoom") {
+        if(this.ctp !== 2 && data.room_type === "2"){
+          this.inviteCount = this.inviteCount + 1
+        }
         if (data.fd != this.fd) {
           if (data.room_type === "2") {
             this.newMsg.oneChat = true;
@@ -1190,37 +1219,29 @@ export default {
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
     },
-    unique(arr, key) {
-      if (!arr) return arr;
-      if (key === undefined) return [...new Set(arr)];
-      const map = {
-        string: (e) => e[key],
-        function: (e) => key(e),
-      };
-      const fn = map[typeof key];
-      const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {});
-      return Object.values(obj);
-    },
     //解耦合
     handleLocalMsgList(type, m, data) {
       // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;
       }
+      const set = new Set();
       switch (m) {
         case "init":
-          this.msgList = data;
+          // this.msgList = data.filter(item => !set.has(item.sender_nickname) ? set.add(item.sender_nickname) : false);
+          this.msgList = data
           break;
         case "push":
           if (data.pic !== undefined) {
             // data.pic = window.location.origin + data.pic;
             // data.pic = "http://huyapre.oxldkm.com" + data.pic;
-            data.pic = "http://huyapretest.oxldkm.com" + data.pic;
-            // data.pic = "https://www.x9zb.live" + data.pic;
+            // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
+            data.pic = "https://www.x9zb.live" + data.pic;
           }
           this.msgList.push(data);
           break;
         case "unshift":
+          // this.newData = data.filter(item => !set.has(item.sender_nickname) ? set.add(item.sender_nickname) : false);
           data.forEach((el) => {
             this.msgList.unshift(el);
           });
@@ -1232,7 +1253,7 @@ export default {
         default:
           break;
       }
-      this.toBottom();
+      this.msgList = this.msgList.filter(item=> item.isError === undefined)
     },
   },
 };

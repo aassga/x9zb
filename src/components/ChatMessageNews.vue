@@ -44,7 +44,7 @@
                         : ''
                     "
                   >
-                    {{ item.sender_nickname.length > 10 ? item.sender_nickname.substr(0,7) : item.sender_nickname }}
+                    {{ item.sender_nickname }}
                     <span
                       v-if="
                         item.text !== '进入直播间' &&
@@ -88,7 +88,7 @@
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
                     @click="resend(item)"
-                  ></i>
+                  >重新发送</i>
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -150,8 +150,8 @@ export default {
         let split = window.location.hostname.includes("10")
           // ? window.location.origin + '/' 
           // ? "http://huyapre.oxldkm.com/"
-          ? "http://huyapretest.oxldkm.com/"
-          // ? "https://www.x9zb.live/"
+          // ? "http://huyapretest.oxldkm.com/"
+          ? "https://www.x9zb.live/"
           : window.location.origin + "/";
         newUrl = newUrl.replace(split, "");
       } else {
