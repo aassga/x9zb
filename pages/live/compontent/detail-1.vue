@@ -2349,7 +2349,7 @@ form {
 }
 .pin-info {
   background: #f4e8d3;
-  padding: 0 5px 5px;
+  padding: 5px;
   text-align: left;
   border-radius: 4px;
   position: absolute;
