@@ -46,6 +46,7 @@
       <chat-message-new
         :msgList="msgList"
         :controlIndex="controlIndex"
+        :parmUserInfo="parmUserInfo"
         :ctp="ctp"
         :pinInfo="pinInfo"
         :roomInfo="roomInfo"
@@ -270,10 +271,6 @@ export default {
   watch: {
     msgList2: {
       handler(newV, oldV) {
-        console.log("未读消息列表数据变化");
-        console.log(newV);
-        console.log("消息列表的数据");
-        console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
         this.onHandleGroupMsgChange(this.messageList);
         // 刷新视图
@@ -317,13 +314,15 @@ export default {
     const _that = this;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop <= 25 && domScroll.scrollTop !== 0 && this.isMore) {
+      if (domScroll.scrollTop <=2 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
-        this.getChatHistoryMsg(this.initTab ? 1 : "");
+        setTimeout(() => {
+          this.getChatHistoryMsg(this.initTab ? 1 : "");
+        }, 1000)
       }
     });
 
@@ -568,7 +567,7 @@ export default {
       })
       .catch((err) => {
         localStorage.clear();
-				window.location.reload()
+				// window.location.reload()
       });
     },
     backList() {
@@ -739,13 +738,15 @@ export default {
       }, 1000);
     },
     changeType(e) {
+      console.log(e)
       this.pinInfo = "";
-      if (this.showLoading) {
-        return;
-      }
-      if (this.ctp == e) {
-        return;
-      }
+      this.msgList = []
+      // if (this.showLoading) {
+      //   return;
+      // }
+      // if (this.ctp == e) {
+      //   return;
+      // }
       this.ctp = e;
       this.page = 1;
       this.showLoading = true;
@@ -753,7 +754,6 @@ export default {
         this.newMsg.groupChat = false;
         this.showChatList = true;
       } else {
-        console.log(123)
         this.backList();
       }
       const qVid = this.qsVid;
@@ -768,6 +768,7 @@ export default {
           this.handleLocalMsgList(2);
           this.newMsg.oneChat = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
+        
           if (!vInfo.hasOwnProperty(qVid)) {
             this.inviteRoom();
             return;
@@ -782,6 +783,7 @@ export default {
       this.changeHeight()
     },    
     inviteRoom() {
+      console.log(this.fd)
       if (!this.fd) {
         return;
       }
@@ -839,8 +841,8 @@ export default {
         );
       })
       .catch(err => {
-        localStorage.clear();
-				window.location.reload()
+        // localStorage.clear();
+				// window.location.reload()
       })
     },
     // showControl(index) {
@@ -872,13 +874,13 @@ export default {
     },
     newSocket(data) {
       // console.log('ws',data)
-      const wsprotocol = window.location.protocol === "http:" ? "ws://" : "wss://";
-      const windowHost = window.location.hostname
-      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
+      let windowHost = window.location.hostname
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `${wsprotocol}${
       //   window.location.hostname.includes("10")
@@ -1042,7 +1044,7 @@ export default {
         this.msgText = "";
         return false;
       }
-      if (this.ctp == 0 && !this.token) {
+      if (this.ctp === 0 && !this.token) {
         this.$message({
           type: "error",
           message: "未登录不能在直播间发言~",
@@ -1067,7 +1069,7 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-      this.handleLocalMsgList(this.ctp,"push",msgItem);
+      // this.handleLocalMsgList(this.ctp,"push",msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
       return;
@@ -1139,12 +1141,6 @@ export default {
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
-        if (data.pic !== undefined) {
-          this.handleLocalMsgList(this.ctp, "push", data);
-        }
-        if (data.sender_nickname === this.info.user_nickname) {
-          return;
-        }
         if (data.sender_nickname.includes("游客") && this.ctp == 0) {
           return;
         }
@@ -1230,7 +1226,6 @@ export default {
       const set = new Set();
       switch (m) {
         case "init":
-          // this.msgList = data.filter(item => !set.has(item.sender_nickname) ? set.add(item.sender_nickname) : false);
           this.msgList = data
           break;
         case "push":
@@ -1244,7 +1239,6 @@ export default {
           this.msgList.push(data);
           break;
         case "unshift":
-          // this.newData = data.filter(item => !set.has(item.sender_nickname) ? set.add(item.sender_nickname) : false);
           data.forEach((el) => {
             this.msgList.unshift(el);
           });
@@ -1256,7 +1250,6 @@ export default {
         default:
           break;
       }
-      this.msgList = this.msgList.filter(item=> item.isError === undefined)
     },
   },
 };
@@ -1470,9 +1463,9 @@ form {
   display: flex;
   span {
     position: relative;
-    color: #fff;
+    color: #000;
     line-height: 38px;
-    background: #6363b5;
+    background: #f4f4f4;
     text-align: center;
     display: inline-block;
     margin-right: 1px;
@@ -1485,6 +1478,8 @@ form {
       // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
       //   linear-gradient(#000000, #000000);
       background-color: #c41d48;
+      color: #FFF;
+
     }
   }
 }
@@ -1622,7 +1617,7 @@ form {
     }
   }
   .chat-window {
-    background: #f3f3f3;
+    background: #FFF;
     height: 27.3em;
     // padding-top: 80px;
     // margin-top: 76px;

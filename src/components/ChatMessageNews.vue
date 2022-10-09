@@ -10,7 +10,7 @@
     </div>
 
     <div class="chat-detail-main" ref="content-list">
-      <div v-for="(item, index) in msgList" :key="index">
+      <div v-for="(item, index) in msgList" :key="index" :class="{'is-anchor': ctp === 2}">
         <!--   <div class="system-tips" v-if="item.action === 'system'">
                 {{item.text}}
               </div>-->
@@ -28,14 +28,17 @@
               <div class="msg-container">
                 <div
                   class="msg-content"
-                  :style="
-                    item.text === '进入直播间' || item.text.includes('进入直播间')
-                      ? 'justify-content: center;'
-                      : ''
-                  "
+                   :class="[
+                    {'my-self': mySelf(item) && ctp === 2},
+                   ]"
                 >
-                  <!-- <span class="level-1">Lv1</span> -->
-                  <div
+                  <template v-if="ctp === 0">
+                    <img :src="hiImg" class="hi-tag" v-if="item.text ? item.text.indexOf('进入直播间') !== -1 : false"/>
+                    <span class="anchor-tag" v-if="item.sender == uid">主播</span>
+                    <span class="level-tag" :class="`level${item.sender_exp ? item.sender_exp : 0}`" v-if="item.sender_exp && item.action !== 'gift' && item.sender != uid">Lv.{{item.sender_exp ? item.sender_exp : 0}}</span>
+                  </template>
+
+                  <div v-if="ctp !== 2"
                     class="text-name"
                     :style="
                       item.text === '进入直播间' ||
@@ -52,6 +55,11 @@
                       "
                       >:</span
                     >
+                  </div>
+                  <div v-if="ctp === 2 && !mySelf(item)"  class="msg-avatar" >
+                    <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
+                    <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
+                    <img class="avatar" :src="avatarImg(item)">
                   </div>
                   <template v-if="item.pic && !item.text">
                     <el-image
@@ -72,18 +80,20 @@
                       <div class="thumb-text">{{ item.text }}</div>
                     </div>
                   </template>
-                  <div
+                  <vue-markdown v-if="!item.pic && item.text"
                     class="text-info"
                     :style="
                       item.text === '进入直播间' ||
                       item.text.includes('进入直播间')
                         ? 'color: rgba(0 0 0 / 20%);'
-                        : 'width: 180px;'
+                        : ctp !==2
+                        ? 'width: 180px;'
+                        : ''
                     "
-                    v-else
-                    v-html="getText(item.text)"
-                    @click.stop="showControl(index)"
-                  ></div>
+                    :anchor-attributes="linkAttrs" 
+                    @click.stop="showControl(index)">{{
+                    item.text
+                  }}</vue-markdown>
                   <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
@@ -107,14 +117,21 @@
 </template>
 
 <script>
+import VueMarkdown from "vue-markdown";
 export default {
   name: "ChatMessageNews",
+  components: {
+    VueMarkdown,
+  },
   props: {
     msgList: {
       type: Array,
     },
     chatMsgHight:{
       type:Number,
+    },
+    parmUserInfo:{
+      type: Object,
     },
     controlIndex:{
       type:Number,
@@ -141,7 +158,16 @@ export default {
   },
   data() {
     return {
+      linkAttrs: {
+        target: "_blank",
+        class: "linkified",
+      },
+      uid: "",
+      hiImg:require("./../assets/images/HiTag.png"),
     }
+  },
+  created() {
+    this.uid = this.$route.query.id;
   },
   filters: {
     picFilter(url) {
@@ -161,6 +187,20 @@ export default {
     },
   },
   methods: {
+    avatarImg(item){
+      if(item.avatar === ""){
+        return require("@/assets/images/userLogo.png")
+      }else{
+        return window.location.origin + item.avatar
+      }
+    },
+    mySelf(item){
+      if((Number(item.sender) === this.parmUserInfo.user_id) || (item.sender === this.parmUserInfo.user_id)){
+        return true
+      }else{
+        return false
+      }
+    },
     clearStatus() {
       this.$emit('controlNumber',-1)
     },
@@ -214,8 +254,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chat-detail-main {
-  background: #f3f3f3;
+::v-deep.chat-detail-main {
+  background: #fff;
   padding: 0 10px 30px 10px;
   .system-tips {
     margin-top: -26px;
@@ -245,6 +285,87 @@ export default {
     word-break: break-all;
     color: #343a40;
     display: flex;
+    .hi-tag {
+      display: inline-block;
+      height: 18px;
+      margin-right: 4px;
+      margin-bottom: 2px;
+    }
+    .msg-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      max-width: 40px;
+      height: 40px;
+      margin-right: 5px;
+      border-radius: 5px;
+      overflow: hidden;
+      .avatar {
+        width: 40px;
+      } 
+    }    
+    .anchor-tag {
+      display: inline-block;
+      padding: 0 6px;
+      height: 18px;
+      margin-right: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 18px;
+      border-radius: 10px;
+      background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
+      color: #9c583d;
+    }
+    .level-tag {
+      color: #fff;
+      display: inline-block;
+      padding: 0 4px;
+      height: 18px;
+      margin-right: 4px;
+      font-size: 14px;
+      line-height: 18px;
+      border-radius: 2px;
+      &.level0 {
+        background: #d1d1d1;
+      }
+      &.level1 {
+        background: #8bf093;
+      }
+      &.level2 {
+        background: #63d671;
+      }
+      &.level3 {
+        background: #5ac8b5;
+      }
+      &.level4 {
+        background: #3b8ea9;
+      }
+      &.level5 {
+        background: #235b8a;
+      }
+      &.level6 {
+        background: #3244b4;
+      }
+      &.level7 {
+        background: #602ad0;
+      }
+      &.level8 {
+        background: #9f2ad0;
+      }
+      &.level9 {
+        background: #bd20ff;
+      }
+    }
+    .text-info{
+      display: initial;
+      color: rgb(0 0 0 / 80%);
+      .linkified{
+        color: blue;
+        text-decoration:underline;
+        cursor: pointer;
+      }
+    }
     .msg-footer {
       font-size: 12px;
       color: #707070;
@@ -256,6 +377,18 @@ export default {
         color: #47a2ff;
       }
     }
+    &.my-self {
+      flex-direction: row-reverse;
+      .text-info {
+        margin-right: 10px;
+        margin-left: 0;
+        &::after {
+          margin-left: calc(100% - 3px);
+          border-color: transparent transparent transparent #eee;
+        }
+      }
+    }
+
   }
 
   .other-side {
@@ -266,6 +399,62 @@ export default {
     }
     .msg-footer {
       text-align: left;
+    }
+  }
+  .is-anchor {
+    .msg-content {
+      display: flex;
+      margin-top: 10px;
+      padding: 0 5px;
+      .msg-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        max-width: 40px;
+        height: 40px;
+        margin-right: 5px;
+        border-radius: 5px;
+        overflow: hidden;
+        .avatar {
+          width: 40px;
+        } 
+      }
+      .text-info {
+        align-self: flex-start;
+        position: relative;
+        max-width: 65%;
+        min-height: 30px;
+        margin-left: 10px;
+        padding: 8px;
+        border-radius: 7px;
+        background: #eee;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 0;
+          height: 10px;
+          margin-top: 5px;
+          margin-left: -18px;
+          border-color: transparent #eee transparent transparent;
+          border-style: solid;
+          border-width: 4px 10px;
+        }
+      }
+      &.my-self {
+        flex-direction: row-reverse;
+        .text-info {
+          margin-right: 10px;
+          margin-left: 0;
+          &::after {
+            margin-left: calc(100% - 3px);
+            border-color: transparent transparent transparent #eee;
+          }
+        }
+      }
     }
   }
 }
@@ -306,4 +495,7 @@ export default {
 .el-image{
   height: 8em;
 }
+
+
+
 </style>

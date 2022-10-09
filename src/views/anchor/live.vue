@@ -823,7 +823,7 @@
 				this.gifMask = true
 				if (this.offsetLeft == this.$refs.gifli[index].offsetLeft) return
 				this.gifItem = e
-				console.log(this.num * 450);
+				// console.log(this.num * 450);
 				this.offsetLeft = this.$refs.gifli[index].offsetLeft+this.num * 450
 				// console.log(this.$refs.gifli[index].offsetLeft);
 				// console.log(e);
@@ -944,7 +944,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					console.log(res,"res.data==========")
+					// console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)

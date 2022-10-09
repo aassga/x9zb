@@ -173,7 +173,7 @@ const store = new Vuex.Store({
 				return res
 		}).catch((err)=>{
 			localStorage.clear();
-			window.location.reload()
+			// window.location.reload()
 		})
   },
 	addQuickReply({ commit }, params) {
@@ -213,7 +213,7 @@ const store = new Vuex.Store({
 		  info().then(res=>{
 				if(res === undefined){
 					localStorage.clear();
-					window.location.reload()
+					// window.location.reload()
 				}
 			  state.state.infos = res.data
 			  // this.updateMyProfile(res.data)
