@@ -1230,11 +1230,11 @@ export default {
           break;
         case "push":
           if (data.pic !== undefined) {
-            // data.pic = window.location.origin + data.pic;
+            data.pic = window.location.origin + data.pic;
             // data.pic = "http://huyapre.oxldkm.com" + data.pic;
             // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
             // data.pic = "https://www.x9zb.live" + data.pic;
-            data.pic = "http://huidu.x9zb.live" + data.pic;
+            // data.pic = "http://huidu.x9zb.live" + data.pic;
           }
           this.msgList.push(data);
           break;
