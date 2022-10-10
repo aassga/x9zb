@@ -550,8 +550,8 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-            ? "https://www.x9zb.live/upload/"
-            // ? window.location.origin + "/"
+            // ? "https://www.x9zb.live/upload/"
+            ? window.location.origin + "/"
             // ? "http://huyapreadmin.oxldkm.com/upload/"
             // ? "http://huidu.x9zb.live/upload/"
             : window.location.origin + "/";
@@ -620,7 +620,11 @@ export default {
   },
   methods: {
     avararImg(item){
-      return window.location.origin + item.avatar
+      if(item.avatar === ""){
+        return require('./../../../static/images/home/userLogo.png')
+      }else{
+        return window.location.origin + item.avatar
+      }
     },
     addPage() {
       console.log("page", this.page);
@@ -1198,11 +1202,11 @@ export default {
       const wsprotocol =
         window.location.protocol == "http:" ? "ws" : "wss";
       const locationHost = window.location.hostname;
-      // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1329,10 +1333,10 @@ export default {
         formData.append("text", "");
         data = formData;
         let xhr = new XMLHttpRequest();
-        // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
+        xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
         // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
         // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
-        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
+        // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
