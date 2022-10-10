@@ -1,8 +1,7 @@
 <template>
   <div
     class="chat-window"
-
-    :style="{'height':reversedHeight + 'px'}"
+    :style="{ height: reversedHeight + 'px' }"
     @click="clearStatus()"
   >
     <div v-if="false" class="animation-loading-container">
@@ -10,7 +9,11 @@
     </div>
 
     <div class="chat-detail-main" ref="content-list">
-      <div v-for="(item, index) in msgList" :key="index" :class="{'is-anchor': ctp === 2}">
+      <div
+        v-for="(item, index) in msgList"
+        :key="index"
+        :class="{ 'is-anchor': ctp === 2 }"
+      >
         <!--   <div class="system-tips" v-if="item.action === 'system'">
                 {{item.text}}
               </div>-->
@@ -28,38 +31,54 @@
               <div class="msg-container">
                 <div
                   class="msg-content"
-                   :class="[
-                    {'my-self': mySelf(item) && ctp === 2},
-                   ]"
+                  :class="[{ 'my-self': mySelf(item) && ctp === 2 }]"
                 >
                   <template v-if="ctp === 0">
-                    <img :src="hiImg" class="hi-tag" v-if="item.text ? item.text.indexOf('进入直播间') !== -1 : false"/>
-                    <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                    <span class="level-tag" :class="`level${item.sender_exp ? item.sender_exp : 0}`" v-if="item.sender_exp && item.action !== 'gift' && item.sender != uid">Lv.{{item.sender_exp ? item.sender_exp : 0}}</span>
+                    <img
+                      :src="hiImg"
+                      class="hi-tag"
+                      v-if="
+                        item.text
+                          ? item.text.indexOf('进入直播间') !== -1
+                          : false
+                      "
+                    />
+                    <span class="anchor-tag" v-if="item.sender == uid"
+                      >主播</span
+                    >
+                    <span
+                      class="level-tag"
+                      :class="`level${item.sender_exp ? item.sender_exp : 0}`"
+                      v-if="
+                        item.sender_exp &&
+                        item.action !== 'gift' &&
+                        item.sender != uid
+                      "
+                      >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                    >
                   </template>
 
-                  <div v-if="ctp !== 2"
+                  <div
+                    v-if="ctp !== 2"
                     class="text-name"
                     :style="
-                      item.text === '进入直播间' ||
                       item.text.includes('进入直播间')
                         ? 'color: rgba(0 0 0 / 20%);'
                         : ''
                     "
                   >
-                    {{ item.sender_nickname }}
-                    <span
-                      v-if="
-                        item.text !== '进入直播间' &&
-                        !item.text.includes('进入直播间')
-                      "
-                      >:</span
-                    >
+                    {{
+                      !item.text.includes("进入直播间") &&
+                      item.sender_nickname.length > 5
+                        ? item.sender_nickname.substr(0, 6) + "..."
+                        : item.sender_nickname
+                    }}
+                    <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="ctp === 2 && !mySelf(item)"  class="msg-avatar" >
+                  <div v-if="ctp === 2 && !mySelf(item)" class="msg-avatar">
                     <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
                     <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
-                    <img class="avatar" :src="avatarImg(item)">
+                    <img class="avatar" :src="avatarImg(item)" />
                   </div>
                   <template v-if="item.pic && !item.text">
                     <el-image
@@ -80,28 +99,31 @@
                       <div class="thumb-text">{{ item.text }}</div>
                     </div>
                   </template>
-                  <div @click.stop="showControl(index)">
-                    <vue-markdown v-if="!item.pic && item.text"
+                  <div
+                    v-if="!item.pic && item.text"
+                    @click.stop="showControl(index)"
+                    style="display: contents"
+                  >
+                    <vue-markdown
                       class="text-info"
                       :style="
-                        item.text === '进入直播间' ||
                         item.text.includes('进入直播间')
                           ? 'color: rgba(0 0 0 / 20%);'
-                          : ctp !==2
-                          ? 'width: 180px;'
+                          : ctp !== 2
+                          ? 'width: 170px;'
                           : ''
                       "
-                      :anchor-attributes="linkAttrs" 
-                      >{{
-                      item.text
-                    }}</vue-markdown>
+                      :anchor-attributes="linkAttrs"
+                      >{{ item.text }}{{ item.length }}</vue-markdown
+                    >
                   </div>
 
                   <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
                     @click="resend(item)"
-                  >重新发送</i>
+                    >重新发送</i
+                  >
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -115,7 +137,6 @@
         </template>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -130,34 +151,33 @@ export default {
     msgList: {
       type: Array,
     },
-    chatMsgHight:{
-      type:Number,
+    chatMsgHight: {
+      type: Number,
     },
-    parmUserInfo:{
+    parmUserInfo: {
       type: Object,
     },
-    controlIndex:{
-      type:Number,
+    controlIndex: {
+      type: Number,
     },
-    ctp:{
-      type:Number,
+    ctp: {
+      type: Number,
     },
-    pinInfo:{
-      type:null
+    pinInfo: {
+      type: null,
     },
-    roomInfo:{
-      type:null
-    }
+    roomInfo: {
+      type: null,
+    },
   },
-  computed:{
-    reversedHeight: function() {
-      if(this.roomInfo.name !==undefined){
-        return this.chatMsgHight - 40
-      }else{
-        return this.chatMsgHight
+  computed: {
+    reversedHeight: function () {
+      if (this.roomInfo.name !== undefined) {
+        return this.chatMsgHight - 40;
+      } else {
+        return this.chatMsgHight;
       }
     },
-
   },
   data() {
     return {
@@ -166,8 +186,8 @@ export default {
         class: "linkified",
       },
       uid: "",
-      hiImg:require("./../assets/images/HiTag.png"),
-    }
+      hiImg: require("./../assets/images/HiTag.png"),
+    };
   },
   created() {
     this.uid = this.$route.query.id;
@@ -176,13 +196,10 @@ export default {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
-        let split = window.location.hostname.includes("10")
-          ? window.location.origin + '/' 
-          // ? "http://huyapre.oxldkm.com/"
-          // ? "http://huyapretest.oxldkm.com/"
-          // ? "https://www.x9zb.live/"
-          // ? "https://huidu.x9zb.live/"
-          : window.location.origin + "/";
+        let split = window.location.origin + "/";
+        // let split = "http://huyapretest.oxldkm.com/"
+        // let split = "https://www.x9zb.live/"
+        // let split = "https://huidu.x9zb.live/"
         newUrl = newUrl.replace(split, "");
       } else {
         return newUrl;
@@ -190,22 +207,25 @@ export default {
     },
   },
   methods: {
-    avatarImg(item){
-      if(item.avatar === ""){
-        return require("@/assets/images/userLogo.png")
-      }else{
-        return window.location.origin + item.avatar
+    avatarImg(item) {
+      if (item.avatar === "") {
+        return require("@/assets/images/userLogo.png");
+      } else {
+        return window.location.origin + item.avatar;
       }
     },
-    mySelf(item){
-      if((Number(item.sender) === this.parmUserInfo.user_id) || (item.sender === this.parmUserInfo.user_id)){
-        return true
-      }else{
-        return false
+    mySelf(item) {
+      if (
+        Number(item.sender) === this.parmUserInfo.user_id ||
+        item.sender === this.parmUserInfo.user_id
+      ) {
+        return true;
+      } else {
+        return false;
       }
     },
     clearStatus() {
-      this.$emit('controlNumber',-1)
+      this.$emit("controlNumber", -1);
     },
     // 聊天框滚动到最底部
     openLink(link) {
@@ -216,9 +236,9 @@ export default {
         this.controlIndex = -1;
         return;
       }
-      this.$emit('controlNumber',index)
+      this.$emit("controlNumber", index);
       // this.controlIndex = index;
-    },    
+    },
     getText(str) {
       if (!str) {
         return;
@@ -234,7 +254,7 @@ export default {
       return str;
     },
     resend(item) {
-      this.$emit('msgAction',item)
+      this.$emit("msgAction", item);
     },
     copyText(item) {
       const str = item.text;
@@ -306,8 +326,8 @@ export default {
       overflow: hidden;
       .avatar {
         width: 40px;
-      } 
-    }    
+      }
+    }
     .anchor-tag {
       display: inline-block;
       padding: 0 6px;
@@ -360,12 +380,12 @@ export default {
         background: #bd20ff;
       }
     }
-    .text-info{
+    .text-info {
       display: initial;
       color: rgb(0 0 0 / 80%);
-      .linkified{
+      .linkified {
         color: blue;
-        text-decoration:underline;
+        text-decoration: underline;
         cursor: pointer;
       }
     }
@@ -391,7 +411,6 @@ export default {
         }
       }
     }
-
   }
 
   .other-side {
@@ -421,7 +440,7 @@ export default {
         overflow: hidden;
         .avatar {
           width: 40px;
-        } 
+        }
       }
       .text-info {
         align-self: flex-start;
@@ -434,7 +453,7 @@ export default {
         background: #eee;
 
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           left: 0;
           top: 0;
@@ -492,13 +511,10 @@ export default {
     bottom: -40px;
   }
 }
-.mt0{
+.mt0 {
   margin-top: 0;
 }
-.el-image{
+.el-image {
   height: 8em;
 }
-
-
-
 </style>
