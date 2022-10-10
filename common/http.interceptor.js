@@ -14,7 +14,7 @@ const install = (Vue, vm) => {
 		loadingTime: 1000,
 		// ......
 	});
-	
+	let apiUrl = ''
 	// 请求拦截，配置Token等参数
 	Vue.prototype.$u.http.interceptor.request = (config) => {
 		// 引用token
@@ -47,6 +47,7 @@ const install = (Vue, vm) => {
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
 		if(config.url == '/user/login') config.header.noToken = true;
 		// 最后需要将config进行return
+		apiUrl = config.url
 		return config;
 		// 如果return一个false值，则会取消本次请求
 		// if(config.url == '/user/rest') return false; // 取消某次请求
@@ -54,9 +55,10 @@ const install = (Vue, vm) => {
 	
 	// 响应拦截，判断状态码是否通过
 	Vue.prototype.$u.http.interceptor.response = (res) => {
-		 if(res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="参数错误"){
- 			// vm.$u.toast(res.msg);
-    	}
+		let showMsg = apiUrl.indexOf('api/chat') < 0
+		// if(res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="参数错误"){
+ 	// 		console.log(res.msg);
+  //   	}
 		if(res.code == 0) {
 			// res为服务端返回值，可能有code，result等字段
 			// 这里对res.result进行返回，将会在this.$u.post(url).then(res => {})的then回调中的res的到
@@ -71,6 +73,11 @@ const install = (Vue, vm) => {
 			}, 1500)
 			return false;
 		} else {
+			if (showMsg) {
+				vm.$u.toast(res.msg);
+			} else {
+				console.log(res,"error-msg=============");
+			}
 			// vm.$u.toast(res.msg);
 			// console.log(res,"error-msg=============");
 			// 如果返回false，则会调用Promise的reject回调，

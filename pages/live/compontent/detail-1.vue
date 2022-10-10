@@ -12,7 +12,10 @@
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div class="announcement" v-if="current !== 2 || $store.state.system.announcement === undefined">
+    <div
+      class="announcement"
+      v-if="current !== 2 || $store.state.system.announcement === undefined"
+    >
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -26,11 +29,35 @@
         <div v-if="pinInfo" class="pin-info">
           {{ pinInfo.text }}
         </div>
-        <div class="chat-window" :class="{ 'chat-pin': pinInfo }" @click="clearStatus()">
+        <div
+          class="chat-window"
+          :class="{ 'chat-pin': pinInfo }"
+          @click="clearStatus()"
+        >
           <div class="chat-detail-main current0" ref="content-list">
-            <!-- v-if="current == 0" -->
             <div v-for="(item, index) in messageDataList" :key="index">
               <div class="system-tips" v-if="item.action === 'system'">
+                <template v-if="current === 0">
+                  <img
+                    src="../../../static/images/live/HiTag.png"
+                    class="hi-tag"
+                    v-if="
+                      item.text ? item.text.indexOf('进入直播间') !== -1 : false
+                    "
+                  />
+                  <span class="anchor-tag" v-if="item.sender == uid">主播</span>
+                  <span
+                    class="level-tag"
+                    :class="`level${item.sender_exp ? item.sender_exp : 0}`"
+                    v-if="
+                      item.sender_exp &&
+                      item.action !== 'gift' &&
+                      item.sender != uid
+                    "
+                    >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                  >
+                </template>
+
                 {{ item.text }}
               </div>
               <template v-else>
@@ -45,18 +72,49 @@
                   "
                 >
                   <div class="msg-box">
-                    <div class="msg-container">
+                    <div class="msg-container"
+                      :class="{'anchor-msg': current === 1 }"
+                    >
                       <div
                         class="msg-content"
+                        :class="{
+                          'my-self': (Number(item.sender) === parmUserInfo.user_id || item.sender === parmUserInfo.user_id) && current === 1,
+                        }"
                         @click.stop="showControl(index)"
-                        :style="
-                          item.text === '进入直播间' ||
-                          item.text.includes('进入直播间')
-                            ? 'text-align:center'
-                            : ''
-                        "
                       >
-                        <div class="msg-footer">
+                        <template v-if="current === 0">
+                          <img
+                            src="../../../static/images/live/HiTag.png"
+                            class="hi-tag"
+                            v-if="
+                              item.text
+                                ? item.text.indexOf('进入直播间') !== -1
+                                : false
+                            "
+                          />
+                          <span class="anchor-tag" v-if="item.sender == uid"
+                            >主播</span
+                          >
+                          <span
+                            class="level-tag"
+                            :class="`level${
+                              item.sender_exp ? item.sender_exp : 0
+                            }`"
+                            v-if="
+                              item.sender_exp &&
+                              item.action !== 'gift' &&
+                              item.sender != uid
+                            "
+                            >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                          >
+                        </template>
+                        <div
+                          class="msg-avatar"
+                          v-if="(item.sender != parmUserInfo.user_id) && current === 1"
+                        >
+                          <img class="avatar" :src="avararImg(item)" />
+                        </div>
+                        <div class="msg-footer" v-if="current !== 1">
                           <span
                             :style="
                               item.text === '进入直播间' ||
@@ -117,168 +175,6 @@
                           >重新发送</i
                         >
                         <div
-                          v-if="controlIndex === index" class="msg-control other"
-                        >
-                          <div @click="copyText(item)">复制</div>
-                          <div
-                            v-if="system.report == 1"
-                            @click="onHandleReportShow(item)"
-                          >
-                            举报
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-          <!-- <div
-            class="chat-detail-main current1"
-            ref="content-list"
-            v-if="current == 1"
-          >
-            <div v-for="(item, index) in messageDataList" :key="index">
-              <div class="system-tips" v-if="item.action === 'system'">
-                {{ item.text }}
-              </div>
-              <template v-else>
-                <div
-                  class="other-side"
-                  v-if="
-                    item.channel == 'null' ||
-                    !item.channel ||
-                    item.channel === channel ||
-                    (!channel && item.channel === '000')
-                  "
-                >
-                  <div class="msg-box">
-                    <div class="msg-container">
-                      <div class="msg-content" @click.stop="showControl(index)">
-                        <div class="msg-footer">
-                          <span>{{ item.sender_nickname || "我" }}:</span>
-                        </div>
-                        <template v-if="item.pic && !item.text">
-                          <img
-                            @click.stop="onHandleClickImg(item.pic)"
-                            :src="item.pic | picFilter"
-                            class="pic-info"
-                          />
-                        </template>
-                        <template v-if="item.pic && item.text">
-                          <div
-                            class="thumb-container"
-                            @click.stop="openAppUrl(item.link)"
-                          >
-                            <img
-                              class="thumb-pic"
-                              :src="item.pic | picFilter"
-                            />
-                            <div class="thumb-title">
-                              {{ item.title }}
-                            </div>
-                            <br />
-                            <div class="thumb-text">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                        </template>
-                        <div
-                          v-else
-                          @click="openAppUrl(item.text)"
-                          class="text-info"
-                          v-html="getText(item.text)"
-                        ></div>
-                        <i
-                          class="el-icon-warning error-msg"
-                          v-if="item.isError"
-                          @click="resend(item)"
-                          >重新发送</i
-                        >
-                        <div
-                          v-if="controlIndex === index"
-                          class="msg-control other"
-                        >
-                          <div @click="freeze(item)">冻结</div>
-                          <div @click="copyText(item)">复制</div>
-                          <div
-                            v-if="system.report == 1"
-                            @click="onHandleReportShow(item)"
-                          >
-                            举报
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-          <div
-            class="chat-detail-main current2"
-            ref="content-list"
-            v-if="current == 2"
-          >
-            <div v-for="(item, index) in messageDataList" :key="index">
-              <div class="system-tips" v-if="item.action === 'system'">
-                {{ item.text }}
-              </div>
-              <template v-else>
-                <div
-                  class="other-side"
-                  v-if="
-                    item.channel == 'null' ||
-                    !item.channel ||
-                    item.channel === channel ||
-                    (!channel && item.channel === '000')
-                  "
-                >
-                  <div class="msg-box">
-                    <div class="msg-container">
-                      <div class="msg-content" @click.stop="showControl(index)">
-                        <div class="msg-footer">
-                          <span>{{ item.sender_nickname || "我" }}:</span>
-                        </div>
-                        <template v-if="item.pic && !item.text">
-                          <img
-                            @click.stop="onHandleClickImg(item.pic)"
-                            :src="item.pic | picFilter"
-                            class="pic-info"
-                          />
-                        </template>
-                        <template v-if="item.pic && item.text">
-                          <div
-                            class="thumb-container"
-                            @click.stop="openAppUrl(item.link)"
-                          >
-                            <img
-                              class="thumb-pic"
-                              :src="item.pic | picFilter"
-                            />
-                            <div class="thumb-title">
-                              {{ item.title }}
-                            </div>
-                            <br />
-                            <div class="thumb-text">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                        </template>
-                        <div
-                          v-else
-                          @click="openAppUrl(item.text)"
-                          class="text-info"
-                          v-html="getText(item.text)"
-                        ></div>
-                        <i
-                          class="el-icon-warning error-msg"
-                          v-if="item.isError"
-                          @click="resend(item)"
-                          >重新发送</i
-                        >
-                        <div
                           v-if="controlIndex === index"
                           class="msg-control other"
                         >
@@ -296,7 +192,7 @@
                 </div>
               </template>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -313,51 +209,51 @@
       <div class="quick-reply-list">
         <div class="send-type-container">
           <svg
-          @click="isShowEmoji = !isShowEmoji"
-          class="emoji-btn"
-          style="max-height: 30px"
-          width="25"
-          height="25"
-          viewBox="0 0 40 40"
-          fill="none"
-        >
-          <circle
-            cx="20"
-            cy="20"
-            r="18.3333"
-            stroke="black"
-            stroke-opacity="0.4"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M12.6667 23.6667C12.6667 23.6667 15.4167 27.3334 20 27.3334C24.5834 27.3334 27.3334 23.6667 27.3334 23.6667"
-            stroke="black"
-            stroke-opacity="0.4"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M14.5 14.5H14.5184"
-            stroke="black"
-            stroke-opacity="0.4"
-            stroke-width="4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M25.5 14.5H25.5184"
-            stroke="black"
-            stroke-opacity="0.4"
-            stroke-width="4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          </svg>           
+            @click="isShowEmoji = !isShowEmoji"
+            class="emoji-btn"
+            style="max-height: 30px"
+            width="25"
+            height="25"
+            viewBox="0 0 40 40"
+            fill="none"
+          >
+            <circle
+              cx="20"
+              cy="20"
+              r="18.3333"
+              stroke="black"
+              stroke-opacity="0.4"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M12.6667 23.6667C12.6667 23.6667 15.4167 27.3334 20 27.3334C24.5834 27.3334 27.3334 23.6667 27.3334 23.6667"
+              stroke="black"
+              stroke-opacity="0.4"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14.5 14.5H14.5184"
+              stroke="black"
+              stroke-opacity="0.4"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M25.5 14.5H25.5184"
+              stroke="black"
+              stroke-opacity="0.4"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </div>
-      
+
         <div v-if="current != 0" class="send-type-container">
           <svg
             width="25"
@@ -407,7 +303,7 @@
           <!-- v-if="msgType != 2" -->
           <textarea
             id="msg"
-            :style="current !== 0 ? 'width:11.5em':'width:14em'"
+            :style="current !== 0 ? 'width:11.5em' : 'width:14em'"
             type="text"
             @blur="toTop"
             placeholder="请输入内容"
@@ -420,7 +316,6 @@
           <span class="send" @click="sendMsg">发送</span>
         </div>
       </div>
-
 
       <!-- <div
         id="add-img"
@@ -487,7 +382,7 @@ import _assertThisInitialized from "@babel/runtime/helpers/assertThisInitialized
 import { VEmojiPicker } from "v-emoji-picker";
 export default {
   name: "information-detail",
-  props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid",],
+  props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
   components: {
     VEmojiPicker,
   },
@@ -496,7 +391,7 @@ export default {
       reportListShow: false,
       reportList: [],
       reportValue: "",
-      isErrorMsg:true,
+      isErrorMsg: true,
       url: window.location.href,
       modalMsgList: [],
       isReadOnly: false,
@@ -558,8 +453,8 @@ export default {
       info: null,
       type0_local_msg_list: [],
       type2_local_msg_list: [],
-      historyData:[],
-      initInvite:true,
+      historyData: [],
+      initInvite: true,
     };
   },
   computed: {
@@ -573,9 +468,9 @@ export default {
       if (newVal != oldVal) {
         if (newVal == 2 && this.reconnectStatus) {
           return;
-        }else if(this.historyData.length < 50 ){
+        } else if (this.historyData.length < 50) {
           return;
-        }else{
+        } else {
           this.getChatHistoryMsg();
         }
       }
@@ -584,10 +479,9 @@ export default {
     fd(newVal, oldVal) {
       if (newVal != oldVal) {
         if (this.current == 0) {
-        	this.inviteRoom();
-        } 
+          this.inviteRoom();
+        }
         this.inRoomInfo(newVal);
-        
       }
     },
     showLoading(newV, oldV) {
@@ -609,7 +503,7 @@ export default {
       }
     },
     current(newVal, oldVal) {
-      this.messageDataList = []
+      this.messageDataList = [];
       this.initBase();
       if (oldVal == 2) {
         this.leaveRoom();
@@ -656,12 +550,12 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          // ? "https://www.x9zb.live/upload/"
-          // ? window.location.origin + "/"
-          // ? "http://huyapreadmin.oxldkm.com/upload/"
-          ? "http://http://huidu.x9zb.live/upload/"
-          : // window.location.origin + "/";
-        newUrl = newUrl.replace(split, "");
+            ? "https://www.x9zb.live/upload/"
+            // ? window.location.origin + "/"
+            // ? "http://huyapreadmin.oxldkm.com/upload/"
+            // ? "http://huidu.x9zb.live/upload/"
+            : window.location.origin + "/";
+            (newUrl = newUrl.replace(split, ""));
       }
       return newUrl;
     },
@@ -686,12 +580,12 @@ export default {
       // );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
-        if(!this.isErrorMsg){
-          this.isErrorMsg = true
-          this.getChatHistoryMsg()
-          return
+        if (!this.isErrorMsg) {
+          this.isErrorMsg = true;
+          this.getChatHistoryMsg();
+          return;
         }
-        this.debounce(this.addPage(),2000)
+        this.debounce(this.addPage(), 2000);
         this.isScroller = true;
       }
     });
@@ -716,7 +610,6 @@ export default {
   },
   created() {
     this.uid = this.$route.query.id;
-
   },
   beforeDestroy() {
     this.$store.dispatch("chatInOut", {
@@ -726,20 +619,24 @@ export default {
     });
   },
   methods: {
-    addPage(){
-      return this.page ++ ;
+    avararImg(item){
+      return window.location.origin + item.avatar
     },
-    debounce(fn,delay){
+    addPage() {
+      console.log("page", this.page);
+      return this.page++;
+    },
+    debounce(fn, delay) {
       let timer = null;
       return function () {
-        if(timer){
-          clearTimeout(timer)
+        if (timer) {
+          clearTimeout(timer);
         }
-        timer = setTimeout(fn,delay)
-      }
+        timer = setTimeout(fn, delay);
+      };
     },
-    clearStatus(){
-      this.controlIndex = -1
+    clearStatus() {
+      this.controlIndex = -1;
     },
     submit() {
       let files = [];
@@ -788,8 +685,8 @@ export default {
         url = window.location.origin + img;
       }
       uni.previewImage({
-        indicator:"number",
-        loop:true,
+        indicator: "number",
+        loop: true,
         urls: [url],
       });
     },
@@ -925,7 +822,7 @@ export default {
           : localStorage.getItem("userid");
       }
       this.getImToken();
-      this.quickReplyList();
+      // this.quickReplyList();
     },
     delQuickReply(item) {
       const _that = this;
@@ -1049,7 +946,7 @@ export default {
       if (isSucess) {
         this.$u.toast("复制成功");
         this.tipsId = "";
-        this.controlIndex = -1
+        this.controlIndex = -1;
       }
     },
     getImToken(initSec = false) {
@@ -1085,7 +982,7 @@ export default {
       }
       const _that = this;
       const params = {
-        page: iniPage || this.page,
+        page: 1,
         limit: 50,
         type:
           this.current == 2
@@ -1120,7 +1017,7 @@ export default {
             return;
           }
           let dataList = res.reverse();
-          this.historyData = res
+          this.historyData = res;
           this.lockPage = true;
           if (dataList.length <= 10) {
             this.isScroller = true;
@@ -1138,7 +1035,7 @@ export default {
           );
           // console.log('///////////////////')
           // _that.msgList.unshift(...dataList);
-        })
+        });
     },
     showControl(index) {
       // console.log('我是点击消息事件')
@@ -1223,11 +1120,11 @@ export default {
           channel_code: this.channel_code ? this.channel_code : "",
         })
         .then((res) => {
-          if(this.initInvite){
-            this.initInvite = false
+          if (this.initInvite) {
+            this.initInvite = false;
             roomInfo[roomId] = res.vid;
             localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-            return
+            return;
           }
           roomInfo[roomId] = res.vid;
           this.parmUserInfo.vid = res.vid;
@@ -1266,10 +1163,10 @@ export default {
           this.initInfo(true);
           return;
         }
-        if(res.pinData && res.pinData !== ""){
+        if (res.pinData && res.pinData !== "") {
           _that.pinInfo = {
-            text:res.pinData
-          }
+            text: res.pinData,
+          };
         }
         _that.getChatHistoryMsg(1);
       });
@@ -1293,15 +1190,15 @@ export default {
     },
     newSocket(data) {
       // this.WSURL = `${wsprotocol}${
-        // 	window.location.hostname.includes('10')
-        // 		? '10.83.107.92:9021'
-        // 		: window.location.hostname
+      // 	window.location.hostname.includes('10')
+      // 		? '10.83.107.92:9021'
+      // 		: window.location.hostname
       // 	// '10.83.107.92:9021'
       // }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
-      const wsprotocol = window.location.protocol == "http:" ? "ws://" : "wss://"
-      const locationHost = window.location.hostname
+      const wsprotocol =
+        window.location.protocol == "http:" ? "ws" : "wss";
+      const locationHost = window.location.hostname;
       // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-
 
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -1355,7 +1252,7 @@ export default {
       this.timeoutnum = setTimeout(() => {
         //新连接
         // this.initBase();
-        this.initInvite = true
+        this.initInvite = true;
         this.initInfo(true);
         this.lockReconnect = false;
       }, 5000);
@@ -1434,8 +1331,8 @@ export default {
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
         // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-        xhr.open("POST","http://huidu.x9zb.live/api/chat/sendMessage");
-        // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
+        // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
+        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
@@ -1478,34 +1375,14 @@ export default {
       // 	return;
       // }
       let currentDate = new Date().getTime();
-      let msgItem = {
-        sender: this.parmUserInfo.user_id,
-        sender_nickname: this.info.user_nickname,
-        text: this.msgText,
-        uiCode: currentDate,
-        isError: false,
-      };
       if (this.info.user_nickname === undefined) {
         this.$u.toast("游客不可在直播间发话报成功");
         this.msgText = "";
         return;
       } else {
-        this.handleLocalMsgList(this.current,"push",msgItem)
         this.sendMsgByApi(currentDate);
       }
       return;
-      let msg = {
-        action: "system",
-        server: "notice",
-        uid: this.uid,
-        fd: this.fd,
-        txt: this.msgText,
-        method: "notice",
-      };
-
-      this.$global.ws.send(JSON.stringify(msg));
-      this.msgText = "";
-      this.toBottom();
     },
     // 客户端接收服务端数据时触发
     websocketonmessage(e) {
@@ -1556,12 +1433,6 @@ export default {
         // list.push(data);
         // console.log( this.senderid,"123123",data," this.info======")
         //自己发送的消息不渲染到列表
-        if (data.pic !== undefined) {
-          this.handleLocalMsgList(this.current, "push", data);
-        }
-        if (data.sender == this.senderid) {
-          return;
-        }
         if (data.sender_nickname.includes("游客") && this.current == 0) {
           return;
         }
@@ -1668,15 +1539,13 @@ export default {
       const set = new Set();
       switch (m) {
         case "init":
-          data.forEach((el) => {
-          });
-          this.messageDataList = data
+          data.forEach((el) => {});
+          this.messageDataList = data;
           break;
         case "push":
           this.messageDataList.push(data);
           break;
         case "unshift":
-  
           data.forEach((el) => {
             this.messageDataList.unshift(el);
           });
@@ -1688,65 +1557,8 @@ export default {
         default:
           break;
       }
+      console.log(this.messageDataList)
       this.toBottom();
-
-      // if (type == 0) {
-      //   if (m == "init") {
-      //     this.msgList0 = data;
-      //   }
-      //   if (m == "push") {
-      //     this.msgList0.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     data.forEach((el) => {
-      //       this.msgList0.unshift(el);
-      //     });
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList0 = [];
-      //   }
-      //   return this.msgList0;
-      // }
-      // if (type == 2) {
-      //   if (m == "init") {
-      //     this.msgList2 = data;
-      //   }
-      //   if (m == "push") {
-      //     this.msgList2.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     data.forEach((el) => {
-      //       this.msgList2.unshift(el);
-      //     });
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList2 = [];
-      //   }
-      //   return this.msgList2;
-      // }
-      // if (type == 1) {
-      //   if (m == "init") {
-      //     this.msgList1 = data;
-      //   }
-      //   if (m == "push") {
-      //     if(data.pic !== undefined){
-      //       data.pic =  "https://www.x9zb.live" + data.pic
-      //       // data.pic =  "http://huyapreadmin.oxldkm.com" + data.pic
-      //     }
-      //     this.msgList1.push(data);
-      //   }
-      //   if (m == "unshift") {
-      //     data.forEach((el) => {
-      //       this.msgList1.unshift(el);
-      //     });
-      //   }
-      //   if (m == "empty") {
-      //     this.msgList1 = [];
-      //   }
-      //   console.log(this.msgList1)
-      //   return this.msgList1;
-      // }
-      // this.toBottom()
     },
   },
 };
@@ -1939,7 +1751,7 @@ form {
 .detail {
   height: calc(100% - 80rpx);
   overflow-y: scroll;
-  background: #e9e9f5;
+  background: #FFF;
 }
 .add-margin {
   margin-top: 40px;
@@ -2201,7 +2013,7 @@ form {
 }
 
 .ChatDetails_container {
-  background: #e9e9f5;
+  background: #FFF;
   height: 100%;
   position: relative;
 
@@ -2219,7 +2031,7 @@ form {
   }
 
   .chat-detail-main {
-    background: #e9e9f5;
+    background: #FFF;
     padding: 0 10px 60px 10px;
     .msg-container {
       color: #363636;
@@ -2238,13 +2050,141 @@ form {
           font-size: 12px;
         }
       }
-    }
+      .hi-tag {
+        height: 36rpx;
+        margin-right: 6rpx;
+        vertical-align: sub;
+      }
 
+      .anchor-tag {
+        display: inline-block;
+        height: 36rpx;
+        padding: 0 12rpx;
+        margin-right: 6rpx;
+        font-size: 24rpx;
+        line-height: 36rpx;
+        border-radius: 10px;
+        font-weight: bold;
+        background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
+        color: #9c583d;
+      }
+
+      .level-tag {
+        display: inline-block;
+        height: 36rpx;
+        margin-right: 6rpx;
+        padding: 0 8rpx;
+        line-height: 36rpx;
+        border-radius: 2px;
+        color: #fff;
+
+        &.level0 {
+          background: #d1d1d1;
+        }
+
+        &.level1 {
+          background: #8bf093;
+        }
+
+        &.level2 {
+          background: #63d671;
+        }
+
+        &.level3 {
+          background: #5ac8b5;
+        }
+
+        &.level4 {
+          background: #3b8ea9;
+        }
+
+        &.level5 {
+          background: #235b8a;
+        }
+
+        &.level6 {
+          background: #3244b4;
+        }
+
+        &.level7 {
+          background: #602ad0;
+        }
+
+        &.level8 {
+          background: #9f2ad0;
+        }
+
+        &.level9 {
+          background: #bd20ff;
+        }
+      }
+
+    }
+    .anchor-msg{
+      .msg-content {
+        display: flex;
+
+        .msg-avatar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 80rpx;
+          max-width: 80rpx;
+          height: 80rpx;
+          margin-right: 10rpx;
+          border-radius: 5px;
+          overflow: hidden;
+
+          .avatar {
+            width: 80rpx;
+          }
+        }
+
+        .text-info {
+          align-self: flex-start;
+          position: relative;
+          max-width: 65%;
+          min-height: 40rpx;
+          margin-left: 20rpx;
+          padding: 8px;
+          border-radius: 7px;
+          background: #eee;
+
+          &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 4rpx;
+            margin-top: 12rpx;
+            margin-left: -36rpx;
+            border-color: transparent #eee transparent transparent;
+            border-style: solid;
+            border-width: 8rpx 20rpx;
+          }
+        }
+
+        &.my-self {
+          flex-direction: row-reverse;
+
+          .text-info {
+            margin-right: 20rpx;
+            margin-left: 0;
+
+            &::after {
+              margin-left: calc(100% - 6rpx);
+              border-color: transparent transparent transparent #eee;
+            }
+          }
+        }
+      }
+    }
     .system-tips {
       padding: 4px 2px;
       border-radius: 4px;
       font-size: 12px;
-      text-align: center;
+
       color: rgba(0, 0, 0, 0.2);
     }
 

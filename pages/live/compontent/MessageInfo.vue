@@ -53,7 +53,7 @@
 		left: 0;
 		width: 100%;
 		height: 41px!important;
-		background-color: #e9e9f5;
+		background-color: #FFF;
 		overflow: hidden;
 		// overflow-y: scroll;
 		// overflow-x: hidden;
