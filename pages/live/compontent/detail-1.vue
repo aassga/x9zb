@@ -1371,7 +1371,7 @@ export default {
       let currentDate = new Date().getTime();
       console.log(this.current)
       if (this.info.user_nickname === undefined && this.current === 0) {
-        this.$u.toast("游客不可在直播间发话报成功");
+        this.$u.toast("游客不能在广场发言 请您先登录");
         this.msgText = "";
         return;
       } else {
