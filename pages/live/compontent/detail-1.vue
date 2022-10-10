@@ -303,7 +303,7 @@
           <!-- v-if="msgType != 2" -->
           <textarea
             id="msg"
-            :style="current !== 0 ? 'width:11.5em' : 'width:14em'"
+            :style="current !== 0 ? 'width:65%' : 'width:70%'"
             type="text"
             @blur="toTop"
             placeholder="请输入内容"
@@ -550,10 +550,10 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-            ? "https://www.x9zb.live/upload/"
+            // ? "https://www.x9zb.live/upload/"
             // ? window.location.origin + "/"
             // ? "http://huyapreadmin.oxldkm.com/upload/"
-            // ? "http://huidu.x9zb.live/upload/"
+            ? "http://huidu.x9zb.live/upload/"
             : window.location.origin + "/";
             (newUrl = newUrl.replace(split, ""));
       }
@@ -620,6 +620,9 @@ export default {
   },
   methods: {
     avararImg(item){
+      if(item.avatar === ""){
+        return require('./../../../static/images/home/userLogo.png')
+      }
       return window.location.origin + item.avatar
     },
     addPage() {
@@ -1331,8 +1334,8 @@ export default {
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
         // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-        // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
-        xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
+        xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
+        // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
         this.prevImg = "";
@@ -1893,6 +1896,7 @@ form {
 .footer-box {
   display: flex;
   justify-content: space-around;
+  width:100%;
   // margin-top: 10px;
 }
 #msg {
