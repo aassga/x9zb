@@ -308,7 +308,7 @@ export default {
   //   },
   // },
   updated() {
-    this.toBottom();
+    // this.toBottom();
   },
   async mounted() {
     const _that = this;
@@ -507,7 +507,6 @@ export default {
       this.msgCount = num;
     },
     onHandleMsgChange(list) {
-      console.log(list)
       let num = 0;
       for (let index = 0; index < list.length; index++) {
         const element = list[index];
@@ -738,7 +737,6 @@ export default {
       }, 1000);
     },
     changeType(e) {
-      console.log(e)
       this.pinInfo = "";
       this.msgList = []
       // if (this.showLoading) {
@@ -783,7 +781,6 @@ export default {
       this.changeHeight()
     },    
     inviteRoom() {
-      console.log(this.fd)
       if (!this.fd) {
         return;
       }
@@ -876,9 +873,9 @@ export default {
       // console.log('ws',data)
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname
-      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
@@ -1213,9 +1210,15 @@ export default {
     },
     // 聊天框滚动到最底部
     toBottom() {
-      let main = document.querySelector(".chat-window");
-      let content = document.querySelector(".chat-detail-main");
-      main.scrollTop = content.clientHeight - main.clientHeight + 500;
+      // let main = document.querySelector(".chat-window");
+      // let content = document.querySelector(".chat-detail-main");
+      // main.scrollTop = content.clientHeight - main.clientHeight + 500;
+      let box = document.getElementsByClassName('chat-window')[0]
+      this.$nextTick(() => {
+        setTimeout(() =>{
+          box.scrollTop = box.scrollHeight
+        },500)
+      })
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
@@ -1230,9 +1233,9 @@ export default {
           break;
         case "push":
           if (data.pic !== undefined) {
-            // data.pic = window.location.origin + data.pic;
+            data.pic = window.location.origin + data.pic;
             // data.pic = "http://huyapre.oxldkm.com" + data.pic;
-            data.pic = "http://huyapretest.oxldkm.com" + data.pic;
+            // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
             // data.pic = "https://www.x9zb.live" + data.pic;
             // data.pic = "http://huidu.x9zb.live" + data.pic;
           }

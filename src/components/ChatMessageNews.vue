@@ -80,20 +80,23 @@
                       <div class="thumb-text">{{ item.text }}</div>
                     </div>
                   </template>
-                  <vue-markdown v-if="!item.pic && item.text"
-                    class="text-info"
-                    :style="
-                      item.text === '进入直播间' ||
-                      item.text.includes('进入直播间')
-                        ? 'color: rgba(0 0 0 / 20%);'
-                        : ctp !==2
-                        ? 'width: 180px;'
-                        : ''
-                    "
-                    :anchor-attributes="linkAttrs" 
-                    @click.stop="showControl(index)">{{
-                    item.text
-                  }}</vue-markdown>
+                  <div @click.stop="showControl(index)">
+                    <vue-markdown v-if="!item.pic && item.text"
+                      class="text-info"
+                      :style="
+                        item.text === '进入直播间' ||
+                        item.text.includes('进入直播间')
+                          ? 'color: rgba(0 0 0 / 20%);'
+                          : ctp !==2
+                          ? 'width: 180px;'
+                          : ''
+                      "
+                      :anchor-attributes="linkAttrs" 
+                      >{{
+                      item.text
+                    }}</vue-markdown>
+                  </div>
+
                   <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
@@ -174,9 +177,9 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
-          // ? window.location.origin + '/' 
+          ? window.location.origin + '/' 
           // ? "http://huyapre.oxldkm.com/"
-          ? "http://huyapretest.oxldkm.com/"
+          // ? "http://huyapretest.oxldkm.com/"
           // ? "https://www.x9zb.live/"
           // ? "https://huidu.x9zb.live/"
           : window.location.origin + "/";
