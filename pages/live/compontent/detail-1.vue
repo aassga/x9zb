@@ -158,7 +158,7 @@
                           </div>
                         </template>
                         <div
-                          v-else
+                        v-if="!item.pic && item.text"
                           @click="openAppUrl(item.text)"
                           class="text-info"
                           v-html="getText(item.text)"
@@ -551,9 +551,9 @@ export default {
       if (url.includes("base64")) {
         let split = window.location.hostname.includes("10")
             // ? "https://www.x9zb.live/upload/"
-            ? window.location.origin + "/"
+            // ? window.location.origin + "/"
             // ? "http://huyapreadmin.oxldkm.com/upload/"
-            // ? "http://huidu.x9zb.live/upload/"
+            ? "http://huidu.x9zb.live/upload/"
             : window.location.origin + "/";
             (newUrl = newUrl.replace(split, ""));
       }
@@ -1202,11 +1202,11 @@ export default {
       const wsprotocol =
         window.location.protocol == "http:" ? "ws" : "wss";
       const locationHost = window.location.hostname;
-      this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapreadmin.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1333,9 +1333,9 @@ export default {
         formData.append("text", "");
         data = formData;
         let xhr = new XMLHttpRequest();
-        xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
+        // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
         // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-        // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
+        xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
         // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
@@ -1368,18 +1368,9 @@ export default {
     },
     sendMsg() {
       this.isShowEmoji = false;
-      // if (this.needBuy) {
-      // 	this.$message({
-      // 		type: "error",
-      // 		message: "需购买模特含对话的套餐"
-      // 	});
-      // 	return;
-      // }
-      // if (!this.isAllowedSendMsg || this.msgText == ""&&this.current!=0) {
-      // 	return;
-      // }
       let currentDate = new Date().getTime();
-      if (this.info.user_nickname === undefined) {
+      console.log(this.current)
+      if (this.info.user_nickname === undefined && this.current === 0) {
         this.$u.toast("游客不可在直播间发话报成功");
         this.msgText = "";
         return;
