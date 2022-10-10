@@ -46,7 +46,7 @@
 			<text style="">正在直播</text>
 			<image class="daily-icon" src="/static/images/daily/daily-icon.png" mode="" @click="$navigateTo('../dailyMission')"></image>
 		</view>
-		<view class="detail-video-list flex-wrap">
+		<view class="detail-video-list flex-wrap" @touchstart="start" @touchend="end">
 			<view class="detail-video-li " v-for="(item,index) in liveList.data" :key="index"
 				@click="$navigateTo('detail?id=' + item.uid+'&vid='+item.vid)">
 				<view class="detail-viedo-top">
@@ -71,11 +71,23 @@
 				</view>
 			</view>
 		</view>
+		<view class="pagination-container">
+			<pagiation
+				:current="current_page"
+				:total="total"
+				:limit="limit"
+				@jumpPage="jumpPage"
+			/>
+		</view>
 	</view>
 </template>
 
 <script>
+	import pagiation from '../compontent/pagination.vue';
 	export default {
+		components: {
+			pagiation
+		},
 		data() {
 			return {
 				// list: [{
@@ -91,8 +103,12 @@
 				// 		title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
 				// 	}
 				// ],
+				current_page: 1,
+				total: 0,
+				limit: 20,
 				liveList: {},
-				bannerList: []
+				bannerList: [],
+				clientX: null,
 			}
 		},
 		props: {
@@ -100,6 +116,15 @@
 				type: Array,
 				default: []
 			}
+		},
+		computed: {
+			total_page() {
+                let result = 1;
+                if (this.total > 0) {
+                    result = Math.ceil(this.total / this.limit);
+                }
+                return result;
+            }
 		},
 		mounted() {
 			console.log(2);
@@ -123,18 +148,49 @@
 
 				})
 			},
-			getList() {
-				// 全部赛事
-				this.$u.post('/api/hot_match/all_match', {}).then(res => {
-					this.bannerList = res.data
+			getList(page = 1, need_all_match = true) {
+				if (need_all_match) {
+					// 全部赛事
+					this.$u.post('/api/hot_match/all_match', {}).then(res => {
+						this.bannerList = res.data
 
-					// console.log(resdata);
-				})
+						// console.log(resdata);
+					})
+				}
 
 				// 正在直播
-				this.$u.get('/api/live_streaming/getLiveList', {}).then(res => {
-					this.liveList = res
+				this.$u.get('/api/live_streaming/getLiveList', {
+					page: page,
+					limit: this.limit
+				}).then(res => {
+					this.liveList = res;
+					this.current_page = res.current_page;
+					this.total = res.total;
 				})
+			},
+			jumpPage(page) {
+				console.log(page);
+				if (!(page > 0 && page <= this.total_page)) {
+					return;
+                }
+                if (page == this.current_page) {
+					return;
+                }
+				this.getList(page, false);
+				// this.getList(page, false);
+			},
+			start(e) {
+				this.clientX = e.changedTouches[0].clientX;
+			},
+			end(e) {
+				const subX = e.changedTouches[0].clientX - this.clientX;
+				if (subX > 100) {
+					this.jumpPage(this.current_page - 1);
+				} else if (subX < -100) {
+					this.jumpPage(this.current_page + 1);
+				} else {
+					return;
+				}
 			}
 		}
 	}
@@ -323,5 +379,9 @@
 	.detail-video-right {
 		flex: 1;
 		min-width: 100px;
+	}
+
+	.pagination-container {
+		margin-top: 10rpx;
 	}
 </style>

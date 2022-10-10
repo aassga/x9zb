@@ -249,7 +249,9 @@
 						this.from.guest_id = userid
 					}
 					this.$u.get('/api/user/registered',this.from).then(res => {
-						
+						if(res){
+							this.type = 1;
+						}
 					})
 				}
 				

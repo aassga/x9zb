@@ -195,14 +195,18 @@
 							clearInterval(this.timerLoad)
 							this.timerLoad = null;
 						}
-						this.timerNum = 300;
+						this.timerNum = 180;
 						this.timerLoad = setInterval(() => {
+							console.log(this.timerNum)
 							if (this.timerNum <= 0) {
 								clearInterval(this.timerLoad)
 								this.timerLoad = null;
-								if (uni.getStorageSync('isShowDownLoad') == false) {
+								console.log(sessionStorage.getItem('isShowDownLoad'))
+								if (!sessionStorage.getItem('isShowDownLoad')) {
 								this.showDownLoadModel = true;
-								uni.setStorageSync('isShowDownLoad',true)
+								console.log('弹框的状态')
+								console.log(this.showDownLoadModel)
+								sessionStorage.setItem('isShowDownLoad',true)
 								}
 			
 							}
@@ -863,9 +867,9 @@
 			z-index: 999;
 			position: absolute;
 			bottom: 20rpx;
-			right: 20rpx;
+			left: 20rpx;
 			width: 120rpx;
-			height: 45rpx;
+			height: 60rpx;
 		}
 
 		.thumb {

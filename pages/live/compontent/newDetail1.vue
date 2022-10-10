@@ -85,21 +85,21 @@
 		}
 
 		.HuyaXWebhMessagelist_i {
-			padding-left: 40rpx;
 			box-sizing: border-box;
 			width: 100%;
 			height: 100rpx;
 			display: flex;
 			align-items: center;
-			cursor: pointer;
 			justify-content: space-between;
+			border-bottom: 2rpx solid #dcd8d8;
+			cursor: pointer;
 
 			&.active {
-				background-color: #f5f7fa;
+				background-color: #fffbf5;
 			}
 
 			&:hover {
-				background-color: #f5f7fa;
+				background-color: #fffbf5;
 			}
 
 			.HuyaXWebhMessagelist_i_avater_box {
@@ -132,7 +132,6 @@
 			}
 
 			.HuyaXWebhMessagelist_i_context {
-				border-bottom: 2rpx solid #dcd8d8;
 				width: 85%;
 				height: 100rpx;
 				display: flex;
