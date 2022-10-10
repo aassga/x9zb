@@ -1335,11 +1335,7 @@ export default {
         let xhr = new XMLHttpRequest();
         xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
         // xhr.open("POST","http://huyapreadmin.oxldkm.com/api/chat/sendMessage");
-<<<<<<< HEAD
-        xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
-=======
         // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
->>>>>>> 7e4837f4b4ebab4ab09c60bfca4ee096ce8b91de
         // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
         this.formData = {};
