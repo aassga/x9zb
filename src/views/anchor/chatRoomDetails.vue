@@ -62,10 +62,10 @@
               >
                 <div class="msg-box" @click="console.log(item)">
                   <div class="msg-container">
-                    <div class="msg-content" :class="{'anchor-msg': item.sender == uid}" @click.stop="showControl(index)">
+                    <div class="msg-content" :class="{'anchor-msg': item.sender == anchor_id || item.userid == anchor_id}" @click.stop="showControl(index)">
                       <img src="../../assets/images/HiTag.png" class="hi-tag" v-if="item.text ? item.text.indexOf('进入直播间') !== -1 : false"/>
-                      <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                      <span class="level-tag" :class="`level${item.sender_exp ? item.sender_exp : 0}`" v-if="item.sender_exp && item.action !== 'gift' && item.sender != uid">Lv.{{item.sender_exp ? item.sender_exp : 0}}</span>
+                      <span class="anchor-tag" v-if="item.sender == anchor_id || item.userid == anchor_id">主播</span>
+                      <span class="level-tag" :class="`level${item.sender_exp ? item.sender_exp : 0}`" v-if="item.sender_exp && item.action !== 'gift' && item.sender != anchor_id && item.userid != anchor_id">Lv.{{item.sender_exp ? item.sender_exp : 0}}</span>
                       <div class="text-name" v-if="item.action !== 'gift'">{{item.sender_nickname ? item.sender_nickname + ':' : ''}}</div>
                       <template v-if="item.pic&&!item.text">
                         <el-image
@@ -350,19 +350,23 @@ export default {
         groupChat: false
       },
       room_type: "",
-      channel: localStorage.getItem("channel"),
+      channel: getQueryString().channel_code||localStorage.getItem("channel"),
       showLoading: true,
       initChatTab: true,
       initTab: true,
       leaveVid: "",
       type0_local_msg_list: [],
-      type2_local_msg_list: []
+      type2_local_msg_list: [],
+      anchor_id: "",
     };
   },
   computed: {
     token() {
       return this.$store.state.user.islogin;
-    }
+    },
+    infos(){
+      return this.$store.state.infos
+    },
   },
   //给新的ws实例添加监听事件
   watch: {
@@ -425,7 +429,7 @@ export default {
     this.toBottom();
   },
   async mounted() {
-    const _that = this;
+    this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", e => {
       console.log(
@@ -852,7 +856,8 @@ export default {
           fd: this.fd,
           name: this.parmUserInfo.username,
           user_id: getQueryString().uid,
-          channel: this.channel
+          channel: this.channel,
+          channel_code: this.channel,
         })
         .then(res => {
           if (this.initInvite) {
@@ -910,6 +915,7 @@ export default {
       this.controlIndex = index;
     },
     inRoomInfo(fd) {
+
       if (this.ctp == 1 || this.ctp == 2) {
         this.leaveVid = this.parmUserInfo.vid;
       }
@@ -918,7 +924,8 @@ export default {
         token: this.imUserInfo.token,
         fd: fd,
         type: this.ctp == 1 ? this.room_type : this.ctp || 0,
-        channel: this.channel
+        channel: this.channel,
+          channel_code: this.channel,
       };
       const _that = this;
       // if(_that.inRoom){
@@ -1044,7 +1051,8 @@ export default {
         color: "#000",
         sender: this.parmUserInfo.user_id,
         token: this.imUserInfo.token,
-        channel: this.channel
+        channel: this.channel,
+          channel_code: this.channel,
       };
       if (this.ctp === 2) {
         data.receiver = getQueryString().uid;
@@ -1117,7 +1125,7 @@ export default {
         avatar: this.info.avatar,
         sender: this.parmUserInfo.user_id,
         sender_nickname: this.info.user_nickname,
-        sender_exp: this.info.exp,
+        sender_exp: this.infos.exp,
         text: this.msgText,
         uiCode: currentDate,
         isError: false
@@ -1652,7 +1660,7 @@ form {
   margin-top: 38px;
 }
 
-::v-deep .el-drawer__header {
+/deep/ .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }

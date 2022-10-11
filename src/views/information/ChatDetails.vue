@@ -588,7 +588,7 @@ msg.focus();
 };
 </script>
 <style lang="scss" scoped>
-::v-deep .el-drawer__header {
+/deep/ .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }
