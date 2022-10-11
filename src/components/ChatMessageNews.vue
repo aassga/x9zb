@@ -31,7 +31,12 @@
               <div class="msg-container">
                 <div
                   class="msg-content"
-                  :class="[{ 'my-self': mySelf(item) && ctp === 2 }]"
+                  :class="{
+                    'my-self':
+                      (Number(item.sender) === parmUserInfo.user_id ||
+                        item.sender === parmUserInfo.user_id) &&
+                      current === 1,
+                  }"
                 >
                   <template v-if="ctp === 0">
                     <img
