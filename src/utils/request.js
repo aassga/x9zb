@@ -13,7 +13,7 @@ import {
 } from '@/utils/auth'
 
 let baseURL = process.env;
-// console.log(apiUrl);
+console.log(apiUrl);
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);
 // }
@@ -41,7 +41,7 @@ service.interceptors.request.use(
 	},
 	error => {
 		// do something with request error
-		// console.log(error) // for debug
+		console.log(error) // for debug
 		return Promise.reject(error)
 	}
 )
@@ -68,27 +68,22 @@ service.interceptors.response.use(
 		// }
 		let _this = this
 		const res = response.data
-		const api_url = response.config.url
-		let showMsg = api_url.indexOf("api/chat") < 0
 		// if the custom code is not 20000, it is judged as an error.
-		// if(res.msg!="connection error"&&res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="登录成功"&&res.msg!="赠送礼物成功"){
+		if(res.msg!="connection error"&&res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="登录成功"&&res.msg!="赠送礼物成功"){
 			// Message({
 			// 	message: res.msg || 'Error',
 			// 	type: 'error',
 			// 	duration: 5 * 1000
 			// })
-
-			// // console.log(res.msg,"res.msg======")
-		// }
-		// if (res.code == 1&&res.msg!="connection error") {
-		if (res.code !== 0) {
-
+			console.log(res.msg,"res.msg======")
+		}
+		if (res.code == 1&&res.msg!="connection error") {
 			// Message({
 			// 	message: res.msg || 'Error',
 			// 	type: 'error',
 			// 	duration: 5 * 1000
 			// })
-			// // console.log(res.msg,"res.msg1======")
+			console.log(res.msg,"res.msg1======")
 			// 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
 			if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
 				// to re-login
@@ -101,38 +96,28 @@ service.interceptors.response.use(
 						location.reload()
 					})
 				})
-			} else {
-				if (showMsg&&!res.msg.includes("注册成功")) {
-					Message({
-						message: res.msg || 'Error',
-						type: 'error',
-						duration: 5 * 1000
-					})
-				} else {
-					// console.log(res.msg,"res.msg======")
-				}
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else if (res.code == 700) { //登录过期
-
+			
 			// 控制弹窗1s内出现一次
 			i++
-			if (i > 1) return
-			if (i == 1) {
-				setTimeout(res => {
+			if(i>1) return
+			if(i==1){
+				setTimeout(res=>{
 					i = 0
-				}, 2000)
+				},2000)
 			}
-
+			
 			// router.app.fullPath = '/main'
 			localStorage.setItem('index', 0)
 			// store.dispatch('delToken','')
 			store.state.user.data = {}
 			store.state.user.islogin = false
 			localStorage.removeItem('userInfo')
-			// // console.log(_this);
+			// console.log(_this);
 			Vue.prototype.$message.error('请登录后操作')
-			// // console.log('--------------------'+router);
+			// console.log('--------------------'+router);
 			//  setTimeout(res=>{
 			return Promise.reject(new Error('Error'))
 			// router.push({path:'/main',name:'main'})
@@ -143,23 +128,23 @@ service.interceptors.response.use(
 			// location.reload()
 			// this.$
 		} else if (res.code != 700 && res.code != 1 && res.code !== 0) { //其它状态
-
+			
 			return res
-
+			
 		} else {
 			return res
 		}
 		removeToken()
 	},
 	error => {
-		// // console.log('err' + error) // for debug
+		// console.log('err' + error) // for debug
 		// Message({
 		// 	// message: error.message == 'errError: timeout of 10000ms exceeded'?'请求超时,请重试':error.message,
 		// 	message: '连接超时,请重试',
 		// 	type: 'error',
 		// 	duration: 5 * 1000
 		// })
-		// console.log(res.msg,"timeout======")
+		console.log(res.msg,"timeout======")
 		return Promise.reject(error)
 	}
 )

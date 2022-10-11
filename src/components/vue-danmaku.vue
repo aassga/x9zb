@@ -308,13 +308,13 @@
       },
       // 添加弹幕（插入到当前播放的弹幕位置）
       add(danmu) {
-        // console.log(danmu);
+        console.log(danmu);
 		// return
         const index = this.index % this.danmuList.length
-        // // console.log(index);
+        // console.log(index);
         // this.danmuList.push(danmu)
         // this.danmuList.splice(this.danmuList.length, 0, danmu)
-        // // console.log(this.danmuList);
+        // console.log(this.danmuList);
       },
       // 添加弹幕（插入到弹幕末尾）
       push(danmu) {

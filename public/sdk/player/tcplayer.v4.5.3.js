@@ -264,17 +264,17 @@ var IS_ZX = /ZTE/i.test(USER_AGENT); // 中兴
 // async function isSupportWidevine(result) {
 //   try {
 //     result = await navigator.requestMediaKeySystemAccess('com.widevine.alpha', widevineOptions).then(function (keySystemAccess) {
-//       // // console.log(keySystemAccess.getConfiguration());
+//       console.log(keySystemAccess.getConfiguration());
 //       return true;
 //     }).catch(function (e) {
-//       // // console.log('rejected', e);
+//       console.log('rejected', e);
 //       return false;
 //     });
 //   } catch (e) {
-//     // // console.log(e);
+//     console.log(e);
 //     result = false;
 //   }
-//   // // console.log('result', result);
+//   console.log('result', result);
 // }
 
 var isWebRTCAPISupported = function isWebRTCAPISupported() {
@@ -661,7 +661,7 @@ var logByType = function logByType(type, args) {
   if (!fn && type === 'debug') {
     // Certain browsers don't have support for console.debug. For those, we
     // should default to the closest comparable log.
-    fn = window_1.console.info || window_1.// // console.log;
+    fn = window_1.console.info || window_1.console.log;
   }
 
   // Bail out if there's no console or if this type is not allowed by the
@@ -698,7 +698,7 @@ var logByType = function logByType(type, args) {
 };
 
 /**
- * Logs plain debug messages. Similar to `// // console.log`.
+ * Logs plain debug messages. Similar to `console.log`.
  *
  * @class
  * @param    {Mixed[]} args
@@ -11757,11 +11757,11 @@ function use(type, middleware) {
 
 
 function setSource(player, src, next) {
-  // // console.log('setSource', src);
+  console.log('setSource', src);
   // 可以在这里异步加载tech，player ready回调是在loadtech 触发的，所以异步加载tech后ready也会异步化
   // resourceLoader('//unpkg.com/videojs-contrib-hls.js@3.0.3/dist/videojs-contrib-hlsjs.min.js', {
   //   success: function () {
-  //     // // console.log('load hls done');
+  //     console.log('load hls done');
   player.setTimeout(function () {
     return setSourceHelper(src, middlewares[src.type], next, player);
   }, 1);
@@ -14941,7 +14941,7 @@ var SeekBar = function (_Slider) {
 
     this.player_.trigger('beforeseek');
 
-    // // console.log('before seeking', this.player_.currentTime());
+    // console.log('before seeking', this.player_.currentTime());
 
     this.player_.scrubbing(true);
 
@@ -19886,7 +19886,7 @@ var Html5 = function (_Tech) {
         video.webkitEnterFullScreen();
       }, 0);
     } else {
-      // // console.log('webkitEnterFullScreen');
+      console.log('webkitEnterFullScreen');
       video.webkitEnterFullScreen();
     }
   };
@@ -20391,7 +20391,7 @@ var mpegurlRE = /^application\/(?:x-|vnd\.apple\.)mpegurl/i;
 var mp4RE = /^video\/mp4/i;
 
 Html5.patchCanPlayType = function () {
-  // // console.log('patchCanPlayType');
+  console.log('patchCanPlayType');
   // Android 4.0 and above can play HLS to some extent but it reports being unable to do so
   if (ANDROID_VERSION >= 4.0 && !IS_FIREFOX) {
     Html5.TEST_VID.constructor.prototype.canPlayType = function (type) {
@@ -21077,9 +21077,9 @@ Html5.nativeSourceHandler = {};
  *         'probably', 'maybe', or '' (empty string)
  */
 Html5.nativeSourceHandler.canPlayType = function (type) {
-  // // console.log('Html5.canPlayType', type);
+  console.log('Html5.canPlayType', type);
   setTimeout(function () {
-    // // console.log('Html5.canPlayType', type);
+    console.log('Html5.canPlayType', type);
   }, 2000);
   // IE9 on Windows 7 without MediaPlayer throws an error here
   // https://github.com/videojs/video.js/issues/519
@@ -22625,7 +22625,7 @@ var Player = function (_Component) {
 
 
   Player.prototype.handleTechClick_ = function handleTechClick_(event) {
-    // // console.log('handleTechClick_', event, this.tech(true).el().webkitDisplayingFullscreen)
+    // console.log('handleTechClick_', event, this.tech(true).el().webkitDisplayingFullscreen)
     if (!isSingleLeftClick(event)) {
       return;
     }
@@ -23288,11 +23288,11 @@ var Player = function (_Component) {
    *   myPlayer.src("http://www.example.com/path/to/video.mp4");
    *
    *   // get, should be false
-   *   // // console.log(myPlayer.defaultMuted());
+   *   console.log(myPlayer.defaultMuted());
    *   // set to true
    *   myPlayer.defaultMuted(true);
    *   // get should be true
-   *   // // console.log(myPlayer.defaultMuted());
+   *   console.log(myPlayer.defaultMuted());
    * ```
    *
    * @param {boolean} [defaultMuted]
@@ -23555,7 +23555,7 @@ var Player = function (_Component) {
 
 
   Player.prototype.canPlayType = function canPlayType(type) {
-    // // console.log('canPlayType', type);
+    console.log('canPlayType', type);
     var can = void 0;
 
     // Loop through each playback technology in the options order
@@ -23739,7 +23739,7 @@ var Player = function (_Component) {
         }
       }
     } catch (e) {
-      // // console.log('err', e);
+      console.log('err', e);
     }
 
     // middlewareSource is the source after it has been changed by middleware
@@ -23790,7 +23790,7 @@ var Player = function (_Component) {
 
   Player.prototype.src_ = function src_(source) {
     var sourceTech = this.selectSource([source]);
-    // // console.log('src_', sourceTech);
+    console.log('src_', sourceTech);
     if (!sourceTech) {
       return true;
     }
@@ -33559,10 +33559,10 @@ function jsonp(url, opts, fn) {
   script.setAttribute('async', true);
   script.onload = function (e) {
     // onload事件会在响应内容执行完毕后触发
-    // // console.log('jsonp onload', e);
+    // console.log('jsonp onload', e);
   };
   script.onreadystatechange = function () {
-    // // console.log('jsonp onreadystatechange', this.readyState, window[id]);
+    // console.log('jsonp onreadystatechange', this.readyState, window[id]);
     if (this.readyState === 'loaded' && window[id]) {
       cleanup();
       if (fn) fn(new Error('ServerError'));
@@ -33570,7 +33570,7 @@ function jsonp(url, opts, fn) {
     // IE8 没有onload error事件 只有onreadystatechange，readyState 为loading或loaded。loaded 时回调已执行
   };
   script.onerror = function (e) {
-    // // console.log('jsonp onerror', e);
+    // console.log('jsonp onerror', e);
     cleanup();
     if (fn) fn(new Error('ServerError'));
   };
@@ -33720,7 +33720,7 @@ var MediaAsyncLoader = function (_Component) {
     if (args['playerID']) {
       params['playerid'] = args['playerID'];
     }
-    // // console.log(params);
+    // console.log(params);
     this.requestTimestamp = +new Date().getTime();
     player.trigger({ type: 'playcgistart', data: { time: this.requestTimestamp, url: url } });
     log$2('playcgi loading');
@@ -33763,7 +33763,7 @@ var MediaAsyncLoader = function (_Component) {
 
 
   MediaAsyncLoader.prototype.onResult = function onResult(error, result, body) {
-    // // console.log('onResult', error, result, body);
+    // console.log('onResult', error, result, body);
     // 处理 xhr 返回的数据格式，注意 body 可能不是 json 格式
     try {
       if (body) {
@@ -33956,7 +33956,7 @@ var MediaAsyncLoader = function (_Component) {
 
 
   MediaAsyncLoader.prototype.onResultV3 = function onResultV3(error, result, body) {
-    // // console.log('onResultV3', error, result, body);
+    // console.log('onResultV3', error, result, body);
     try {
       if (body) {
         result = JSON.parse(body);
@@ -33970,7 +33970,7 @@ var MediaAsyncLoader = function (_Component) {
     var player = this.player();
 
     if (!error) {
-      // // console.log('play cgi', result);
+      // console.log('play cgi', result);
       player.trigger({
         type: 'playcgiend',
         data: { time: +new Date().getTime(), startTime: this.requestTimestamp, error: error, result: result }
@@ -34046,7 +34046,7 @@ var MediaAsyncLoader = function (_Component) {
         previewList = {},
         streamList = {};
     skipPlan = skipPlan ? skipPlan : DRMOptions ? DRMOptions.skipPlan : '';
-    // // console.log('setSrcV3', mediaInfo, player.options_);
+    console.log('setSrcV3', mediaInfo, player.options_);
     if (mediaInfo['previewStreamingInfo'] && mediaInfo['previewStreamingInfo']['previewStreamingList'].length > 0) {
       // 试看视频
       mediaInfo['previewStreamingInfo']['previewStreamingList'].forEach(function (item, index) {
@@ -34068,8 +34068,8 @@ var MediaAsyncLoader = function (_Component) {
         skipPlan = IS_SAFARI && !certificateUri ? 'fairplay' : skipPlan;
         urlEncodeToken = window_1.encodeURIComponent(token);
       }
-      // // console.log(browser);
-      // // console.log(window_1.navigator.userAgent);
+      console.log(browser);
+      console.log(window_1.navigator.userAgent);
       // 判断平台选择对应的播放方案
       // 目前只有原生chrome 和 Firefox 支持 widevine
       if ((IS_CHROME || IS_FIREFOX) && window_1.navigator.requestMediaKeySystemAccess && streamList['widevine'] && skipPlan != 'widevine' && skipPlan != 'all') {
@@ -34124,7 +34124,7 @@ var MediaAsyncLoader = function (_Component) {
       this.player().error({ code: 13, message: 'no video stream' });
       return;
     }
-    // // console.log(streamList, previewList, src);
+    console.log(streamList, previewList, src);
     if (src.length > 0) {
       player.src(src);
     } else {
@@ -34133,7 +34133,7 @@ var MediaAsyncLoader = function (_Component) {
     }
 
     var onError = function onError(event) {
-      // // console.log('DRM init Error', event);
+      console.log('DRM init Error', event);
       log$2('DRM init Error', src);
       // 播放失败时选择另一种播放方案
       // dash getlicense 失败 5
@@ -34487,7 +34487,7 @@ var MediaAsyncLoader = function (_Component) {
   MediaAsyncLoader.prototype.setSrcV4 = function setSrcV4(mediaInfo, skipPlan) {
     var _this3 = this;
 
-    // // console.log('setSrcV4', mediaInfo);
+    console.log('setSrcV4', mediaInfo);
     var player = this.player(),
         options = player.options_,
         src = void 0,
@@ -34518,7 +34518,7 @@ var MediaAsyncLoader = function (_Component) {
       // 设置视频播放地址
       if (mediaInfo.streamingInfo.drmOutput && Array.isArray(mediaInfo.streamingInfo.drmOutput)) {
         // drm
-        // // console.log('setSrcV4 DRM');
+        console.log('setSrcV4 DRM');
         // 统计服务端设置的 drm 策略，存入 drmTypes
         var drmArray = mediaInfo.streamingInfo.drmOutput;
         for (var i = 0; i < drmArray.length; i++) {
@@ -34592,7 +34592,7 @@ var MediaAsyncLoader = function (_Component) {
 
       this.setHlsConfig(options, qualityLabelList, drmTypes.indexOf('SimpleAES') !== -1 && drmTypes.length > 1);
 
-      // // console.log('setSrcV4', src);
+      console.log('setSrcV4', src);
       if (drmData.length > 0) {
         player.src(drmData);
       } else {
@@ -34606,7 +34606,7 @@ var MediaAsyncLoader = function (_Component) {
     }
 
     var onError = function onError(event) {
-      // // console.log('DRM init Error', event);
+      console.log('DRM init Error', event);
       log$2('DRM init Error', drmData);
       // 播放失败时选择另一种播放方案
       // dash getlicense 失败 5
@@ -34615,7 +34615,7 @@ var MediaAsyncLoader = function (_Component) {
       // simpleAES hls.js getkey 失败返回 14
       // simpleAES natvie getKey 失败返回 3
       if (drmData[0]['keySystems']['com.widevine.alpha']) {
-        // // console.log('jiangjiwidevine_' + event.data.code);
+        console.log('jiangjiwidevine_' + event.data.code);
         _this3.setSrcV4(mediaInfo, 'widevine');
         return;
       }
@@ -34667,7 +34667,7 @@ var MediaAsyncLoader = function (_Component) {
 
 
   MediaAsyncLoader.prototype.setQualityLabelList = function setQualityLabelList(list) {
-    // // console.log('setQualityLabelList', list);
+    console.log('setQualityLabelList', list);
     this.player().QualitySwitcher().setOptions({
       qualityLabelList: {
         video: list
@@ -34856,7 +34856,7 @@ var MediaAsyncLoader = function (_Component) {
     // 标记视频原始时长
     player.cache_.originDuration = mediaInfo.basicInfo.duration;
     // let bind = Fn.bind(this, this.keepOriginDuration)
-    // // console.log('setOriginDurationV4', bind.guid);
+    // console.log('setOriginDurationV4', bind.guid);
     player.off('durationchange', this.keepOriginDuration);
     player.one('durationchange', function (event) {
       // 如果首次获取视频实际时长与原始时长不一致，强制显示原始时长
@@ -34925,10 +34925,10 @@ var MediaAsyncLoader = function (_Component) {
         resolutionConfig = result.playerInfo['videoClassification'],
         self = this;
     resolutionConfig.forEach(function (configItem, index) {
-      // // console.log(configItem, index);
+      // console.log(configItem, index);
       // transcodeList的length在filter后会减少
       if (transcodeList.length > 0) {
-        // // console.log(transcodeList.length, multiResolution);
+        // console.log(transcodeList.length, multiResolution);
         // 根据清晰度配置，过滤出清晰度在configItem中存在的视频,并按照resolutionConfig的遍历顺序，push到sources
         transcodeList = transcodeList.filter(function (source) {
           if (configItem['definitionList'].indexOf(source.definition) > -1) {
@@ -34954,7 +34954,7 @@ var MediaAsyncLoader = function (_Component) {
     // 需要注意transcodeList里的视频清晰度都没有在 videoClassification 中匹配到的情况，这时sources为空数组
     // 默认播放清晰度，需要接口返回，如果没有则默认取第一个
     multiResolution['defaultRes'] = result.playerInfo.defaultVideoClassification || Object.keys(sources)[0];
-    // // console.log('getMultiResolutionData', multiResolution);
+    // console.log('getMultiResolutionData', multiResolution);
     return multiResolution;
   };
 
@@ -35235,7 +35235,7 @@ var ContinuePlayTips = function (_Component) {
 
     var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
 
-    // // console.log('init ContinuePlayTips', options);
+    console.log('init ContinuePlayTips', options);
     _this.init(options);
     return _this;
   }
@@ -35602,12 +35602,12 @@ var Html5HlsJS = function () {
     }
     hls.attachMedia(video);
 
-    // // console.log('source src, ', source.src);
+    console.log('source src, ', source.src);
     hls.loadSource(source.src);
   }
 
   Html5HlsJS.prototype.switchQuality = function switchQuality(data) {
-    // // console.log('switchQuality', data, this.hls);
+    console.log('switchQuality', data, this.hls);
     if (data.id != this.hls.currentLevel) {
       this.switchStatus = 'switching';
       this.switchData = data;
@@ -35617,7 +35617,7 @@ var Html5HlsJS = function () {
   };
 
   Html5HlsJS.prototype.dispose = function dispose() {
-    // // console.log('Html5HlsJS dispose');
+    console.log('Html5HlsJS dispose');
     this.hls.destroy();
   };
 
@@ -35631,7 +35631,7 @@ var Html5HlsJS = function () {
     subtitle.url = data.details.fragments[0].url;
 
     if (++this.subtitlesLoadedCount < subtitles.length) {
-      // // console.log('\u52A0\u8F7D\u7B2C' + (this.subtitlesLoadedCount + 1) + '\u6761\u5B57\u5E55');
+      console.log('\u52A0\u8F7D\u7B2C' + (this.subtitlesLoadedCount + 1) + '\u6761\u5B57\u5E55');
       this.hls.trigger(Hls$1.Events.SUBTITLE_TRACK_LOADING, { url: subtitles[this.subtitlesLoadedCount].url, id: subtitles[this.subtitlesLoadedCount].id });
     } else {
       // 字幕头文件解析完成后再次执行添加字幕方法，确保加载字幕时机
@@ -35650,7 +35650,7 @@ var Html5HlsJS = function () {
     var _this2 = this;
 
     var subtitles = this.hls.subtitleTracks;
-    // // console.log('[hls subtitles]: ', subtitles);
+    console.log('[hls subtitles]: ', subtitles);
 
     if (!subtitles.length) {
       console.info('[hls info]: 无字幕');
@@ -35685,7 +35685,7 @@ var Html5HlsJS = function () {
         var subtitle = _this3.tech.addRemoteTextTrack({ src: item.url, kind: 'subtitles', srclang: item.lang, label: item.name }, true);
         subtitle.addEventListener('load', function () {
           item.loaded = true;
-          // // console.log('subtitle load', subtitle);
+          console.log('subtitle load', subtitle);
         });
       });
     }
@@ -35704,7 +35704,7 @@ var Html5HlsJS = function () {
       //m3u8列表加载成功后，保存列表信息，可进一步分析里面的数值，比如直播回看Dvr.js需要解析出直播流的开始时间和可时移时长
       case Hls$1.Events.MANIFEST_LOADED:
         this.manifests.push(data.networkDetails.response || data.networkDetails.responseText);
-        // // console.log(Hls.Events.MANIFEST_LOADED, this.manifests);
+        // console.log(Hls.Events.MANIFEST_LOADED, this.manifests);
         break;
       case Hls$1.Events.LEVEL_SWITCHING:
         break;
@@ -35722,7 +35722,7 @@ var Html5HlsJS = function () {
   };
 
   Html5HlsJS.prototype.onMetaData = function onMetaData(event, data) {
-    // // console.log('hlsjs onMetaData', event, data);
+    console.log('hlsjs onMetaData', event, data);
     var cleanTracklist = [];
     var _hls = this.hls;
     var self = this;
@@ -35751,7 +35751,7 @@ var Html5HlsJS = function () {
       qualityData: { video: cleanTracklist },
       callbacks: { video: videojs.bind(this, this.switchQuality) }
     };
-    // // console.log('hlsjs onMetaData', payload);
+    // console.log('hlsjs onMetaData', payload);
     // 加载并解析master playlist后更新media playlist信息，并发出事件。
     // 为了避免hls解析快于插件初始化，导致插件不能正常触发时间，这里做延迟处理。
     this.tech.setTimeout(function () {
@@ -35766,12 +35766,12 @@ var Html5HlsJS = function () {
   };
 
   Html5HlsJS.prototype.onLevelLoaded = function onLevelLoaded(event, data) {
-    // // console.log('hlsjs level loaded', event, data);
+    // console.log('hlsjs level loaded', event, data);
     this._duration = data.details.live ? Infinity : data.details.totalduration;
   };
 
   Html5HlsJS.prototype.onError = function onError(event, data) {
-    // // console.log('hlsjs onError', event, data, this.tech);
+    console.log('hlsjs onError', event, data, this.tech);
     var player = this.tech.player();
     if (data.fatal) {
       switch (data.type) {
@@ -35819,7 +35819,7 @@ var Html5HlsJS = function () {
     var recoverRetry = 0;
     return function (data) {
       var now = Date.now();
-      // // console.log('hls errorHandlerFactory', data);
+      console.log('hls errorHandlerFactory', data);
       if (recoverRetry == hls.config.recoverMediaErrorMaxRetry) {
         player.error({ code: 15, source: data });
       } else {
@@ -35850,7 +35850,7 @@ var hlsExtRE = /\.m3u8/i;
 var HlsSourceHandler = {
   name: 'hlsSourceHandler',
   canHandleSource: function canHandleSource(source) {
-    // // console.log('canHandleSource', source);
+    console.log('canHandleSource', source);
     // skip hls fairplay, need to use Safari resolve it.
     if (source.skipHlsJs || source.keySystems && source.keySystems['com.apple.fps.1_0']) {
       return '';
@@ -35869,16 +35869,16 @@ var HlsSourceHandler = {
     } else {
       // hls关闭自动加载后，需要手动加载资源
       if (options.hlsConfig && options.hlsConfig.autoStartLoad === false) {
-        // // console.log('hls bind', tech.player().hasStarted());
+        // console.log('hls bind', tech.player().hasStarted());
         tech.on('play', function () {
-          // // console.log('hls play', this.player().hasStarted());
+          // console.log('hls play', this.player().hasStarted());
           if (!this.player().hasStarted()) {
             this.hlsProvider.hls.startLoad();
           }
         });
       }
     }
-    // // console.log('handleSource', source, tech, options);
+    console.log('handleSource', source, tech, options);
     tech.hlsProvider = new Html5HlsJS(source, tech, options);
     return tech.hlsProvider;
   },
@@ -36182,7 +36182,7 @@ var Html5DashJS = function () {
     classCallCheck(this, Html5DashJS);
 
     // Get options from tech if not provided for backwards compatibility
-    // // console.log('Html5DashJS', source, tech, options);
+    console.log('Html5DashJS', source, tech, options);
     options = options || tech.options_;
 
     this.player = videojs(options.playerId);
@@ -36412,7 +36412,7 @@ var Html5DashJS = function () {
     setupTextTracks.call(null, this.player, tech, options);
 
     // Attach the source with any protection data
-    // // console.log('setProtectionData',this.keySystemOptions_);
+    // console.log('setProtectionData',this.keySystemOptions_);
     this.mediaPlayer_.setProtectionData(this.keySystemOptions_);
     this.mediaPlayer_.attachSource(manifestSource);
 
@@ -36575,7 +36575,7 @@ var Html5DashJS = function () {
   };
 
   Html5DashJS.prototype.switchQuality = function switchQuality(data) {
-    // // console.log('switchQuality', data, this);
+    // console.log('switchQuality', data, this);
     var _mediaPlayer = this.mediaPlayer_;
     if (data.id === -1) {
       // migrate from 2.9.3 to 3.1.3 http://cdn.dashjs.org/v3.1.3/jsdoc/module-MediaPlayer.html#updateSettings__anchor
@@ -36597,7 +36597,7 @@ var Html5DashJS = function () {
   };
 
   Html5DashJS.prototype.onEvent = function onEvent(event) {
-    // // console.log('dashjs', event.type);
+    // console.log('dashjs', event.type);
     this.tech_.trigger({ type: 'dash_' + event.type, data: event });
 
     switch (event.type) {
@@ -37235,7 +37235,7 @@ var RightClickPopupMenu = function (_Menu) {
   };
 
   RightClickPopupMenu.prototype.onContextmenu = function onContextmenu(event) {
-    // // console.log('on contextmenu', event);
+    console.log('on contextmenu', event);
     event.preventDefault();
     this.show();
 
@@ -37296,7 +37296,7 @@ var ProgressMarkerGenerator = function (_clickableComponent) {
   };
 
   ProgressMarkerGenerator.prototype.resetDotsElement = function resetDotsElement() {
-    // // console.log('resetDotsElement');
+    // console.log('resetDotsElement');
     var player_ = this.player_;
     this.duration = player_.duration();
 
@@ -37308,7 +37308,7 @@ var ProgressMarkerGenerator = function (_clickableComponent) {
   };
 
   ProgressMarkerGenerator.prototype.resetEl = function resetEl() {
-    // // console.log('resetEl');
+    // console.log('resetEl');
     this.setUpEl();
   };
 
@@ -37316,7 +37316,7 @@ var ProgressMarkerGenerator = function (_clickableComponent) {
 
 
   ProgressMarkerGenerator.prototype.dotMouseLeave = function dotMouseLeave() {
-    // // console.log(' dot mouse leave');
+    // console.log(' dot mouse leave');
     var dot = event.currentTarget;
     var containerID = dot.getAttribute('container-id');
     var popUpContainer = this.getChildById(containerID);
@@ -37327,7 +37327,7 @@ var ProgressMarkerGenerator = function (_clickableComponent) {
 
 
   ProgressMarkerGenerator.prototype.dotHover = function dotHover() {
-    // // console.log('dot hover');
+    // console.log('dot hover');
     //对溢出进行判别，判断当前显示位置是否会溢出边界
     var playerWidth = event.currentTarget.parentElement.offsetWidth,
         showingCommentWidth = event.currentTarget.offsetLeft + COMMENT_WIDTH,
@@ -37448,7 +37448,7 @@ var ProgressMarkerGenerator = function (_clickableComponent) {
   ProgressMarkerGenerator.prototype.setUpEl = function setUpEl() {
     var _this2 = this;
 
-    // // console.log(this.player_.dots);
+    // console.log(this.player_.dots);
     var dotsSetting = this.player_.options_.dots || 0;
 
     var el = this.el_ || _clickableComponent.prototype.createEl.call(this);
@@ -37613,14 +37613,14 @@ var SpeedUp = function (_Plugin) {
 
   SpeedUp.prototype.checkLatency = function checkLatency() {
     var latency = this.player.bufferedEnd() - this.player.currentTime();
-    // // console.log('latency', latency, this.MAX_LATENCY);
+    console.log('latency', latency, this.MAX_LATENCY);
     if (latency > this.MAX_LATENCY) {
-      // // console.log('开始追帧');
+      console.log('开始追帧');
       this.player.playbackRate(this.RATEVALUE);
     }
 
     if (latency < this.TARGET_LANTENCY) {
-      // // console.log('结束追帧');
+      console.log('结束追帧');
       this.player.playbackRate(1);
     }
   };
@@ -37632,7 +37632,7 @@ var SpeedUp = function (_Plugin) {
     var timer = void 0;
 
     player.on('playing', function () {
-      // // console.log('playing');
+      console.log('playing');
       if (player.duration() === Infinity) {
         timer = setInterval(_this2.checkLatency.bind(_this2), 1000);
       }
@@ -37755,7 +37755,7 @@ LoadingSpinner$2.prototype.createEl = function () {
 
 var Plugin$3 = videojs.getPlugin('plugin');
 var log$3 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 
 var Skin = function (_Plugin) {
   inherits(Skin, _Plugin);
@@ -37779,7 +37779,7 @@ videojs.registerPlugin('Skin', Skin);
 
 var Plugin$4 = videojs.getPlugin('plugin');
 var log$4 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 
 var VID = function (_Plugin) {
   inherits(VID, _Plugin);
@@ -37899,7 +37899,7 @@ var _root = root;
  * @example
  *
  * _.defer(function(stamp) {
- *   // // console.log(_.now() - stamp);
+ *   console.log(_.now() - stamp);
  * }, _.now());
  * // => Logs the number of milliseconds it took for the deferred invocation.
  */
@@ -38452,7 +38452,7 @@ var DvrProgressControl = function (_Component) {
   };
 
   DvrProgressControl.prototype.update = function update(percent) {
-    // // console.log('DvrProgressControl update', percent);
+    // console.log('DvrProgressControl update', percent);
     this.getChild('DvrSeekBar').update(percent);
   };
   /**
@@ -38461,7 +38461,7 @@ var DvrProgressControl = function (_Component) {
 
 
   DvrProgressControl.prototype.handleMouseMove = function handleMouseMove(event) {
-    // // console.log('DvrProgressControl move', event);
+    // console.log('DvrProgressControl move', event);
     var dvrSeekBar = this.getChild('DvrSeekBar');
     var percent = dvrSeekBar.calculateDistance(event);
     var mouseTimeDisplay = dvrSeekBar.getChild('DvrMouseTimeDisplay');
@@ -38471,7 +38471,7 @@ var DvrProgressControl = function (_Component) {
   };
 
   DvrProgressControl.prototype.handleMouseUp = function handleMouseUp(event) {
-    // // console.log('DvrProgressControl mouseup');
+    // console.log('DvrProgressControl mouseup');
     var dvrSeekBar = this.getChild('DvrSeekBar');
     dvrSeekBar.handleMouseUp(event);
   };
@@ -38501,7 +38501,7 @@ var DvrSeekBar = function (_Slider) {
     _this2.percent_ = 1;
     _this2.update = throttle_1(videojs.bind(_this2, _this2.update), 50);
     // this.update = videojs.bind(this, this.update);
-    // // console.log('DvrSeekBar init vertical:', this.vertical()) // false
+    // console.log('DvrSeekBar init vertical:', this.vertical()) // false
     _this2.on(player, 'seekToLive', videojs.bind(_this2, function (event) {
       this.update(event.data);
     }));
@@ -38536,7 +38536,7 @@ var DvrSeekBar = function (_Slider) {
       return;
     }
     this.percent_ = percent;
-    // // console.log('DvrSeekBar update', (percent*100).toFixed(2), window.getComputedStyle(this.el_).height);
+    // console.log('DvrSeekBar update', (percent*100).toFixed(2), window.getComputedStyle(this.el_).height);
     this.bar.update(videojs.dom.getBoundingClientRect(this.el_), percent);
     this.updateAriaAttributes(percent);
   };
@@ -38558,7 +38558,7 @@ var DvrSeekBar = function (_Slider) {
   DvrSeekBar.prototype.handleMouseMove = function handleMouseMove(event) {
     // let newTime = this.calculateDistance(event) * this.player_.duration();
     var percent = this.calculateDistance(event);
-    // // console.log('DvrSeekBar mouseDown or move', this.calculateDistance(event));
+    // console.log('DvrSeekBar mouseDown or move', this.calculateDistance(event));
     this.update(percent);
   };
 
@@ -38566,7 +38566,7 @@ var DvrSeekBar = function (_Slider) {
     _Slider.prototype.handleMouseUp.call(this);
     var percent = this.calculateDistance(event);
     //slider handleMouseUp 会调用 update 方法，但是没有传入参数，会影响DvrSeekBar的update逻辑
-    // // console.log('DvrSeekBar mouseUp', this.calculateDistance(event));
+    // console.log('DvrSeekBar mouseUp', this.calculateDistance(event));
     this.update(percent);
     //设置时移播放地址
     this.player().Dvr().timeShift(percent);
@@ -38630,7 +38630,7 @@ var DvrTimeShiftBar = function (_Component2) {
 
 
   DvrTimeShiftBar.prototype.update = function update(seekBarRect, seekBarPoint) {
-    // // console.log('DvrTimeShiftBar', seekBarRect, seekBarPoint);
+    // console.log('DvrTimeShiftBar', seekBarRect, seekBarPoint);
 
     var percentage = (seekBarPoint * 100).toFixed(2) + '%';
     var style = this.el_.style;
@@ -38750,7 +38750,7 @@ var Dvr = function (_Plugin) {
     _this.isInit = false;
     _this.options = options;
     var self = _this;
-    // // console.log('new Dvr');
+    console.log('new Dvr');
 
     player.ready(function () {
       var tech = player.tech(true);
@@ -38760,14 +38760,14 @@ var Dvr = function (_Plugin) {
         var Hls = hlsProvider.Hls;
         //在获取到m3u8后开始初始化 hlsManifestLoaded
         tech.one(Hls.Events.MANIFEST_LOADED, function (event) {
-          // // console.log(Hls.Events.MANIFEST_LOADED, event);
+          console.log(Hls.Events.MANIFEST_LOADED, event);
         });
         tech.one(Hls.Events.LEVEL_LOADED, function (event) {
-          // // console.log(Hls.Events.LEVEL_LOADED, event);
+          console.log(Hls.Events.LEVEL_LOADED, event);
         });
         //
         player.one('loadedmetadata', function (event) {
-          // // console.log('loadedmetadata', event);
+          console.log('loadedmetadata', event);
           //避免时移切换的时候 video的poster自动显示
           tech.el_.setAttribute('poster', '');
           self.init();
@@ -38791,19 +38791,19 @@ var Dvr = function (_Plugin) {
     // 没有检测到必要的参数，退出初始化过程，当再次播放时，按需重新初始化
     if (!this.dvrData['startTime'] && !this.isInit) {
       player.one('loadedmetadata', videojs.bind(this, function (event) {
-        // // console.log('loadedmetadata1', this.isInit, hlsProvider);
+        console.log('loadedmetadata1', this.isInit, hlsProvider);
         this.init();
       }));
       return;
     }
-    // // console.log('init', this);
+    console.log('init', this);
     this.initControl();
     // 初始时移值
     this.delay = getParams('delay', player.tech_.currentSource_.src) || 0;
     this.updateControl(!this.isLive());
     //当通过player.src切换地址时，仍需要更新状态
     player.on('loadedmetadata', videojs.bind(this, function () {
-      // // console.log('loadedmetadata2', hlsProvider);
+      console.log('loadedmetadata2', hlsProvider);
       this.parseM3u8(hlsProvider.manifests[0]);
       this.delay = getParams('delay', player.tech_.currentSource_.src) || 0;
       this.updateControl();
@@ -38849,7 +38849,7 @@ var Dvr = function (_Plugin) {
   };
 
   Dvr.prototype.seekToLive = function seekToLive() {
-    // // console.log('seekToLive', this.player);
+    // console.log('seekToLive', this.player);
     if (!this.isLive()) {
       this.timeShift(1);
       this.player.trigger({ type: 'seekToLive', data: 1 });
@@ -38889,7 +38889,7 @@ var Dvr = function (_Plugin) {
     player.posterImage.hide();
     player.tech_.one('hlsManifestParsed', videojs.bind(this, function () {
       // player.one('loadedmetadata', videojs.bind(this, function () {
-      //     // // console.log('hlsManifestParsed');
+      //     console.log('hlsManifestParsed');
       player.play();
       // this.updateControl(false);
     }));
@@ -38899,7 +38899,7 @@ var Dvr = function (_Plugin) {
     this.dvrData = {};
     // 可以通过hls的 hlsManifestLoaded事件获取m3u8数据，然而dvr初始化时，hls已经开始加载并触发事件，所以在这里监听hls时间可能达不到预期的目的
     // 当前时间戳 - #EXT-TX-TS-START-TIME与#EXT-TX-TS-DURATION比较，选择小的
-    // // console.log('dvr init', hlsProvider);
+    // console.log('dvr init', hlsProvider);
     // const TX_TS_START_TIME=/#EXT-TX-TS-START-TIME:*(.+)/;
     // const TX_TS_DURATION_REGEX=/#EXT-TX-TS-DURATION:*(.+)/;
     var LEVEL_PLAYLIST_REGEX_FAST = new RegExp([/#EXT-TX-TS-START-TIME:*(.+)/.source, /|#EXT-TX-TS-DURATION:*(.+)/.source].join(''), 'g');
@@ -38917,7 +38917,7 @@ var Dvr = function (_Plugin) {
       //可回看时移最大值
       this.dvrData['maxTimeShift'] = Math.min(Math.floor(new Date().getTime() / 1000 - this.dvrData['startTime']), this.dvrData['duration']);
     }
-    // // console.log('dvr init', this.dvrData);
+    // console.log('dvr init', this.dvrData);
   };
 
   return Dvr;
@@ -38964,7 +38964,7 @@ var QualitySwitcherMenuItem = function (_MenuItem) {
   function QualitySwitcherMenuItem(player, options) {
     classCallCheck(this, QualitySwitcherMenuItem);
     return possibleConstructorReturn(this, _MenuItem.call(this, player, options));
-    // // console.log('QualitySwitcherMenuItem', options);
+    // console.log('QualitySwitcherMenuItem', options);
   }
 
   QualitySwitcherMenuItem.prototype.handleClick = function handleClick(event) {
@@ -39030,7 +39030,7 @@ var QualitySwitcherMenuButton = function (_MenuButton) {
         menu = new QualitySwitcherMenu(this.player(), { 'name': this.options_.trackType + 'QualitySwitcherMenu' }),
         options = void 0;
     //创建item
-    // // console.log('createMenu QualitySwitcherMenuButton',this.options_);
+    // console.log('createMenu QualitySwitcherMenuButton',this.options_);
     for (var i = qualityList.length - 1; i > -1; i--) {
       var qualityItem = qualityList[i];
       options = videojs.mergeOptions(qualityItem, {
@@ -39065,7 +39065,7 @@ var TRACK_CLASS = {
   subtitle: 'tcp-subtitle-quality-switcher'
 };
 var log$5 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 
 var QualitySwitcher = function (_Plugin) {
   inherits(QualitySwitcher, _Plugin);
@@ -39160,7 +39160,7 @@ var QualitySwitcher = function (_Plugin) {
 
   QualitySwitcher.prototype.setOptions = function setOptions(options) {
     this.options = videojs.mergeOptions(this.options, options);
-    // // console.log('setOptions', this, options);
+    // console.log('setOptions', this, options);
   };
   /**
    *
@@ -39330,7 +39330,7 @@ var MultiResolution = function (_Plugin) {
     options = extend({}, defaultOptions, data, this.manualOptions, opt),
         multiResSources = options && options.sources;
     this.options = options;
-    // // console.log('MultiResolution init', this.options, defaultOptions, data, this.manualOptions);
+    // console.log('MultiResolution init', this.options, defaultOptions, data, this.manualOptions);
     if (multiResSources) {
       log$6('MultiResolution initializing', options);
       // this.currentID = options.defaultRes;
@@ -39358,7 +39358,7 @@ var MultiResolution = function (_Plugin) {
         //避免切换的时候 video 的poster自动显示，需要删除h5 tech自带的poster
         player.one('loadedmetadata', function () {
           var tech = this.tech(true);
-          // // console.log('loadedmetadata', tech);
+          // console.log('loadedmetadata', tech);
           // IE无法获取到tech.name, h5 为unknown tech, flash为 undefined
           if ('flash' != tech.name_ && tech.el_.getAttribute('poster')) {
             // 设置过video poster，在切换src时会看到 poster ，这里必须想办法去掉video poster。
@@ -39390,7 +39390,7 @@ var MultiResolution = function (_Plugin) {
 
 
   MultiResolution.prototype.update = function update(data) {
-    // // console.log(this, data);
+    // console.log(this, data);
     this.init(data);
   };
 
@@ -39415,13 +39415,13 @@ var MultiResolution = function (_Plugin) {
 
 
   MultiResolution.prototype.onMasterPlaylistChange = function onMasterPlaylistChange(event) {
-    // // console.log('onMasterPlaylistChange', event);
+    console.log('onMasterPlaylistChange', event);
     // let tech = this.player.tech(true);
     this.player.trigger({ type: 'qualitydataloaded', data: event.data });
   };
 
   MultiResolution.prototype.onHlsLevelChange = function onHlsLevelChange(event) {
-    // // console.log('onHlsLevelChange', event);
+    // console.log('onHlsLevelChange', event);
     if (event.type == 'hlsresolutionswitching') {
       this.player.trigger({ type: 'resolutionswitching', data: event.data });
     } else if (event.type == 'hlsresolutionswitched') {
@@ -39430,7 +39430,7 @@ var MultiResolution = function (_Plugin) {
   };
 
   MultiResolution.prototype.onDashQualityChange = function onDashQualityChange(event) {
-    // // console.log('onDashQualityChange', event);
+    // console.log('onDashQualityChange', event);
     if (event.type == 'dashqualityswitching') {
       this.player.trigger({ type: 'resolutionswitching', data: event.data });
     } else if (event.type == 'dashqualityswitched') {
@@ -39457,7 +39457,7 @@ var MultiResolution = function (_Plugin) {
     var currentTime = player.currentTime();
     var isPaused = player.paused(); // 切换前是否暂停，在H5模式下播放结束也可能是暂停
     var isLive = Infinity === player.duration();
-    // // console.log('switchResolution', data, player.duration(), isPaused);
+    console.log('switchResolution', data, player.duration(), isPaused);
 
     player.trigger({ type: 'resolutionswitching', data: data });
     if (isLive) {
@@ -39492,18 +39492,18 @@ var MultiResolution = function (_Plugin) {
           player.play();
           player.tech(true).trigger('seeked');
         } else {
-          // // console.log('switchResolution', isPaused, isEnded);
+          // console.log('switchResolution', isPaused, isEnded);
           player.play();
           if (player.playbackRate() != prePlaybackRate) {
             player.playbackRate(prePlaybackRate);
           }
         }
-        // // console.log('switchResolution switched');
+        // console.log('switchResolution switched');
         player.trigger({ type: 'resolutionswitched', data: data });
       });
       player.bigPlayButton && player.bigPlayButton.hide();
       player.posterImage && player.posterImage.hide();
-      // // console.log('switchResolution switching', this);
+      // console.log('switchResolution switching', this);
       if (player.options_['preload'] == 'none') {
         player.one('suspend', function () {
           player.load();
@@ -39523,8 +39523,8 @@ var MultiResolution = function (_Plugin) {
         // }
       }, 100);
     }
-    // // console.log('switchResolution');
-    // // console.log(player.src());
+    console.log('switchResolution');
+    console.log(player.src());
     this.currentID = data.id;
   };
 
@@ -39939,7 +39939,7 @@ var initPlugin = function initPlugin(player, options) {
     if (!error) {
       return;
     }
-    // // console.log(error, options.errors[error.code || 0]);
+    console.log(error, options.errors[error.code || 0]);
     error = videojs.mergeOptions(error, options.errors[error.code || 0]);
     /*
         if (error.code === 4 && FlashObj && !FlashObj.isSupported()) {
@@ -40080,11 +40080,11 @@ var Reporter = function (_Plugin) {
 
     var _this = possibleConstructorReturn(this, _Plugin.call(this, player));
 
-    // // console.log('player', player);
+    console.log('player', player);
     if (!player.options_.plugins.Reporter) {
       var _ret;
 
-      // // console.log('reporter disabled');
+      console.log('reporter disabled');
       return _ret = false, possibleConstructorReturn(_this, _ret);
     }
 
@@ -40156,7 +40156,7 @@ var Reporter = function (_Plugin) {
     if (!cgiSeq[event.data.startTime]) {
       return;
     }
-    // // console.log('onPlayCgiEnd', cgiSeq);
+    // console.log('onPlayCgiEnd', cgiSeq);
     var data = event['data'],
         code = void 0,
         type = void 0,
@@ -40499,7 +40499,7 @@ var store2 = createCommonjsModule(function (module) {
 // import store from 'store';
 var Plugin$9 = videojs.getPlugin('plugin');
 var log$8 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 /**
  * 续播插件
  * 在视频开始播放后，只要触发timeupdate就记录一次视频的currentTime
@@ -40564,13 +40564,13 @@ var ContinuePlay = function (_Plugin) {
 
   ContinuePlay.prototype.onPlay = function onPlay(event) {
     var player = this.player;
-    // // console.log('last time play at ' + this.lastTime, this.player.duration(), !this.player.duration(), _typeof(this.player.duration()), event);
+    console.log('last time play at ' + this.lastTime, this.player.duration(), !this.player.duration(), _typeof(this.player.duration()), event);
     if (Math.round(this.lastTime) > 1 && this.player.duration() > 1 && Math.round(this.lastTime) != Math.round(this.player.duration())) {
       if (this.options.auto) {
-        // // console.log('auto start', this.lastTime);
+        console.log('auto start', this.lastTime);
         this.start();
       } else {
-        // // console.log('显示提示，在提示层点击触发调用 start()');
+        // console.log('显示提示，在提示层点击触发调用 start()');
         // 显示提示，在提示层点击触发调用 start()
         player.addChild('ContinuePlayTips', videojs.mergeOptions(this.options, {
           time: this.lastTime,
@@ -40788,7 +40788,7 @@ var Overlay = function (_Component) {
       this.debug('unbound `endListener_` from "' + this.endEvent_ + '"');
       this.off(this.player(), this.endEvent_, this.endListener_);
     }
-    // // console.log('has start',this.player().hasStarted());
+    // console.log('has start',this.player().hasStarted());
     if (this.options_['once']) {
       // 只显示一次，只用在片头贴片的情况，this.startEvent_ 为 loadstart 等未播放前的事件, 已标记开始播放的播放器，不再显示片头贴片
       if (videojs.browser.IS_IOS && videojs.browser.IS_WECHAT) {
@@ -40816,7 +40816,7 @@ var Overlay = function (_Component) {
 
   Overlay.prototype.startOnPause_ = function startOnPause_(event) {
     var player = this.player();
-    // // console.log(event.type, player.paused(), player.seeking(), player.ended());
+    // console.log(event.type, player.paused(), player.seeking(), player.ended());
     if (event.type === 'pause') {
       // pause 有可能是 seek 或者 ended 之前触发的
       if (!player.seeking() && !player.ended()) {
@@ -41035,7 +41035,7 @@ registerPlugin$1('Patch', plugin);
  */
 var Plugin$10 = videojs.getPlugin('plugin');
 var log$9 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 var locations = ['start', 'pause', 'ended'];
 var startEvent = ['loadstart', 'pause', 'ended'];
 var endEvent = ['play', 'play', 'play'];
@@ -41126,7 +41126,7 @@ var ImagePatch = function (_Plugin) {
     }
 
     // this.loadImg(data[0]['url'], function(){
-    //   // // console.log(this.width, this.height);
+    //   console.log(this.width, this.height);
     // });
   };
 
@@ -41182,8 +41182,8 @@ var ImagePatch = function (_Plugin) {
   };
 
   ImagePatch.prototype.onImgLoaded = function onImgLoaded(img) {
-    // // console.log('img load', img.width, img);
-    // // console.log('img load', img);
+    // console.log('img load', img.width, img);
+    // console.log('img load', img);
     if (videojs.browser.IE_VERSION) {
       // IE 图片如果设置css width 100% 会以原始尺寸进行渲染，而不是容器宽度，且获取图片尺寸为100，不是原始尺寸
       var containerWidth = parseInt(this.player.el().currentStyle.width),
@@ -41191,7 +41191,7 @@ var ImagePatch = function (_Plugin) {
       if (img.width > containerWidth || img.height > containerHeight) {
         // ie 图片高度超过容器的情况，让图片垂直居中
         var height = containerWidth / (img.width / img.height);
-        // // console.log(containerWidth, img.width, img.height);
+        // console.log(containerWidth, img.width, img.height);
         if (img.width / img.height > containerWidth / containerHeight) {
           // 等宽情况下 图片高小于播放器高
           // img.style.marginTop = (containerHeight - height) / 2 + 'px';
@@ -41430,7 +41430,7 @@ var VttThumbnail = function (_Plugin) {
     leftShift = Math.max(0, leftShift);
     // 计算偏移量
     left = eventX - progressControlRect.left - setting['w'] / 2 - leftShift;
-    // // console.log('cal ', left, leftShift, eventX, seekBarRect, seekBar.width(), seekBarRect.left, setting['w']);
+    // console.log('cal ', left, leftShift, eventX, seekBarRect, seekBar.width(), seekBarRect.left, setting['w']);
     left = Math.max(seekBar.el().offsetLeft, left);
     setting['left'] = left;
     this.setView(setting);
@@ -42876,7 +42876,7 @@ videojs.registerPlugin('PlayList', PlayList);
 
 var Plugin$17 = videojs.getPlugin('plugin');
 var log$16 = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 
 var HLSToken = function (_Plugin) {
   inherits(HLSToken, _Plugin);
@@ -43407,8 +43407,8 @@ var addKey = function addKey(_ref2) {
       reject('Could not create MediaKeys');
       return;
     }
-    // // console.log('fairplay createSession');
-    // // console.log('fairplay contentId & initData', contentId, initData);
+    console.log('fairplay createSession');
+    console.log('fairplay contentId & initData', contentId, initData);
     var keySession = video.webkitKeys.createSession('video/mp4', concatInitDataIdAndCertificate({ id: contentId, initData: initData, cert: cert }));
 
     if (!keySession) {
@@ -43454,7 +43454,7 @@ var defaultGetCertificate = function defaultGetCertificate(certificateUri) {
         callback(err);
         return;
       }
-      // // console.log('fairplay get certificate', responseBody);
+      console.log('fairplay get certificate', responseBody);
       callback(null, new Uint8Array(responseBody));
     });
   };
@@ -43482,8 +43482,8 @@ var defaultGetLicense$1 = function defaultGetLicense(licenseUri) {
         callback(err);
         return;
       }
-      // // console.log('fairplay get license success', response, responseBody);
-      // // console.log('fairplay get license success key ', key);
+      console.log('fairplay get license success', response, responseBody);
+      // console.log('fairplay get license success key ', key);
       callback(null, responseBody);
     });
   };
@@ -44071,7 +44071,7 @@ var DynamicWatermark = function (_Plugin) {
     });
 
     player.on(['fullscreenchange', 'playerresize'], function () {
-      // // console.log('fullscreenchange');
+      // console.log('fullscreenchange');
       // 如果立即进行计算尺寸和位置，获取到的播放器宽高会不准，此时播放器容器在重绘中。
       setTimeout(function () {
         _this2.calculateStyle();
@@ -44145,7 +44145,7 @@ var DynamicWatermark = function (_Plugin) {
       frameWidth = playerWith;
       frameHeight = playerHeight;
     }
-    // // console.log(videoWidth, videoHeight, playerWith, playerHeight);
+    // console.log(videoWidth, videoHeight, playerWith, playerHeight);
     style.containerLeft = (playerWith - frameWidth) / 2 / playerWith * 100;
     style.containerTop = (playerHeight - frameHeight) / 2 / playerHeight * 100;
     style.containerWidth = frameWidth / playerWith * 100;
@@ -44204,10 +44204,10 @@ var DynamicWatermark = function (_Plugin) {
           var speed = Math.min(1, _this3.options.speed === 0 ? 0 : _this3.options.speed ? _this3.options.speed : 0.2);
           var containerClientRect = dom$2.getBoundingClientRect(containerElement),
               contentClientRect = dom$2.getBoundingClientRect(markContentElement);
-          // // console.log(contentClientRect);
+          // console.log(contentClientRect);
           var left = contentClientRect.left - containerClientRect.left,
               top = contentClientRect.top - containerClientRect.top;
-          // // console.log(left, top);
+          // console.log(left, top);
           left += speed * xDirection * random;
           top += speed * yDirection * (1 - random);
 
@@ -44236,7 +44236,7 @@ var DynamicWatermark = function (_Plugin) {
         }
       } catch (exception) {
         // 被移除元素后重新添加到dom节点里
-        // // console.log(dom.$('.tcp-dynamic-watermark-container'), dom.$('.tcp-dynamic-watermark-content'), this);
+        // console.log(dom.$('.tcp-dynamic-watermark-container'), dom.$('.tcp-dynamic-watermark-content'), this);
         if (!player.$('.tcp-dynamic-watermark-container')) {
           player.el() && player.el().appendChild(containerElement);
         } else if (!player.$('.tcp-dynamic-watermark-content')) {
@@ -44312,7 +44312,7 @@ var Html5FlvJS = function () {
   }
 
   Html5FlvJS.prototype.onError = function onError(errorType, message, source) {
-    // // console.log('flvjs onError', arguments, this);
+    console.log('flvjs onError', arguments, this);
     var player = this.tech.player();
     // this.tech.player().trigger('error', event);
     if (errorType === flvjs.ErrorTypes.NETWORK_ERROR) {
@@ -44324,7 +44324,7 @@ var Html5FlvJS = function () {
   };
 
   Html5FlvJS.prototype.onEvent = function onEvent(eventType, source) {
-    // // console.log('flvjs onEvent', eventType, source,  this);
+    // console.log('flvjs onEvent', eventType, source,  this);
     this.tech.player().trigger({ type: 'FLVJS_EVENT', data: {
         type: eventType,
         data: source
@@ -44332,7 +44332,7 @@ var Html5FlvJS = function () {
   };
 
   Html5FlvJS.prototype.dispose = function dispose() {
-    // // console.log('Html5FlvJS dispose');
+    console.log('Html5FlvJS dispose');
     this.tech.player().pause();
     // firefox 存在此错误，其他浏览器没有问题，暂吞掉此错误，保证功能顺利进行
     // https://stackoverflow.com/questions/52575527/firefox-invalidstateerror-an-attempt-was-made-to-use-an-object-that-is-not-or
@@ -44341,7 +44341,7 @@ var Html5FlvJS = function () {
       try {
         this.flv.destroy();
       } catch (e) {
-        // // console.log('error msg:', e.message);
+        console.log('error msg:', e.message);
       }
     }
 
@@ -44412,7 +44412,7 @@ var WebRTCProvider = function () {
   function WebRTCProvider(source, tech, options) {
     classCallCheck(this, WebRTCProvider);
 
-    // // console.log('WebRTCProvider constructor');
+    console.log('WebRTCProvider constructor');
     this.tech = tech;
     this.playerMetrics = this.tech.player().PlayerMetrics();
 
@@ -44435,7 +44435,7 @@ var WebRTCProvider = function () {
     //   webrtcPlayer.startPlay(source.src);
     // } else {
     //   tech.player().one('play', () => {
-    //     // // console.log('webrtcPlayer play', tech.currentSource_.src === source.src);
+    //     console.log('webrtcPlayer play', tech.currentSource_.src === source.src);
     //     if(tech.currentSource_.src === source.src){
     //       webrtcPlayer.startPlay(source.src);
     //     }
@@ -44450,7 +44450,7 @@ var WebRTCProvider = function () {
 
 
   WebRTCProvider.prototype.onPlayStats = function onPlayStats(data) {
-    // // console.log('webrtc onPlayStats', data);
+    // console.log('webrtc onPlayStats', data);
     this.tech.player().trigger({ type: 'webrtcstats', data: data });
   };
 
@@ -44529,10 +44529,10 @@ var WebRTCProvider = function () {
   WebRTCProvider.prototype.setSource = function setSource(source) {
     var _this = this;
 
-    // // console.log('setSource', source);
+    console.log('setSource', source);
     this.webrtcPlayer.startPlay(source.src);
     this.tech.player().one('webrtcevent', function (event) {
-      // // console.log('setSource webrtcevent', event.data);
+      console.log('setSource webrtcevent', event.data);
       if (event.data.code === -1002) {
         _this.tech.player().play();
       }
@@ -44590,7 +44590,7 @@ var WebRTCProvider = function () {
     var currentSrc = this.tech.currentSource_.src;
     // 设置新的 sources
     var sources = this.convertProtocol(currentSrc); //  转换成 flv、hls， 优先判断flv 能否播放，然后播放hls
-    // // console.log('switchPlaySource', sources);
+    console.log('switchPlaySource', sources);
     player.bigPlayButton && player.bigPlayButton.hide();
     player.posterImage && player.posterImage.hide();
     player.src(sources);
@@ -44598,10 +44598,10 @@ var WebRTCProvider = function () {
     var event = videojs.browser.IS_IOS || videojs.browser.IS_ANDROID ? 'loadeddata' : 'loadedmetadata';
     // FIXME: 切换src后会触发两次播放事件，这里目前只能如下处理，待优化
     var continuePlay = function continuePlay() {
-      // // console.log('switchPlaySource play', event);
+      console.log('switchPlaySource play', event);
       player.play();
       player.one('progress', function () {
-        // // console.log('switchPlaySource progress');
+        console.log('switchPlaySource progress');
         // 偶现 progress后没有播放成功，需要补一次play调用。然而如果没有第一次play， progress不一定触发。
         player.play();
         player.off(event, continuePlay);
@@ -46308,14 +46308,14 @@ var CN = {
 
 // resourceLoader('../../../dist/video-js.css', {
 //   success: function () {
-//     // // console.log('load css done');
+//     console.log('load css done');
 //   }
 // });
 var log = videojs.log;
-// const log = // // console.log;
+// const log = console.log;
 
 //IE 8 fixed;
-if (Function.prototype.bind && (typeof console === 'undefined' ? 'undefined' : _typeof(console)) == "object" && _typeof(// // console.log) == "object") {
+if (Function.prototype.bind && (typeof console === 'undefined' ? 'undefined' : _typeof(console)) == "object" && _typeof(console.log) == "object") {
   var logFns = ["log", "info", "warn", "error", "assert", "dir", "clear", "profile", "profileEnd"];
 
   for (var i$1 = 0; i$1 < logFns.length; i$1++) {
@@ -46350,7 +46350,7 @@ function TCPlayer(id, options, ready) {
   }
   if (videojs.browser.IE_VERSION && (tag.style.width || tag.offsetWidth && tag.offsetWidth !== 300)) {
     // 避免设置了尺寸的情况下再动态设置宽高，在IE下会出现尺寸重置的情况。
-    // // console.log('player width ' + tag.style.width);
+    console.log('player width ' + tag.style.width);
     window_1.VIDEOJS_NO_DYNAMIC_STYLE = true;
   }
 

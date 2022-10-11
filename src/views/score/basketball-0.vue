@@ -1075,12 +1075,12 @@
 				} else {
 					num = this.$refs.complete4.offsetTop
 				}
-				// // console.log(this.$refs.scroll.wrap)
+				// console.log(this.$refs.scroll.wrap)
 				// this.$refs.scroll.wrap.scrollTop = this.$refs.complete.offsetTop
 				// if (type == 3) {
-				// 	// console.log()
+				// 	console.log()
 				// }
-				// // console.log(num)
+				// console.log(num)
 				this.$emit('setTypeTab', num)
 			},
 			// 篮球比分数据
@@ -1239,10 +1239,10 @@
 				 */
 				/* 判断当前页面是足球即时比分 */
 				// football
-				// // console.log(e);
+				// console.log(e);
 				let router = this.$route
 				if(router.path != '/basketball') return
-				// // console.log(router);
+				// console.log(router);
 				
 				/* 监听距离 已结束的距离 */
 				let value =  document.documentElement.scrollTop
@@ -1252,7 +1252,7 @@
 				let  abnormalTime =  this.$refs.complete4.getBoundingClientRect().top
 				/* 未开始 */
 				let  notStart =  this.$refs.complete2.getBoundingClientRect().top
-				// console.log(notStart);
+				console.log(notStart);
 				if(endTime < 1000 && !this.isEndTime) {
 					this.isEndTime = true
 				}
@@ -1344,12 +1344,12 @@
 				// let index = this.topList.findIndex(item1 =>{
 				// 	return item1.id === item.id
 				// })
-				// // console.log(index);
+				// console.log(index);
 				// return
 				this.list4.splice(this.list4.findIndex(item1 => item1.id === item.id), 1)
 				this.topList.splice(this.topList.findIndex(item1 => item1.id === item.id), 1)
 				localStorage.setItem('topList1', JSON.stringify(this.topList))
-				// // console.log(this.topList);
+				// console.log(this.topList);
 			},
 			// 置顶
 			setlist4() {
@@ -1373,7 +1373,7 @@
 				// 	})
 				// })
 				// this.list4 = list4
-				// // console.log(this.topList);
+				// console.log(this.topList);
 			},
 			// 收藏
 			setCollect(item) {
@@ -1457,7 +1457,7 @@
 							}
 						})
 						this.list1 = list1
-						// // console.log(this.list1);
+						// console.log(this.list1);
 						this.list2 = list2
 						this.list3 = list3
 						this.list5 = list5

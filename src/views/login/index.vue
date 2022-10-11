@@ -116,14 +116,14 @@ export default {
 
           this.loading = true
           // this.$store.dispatch('user/login', this.loginForm).then(() => {
-          //   // console.log('ok')
+          //   console.log('ok')
           //   this.$router.push({ path: this.redirect || '/' })
           //   this.loading = false
           // }).catch(() => {
           //   this.loading = false
           // })
         } else {
-          // console.log('错误提交！！')
+          console.log('错误提交！！')
           return false
         }
       })

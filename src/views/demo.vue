@@ -370,7 +370,7 @@
 		components: {exponent},
 		computed: {
 			// topList() {
-			// 	// console.log(JSON.parse(localStorage.getItem('topList')));
+			// 	console.log(JSON.parse(localStorage.getItem('topList')));
 			// 	return JSON.parse(localStorage.getItem('topList')) || []
 			// },
 			

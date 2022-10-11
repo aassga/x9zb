@@ -34388,7 +34388,7 @@ a {
 }
 
 .home-page-row>div:last-child {
-	/* width: 336px */
+	width: 336px
 }
 
 .home-page-row .anchor-home-page-middle-col-middle-warp .anchor-home-page-middle-col-middle-bulletin>li {
@@ -61456,16 +61456,15 @@ li {
 }
 
 .chatroom-contribution-list-comp .contribution-header .title .jiantou {
-	height: 9px;
+	height: 6px;
 	width: 9px;
 	position: absolute;
 	bottom: 0;
-	color: #C41D48;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #C41D48
+	color: #bb9352
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {
@@ -64465,7 +64464,7 @@ li {
 	font-size: 14px;
 	height: 50px;
 	line-height: 50px;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66;
 	margin-left: 8px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -64481,7 +64480,7 @@ li {
 
 .anchor-live-chatroom .top-message .top-text .top-text-scroll a {
 	text-decoration: underline;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66
 }
 
 .anchor-live-chatroom .need-reconnect {
@@ -72491,16 +72490,15 @@ li {
 }
 
 .chatroom-contribution-list-comp .contribution-header .title .jiantou {
-	height: 9px;
+	height: 6px;
 	width: 9px;
 	position: absolute;
 	bottom: 0;
-	color: #C41D48;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #C41D48
+	color: #bb9352
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {
@@ -75384,7 +75382,7 @@ li {
 	font-size: 14px;
 	height: 50px;
 	line-height: 50px;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66;
 	margin-left: 8px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -75400,7 +75398,7 @@ li {
 
 .anchor-live-chatroom .top-message .top-text .top-text-scroll a {
 	text-decoration: underline;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66
 }
 
 .anchor-live-chatroom .need-reconnect {

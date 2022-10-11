@@ -32,11 +32,11 @@ export default {
 .HuyaXWebhMessageinfo {
   position: relative;
   z-index: 1;
-  // top: 38px;
-  min-height: 40px;
+  min-height: 42px;
   left: 0;
   width: 100%;
-  
+  background-color: #fff;
+  border-bottom: 1px solid #dcd8d8;
   overflow-y: scroll;
   overflow-x: hidden;
   &::-webkit-scrollbar{
@@ -45,15 +45,12 @@ export default {
   .HuyaXWebhMessageinfo_title {
     position: relative;
     width: 100%;
-    height: 40px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 15px;
-    font-size: 14px;
+    font-size: 16px;
     box-sizing: border-box;
-    border-bottom: 1px solid #dcd8d8;
-    background-color: #ececec;
     .HuyaXWebhMessageinfo_title_icon {
       position: absolute;
       top: 13px;

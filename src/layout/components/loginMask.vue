@@ -78,7 +78,7 @@
 												<div class="login-passwd-icon"><img
 														src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAh1BMVEUAAAC8vLy7u7u8vLy7u7u8vLy8vLy8vLy8vLy8vLy8vLy8vLy9vb2+vr7BwcG8vLy8vLy9vb3Kysq7u7u8vLy8vLy8vLzAwMDDw8PKysq8vLy8vLy9vb3///+7u7u8vLy8vLy8vLy9vb3AwMC8vLy8vLy9vb28vLy+vr67u7u8vLy7u7u7u7tP74ylAAAALHRSTlMAtvHo3ver+2PitJxWMxWAaUsL6N2wchsQB+1eOQHXoZk/LiTJxZCJRLydfET/bPkAAAFzSURBVFjD7ZXrcoIwEIUFyy2gXCpXQUGt2jbv/3xttsCM1YTF4Iwz5vzMyXxJTrKbmZISX1Fo+3Xt22EkQ8lsYtBWhhZkd2LypKAXKpL8Hs75jV7JCcdzAoveUjISU9VdNCTxytJL4i6sbTUK5FPQPIj667MdCjqO4XgUdIouwm/pNp6zN+BU3v/xUIfxHRpksvnW+dooYQUNyykpU3DLWoPVIEEaLCvY7AeyMOAF7TjxgZmiQLD9mOdu4dj4qNc8N8THzWrMyrilbLCaQ4EGZm7YOhUm64F70bBp79ushWljHnfKJpp832X+AgFaDoC+pgK5rw5KSaFDM9K5gpakF1o6UGdoESFohQe9DxQsWnMFegBoTmJnApAeVOxD0KVB4Z/RyILMvsQkQXbneJKgpnMWz7Kjz86J5UD9ljz5B3la/nZNf4qX7cA3LQ2CDrZSIDHIOhyM52psCvQg0AYPcoSgIx7kCkH5N9FQIn40U1Lq9APFggVM0PoDhgAAAABJRU5ErkJggg=="
 														alt="icon"></div>
-												<div class="login-input"><input :type="!isEyes ? 'password' : 'text'" v-model="base.password"
+												<div class="login-input"><input :type="!isEyes ? 'password' : 'number'" v-model="base.password"
 														placeholder="请输入密码">
 													<div class="icon-view"><img @click="isEyes = !isEyes" class="img-icon"
 															src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAeFBMVEUAAACwsLDAwMCnp6enp6enp6enp6enp6eoqKimpqanp6enp6enp6e1tbWnp6enp6enp6eoqKiurq6np6enp6enp6empqapqamqqqqmpqanp6eoqKinp6enp6epqamnp6enp6eoqKipqamrq6uqqqqnp6enp6empqY2tiXnAAAAJ3RSTlMADAXz1c2yojXs4JaJCMW6XCwT+OVqVTwmqZB7UEMavZxJPyIfdGLZjtuCAAABQklEQVRYw+2UW26DMBBFAYMBg3mFZyAkTdLO/ndYGKBKWmODVKlq5PMFulfHZmxhaDQajUbzkvDQZ8WO/v1MIk8UuDBQbvZYzlD3TUFCYEyyraIWRipBYmPSbPSkB6z3gigBJNnkMR0sB8LwjNnhumVAFLs2F6Y1wdRP1aJgWnOtWcJkqlT7cQFZvywhIIdSPp8YECrfMnIx1zsnBkhkGhKOMMHeVgrZspYj9eDXTUQiVRaSOY7Ro9wTYre35xl3DVky11LetAgesN2iqjPLvKddGJOHwMkUHh6Bgn0jIhLFnAVykYMlyksHxNgJd6cHuQhLdJykd8x/WPyg+rrYVC7qGUBjzafkvVMGC3ncektwGV5vqlNLum/vqPl4nu216I29eCg6CZK/EtUo8oy9iP/ljP+CqKZ5nBoajUaj0fwHPgH1/TzDinf0agAAAABJRU5ErkJggg=="
@@ -185,14 +185,9 @@
 			}
 		},
 		computed: {
-			loginStatus:{
-				get(){
-					return this.$store.state.user.showLoginMask
-				},
+			loginStatus() {
+				return this.$store.state.user.showLoginMask
 			},
-			// loginStatus() {
-			// 	return this.$store.state.user.showLoginMask
-			// },
 			// options(){
 			// 	return this.$store.state.user.system
 			// }
@@ -205,7 +200,7 @@
 		},
 		mounted() {
 			let system = this.$store.state.system.CountryCode
-			// // console.log(system);
+			// console.log(system);
 			this.options = system
 			// this.logData('admin',user)
 			if (this.$store.state.user.isRegister) {
@@ -240,14 +235,14 @@
 							}
 						}).catch(res1 => {})
 					}).catch(res1 => {
-						// console.log('失败' + res1);
+						console.log('失败' + res1);
 					})
 				} else {
 					register(_this.database).then(res => {
 						_this.type = 'code'
 						_this.$message.success('注册成功')
 					}).catch(res => {
-						// console.log('失败' + res);
+						console.log('失败' + res);
 					})
 				}
 			},
@@ -303,7 +298,7 @@
 						forgotPassword(data).then(res => {
 							this.type = 'code'
 						}).catch(res => {
-							// console.log('失败' + res);
+							console.log('失败' + res);
 						})
 						// this.verificationCode(data)
 					} else { //注册
@@ -325,7 +320,7 @@
 							_this.type = 'code'
 							_this.$message.success('注册成功')
 						}).catch(res => {
-							// console.log('失败' + res);
+							console.log('失败' + res);
 						})
 					}
 					
@@ -336,7 +331,7 @@
 
 					// this.$message.error('错了哦，这是一条错误消息');
 				}
-				// // console.log(type);
+				// console.log(type);
 				// data.mobile = ''
 				// data.password = ''
 				// $store.state.user.islogin=false
@@ -359,7 +354,7 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					// console.log('失败' + res);
+					console.log('失败' + res);
 				})
 			},
 
@@ -367,7 +362,7 @@
 			getCount() {
 				const TIME_COUNT = 60;
 				if (!this.timer) {
-					// console.log(1);
+					console.log(1);
 					this.count = TIME_COUNT;
 					this.show = false;
 					this.timer = setInterval(() => {

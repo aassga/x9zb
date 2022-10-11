@@ -38,8 +38,7 @@ module.exports = {
         // target : "http://huyapretest.oxldkm.com/", //实际请求服务器地址
         // target : "https://www.x9zb.live/", //实际请求服务器地址
         target : "http://huidu.x9zb.live/", //实际请求服务器地址
-        changeOrigin: true,
-        ws:true,
+        changeOrigin : true,
         secure : false,
         pathRewrite : {
             "^/opc" : ""
@@ -77,8 +76,8 @@ module.exports = {
         //     }
         //   }
         // })
-        // // console.log("test==========================", test)
-        // // console.log("args==========================", args[0])
+        // console.log("test==========================", test)
+        // console.log("args==========================", args[0])
         return args
       })
   },

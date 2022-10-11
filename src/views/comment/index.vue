@@ -186,13 +186,13 @@
 						
 						item.is_likes = 1
 					}
-					// console.log(item.is_likes);
+					console.log(item.is_likes);
 				}).catch(res=>{})
 			},
 			// 动态点赞
 			commentLikes(item){
 				setDynamiclikes({id:item.id}).then(res => {
-					// console.log(item.is_likes);
+					console.log(item.is_likes);
 					if(item.is_likes == 1) {
 						item.is_likes = 0
 						item.like ++
@@ -211,7 +211,7 @@
 					id:item.id,
 					content:type == 1?this.content:this.content2
 				}
-				// console.log(this.isrep);
+				console.log(this.isrep);
 				if(type == 2){
 					data.cid = this.isrep.id
 				}
@@ -251,7 +251,7 @@
 					})
 					this.dateil = res.data
 					this.list = res.data.list
-					// console.log(this.dateil);
+					console.log(this.dateil);
 				}).catch(res=>{
 					
 				})

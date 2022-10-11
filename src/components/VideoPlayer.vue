@@ -192,7 +192,7 @@ export default {
 	#video_context .video_bottom_logo{
 		  position: absolute;
   left: 20px;
-  bottom: 30px;
+  bottom: 20px;
   width: 120px;
 	}
 </style>

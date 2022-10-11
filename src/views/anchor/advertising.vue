@@ -227,7 +227,7 @@
 				// https://longya.tv/live?router=live&type=${query.type}&id='${query.id}&uid=${query.uid}
 				var _this = this;
 				var clipboard = new Clipboard(".btnss"); //单页面引用
-				// console.log(clipboard);
+				console.log(clipboard);
 				// 　　　var clipboard = new this.Clipboard(".btn"); //在main.js中引用
 				clipboard.on("success", e => {
 					// 释放内存

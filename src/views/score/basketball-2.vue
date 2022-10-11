@@ -197,7 +197,7 @@
 		},
 		watch: {
 			time(e) {
-				// console.log(e)
+				console.log(e)
 				this.$store.state.loading = true
 				this.page = 1
 				this.list = []

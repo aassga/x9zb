@@ -24,24 +24,24 @@
 			document.oncontextmenu = function () {
 				return false
 			}
-			window.onkeydown = window.onkeyup = window.onkeypress = function (event) {
-				if (event.keyCode == 123) {
-					event.preventDefault();
-					return false
-				}
-			}
-			// // console.log(process.env.NODE_ENV)
+			// window.onkeydown = window.onkeyup = window.onkeypress = function (event) {
+			// 	if (event.keyCode == 123) {
+			// 		event.preventDefault();
+			// 		return false
+			// 	}
+			// }
+			console.log(process.env.NODE_ENV)
 		    // if(process.env.NODE_ENV!=='dev'){
 		    //   setInterval(()=>{
 		    //     debugger;
 		    //   },50)
 		    // }
-			window.addEventListener('resize',function(){
-				let screenWidth = document.body.offsetWidth;
-				// if (screenWidth <= 500) {
-				// 	location.href = 'https://m.longya.live'
-				// }
-			})
+			// window.addEventListener('resize',function(){
+			// 	let screenWidth = document.body.offsetWidth;
+			// 	// if (screenWidth <= 500) {
+			// 	// 	location.href = 'https://m.longya.live'
+			// 	// }
+			// })
 			window.callback = function(res){
 			    // res（用户主动关闭验证码）= {ret: 2, ticket: null}
 			    // res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
@@ -178,6 +178,10 @@
 	};
 </script>
 <style type="">
+	body{
+		/* height: 100vh !important;
+		overflow-y: scroll; */
+	}
 	@import url("~@/styles/index.css");
 	@import url("~@/styles/style.css");
 	::-moz-selection{

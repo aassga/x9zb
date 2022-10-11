@@ -58,7 +58,7 @@ export default {
     methods: {
         getList(){
             lfetchList().then(res => {
-                // console.log(res)
+                console.log(res)
                 this.tableArr = res.data.items 
                 this.tableArr.map(item => {
                     if(item.status){
@@ -76,7 +76,7 @@ export default {
             this.tableData = this.tableArr.slice((pageNum - 1) * pageSize, pageNum * pageSize) || []
         },
         selected(ev){
-            // console.log(ev)
+            console.log(ev)
         }
     },
     mounted(){

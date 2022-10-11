@@ -50,6 +50,7 @@
         :ctp="ctp"
         :pinInfo="pinInfo"
         :roomInfo="roomInfo"
+        :channel="channel"
         :chatMsgHight="chatMsgHight"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
@@ -536,6 +537,7 @@ export default {
     },
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
+      console.log(msgList, type)
       if (type == 0) {
         // // console.log("默认的未读消息数组");
         // // console.log(msgList);
@@ -758,12 +760,12 @@ export default {
     changeType(e) {
       this.pinInfo = "";
       this.msgList = [];
-      // if (this.showLoading) {
-      //   return;
-      // }
-      // if (this.ctp == e) {
-      //   return;
-      // }
+      if (this.showLoading) {
+        return;
+      }
+      if (this.ctp == e) {
+        return;
+      }
       this.ctp = e;
       this.page = 1;
       this.showLoading = true;
@@ -776,7 +778,6 @@ export default {
       const qVid = this.qsVid;
       this.controlIndex = -1;
       if (e == 0) {
-        this.chatMsgHight = 0
         this.parmUserInfo.vid = qVid;
         this.inRoomInfo(this.fd);
 
@@ -1630,14 +1631,14 @@ form {
   padding-right: 2vw;
 }
 .ChatDetails_container {
-  background: #e9e9f5;
+  background: #FFF;
   min-height: 549px;
   position: relative;
   min-width: 334px;
   height: 100%;
   .send-container {
     height: 122px;
-    // position: absolute;
+    position: absolute;
     bottom: 0;
     min-width: 335px;
     line-height: 50px;
@@ -1721,7 +1722,7 @@ form {
   }
   .chat-window {
     background: #FFF;
-    height: 27.3em;
+    // height: 27.3em;
     // padding-top: 80px;
     // margin-top: 76px;
     overflow-y: auto;
@@ -1900,5 +1901,15 @@ form {
 .el-button--danger:hover, 
 .el-button--danger:focus{
   background-color: #c41d47a1;
+}
+::v-deep.el-dialog-loginOut{
+  .el-dialog{
+    width: 25%;
+    .el-dialog__body{
+      .upload-demo{
+        text-align: center;
+      }
+    }
+  }
 }
 </style>

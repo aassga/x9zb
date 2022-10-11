@@ -458,14 +458,14 @@
 							
 						</div>
 					</div>
-					<!-- <div>
+					<div>
 						<div class="grid-header">
 							<div class="grid-header-left"><img class="grid-header-left-icon"
 									src="../../assets/images/main-star.png" alt="">
 								<div class="grid-header-left-text">联赛积分榜</div>
 							</div>
-							<div class="grid-header-right"><a class="grid-header-right-more" target="_blank"
-									href="/database/football/9/1/232894">更多 <i></i></a></div>
+							<!-- <div class="grid-header-right"><a class="grid-header-right-more" target="_blank"
+									href="/database/football/9/1/232894">更多 <i></i></a></div> -->
 						</div>
 						<div class="rank-content">
 							<div class="rank-content-tabs">
@@ -483,6 +483,7 @@
 									<div class="rank-col-4">积分</div>
 								</div>
 								<div v-if="group == 0">
+									<!-- <div class="top-n top1" style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">A组</div> -->
 									<div class="rank-content-info-item top-n" v-for="(item,index) in rangingList"
 										:key="index">
 										<div class="rank-col-1">
@@ -505,6 +506,7 @@
 									</div>
 								</div>
 								<div v-else>
+									<!-- a组 -->
 									<div class="top-n top1"
 										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
 										A组</div>
@@ -527,6 +529,7 @@
 										<div class="rank-col-3">{{item.won}}/{{item.draw}}/{{item.loss}}</div>
 										<div class="rank-col-4">{{item.points}}</div>
 									</div>
+									<!-- B组 -->
 									<div class="top-n top1"
 										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
 										B组</div>
@@ -552,7 +555,7 @@
 								</div>
 							</div>
 						</div>
-					</div> -->
+					</div>
 				</div>
 				<div class="official-activity">
 					<div class="title">
@@ -714,13 +717,13 @@
 			mainTabIndex(e) {
 				
 				this.title_name=this.mainList[e].title
-				// // console.log(this.mainList[e])
-				// // console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
-				// // console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
+				// console.log(this.mainList[e])
+				// console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
+				// console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
 				if ((this.mainList[e].starttime)-(this.servertime)>0&&(this.mainList[e].starttime)>0 ) {
 					this.counttDown=(this.mainList[e].starttime)-(this.servertime)
 					// 先卸载定时器从新加载定时器
-					// // console.log(this.counttDown)
+					// console.log(this.counttDown)
 					clearInterval(this.timeInterval)
 					this.Iime()
 					// this.counttDown=10
@@ -739,7 +742,7 @@
 			let data = {
 				id: this.titleTab[0].id
 			}
-			//this.getRanking(data)
+			this.getRanking(data)
 			this.getLiveList()
 			this.recommend()
 			this.classification()
@@ -957,7 +960,7 @@
 					this.servertime=res.data.servertime
 					this.starttime=res.data.data[0].starttime
 					this.servertimeDate(this.servertime)
-					// // console.log(this.starttime-this.servertime+"倒计时")
+					// console.log(this.starttime-this.servertime+"倒计时")
 					if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 ) {
 						this.counttDown=(this.starttime)-(this.servertime)
 						// this.counttDown=10
@@ -983,7 +986,7 @@
 				let s=parseInt(this.counttDown%60)
 				s=s<10?"0"+s:s
 				let date=[d,h,m,s]
-								// // console.log(date)
+								// console.log(date)
 				this.counttDownDay=date
 			},
 			Iime(){
@@ -1017,7 +1020,7 @@
 		        range.selectNode(qrUrlContent)
 		        selection.addRange(range)
 		        qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-		        // console.log(window.location.href,"========");
+		        console.log(window.location.href,"========");
 		        let isSucess = document.execCommand('copy');
 		        if (isSucess) {
 		        	this.$alert('复制成功',"提示")

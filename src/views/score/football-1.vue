@@ -306,7 +306,7 @@
 				this.page = 1;
 				this.list1 = [];
 				this.$store.state.loading = true;
-				// // console.log(this.$store.state.loading)
+				// console.log(this.$store.state.loading)
 				this.getlist();
 				setTimeout(() => {
 					this.$store.state.loading = false;
@@ -341,7 +341,7 @@
 				}else if (num1 == num2 && num1 != 0 && num2 != 0) {
 					return 50
 				} else {
-					// // console.log(num2 / (num1 + num2))
+					// console.log(num2 / (num1 + num2))
 					return num1 / (num1 + num2) * 100
 				}
 			},
@@ -395,9 +395,9 @@
 			},
 			// 获取总进球数
 			getAll(num1,num2,num3){
-				// // console.log('--------------------------------');
+				// console.log('--------------------------------');
 				
-				// // console.log(num1,num2,num3);
+				// console.log(num1,num2,num3);
 				if((num1+num2) > Number(num3)){
 					return '大'
 				}else if((num1+num2) < Number(num3)){

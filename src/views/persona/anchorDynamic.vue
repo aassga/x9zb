@@ -367,11 +367,11 @@
 						cancelButtonText: '确定'
 					})
 					.then(() => {
-						// console.log(1)
+						console.log(1)
 						_this.uploadType = e == 'img' ? 'video' : 'img'
 					})
 					.catch(action => {
-						// console.log(2)
+						console.log(2)
 						_this.uploadType = e
 
 					});
@@ -387,7 +387,7 @@
 			} else {
 				this.info = this.$store.state.infos
 			}
-			// // console.log();
+			// console.log();
 			// 获取主播动态列表
 			this.userPostList(this.info)
 		},
@@ -427,7 +427,7 @@
 			},
 			// 点赞
 			commentLikes(item) {
-				// console.log(item);
+				console.log(item);
 				setDynamiclikes({
 					id: item.id
 				}).then(res => {
@@ -446,7 +446,7 @@
 			},
 			// 获取主播动态列表
 			userPostList(info) {
-				// console.log(info);
+				console.log(info);
 				let data = {
 					uid: info.id,
 					page: this.page
@@ -468,7 +468,7 @@
 			// 删除已上传的图片
 			del(index) {
 				this.flie.splice(index, 1)
-				// console.log(this.flie);
+				console.log(this.flie);
 
 			},
 			// 提交数据
@@ -502,7 +502,7 @@
 				// let str = 'jfkdsj[咒骂]dsjfkljsa[憨笑]哈哈哈，[惊恐]'
 				let exp = /\[(.*?)\]/g; //匹配[*] 大括号里面任意内容的正则
 				let arr = str.match(exp); //字符串匹配出来的数组
-				// // console.log(arr);
+				// console.log(arr);
 				if (!arr) return str;
 			
 				this.emotion.forEach((item1, index) => {
@@ -544,7 +544,7 @@
 				this.flieT[0].img = `${this.QiniuToken.domain}/${res.key}`
 			},
 			beforeAvatarUpload3(file) {
-				// console.log(file);
+				console.log(file);
 				let QiniuToken = this.$store.state.user.QiniuToken
 				const isLt10M = file.size / 1024 / 1024 < 500;
 				if (['video/mp4', 'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb'].indexOf(file.type) == -

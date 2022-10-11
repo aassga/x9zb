@@ -7,7 +7,7 @@ export default {
     time: 30000,//发心跳时间
     WebSocketFn: function (fn,config) { //连接长连接
         // this.ws = new WebSocket(`wss://yl.zckfhly.com/wss?website_domain=${this.website_domains[0]}`);
-        // // console.log("发起websocket连接");
+        // console.log("发起websocket连接");
 		// store.state.system.websocket
 		// loca
 		
@@ -15,7 +15,7 @@ export default {
         this.ws = new WebSocket(store.state.system.websocket);
         this.ws.onopen = () => {
             //连接成功
-            // // console.log('连接成功!');
+            // console.log('连接成功!');
             this.websocket = true;
 			
             // store.dispatch('succeed');
@@ -28,7 +28,7 @@ export default {
 				info:"web",
 				type:"register"
 			}
-			// console.log('// console.log(store);');
+			console.log('console.log(store);');
 			this.ws.send(JSON.stringify(item));
 			if(store.state.type == 1){//足球
 				this.ws.send(JSON.stringify({type:"toggle",company_id:store.state.company_id}));
@@ -42,7 +42,7 @@ export default {
         }
         this.ws.onerror = () => {
             //连接失败
-            // // console.log('连接失败!');
+            // console.log('连接失败!');
             this.websocket = false;
             // store.dispatch('unsuccessful');
             fn && fn(false);
@@ -50,7 +50,7 @@ export default {
     },
     // 心跳
     heartbeat: function () {
-        // // console.log('开始发送心跳!');
+        // console.log('开始发送心跳!');
         let _this = this;
         setInterval(() => {
             _this.send(
@@ -64,7 +64,7 @@ export default {
     onmessage: function (fn) { //获取服务器发送的数据
         if (!this.websocket) return;
         this.ws.onmessage = (data) => {
-            // // console.log(data);
+            // console.log(data);
             data = data['data'];
             let evalFn = '';
             if (data.indexOf('{') != -1 || data.indexOf('[') != -1) {
@@ -84,7 +84,7 @@ export default {
             // store.dispatch('conditionsActions', data);
         }
         this.ws.send(typeof data == 'string' ? data : JSON.stringify(data));
-        // // console.log(typeof data == 'string' ? data : JSON.stringify(data));
+        // console.log(typeof data == 'string' ? data : JSON.stringify(data));
         fn && fn(true);
     },
     websocketclose(fn) {  //关闭

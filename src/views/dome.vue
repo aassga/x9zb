@@ -44,7 +44,7 @@
 		mounted() {
 			//页面添加滚动事件
 			// this.content = JSON.stringify(this.$refs.abc)
-			// // console.log(JSON.stringify(this.$refs.abc));
+			// console.log(JSON.stringify(this.$refs.abc));
 			// this.football_match()
 			// this.sysTem = JSON.parse(localStorage.getItem('userInfo'))
 			setTimeout(res => {
@@ -78,7 +78,7 @@
 				let that = this
 				let promise = this.tim.login(obj)
 				promise.then(function(imResponse) {
-						// console.log('------------------------------------1');
+						console.log('------------------------------------1');
 						that.joinGroup()
 					})
 					.catch(function(imError) {
@@ -88,13 +88,13 @@
 			// 进入房间
 			joinGroup() {
 				let that = this
-				// console.log(this.system.tencent_im_room_number);
+				console.log(this.system.tencent_im_room_number);
 				let promise = this.tim.joinGroup({
 					groupID: this.system.tencent_im_room_number,
 					type: this.TIM.TYPES.GRP_AVCHATROOM
 				});
 				promise.then(function(imResponse) {
-					// console.log('------------------------------------2');
+					console.log('------------------------------------2');
 					that.logout()
 
 				}).catch(function(imError) {
@@ -106,7 +106,7 @@
 				let that = this
 				let promise = this.tim.logout();
 				promise.then(function(imResponse) {
-					// console.log('------------------------------------3');
+					console.log('------------------------------------3');
 					if (that.index == that.length) {
 						that.$message.success('创建成功')
 					}
@@ -134,7 +134,7 @@
 					type: 0
 				}).then(res => {
 					this.tableData = res.data.data
-					// console.log(this.tableData);
+					console.log(this.tableData);
 				}).catch(res => {
 
 				})

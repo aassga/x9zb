@@ -1071,7 +1071,7 @@
 	background: #fff;
 	padding: 33px 10px 7px;
 	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
+	border-bottom-right-radius: 4px
 }
 
 .live-player-footer-wrap .live-player-footer-top-box {
@@ -1325,16 +1325,15 @@
 }
 
 .chatroom-contribution-list-comp .contribution-header .title .jiantou {
-	height: 9px;
+	height: 6px;
 	width: 9px;
 	position: absolute;
 	bottom: 0;
-	color: #C41D48;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #C41D48
+	color: #bb9352
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {
@@ -2493,7 +2492,7 @@
 	font-size: 14px;
 	height: 50px;
 	line-height: 50px;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66;
 	margin-left: 8px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -2509,7 +2508,7 @@
 
 .anchor-live-chatroom .top-message .top-text .top-text-scroll a {
 	text-decoration: underline;
-	color: rgb(0 0 0 / 80%);
+	color: #d8ad66
 }
 #dplayer,
 .dplayer-modal {

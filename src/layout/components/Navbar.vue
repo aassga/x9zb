@@ -315,8 +315,8 @@
 			'$store.state.user.data'(e) {
 				if (e == null) return
 				this.info = e
-				// // console.log('--------------');
-				// // console.log(e);
+				// console.log('--------------');
+				// console.log(e);
 			},
 		},
 		created() {
@@ -327,8 +327,8 @@
 			}
 		},
 		mounted() {
-			// // console.log(this.$store.state.game.voice);
-			// // console.log('-------------');
+			// console.log(this.$store.state.game.voice);
+			// console.log('-------------');
 			let info = localStorage.getItem('userInfo')
 			this.info = JSON.parse(info) || {
 				token: ''
@@ -336,9 +336,9 @@
 			// this.index = localStorage.getItem('index') || 0
 			let meta = this.$route.meta
 			this.index = meta.index
-			// // console.log();
+			// console.log();
 			// let path = this.$route.path
-			// // console.log(this.$route);
+			// console.log(this.$route);
 			// if(path == '/member'){
 			// 	this.index = null
 			// }

@@ -279,7 +279,7 @@
 			this.getQiniu()
 			this.avatarList()
 			let system = this.$store.state.system.CountryCode
-			// // console.log(system);
+			// console.log(system);
 			this.options = system
 		},
 		methods:{
@@ -394,15 +394,15 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					// console.log('失败' + res);
+					console.log('失败' + res);
 				})
 			},
 			// 验证码倒计时
 			getCount() {
-				// console.log(this.timer)
+				console.log(this.timer)
 				const TIME_COUNT = 60;
 				if (!this.timer) {
-					// console.log(1);
+					console.log(1);
 					this.count = TIME_COUNT;
 					this.show = true;
 					this.timer = setInterval(() => {

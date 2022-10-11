@@ -94,7 +94,7 @@
 			},
 			// 取消关注
 			attention(item){
-				// console.log(item);
+				console.log(item);
 				attention({id:item.followed_id}).then(res=>{
 					this.attentionList()
 				}).catch(res=>{})

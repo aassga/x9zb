@@ -873,7 +873,7 @@
 					// location.href = res.data.url
 					// this.url1 = res.data
 					newLink.location.href = res.data.url
-					// // console.log("this.url1: ",this.url1);
+					// console.log("this.url1: ",this.url1);
 					// let that = this
 					// setTimeout(()=>{
 					// 	this.$refs.alink.click()

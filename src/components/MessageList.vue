@@ -25,8 +25,7 @@
             class="HuyaXWebhMessagelist_i_context_t_date"
           >{{item.last_msg ? item.last_msg.creation_time : '未知'}}</div>
         </div>
-        <div class="HuyaXWebhMessagelist_i_context_b" v-if="item.last_msg.text !== ''">{{item.last_msg ? item.last_msg.text : '未知'}}</div>
-        <div class="HuyaXWebhMessagelist_i_context_b" v-else>图片已传送</div>
+        <div class="HuyaXWebhMessagelist_i_context_b">{{item.last_msg ? item.last_msg.text : '未知'}}</div>
       </div>
     </div>
   </div>
@@ -68,11 +67,11 @@ export default {
 <style lang="scss" scoped>
 .HuyaXWebhMessagelist {
   position: absolute;
-  z-index: 1;
-  top: 38px;
+  z-index: 99;
+  // top: 46px;
   left: 0;
   width: 100%;
-  height: -webkit-fill-available;
+  height: calc(100% - 38px);
   background-color: #fff;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -82,7 +81,7 @@ export default {
   .HuyaXWebhMessagelist_i {
     box-sizing: border-box;
     width: 100%;
-    height: 80px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -95,8 +94,8 @@ export default {
       background-color: #fffbf5;
     }
     .HuyaXWebhMessagelist_i_avater_box {
-      width: 25%;
-      height: 80px;
+      width: 22%;
+      height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -108,11 +107,11 @@ export default {
       }
       .HuyaXWebhMessagelist_i_avater_tips {
         position: absolute;
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         border-radius: 50%;
-        right: 8px;
-        top: 12px;
+        right: 3px;
+        top: 18px;
         background-color: red;
         color: #fff;
         display: flex;
@@ -121,9 +120,8 @@ export default {
       }
     }
     .HuyaXWebhMessagelist_i_context {
-      border-bottom: 1px solid #dcd8d8;
-      width: 75%;
-      height: 80px;
+      width: 78%;
+      height: 100px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -135,10 +133,11 @@ export default {
         justify-content: space-between;
         align-items: center;
         .HuyaXWebhMessagelist_i_context_t_name {
-          width: 70%;
+          width: 48%;
           height: 30px;
-          color: #222;
+          color: #000;
           font-size: 16px;
+          font-weight: bold;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -155,14 +154,14 @@ export default {
       }
       .HuyaXWebhMessagelist_i_context_b {
         line-height: 20px;
-        width: 75%;
+        width: 100%;
+        padding-right: 15px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         height: 20px;
-        font-size: 14px;
-        margin-top: 10px;
-        color: #a5a5a5;
+        font-size: 16px;
+        color: #000000cc;
       }
     }
   }

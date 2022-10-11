@@ -762,18 +762,18 @@
 			teamId(e) {
 				this.selectTeam = 0
 				this.TeamData(e)
-				// // console.log(e);
+				// console.log(e);
 			},
 			selectTeam(e) {
-				// // console.log(e);
+				// console.log(e);
 				this.TeamData(this.teamId)
 			},
 			// selectValue(e) { //改变年份，需重新获取详情
-			// 	// console.log('改变年份--');
+			// 	console.log('改变年份--');
 			// 	this.competitionInfo()
 			// },
 			typeListIndex(e) { //改变季前，需重新获取详情
-				// console.log('改变季前--');
+				console.log('改变季前--');
 				this.competitionInfo({id:this.selectId},false)
 			}
 		},
@@ -801,7 +801,7 @@
 			},
 			// 修改选中（
 			setSelect(e){
-				// console.log('出发了',this.tabindex);
+				console.log('出发了',this.tabindex);
 				if(this.tabindex == 0){
 					this.competitionInfo({id:this.selectId},false)
 				}else if(this.tabindex == 1){
@@ -893,7 +893,7 @@
 					})
 					this.title[i].children = res.data
 					item.check = !item.check
-					// console.log(res.data);
+					console.log(res.data);
 				}).catch(res => {
 
 				})
@@ -948,8 +948,8 @@
 			},
 			// 选中三级/四级
 			setCompetition(item){
-				// console.log(item);
-				// console.log(item.type == 0);
+				console.log(item);
+				console.log(item.type == 0);
 				if(item.type == 0){//type == 0 足球，1篮球
 					// 当前页面为足球，当type = 1跳转页面
 					let routeData = this.$router.resolve({
@@ -977,7 +977,7 @@
 					season_id: this.selectValue,
 					// type: matchTypeList.length != 0 ? matchTypeList[this.typeListIndex].id : ''
 				}
-				// console.log(matchTypeList);
+				console.log(matchTypeList);
 				if(this.typeListIndex != 0){
 					data.type = this.details.matchTypeList[this.typeListIndex].id
 				}else {

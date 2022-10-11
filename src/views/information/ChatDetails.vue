@@ -259,8 +259,8 @@ export default {
           return
         }
       this.$store.dispatch("inRoom",inRoomData).then(res=>{
-        // console.log("inRoom的数据")
-        // console.log(res)
+        console.log("inRoom的数据")
+        console.log(res)
         _that.inRoom=true
         })
     },
@@ -290,13 +290,13 @@ export default {
     },
         // 通信发生错误时触发
     websocketonerror() {
-      // console.log("出现错误");
+      console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      // console.log("断开连接", e);
+      console.log("断开连接", e);
       this.ws.close()
       //重连
       this.reconnect();
@@ -342,7 +342,7 @@ export default {
           this.reconnect();
         }
         // this.serverTimeoutObj = setTimeout(() => {
-        //   // console.log(123456)
+        //   console.log(123456)
         //   //超时关闭
         //   this.ws.close();
         // }, this.timeout);

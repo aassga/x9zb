@@ -79,7 +79,7 @@
 				}
 			},500)
 			// }else{
-			// 	// console.log(window.location.origin+"/m/#/pages/prococol/privacy")
+			// 	console.log(window.location.origin+"/m/#/pages/prococol/privacy")
 			// 	// window.location.href = window.location.origin+"/m/#/pages/prococol/privacy"
 			// }
 
