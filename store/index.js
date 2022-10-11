@@ -66,6 +66,10 @@ const store = new Vuex.Store({
 		getInfo(store, http) {
 			http.get('api/Member/info', {}).then(res => {
 				store.state.info = res
+			}).catch(res => {
+				localStorage.removeItem("userInfo");
+				let userid = 10000000 + Math.random().toString().slice(-6);
+				localStorage.setItem("userid", userid);
 			})
 		},
 		// 退出登录

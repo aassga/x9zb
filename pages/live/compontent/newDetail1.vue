@@ -1,5 +1,5 @@
 <template>
-	<scroll-view scroll-y class="HuyaXWebhMessagelist" :class="{'app-version':hidevideo}">
+	<scroll-view scroll-y  class="HuyaXWebhMessagelist" :class="{'app-version':hidevideo,'only-chat-item':onlyChat}">
 		<!-- ,'add-margin':current==1,'is-ios':iosDevice -->
 		<div @click.stop="onHandleClickItem(item,index)"
 			:class="['HuyaXWebhMessagelist_i',activeIndex == index ? 'active' : '']" v-for="(item,index) in list"
@@ -40,6 +40,7 @@
 		data() {
 			return {
 				hidevideo: getQueryString().hidevideo,
+				onlyChat: getQueryString().tabType==1?true:false,
 				// activeIndex: 0,
 				// list: [{
 				// 	avater: "/static/images/home/userLogo.png",
@@ -84,21 +85,21 @@
 		}
 
 		.HuyaXWebhMessagelist_i {
-			padding-left: 40rpx;
 			box-sizing: border-box;
 			width: 100%;
 			height: 100rpx;
 			display: flex;
 			align-items: center;
-			cursor: pointer;
 			justify-content: space-between;
+			border-bottom: 2rpx solid #dcd8d8;
+			cursor: pointer;
 
 			&.active {
-				background-color: #f5f7fa;
+				background-color: #fffbf5;
 			}
 
 			&:hover {
-				background-color: #f5f7fa;
+				background-color: #fffbf5;
 			}
 
 			.HuyaXWebhMessagelist_i_avater_box {
@@ -131,7 +132,6 @@
 			}
 
 			.HuyaXWebhMessagelist_i_context {
-				border-bottom: 2rpx solid #dcd8d8;
 				width: 85%;
 				height: 100rpx;
 				display: flex;
@@ -177,4 +177,11 @@
 			}
 		}
 	}
+.only-chat-item .HuyaXWebhMessagelist_i,.only-chat-item .HuyaXWebhMessagelist_i_context{
+	height:80px!important;
+}
+.only-chat-item .HuyaXWebhMessagelist_i_avater{
+	width:44px!important;
+	height:44px!important;
+}
 </style>

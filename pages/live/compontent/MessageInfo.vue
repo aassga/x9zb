@@ -24,7 +24,7 @@
 		},
 
 		mounted() {
-			// console.log(this.roomInfo,"=========roomInfo")
+			console.log(this.roomInfo,"=========roomInfo")
 		},
 
 		methods: {
@@ -53,7 +53,7 @@
 		left: 0;
 		width: 100%;
 		height: 41px!important;
-		background-color: #FFF;
+		background-color: #fff;
 		overflow: hidden;
 		// overflow-y: scroll;
 		// overflow-x: hidden;
@@ -70,7 +70,7 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0 30rpx;
-			font-size: 28rpx;
+			font-size: 30rpx;
 			box-sizing: border-box;
 			border-bottom: 2rpx solid #dcd8d8;
 

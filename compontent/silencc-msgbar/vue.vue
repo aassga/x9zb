@@ -190,7 +190,7 @@ export default {
     },
     // 动画
     animate() {
-      // console.log('animate', timer)
+      console.log('animate', timer)
       timer = setInterval(() => {
         if (this.isStop) {
           this.clear()

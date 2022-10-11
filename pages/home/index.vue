@@ -36,35 +36,34 @@
 					<!-- <view>充值</view> -->
 				</view>
 				<view class="home-money-bot flex-start">
-					<image src="../../static/images/home/home-money.png" mode=""></image>
-					<text>{{info.balance || 0}}个</text>
+					<image class="diamond-icon" src="../../static/images/home/Diamond.png" mode=""></image>
+					<text>{{parseInt(info.balances) || 0}} 颗</text>
 				</view>
 			</view>
-			<view class="" style="width: 2rpx;margin: 0 24rpx 0 32rpx;background-color: #4B4C53;height: 136rpx;">
+			<view class="" style="width: 2rpx;margin: 0 24rpx 0 32rpx;background-color: #fff;height: 118rpx;">
 				
 			</view>
 			<view class="home-money-left">
 				<view class="home-money-top flex">
-					<text>可提现钻石</text>
-					<!-- <view style="background: linear-gradient(92deg, #FFDFAB 0%, #E3AC72 100%);color: #87390E;">提现</view> -->
+					<text>我的等级</text>
 				</view>
 				<view class="home-money-bot flex-start">
-					<image src="../../static/images/home/home-money.png" mode=""></image>
-					<text>{{info.withdrawal_balance || 0}}个</text>
+					<image class="level-icon" src="../../static/images/home/LV.png" mode=""></image>
+					<text>L{{info.exp || 0}}</text>
 				</view>
 			</view>
 		</view>
 		
 		
 		<view class="home-bar flex">
-			<view class="home-bar-li" v-for="(item,index) in homeBar"  @click="show= true">
+			<view class="home-bar-li" v-for="(item,index) in homeBar" :key="`home_bar_${index}`" @click="show= true">
 				<image :src="'/static/images/home/home-bar'+index+'.png'" mode=""></image>
 				<view>{{item}}</view>
 			</view>
 		</view>
 		
 		<view class="home-list">
-			<view class="home-li flex" v-for="(item,index) in homeList"  @click="show= true">
+			<view class="home-li flex" v-for="(item, index) in homeList" :key="`home_list_${index}`" @click="homeListItemClick(item)">
 				<image :src="'/static/images/home/home-li'+index+'.png'" mode=""></image>
 				<text>{{item}}</text>
 				<image src="../../static/images/home/home-right.png" mode=""></image>
@@ -98,6 +97,18 @@
 			info(){
 				return this.$store.state.info
 			},
+            is_login() {
+                let result = false;
+				if (localStorage.getItem('userInfo')) {
+                    if (localStorage.getItem('userInfo') !== '{}') {
+                        result = true;
+                    }
+                }
+				if (JSON.stringify(this.$store.state.info) !== '{}') {
+					result = true;
+				}
+                return result;
+            },
 			show1:{
 				get() {
 					return this.$store.state.show
@@ -107,8 +118,20 @@
 				}
 			}
 		},
+		created() {
+            this.$store.dispatch('getInfo', this.$u);
+		},
 		methods:{
-			
+			homeListItemClick(item) {
+				if (item == '我的等级') {
+					if (this.is_login) {
+						return this.$navigateTo('../myGrade');
+					} else {
+						return this.$u.toast('请先登录');
+					}
+				}
+				this.show = true;
+			}
 		}
 	}
 </script>
@@ -191,7 +214,7 @@
 	.home-money {
 		overflow: hidden;
 		margin-top: 32rpx;
-		padding: 20rpx 32rpx;
+		padding: 32rpx 32rpx;
 		border-radius: 14rpx;
 		background: url(../../static/images/home/home-bg.png)center top / 100% 100% no-repeat;
 		.home-money-left {
@@ -199,7 +222,7 @@
 		}
 		.home-money-top {
 			text {
-				color: #9D9EA3;
+				color: #fff;
 				font-size: 24rpx;
 			}
 			view {
@@ -210,15 +233,22 @@
 			}
 		}
 		.home-money-bot {
-			margin-top: 8rpx;
-			image {
-				 width: 96rpx;
-				 height: 96rpx;
-				 margin-right: 9rpx;
+			margin-top: 24rpx;
+			.diamond-icon{
+				width: 50rpx;
+				height: 44rpx;
+				margin-right: 9rpx;
+			}
+			.level-icon {
+				width: 34rpx;
+				height: 44rpx;
+				margin-right: 9rpx;
 			}
 			text {
+				display: inline-block;
+				margin: 0 auto;
 				color: #fff;
-				font-size: 36rpx;
+				font-size: 26rpx;
 				font-weight: bold;
 			}
 		}

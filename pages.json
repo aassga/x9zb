@@ -104,6 +104,18 @@
 			}
 		},
 		{
+			"path": "pages/dailyMission",
+			"style": {
+				"navigationBarTitleText": "每日任务"
+			}
+		},
+		{
+			"path": "pages/myGrade",
+			"style": {
+				"navigationBarTitleText": "我的等级"
+			}
+		},
+		{
 			"path": "pages/activity/index",
 			"style": {
 				"navigationBarTitleText": ""

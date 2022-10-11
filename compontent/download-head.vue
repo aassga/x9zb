@@ -7,7 +7,7 @@
 				下载小九直播
 			</view>
 			<view>
-				畅享高清小九直播
+				全网最全赛事,免费下载更高清
 			</view>
 		</view>
 		<view class="download-btn" @click="$navigateTo('../download')">
@@ -31,7 +31,7 @@ getQueryString
 		top: 0;
 		left: 0;
 		right: 0;
-		padding: 14rpx 24rpx;
+		padding: 16rpx 24rpx;
 		background-color: #333;
 		.download-logo {
 			width: 76rpx;
@@ -40,7 +40,7 @@ getQueryString
 		.download-title {
 			flex: 1;
 			color: #fff;
-			font-size: 32rpx;
+			font-size: 26rpx;
 			margin-left: 20rpx;
 		}
 		.download-btn {
