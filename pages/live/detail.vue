@@ -127,13 +127,13 @@
           :activeIndex="activeIndex2"
           @onHandleClickItem="onHandleClickItem"
           :current="current"
-          v-if="current == 2 && showTabs.includes(current) && !showMsgInfo"
+          v-if="current == 1 && showTabs.includes(current) && !showMsgInfo"
           :list="messageList"
         ></newDetail1>
         <MessageInfo
           :headShow="show1 && !hidevideo"
           @close="onHandleMsgInfoBack"
-          v-if="current == 2 && showMsgInfo"
+          v-if="current == 1 && showMsgInfo"
           :current="current"
           :roomInfo="roomInfo"
         >
