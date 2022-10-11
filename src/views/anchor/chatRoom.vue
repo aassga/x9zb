@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="layout-contribution-list">
-        <div class="chatroom-contribution-list-comp" style="height: 218px">
+        <div class="chatroom-contribution-list-comp" style="height: 220px">
           <div class="contribution-header">
             <div class="title">
               <span
@@ -204,7 +204,7 @@
         </div>
       </div>
 
-      <div class="pc-chat-room-container">
+      <div class="pc-chat-room-container" style="height: 100%">
         <ChatDetails
           :qsVid="qsVid"
           :giftList="giftList"
@@ -1058,7 +1058,7 @@ export default {
       let gitfItem = e;
       this.gitfItem = gitfItem;
       if (!gitfItem.data && JSON.stringify(this.infos) == "{}") return;
-      console.log(gitfItem.data);
+      // console.log(gitfItem.data);
       if (gitfItem.data == undefined) return;
       if (gitfItem.type == "TIMCustomElem" && gitfItem.data.type == 102) {
         //普通用户进入直播间获取在线人数 ，登录情况下可见
@@ -1080,8 +1080,8 @@ export default {
         if (this.nick == gitfItem.nick) return;
         this.gitfListSvg.push(gitfItem.data.nobel);
         this.nick = gitfItem.nick;
-        // console.log(this.gitfListSvg);
-        // console.log('出现的次数'+this.gitfNum);
+        // // console.log(this.gitfListSvg);
+        // // console.log('出现的次数'+this.gitfNum);
         setTimeout((res) => {
           this.gitfListSvg.shift();
         }, 1500);
@@ -1112,7 +1112,7 @@ export default {
     // 		url: emojiUrl + emojiMap[emojiName[i]]
     // 	});
     // }
-    // console.log(this.emotion);
+    // // console.log(this.emotion);
     // this.emotion =  this.emojiList
   },
   computed: {
@@ -1197,7 +1197,7 @@ export default {
           _this.roomid
         );
       }
-      // console.log(_this.roomid)
+      // // console.log(_this.roomid)
       this.createCustomMessage(
         {
           //发送普通消息
@@ -1237,12 +1237,12 @@ export default {
         player.startAnimation();
         let i = videoItem.frames;
         player.onFrame(function (i) {
-          // console.log(i);
+          // // console.log(i);
           _this.gitfItemName = true;
           if (i + 1 == videoItem.frames) {
             player.stopAnimation(true);
             player.clear();
-            // console.log('关闭了坐骑特效');
+            // // console.log('关闭了坐骑特效');
             _this.swf_show = false;
             _this.gitfItemName = false;
           }
@@ -1282,7 +1282,7 @@ export default {
     },
     //设置/取消管理
     setAdmin(item) {
-      console.log(item.groupProfile.groupID, item.fromAccount);
+      // console.log(item.groupProfile.groupID, item.fromAccount);
       let promise = this.tim.setGroupMemberRole({
         groupID: item.groupProfile.groupID,
         userID: item.fromAccount,
@@ -1311,7 +1311,7 @@ export default {
 
     // 打开弹窗
     setHuoserMask(item) {
-      console.log(item);
+      // console.log(item);
       this.houseMask = true;
       this.HuoserItem = item;
     },
@@ -1411,7 +1411,7 @@ export default {
     },
 
     getGitfList(gitfItem) {
-      // console.log('---------------------------------------'+gitfItem.data.gift.type);
+      // // console.log('---------------------------------------'+gitfItem.data.gift.type);
       let obj = {
         show: true,
         num: 1,
@@ -1441,7 +1441,7 @@ export default {
         this.time = null;
       }
       this.gitfList.push(obj);
-      console.log(this.gitfList);
+      // console.log(this.gitfList);
       this.time = setTimeout((res) => {
         this.gitfList.shift();
       }, 1000);
@@ -1465,10 +1465,10 @@ export default {
         player.loops = 1;
         player.setVideoItem(videoItem);
         player.startAnimation();
-        console.log(videoItem.frames);
+        // console.log(videoItem.frames);
         let i = videoItem.frames;
         player.onFrame(function (i) {
-          // console.log(i);
+          // // console.log(i);
           if (i + 1 === videoItem.frames) {
             player.stopAnimation(true);
             player.clear();
@@ -1476,7 +1476,7 @@ export default {
           }
         });
       });
-      // console.log(player);
+      // // console.log(player);
     },
 
     getColor(index) {
@@ -1498,7 +1498,7 @@ export default {
     },
     // 编辑自定义消息
     createCustomMessage(data, roomId) {
-      // console.log(data);
+      // // console.log(data);
       let _this = this;
       // return
       // 2. 创建消息实例，接口返回的实例可以上屏
@@ -1561,7 +1561,7 @@ export default {
         // 	player.clear();
         // },3000)
       }
-      // console.log(data, roomId);
+      // // console.log(data, roomId);
       // return
       let message = this.tim.createCustomMessage({
         to: roomId,
@@ -1601,7 +1601,7 @@ export default {
     setEmotion(item) {
       this.iconIndex = null;
       this.message = this.message + item;
-      // console.log(item);
+      // // console.log(item);
     },
     copyText(str) {
       const qrUrlContent = document.getElementById("cp-input");
@@ -1612,7 +1612,7 @@ export default {
       range.selectNode(qrUrlContent);
       selection.addRange(range);
       qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-      console.log(str, "========");
+      // console.log(str, "========");
       let isSucess = document.execCommand("copy");
       if (isSucess) {
         this.$alert("复制成功", "提示");
@@ -1624,14 +1624,14 @@ export default {
       // let str = 'jfkdsj[咒骂]dsjfkljsa[憨笑]哈哈哈，[惊恐]'
       let exp = /\[(.*?)\]/g; //匹配[*] 大括号里面任意内容的正则
       let arr = str.match(exp); //字符串匹配出来的数组
-      // console.log(arr);
+      // // console.log(arr);
       var reg = /(https?:\/\/[^\s]+)/g;
       str = str.replace(reg, "<a target='_blank' href='$1'>$1</a>");
       if (!arr) return str;
 
       this.emotion.forEach((item1, index) => {
         arr.map((item) => {
-          // console.log(item1);
+          // // console.log(item1);
           if (item1.emojiName === item) {
             str = str.replace(
               item,
@@ -1639,14 +1639,14 @@ export default {
             );
           }
 
-          // console.log(item);
+          // // console.log(item);
           // let key = `p${item.substr(1, item.length - 2)}`;  //记录大括号里的值 用作id 方便取值
           // if (!this.salaryVars.hasOwnProperty(key)) this.$set(this.salaryVars, key, '');
         }); //循环遍历
       });
       // let arrNum = 取出所有正则匹配值并转换为input
 
-      // console.log(str);
+      // // console.log(str);
 
       return str;
     },
@@ -1671,13 +1671,13 @@ export default {
     },
 
     setIcon(num) {
-      // console.log(num);
+      // // console.log(num);
       // this.iconIndex = null
       if (this.iconIndex == null) {
         this.iconIndex = num;
       } else if (this.iconIndex == num) {
         this.iconIndex = null;
-        // console.log('取反');
+        // // console.log('取反');
       } else {
         this.iconIndex = num;
       }

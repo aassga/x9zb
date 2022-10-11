@@ -579,7 +579,7 @@ export default {
             arr[index] = { ...arr[index], ...item };
           });
           this.renList = arr;
-          console.log(arr);
+          // console.log(arr);
         })
         .catch((res) => {});
     },

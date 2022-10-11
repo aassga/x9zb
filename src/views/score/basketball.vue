@@ -343,11 +343,11 @@
 				if (e == null) {
 					return
 				}
-				// console.log(this.dateTime[e])
+				// // console.log(this.dateTime[e])
 				this.timeType = this.dateTime[e]
 			},
 			listType1(e) {
-				console.log(e)
+				// console.log(e)
 				this.listType1 = e
 			}
 		},
@@ -363,7 +363,7 @@
 			},
 		},
 		created() {
-			// console.log()
+			// // console.log()
 			this.$store.state.loading = true
 			setTimeout(res => {
 				this.$store.state.loading = false
@@ -375,7 +375,7 @@
 			// 获取收藏的条数
 			this.getList()
 			this.$store.state.type = 2
-			console.log('切换篮球');
+			// console.log('切换篮球');
 			this.$WebSocket.send({type:"classify",classify_type:1},'','')
 			window.addEventListener('scroll',this.handleScroll,true)
 		},
@@ -393,17 +393,17 @@
 			retundata() {
 				//监听接受到websocket的信息
 				this.$WebSocket.onmessage((res) => {
-					// console.log(res);
+					// // console.log(res);
 					this.$store.dispatch("WS_DATA_ACTIONS", res);
 				});
 			},
 			onclose() {
 				//监听长连接的一个断开
 				this.$WebSocket.ws.onclose = () => {
-					//console.log("断开连接1");
+					//// console.log("断开连接1");
 					// this.$store.dispatch("setDeviceNum", "");
 					// let info = this.$store.state.Counter.websocketinfo;
-					//console.log("尝试重新连接长连接");
+					//// console.log("尝试重新连接长连接");
 					this.init();
 				};
 			},
@@ -436,7 +436,7 @@
 				// 	this.id = item.id
 				// 	this.boxLi = item.name
 				// }else 
-				console.log();
+				// console.log();
 				if(type == 1){
 					this.match_id = item.id
 					this.selectId = item.id
@@ -455,7 +455,7 @@
 					type:this.match_id,
 					match_filter:this.tabIndex,
 				}
-				// console.log();
+				// // console.log();
 				if(this.tabIndex == 1 || this.tabIndex == 2){
 					data.date = this.timeType.day
 				}
@@ -568,8 +568,8 @@
 			
 			
 			getShow() {
-				console.log('9ij')
-				// console.log(this.$refs.tiemPick)
+				// console.log('9ij')
+				// // console.log(this.$refs.tiemPick)
 				this.$refs.abc.focus()
 			},
 			// 显示隐藏弹窗
@@ -584,14 +584,14 @@
 			},
 			// 选中的日期
 			change(e) {
-				console.log(e)
+				// console.log(e)
 				let data = {
 					day: e,
 				}
 
 				this.timeType = data
 				this.timeIndex = null
-				console.log(data)
+				// console.log(data)
 			},
 			
 			// 修改三个状态高度
@@ -604,7 +604,7 @@
 				this.$nextTick(() => {
 					// this.$refs['scrollbarContainer'].wrap.scrollTop = 500
 					// document.querySelector(".el-main").scrollTop = anchor.offsetTop;
-					// console.log(this.$refs.scrollbarContainer.)
+					// // console.log(this.$refs.scrollbarContainer.)
 					// this.$refs.scrollbarContainer.scrollTop = 0
 				});
 			},
@@ -655,7 +655,7 @@
 					this.screen.count_1--
 				}
 				
-				console.log(item.check);
+				// console.log(item.check);
 			},
 			
 			// 调用筛选
@@ -665,7 +665,7 @@
 					type:this.match_id,
 					match_filter:this.tabIndex,
 				}
-				// console.log();
+				// // console.log();
 				if(this.tabIndex == 1 || this.tabIndex == 2){
 					data.date = this.timeType.day
 				}

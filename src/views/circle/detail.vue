@@ -168,7 +168,7 @@
 				info({
 					id: this.$route.query.id
 				}).then(res => {
-					console.log(res)
+					// console.log(res)
 					this.detail = res.data.info
 					this.list = res.data.list
 					this.userPostList(this.detail.uid)
@@ -179,12 +179,12 @@
 				// let str = 'jfkdsj[咒骂]dsjfkljsa[憨笑]哈哈哈，[惊恐]'
 				let exp = /\[(.*?)\]/g; //匹配[*] 大括号里面任意内容的正则
 				let arr = str.match(exp); //字符串匹配出来的数组
-				// console.log(arr);
+				// // console.log(arr);
 				if (!arr) return str;
 			
 				this.emotion.forEach((item1, index) => {
 					arr.map(item => {
-						// console.log(item1);
+						// // console.log(item1);
 						if (item1 === item) {
 							str = str.replace(item,
 								`<img src='https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${index}.gif'>`
@@ -194,7 +194,7 @@
 				})
 				// let arrNum = 取出所有正则匹配值并转换为input
 			
-				// console.log(str);
+				// // console.log(str);
 				return str;
 			},
 			// ta的帖子

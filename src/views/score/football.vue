@@ -773,7 +773,7 @@
 						i++
 					}
 				})
-				console.log("123131: ",e + (i * 31));
+				// console.log("123131: ",e + (i * 31));
 				this.mainHeight = e + (i * 31)
 			},
 			/* 子集获取高度 */
@@ -825,7 +825,7 @@
 				let path = this.$route.path
 				if(path != '/football') return
 				let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-				// console.log(this.$refs.football0)
+				// // console.log(this.$refs.football0)
 				if (this.tabIndex == 0) {
 					if(this.$refs.football0 == undefined) return
 					this.$refs.football0.handleScroll2(scrollTop)
@@ -1090,7 +1090,7 @@
 
 			// 选择公司
 			selectTab(item, type) {
-				console.log(type);
+				// console.log(type);
 				if (type == 2) {
 					this.id = item.id
 					this.boxLi = item.name

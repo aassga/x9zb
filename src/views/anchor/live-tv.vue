@@ -412,7 +412,7 @@
 			}
 		},
 		created(){
-			// console.log(888888888888888888888888888)
+			// // console.log(888888888888888888888888888)
 			let query = this.$route.query;
 			this.query = {
 				...this.query,
@@ -444,7 +444,7 @@
 			playerOptions() { // 使用计算属性
 				//如果info为空则已结束
 				if (JSON.stringify(this.info) == "{}") return
-				console.log(this.info)
+				// console.log(this.info)
 				const playerOptionsObj = {
 					live: false,
 					muted:true,
@@ -472,7 +472,7 @@
 						}
 					}
 				}
-				// console.log(this.info)
+				// // console.log(this.info)
 				return playerOptionsObj
 			}
 
@@ -480,7 +480,7 @@
 		watch: {
 			info(e){
 				this.iserr = false
-				// console.log(e+'0000000000000000000');
+				// // console.log(e+'0000000000000000000');
 			},
 			// 设置视频的音量0-1
 			value1(e) {
@@ -491,7 +491,7 @@
 			'$store.state.item'(e) {
 				let list = this.$store.state.item
 				if(this.$refs.danmaku == null) return
-				console.log(list);
+				// console.log(list);
 				this.$refs.danmaku.push(list)
 			},
 			qualityIndex(e){//切换画质
@@ -514,7 +514,7 @@
 		},
 		mounted() {
 			// 监听是否有直播
-			// console.log(
+			// // console.log(
 			// 'islive:',this.islive,
 			// 'reserve:',this.reserve,
 			// 'liveList:',this.liveList,
@@ -535,7 +535,7 @@
 		},
 		methods: {
 			getDetail(type, id) {
-				// console.log(22222222222222222222222222222)
+				// // console.log(22222222222222222222222222222)
 				let data = {
 					id: id,
 				};
@@ -544,7 +544,7 @@
 					getInfo(data)
 						.then((res) => {
 							this.info = res.data.info;	
-							// console.log(this.info)
+							// // console.log(this.info)
 						})
 						.catch((res) => {});
 				}
@@ -585,7 +585,7 @@
 				// return url
 				// localStorage.setItem('index', type)
 				// this.$router.push('/schedule')
-				// console.log(url,type);
+				// // console.log(url,type);
 				// return
 				let routeData = this.$router.resolve({ path:url})
 				window.open(routeData.href,'_blank')
@@ -616,11 +616,11 @@
 				this.value1 = 0
 				// let video = this.$refs.videoPlayer.player
 				// video.muted(false)
-				console.log('player play!-----------------------------------------', player.el_.innerText)
+				// console.log('player play!-----------------------------------------', player.el_.innerText)
 			},
 			onPlayerPause(player) {
 				this.play = false
-				console.log('player pause!', player)
+				// console.log('player pause!', player)
 			},
 			// 全屏按钮
 			fullScreenHandle() {
@@ -635,22 +635,22 @@
 
 			// or listen state event 播放进度
 			playerStateChanged(playerCurrentState) {
-				// console.log(playerCurrentState);
+				// // console.log(playerCurrentState);
 				if (playerCurrentState.timeupdate == undefined) {
 					return
 				}
 				this.time = this.secondsFormat(playerCurrentState.timeupdate)
-				// console.log('player current update state', this.time)
+				// // console.log('player current update state', this.time)
 			},
 			// 重置视频
 			doRest(url) {
-				console.log('重置视频');
+				// console.log('重置视频');
 				// let video = this.$refs.videoPlayer.player
 				// video.src(this.url)
 				// let url = this.info.pull
 				let video = this.$refs.videoPlayer.player
 				video.pause()
-				// console.log(video);
+				// // console.log(video);
 				video.src({src:url})
 				video.load({src:url})
 				video.play()	
@@ -660,13 +660,13 @@
 			// player is ready
 			playerReadied(player) {
 				// code == 4无法播放 监听如果视频播放失败时需要请求直播列表
-				// console.log('the player is readied--------------------------------------', player)
+				// // console.log('the player is readied--------------------------------------', player)
 				// return
 				setTimeout(res=>{
 					if (player.error_ == null) {
 						return
 					}else{
-						// console.log(player.error_,'**************************')
+						// // console.log(player.error_,'**************************')
 						this.iserr = true
 						this.getLiveList()
 					}

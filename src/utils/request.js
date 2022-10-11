@@ -13,7 +13,7 @@ import {
 } from '@/utils/auth'
 
 let baseURL = process.env;
-console.log(apiUrl);
+// console.log(apiUrl);
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);
 // }
@@ -41,7 +41,7 @@ service.interceptors.request.use(
 	},
 	error => {
 		// do something with request error
-		console.log(error) // for debug
+		// console.log(error) // for debug
 		return Promise.reject(error)
 	}
 )
@@ -78,7 +78,7 @@ service.interceptors.response.use(
 			// 	duration: 5 * 1000
 			// })
 
-			// console.log(res.msg,"res.msg======")
+			// // console.log(res.msg,"res.msg======")
 		// }
 		// if (res.code == 1&&res.msg!="connection error") {
 		if (res.code !== 0) {
@@ -88,7 +88,7 @@ service.interceptors.response.use(
 			// 	type: 'error',
 			// 	duration: 5 * 1000
 			// })
-			// console.log(res.msg,"res.msg1======")
+			// // console.log(res.msg,"res.msg1======")
 			// 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
 			if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
 				// to re-login
@@ -109,7 +109,7 @@ service.interceptors.response.use(
 						duration: 5 * 1000
 					})
 				} else {
-					console.log(res.msg,"res.msg======")
+					// console.log(res.msg,"res.msg======")
 				}
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
@@ -130,9 +130,9 @@ service.interceptors.response.use(
 			store.state.user.data = {}
 			store.state.user.islogin = false
 			localStorage.removeItem('userInfo')
-			// console.log(_this);
+			// // console.log(_this);
 			Vue.prototype.$message.error('请登录后操作')
-			// console.log('--------------------'+router);
+			// // console.log('--------------------'+router);
 			//  setTimeout(res=>{
 			return Promise.reject(new Error('Error'))
 			// router.push({path:'/main',name:'main'})
@@ -152,14 +152,14 @@ service.interceptors.response.use(
 		removeToken()
 	},
 	error => {
-		// console.log('err' + error) // for debug
+		// // console.log('err' + error) // for debug
 		// Message({
 		// 	// message: error.message == 'errError: timeout of 10000ms exceeded'?'请求超时,请重试':error.message,
 		// 	message: '连接超时,请重试',
 		// 	type: 'error',
 		// 	duration: 5 * 1000
 		// })
-		console.log(res.msg,"timeout======")
+		// console.log(res.msg,"timeout======")
 		return Promise.reject(error)
 	}
 )

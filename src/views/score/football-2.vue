@@ -286,7 +286,7 @@
 				this.page = 1;
 				this.list = [];
 				// this.$store.state.loading = true;
-				// console.log(this.$store.state.loading)
+				// // console.log(this.$store.state.loading)
 				this.getlist();
 				// setTimeout(() => {
 				// 	this.$store.state.loading = false;
@@ -333,7 +333,7 @@
 				   // if(this.top == (this.$refs.bbb[e].getBoundingClientRect().top + 'px')){
 					  //  return
 				   // }
-				   console.log(this.fightMask)
+				   // console.log(this.fightMask)
 				  this.tlive = item
 				  top = this.$refs.bbb[e].getBoundingClientRect().top + 'px'
 				  left = this.$refs.bbb[e].getBoundingClientRect().left + 50 + 'px'
@@ -360,7 +360,7 @@
 					id: item.id,
 					type: 2
 				}
-				console.log(data);
+				// console.log(data);
 				collect(data).then(res => {
 					if(item.is_collect == 0){
 						this.$message.success('收藏成功')
@@ -403,9 +403,9 @@
 					}
 					let arr = ['asia','eu','bs']
 					arr.forEach((item,index)=>{
-						console.log(r.arr[index])
+						// console.log(r.arr[index])
 						r.arr[index].forEach(item1=>{
-							console.log(item1)
+							// console.log(item1)
 							if(item1.company_id === company_id){
 								data[index] = item1
 							}
@@ -413,7 +413,7 @@
 					})
 					 this.dataMask = true
 					// res.data.asia.forEach(item=>{
-					// 	console.log(item.company_id)
+					// 	// console.log(item.company_id)
 					// 	if(item.company_id === company_id){
 					// 		data.asia = item
 					// 	}
@@ -428,7 +428,7 @@
 					// 		data.bs = item
 					// 	}
 					// })
-					console.log(data)
+					// console.log(data)
 					this.OddsList = data
 				}).catch(res => {
 				

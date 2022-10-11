@@ -45,11 +45,12 @@ export default {
   .HuyaXWebhMessageinfo_title {
     position: relative;
     width: 100%;
-    height: 42px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    padding: 0 15px;
+    font-size: 14px;
     box-sizing: border-box;
     border-bottom: 1px solid #dcd8d8;
     background-color: #ececec;

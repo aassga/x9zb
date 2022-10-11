@@ -1134,7 +1134,7 @@
 				if (this.teamId == 0) {
 					return item[this.player1[i]]
 				} else {
-					console.log(this.team1[i]);
+					// console.log(this.team1[i]);
 					return item[this.team1[i]]
 				}
 			},

@@ -767,9 +767,9 @@
 					this.item = this.$common.assignDeep(this.item, e)
 				} else if (e.type == 'football_exponent' && this.item.id == e.sourceid && e.company_id == this.query
 					.competainId) {
-					// console.log(e.exponent);
+					// // console.log(e.exponent);
 					/* 判断指数不同 */
-					// console.log(obj[e.name][e.name1]);
+					// // console.log(obj[e.name][e.name1]);
 					if (obj[e.name] != undefined) {
 						obj[e.name][e.name1].draw = _this.setExp(Number(exponent[e.name][e.name1].draw), Number(e.exponent[e
 							.name][e.name1].draw))
@@ -793,7 +793,7 @@
 						// }
 					}
 
-					// console.log(JSON.parse(JSON.stringify(obj)));
+					// // console.log(JSON.parse(JSON.stringify(obj)));
 
 					this.item.exponent = _this.$common.assignDeep(this.item.exponent, e.exponent)
 					// this.item.exponent = {
@@ -801,7 +801,7 @@
 					// 	...e.exponent
 					// }
 					// this.item =this.$common.assignDeep(this.item.exponent,e.exponent)
-					// console.log(this.item.exponent);
+					// // console.log(this.item.exponent);
 				}
 			},
 			tabindex(e) {
@@ -850,7 +850,7 @@ if (this.timer) {
 
 			this.roomid = id
 			// this.$store.state.loading = true
-			// console.log(this.$store.state)
+			// // console.log(this.$store.state)
 			// this.ranking()
 			this.getDetail(query.type, query.id);
 			// setInterval(res => {
@@ -882,7 +882,7 @@ if (this.timer) {
 			setTimeout(res => {
 				this.init()
 			}, 1000)
-			// console.log('')
+			// // console.log('')
 			// if(JSON.stringify(this.infos) == '{}') {
 			// 	return this.$message.success('登录后可进行球')
 			// }
@@ -910,17 +910,17 @@ if (this.timer) {
 			retundata() {
 				//监听接受到websocket的信息
 				this.$WebSocket.onmessage((res) => {
-					// console.log(res);
+					// // console.log(res);
 					this.$store.dispatch("WS_DATA_ACTIONS", res);
 				});
 			},
 			onclose() {
 				//监听长连接的一个断开
 				this.$WebSocket.ws.onclose = () => {
-					//console.log("断开连接1");
+					//// console.log("断开连接1");
 					// this.$store.dispatch("setDeviceNum", "");
 					// let info = this.$store.state.Counter.websocketinfo;
-					//console.log("尝试重新连接长连接");
+					//// console.log("尝试重新连接长连接");
 					this.init();
 				};
 			},
@@ -950,7 +950,7 @@ if (this.timer) {
 				}
 				ranking(data).then(res => {
 					this.rankingList = res.data
-					console.log(res.data);
+					// console.log(res.data);
 				}).catch(res => {})
 			},
 			// 获取头条
@@ -1033,7 +1033,7 @@ if (this.timer) {
 				} else if (num1 == num2 && num1 != 0 && num2 != 0) {
 					return 50
 				} else {
-					// console.log(num2 / (num1 + num2))
+					// // console.log(num2 / (num1 + num2))
 					return num1 / (num1 + num2) * 100
 				}
 			},
@@ -1059,7 +1059,7 @@ if (this.timer) {
 			// 1相等 ， 2 大于 ，3小于
 			setExp(num1, num2) {
 				if (num1 == num2) {
-					console.log("true: ",true);
+					// console.log("true: ",true);
 					return 0
 				} else {
 					return 1
@@ -1087,8 +1087,8 @@ if (this.timer) {
 					//篮球
 					getInfo(data)
 						.then((res) => {
-							console.log('获取的详情')
-							console.log(res.data)
+							// console.log('获取的详情')
+							// console.log(res.data)
 							// res.data.tlive = res.data.tlive.reverse()
 							this.item = res.data;
 							let arr = res.data.tlive
@@ -1103,15 +1103,15 @@ if (this.timer) {
 							// _this.$store.state.loading = false
 							this.listArr = listArr
 							this.getHeadList(res.data.competition_id)
-							// console.log(this.item);
+							// // console.log(this.item);
 						})
 						.catch((res) => {});
 				} else {
 					//足球
 					getfootballDetail(data)
 						.then((res) => {
-														console.log('获取的详情')
-							console.log(res.data)
+														// console.log('获取的详情')
+							// console.log(res.data)
 							res.data.tlive = res.data.tlive.reverse()
 							let obj = {
 								eu: {
@@ -1209,7 +1209,7 @@ if (this.timer) {
 							this.tech2 = technology[1]
 							let arr = []
 							this.ranking()
-							// console.log(technology[0])
+							// // console.log(technology[0])
 							for (let i in technology[0]) {
 								for (let b in technology[1]) {
 									if (i == b) {
@@ -1236,7 +1236,7 @@ if (this.timer) {
 											obj.progress2 = technology[0][i] / (technology[0][i] + technology[1][b]) *
 												100
 										}
-										// console.log(technology[0][i] + '----' + technology[1][b])
+										// // console.log(technology[0][i] + '----' + technology[1][b])
 										obj.num1 = technology[0][i]
 										obj.num2 = technology[1][b]
 										arr.push(obj)

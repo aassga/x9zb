@@ -269,7 +269,7 @@
 		},
 		watch:{
 			ImgIndex(e){
-				console.log(e)
+				// console.log(e)
 			}
 		},
 		computed:{
@@ -283,7 +283,7 @@
 			this.info = JSON.parse(localStorage.getItem('userInfo'))
 			this.info.code = this.info.mobile.slice(0,2)
 			this.info.phone = this.info.mobile.slice(3)
-			console.log(this.info)
+			// console.log(this.info)
 			// 获取主播认证信息
 			this.getVerifiedInfo1()
 			// 获取主播经验列表选中
@@ -303,7 +303,7 @@
 			},
 			// 图片上传返回地址
 			handleAvatarSuccess1(res, file){
-				console.log(res, file);
+				// console.log(res, file);
 				this.front = `${this.QiniuToken.domain}/${res.key}`
 			},
 			handleAvatarSuccess2(res, file){
@@ -377,13 +377,13 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					console.log('失败' + res);
+					// console.log('失败' + res);
 				})
 			},
 			
 			// 验证码倒计时
 			getCount() {
-				console.log(this.timer)
+				// console.log(this.timer)
 				const TIME_COUNT = 60;
 				if (!this.timer) {
 					this.count = TIME_COUNT;

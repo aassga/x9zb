@@ -35,7 +35,7 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id) &&
-                      current === 1,
+                      ctp === 2,
                   }"
                 >
                   <template v-if="ctp === 0">

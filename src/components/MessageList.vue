@@ -135,11 +135,10 @@ export default {
         justify-content: space-between;
         align-items: center;
         .HuyaXWebhMessagelist_i_context_t_name {
-          width: 48%;
+          width: 70%;
           height: 30px;
-          color: #000;
+          color: #222;
           font-size: 16px;
-          font-weight: bold;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;

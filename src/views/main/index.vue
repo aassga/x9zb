@@ -714,13 +714,13 @@
 			mainTabIndex(e) {
 				
 				this.title_name=this.mainList[e].title
-				// console.log(this.mainList[e])
-				// console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
-				// console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
+				// // console.log(this.mainList[e])
+				// // console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
+				// // console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
 				if ((this.mainList[e].starttime)-(this.servertime)>0&&(this.mainList[e].starttime)>0 ) {
 					this.counttDown=(this.mainList[e].starttime)-(this.servertime)
 					// 先卸载定时器从新加载定时器
-					// console.log(this.counttDown)
+					// // console.log(this.counttDown)
 					clearInterval(this.timeInterval)
 					this.Iime()
 					// this.counttDown=10
@@ -957,7 +957,7 @@
 					this.servertime=res.data.servertime
 					this.starttime=res.data.data[0].starttime
 					this.servertimeDate(this.servertime)
-					// console.log(this.starttime-this.servertime+"倒计时")
+					// // console.log(this.starttime-this.servertime+"倒计时")
 					if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 ) {
 						this.counttDown=(this.starttime)-(this.servertime)
 						// this.counttDown=10
@@ -983,7 +983,7 @@
 				let s=parseInt(this.counttDown%60)
 				s=s<10?"0"+s:s
 				let date=[d,h,m,s]
-								// console.log(date)
+								// // console.log(date)
 				this.counttDownDay=date
 			},
 			Iime(){
@@ -1017,7 +1017,7 @@
 		        range.selectNode(qrUrlContent)
 		        selection.addRange(range)
 		        qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-		        console.log(window.location.href,"========");
+		        // console.log(window.location.href,"========");
 		        let isSucess = document.execCommand('copy');
 		        if (isSucess) {
 		        	this.$alert('复制成功',"提示")

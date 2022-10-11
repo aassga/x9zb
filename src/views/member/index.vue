@@ -308,7 +308,7 @@
 			let query = this.$route.query
 			// 判断是否是打开充值
 			
-			// console.log();
+			// // console.log();
 			
 			if (query && query.type) {
 				this.navBarIndex = query.type
@@ -322,7 +322,7 @@
 			let tabIndex = localStorage.getItem('tabIndex')
 			this.navBarIndex = Number(tabIndex)
 			this.getPlacard()
-			// console.log(this.$store);
+			// // console.log(this.$store);
 			// 登录im
 			if(JSON.stringify(this.infos) == '{}') return
 			//this.$store.dispatch('loginTim','')
@@ -364,7 +364,7 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					console.log('失败' + res);
+					// console.log('失败' + res);
 				})
 			},
 			paymentPassword(){
@@ -389,7 +389,7 @@
 			getCount() {
 				const TIME_COUNT = 60;
 				if (!this.timer) {
-					console.log(1);
+					// console.log(1);
 					this.count = TIME_COUNT;
 					this.show = false;
 					this.timer = setInterval(() => {

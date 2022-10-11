@@ -115,7 +115,7 @@
 		},
 		created() {
 			// 获取type详情
-			// console.log()
+			// // console.log()
 			this.query = this.$route.query
 			
 			if (this.query.type == 'basketball') {
@@ -136,7 +136,7 @@
 		methods: {
 			// 蓝球详情
 			getExponent() {
-				console.log('我是篮球')
+				// console.log('我是篮球')
 				getExponent({
 					id: this.query.id
 				}).then(res => {
@@ -189,7 +189,7 @@
 			},
 			// 监听子集点击查看按钮触发切换detail6
 			getDetail(e) {
-				console.log(e)
+				// console.log(e)
 				this.id = e.id
 				this.type = e.type
 				this.tabIndex = 6

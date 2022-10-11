@@ -5,7 +5,7 @@ import NProgress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css' // 进度条样式
 import { getToken } from '@/utils/auth' // 从 cookie 中获取 token
 import getPageTitle from '@/utils/get-page-title'
-// console.log(router);
+// // console.log(router);
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 

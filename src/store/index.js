@@ -65,13 +65,13 @@ const store = new Vuex.Store({
 		obj.forEach(item=>{
 			item.data = JSON.parse(item.payload.data)
 		})
-		console.log('喇叭');
+		// console.log('喇叭');
 		if(store.messageList.length > 0) {
 			// store.messageList.push(obj[0])
 		}else {
 			store.messageList = obj
 		}
-		// console.log(store.messageList);
+		// // console.log(store.messageList);
 		// 判断自定义消息和非自定义消息
 		// obj.avatar = event[0].groupProfile.avatar
 		// if(obj.type == 'TIMCustomElem'){//自定义消息
@@ -92,7 +92,7 @@ const store = new Vuex.Store({
 			obj.data = JSON.parse(obj.payload.data)
 		}
 		store.item = obj
-		console.log('监听普通消息');
+		// console.log('监听普通消息');
 		store.messageList = [...store.messageList,...[obj]]
 	},
 	setdanmakuShow(store,obj){
@@ -241,7 +241,7 @@ const store = new Vuex.Store({
 		 let promise = tim.login(obj)
 		promise.then(function(imResponse) {
 			//获取会话列表
-			console.log('登录成功');
+			// console.log('登录成功');
 		})
 		.catch(function(imError) {
 			console.warn("login error:", imError); // 登录失败的相关信息
@@ -273,22 +273,22 @@ const store = new Vuex.Store({
 		let _this = this
 		// data.typeof()
 		
-		// console.log(typeof(data));
+		// // console.log(typeof(data));
 		let id = null
 		if('string' == typeof(data)){
 			id = data
-			// console.log(id);
+			// // console.log(id);
 		}else if(typeof(data) == 'object') {
 			id = data.id
 		}
 		return;
-		// console.log(data.String());
+		// // console.log(data.String());
 	  	let promise = tim.joinGroup({
 	  		groupID: id,
 	  		type: TIM.TYPES.GRP_AVCHATROOM
 	  	});
 	  	promise.then(function(imResponse) {
-			console.log(imResponse);
+			// console.log(imResponse);
 	  		switch (imResponse.data.status) {
 	  			
 	  			case TIM.TYPES.JOIN_STATUS_WAIT_APPROVAL: // 等待管理员同意

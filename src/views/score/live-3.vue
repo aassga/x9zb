@@ -173,7 +173,7 @@
 		},
 		watch:{
 			list(e){
-				console.log(e)
+				// console.log(e)
 				let _this = this
 				let home_list = e.home_player
 				let away_list = e.away_player
@@ -202,7 +202,7 @@
 				// 		})
 				// 	})
 				// })
-				// console.log(this.home_player)
+				// // console.log(this.home_player)
 				this.away_player = e.away_player_first
 				
 				// 获取上场人员列表 主队

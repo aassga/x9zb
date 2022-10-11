@@ -105,7 +105,7 @@ export default {
     "$store.state.item"(e) {
       let list = this.$store.state.item;
       if (this.$refs.danmaku == null) return;
-      console.log(list, "=========");
+      // // console.log(list, "=========");
       this.$refs.danmaku.push(list);
     }
   },
@@ -125,7 +125,7 @@ export default {
       })
         .then(res => {
           this.qsVid = res.data.vid;
-          console.log(res, "resvid=======");
+          // // console.log(res, "resvid=======");
           setTimeout(res1 => {
             this.$store.dispatch("joinGroup", this.query.uid);
           }, 500);
@@ -135,7 +135,7 @@ export default {
             info.starttime - info.servertime > 0 &&
             info.starttime > 0
           ) {
-            // console.log("倒计时钟")
+            // // console.log("倒计时钟")
             this.TcPlayerUrlLoding = false;
             this.urlPlayer = info.pull_tc;
             this.counttDown = info.starttime - info.servertime;
@@ -145,7 +145,7 @@ export default {
             // this.counttDown=10
             return;
           } else if (info.islive != 1) {
-            // console.log("主播未开播")
+            // // console.log("主播未开播")
             this.TcPlayerUrlLoding = false;
             this.counttDown = false;
             return (this.UpSowing = true); //主播未开播
@@ -167,8 +167,8 @@ export default {
     },
     initTcPlayer(url) {
       if (url == "") return;
-      console.log(url);
-      // console.log(this);
+      // // console.log(url);
+      // // console.log(this);
       // sdk引入有顺序
       new Promise((resolve, reject) => {
         let link = document.createElement("link");
@@ -209,11 +209,11 @@ export default {
           video.style.minHeight = "500px";
           // video.setAttribute('autoplay',true)
           document.getElementById("videoContain").appendChild(video);
-          // console.log(this)
+          // // console.log(this)
           let _this = this;
           // 引入成功
           script.onload = function() {
-            console.log("js资源加载成功了");
+            // // console.log("js资源加载成功了");
             tcPlayer = TCPlayer("player-container-id", {
               autoplay: true,
               width: "1098" //播放器宽度
@@ -224,14 +224,14 @@ export default {
             tcPlayer.on("volumechange", function() {
               let muted = tcPlayer.muted();
               let valume = tcPlayer.volume();
-              console.log("muted:", muted, "valume:", valume);
+              // // console.log("muted:", muted, "valume:", valume);
               if (muted || valume == 0) _this.showUnmute = true;
               else {
                 _this.showUnmute = false;
               }
             });
             tcPlayer.on("webrtcevent", event => {
-              console.log(event.data);
+              // // console.log(event.data);
               if (event.data.code == 1010) {
                 tcPlayer.play();
               }
@@ -243,7 +243,7 @@ export default {
 
           // 引入失败
           script.onerror = function() {
-            console.log("js资源加载失败了");
+            // // console.log("js资源加载失败了");
           };
         }
       });
@@ -284,7 +284,7 @@ export default {
 }
 .tencent_player_container {
   position: relative;
-  min-height: 500px;
+  min-height: 630px;
   background: #14092a;
   .video_bottom_logo {
     z-index: 99;

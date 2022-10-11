@@ -679,15 +679,15 @@
 				if (e.type == 'football_match' && this.query.id == e.id && e.company_id == 2) {
 					this.base = {...this.base,...e}
 				} else if (e.type == 'football_exponent' && this.query.id == e.sourceid) {
-					// console.log(e.exponent);
-					console.log('指数');
+					// // console.log(e.exponent);
+					// console.log('指数');
 					this.base.exponent[e.name][e.name1] = e.exponent[e.name][e.name1]
 					// this.base.exponent = {
 					// 	...this.base.exponent,
 					// 	...e.exponent
 					// }
 					// this.base =this.$common.assignDeep(this.item.exponent,e.exponent)
-					// console.log(this.item.exponent);
+					// // console.log(this.item.exponent);
 				}
 			},
 		},
@@ -733,8 +733,8 @@
 			this.userPostList()
 			this.getUserGiftList()
 			this.getReserveLiveList()
-			// console.log(this.infos,'********************&&&&&&&&&&&&&&&&')
-			// console.log(window.location.href);
+			// // console.log(this.infos,'********************&&&&&&&&&&&&&&&&')
+			// // console.log(window.location.href);
 			// this.creatQrCode(window.location.href)
 			setTimeout(res=>{
 				this.init()
@@ -755,8 +755,8 @@
 			}
 			// 判断是否有登录
 			// if()
-			// console.log(this.infos);
-			// console.log('------------------------------');
+			// // console.log(this.infos);
+			// // console.log('------------------------------');
 			// let userInfo = localStorage.getItem('userInfo')
 			if(JSON.stringify(this.infos)=="{}") {
 				this.$store.dispatch('joinGroup', {
@@ -787,7 +787,7 @@
 			
 			
 			setTimeout(res => {
-				// console.log(this.infos.id,query,'====获取');
+				// // console.log(this.infos.id,query,'====获取');
 				let data = {
 					type: 102,
 					nobel: { 
@@ -832,17 +832,17 @@
 			retundata() {
 				//监听接受到websocket的信息
 				this.$WebSocket.onmessage((res) => {
-					// console.log(res);
+					// // console.log(res);
 					this.$store.dispatch("WS_DATA_ACTIONS", res);
 				});
 			},
 			onclose() {
 				//监听长连接的一个断开
 				this.$WebSocket.ws.onclose = () => {
-					//console.log("断开连接1");
+					//// console.log("断开连接1");
 					// this.$store.dispatch("setDeviceNum", "");
 					// let info = this.$store.state.Counter.websocketinfo;
-					//console.log("尝试重新连接长连接");
+					//// console.log("尝试重新连接长连接");
 					this.init();
 				};
 			},
@@ -873,7 +873,7 @@
 		        range.selectNode(qrUrlContent)
 		        selection.addRange(range)
 		        qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-		        console.log(window.location.href,"========");
+		        // console.log(window.location.href,"========");
 		        let isSucess = document.execCommand('copy');
 		        if (isSucess) {
 		        	this.$alert('复制成功',"提示")
@@ -905,7 +905,7 @@
 				return "data:image/svg+xml;base64," + b64;
 			},
 			initMachineSVGA(item) {
-				console.log("gift svga", item);
+				// console.log("gift svga", item);
 			    var mycanvas = document.getElementById("demoCanvas");
 				let _this = this;
 			    let player = new SVGA.Player("#demoCanvas");
@@ -914,14 +914,14 @@
 			    parser.load(item.swf, function (videoItem) {
 					player.setVideoItem(videoItem);
 					player.startAnimation();
-					console.log("1", time);
+					// console.log("1", time);
 					if (_this.haveSvga) {
 						clearTimeout(_this.svgaTimeOut);
 					} else {
 						_this.haveSvga = true;
 					}
 					_this.svgaTimeOut = setTimeout(() => {
-						console.log("2", time);
+						// console.log("2", time);
 						player.stopAnimation();
 					}, time);
 			    });
@@ -931,11 +931,11 @@
 				this.gifMask = true
 				if (this.offsetLeft == this.$refs.gifli[index].offsetLeft) return
 				this.gifItem = e
-				// console.log(this.num * 450);
+				// // console.log(this.num * 450);
 				this.offsetLeft = this.$refs.gifli[index].offsetLeft+this.num * 450
-				// console.log(this.$refs.gifli[index].offsetLeft);
-				// console.log(e);
-				console.log("============================", e);
+				// // console.log(this.$refs.gifli[index].offsetLeft);
+				// // console.log(e);
+				// console.log("============================", e);
 				// this.initMachineSVGA(e.swf)
 			},
 			// 
@@ -1044,7 +1044,7 @@
 			// getExponent(id){
 			// 	getExponent({id:id}).then(res=>{
 			// 		this.exponent = res.data
-			// 		console.log(res.data);
+			// 		// console.log(res.data);
 			// 	}).catch(res=>{})
 			// },
 			// 获取主播动态
@@ -1066,7 +1066,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					console.log(res,"res.data==========")
+					// console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)
@@ -1120,7 +1120,7 @@
 							name: item.key,
 							list: [item]
 						}
-						// console.log(item);
+						// // console.log(item);
 						res.data.data.map((option, optionIndex) => {
 							if (item.key == option.key && optionIndex > index) {
 								// obj.list = [...obj.list, ...[option]]
@@ -1166,7 +1166,7 @@
 						 });
 						 that.userData.title = value
 					}).catch(res=>{})
-				 console.log(value);
+				 // console.log(value);
 				}).catch(() => {
 				 //  this.$message({
 					// type: 'info',
@@ -1251,7 +1251,7 @@
 				this.showDiamondDirections = false;
 			},
 			onhandleSendGift(data) {
-				console.log(data);
+				// console.log(data);
 				let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
 				this.initMachineSVGA(gift);
 			}

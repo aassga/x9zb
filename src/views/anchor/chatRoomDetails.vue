@@ -248,33 +248,36 @@ export default {
         groupChat: false,
       },
       room_type: "",
-      channel: localStorage.getItem("channel"),
+      channel: getQueryString().channel_code||localStorage.getItem("channel"),
       showLoading: true,
       initChatTab: true,
       initTab: true,
       leaveVid: "",
       type0_local_msg_list: [],
       type2_local_msg_list: [],
-
       chatMsgHight:0,
       fullscreenLoading:false,
       uploadImgShow:false,
-      fileList:[]
+      fileList:[],
+      anchor_id: "",
     };
   },
   computed: {
     token() {
       return this.$store.state.user.islogin;
-    }
+    },
+    infos(){
+      return this.$store.state.infos
+    },
   },
   //给新的ws实例添加监听事件
   watch: {
     msgList2: {
       handler(newV, oldV) {
-        console.log("未读消息列表数据变化");
-        console.log(newV);
-        console.log("消息列表的数据");
-        console.log(this.messageList);
+        // // console.log("未读消息列表数据变化");
+        // // console.log(newV);
+        // // console.log("消息列表的数据");
+        // // console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
         this.onHandleGroupMsgChange(this.messageList);
         // 刷新视图
@@ -284,7 +287,7 @@ export default {
     },
     fd(newV, oldV) {
       if (newV != oldV) {
-        console.log(99999999);
+        // // console.log(99999999);
         this.inviteRoom(true);
       }
       // c
@@ -304,6 +307,11 @@ export default {
         // this.leaveRoom(2);
       }
     },
+    pinInfo(newV, oldV){
+      if(newV !== ""){
+        this.changeHeight()
+      }
+    }
   },
   // filters: {
   //   picFilter(url) {
@@ -322,13 +330,13 @@ export default {
     // this.toBottom();
   },
   async mounted() {
-    const _that = this;
+    this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", e => {
-      console.log(
-        domScroll.scrollTop,
-        "domScroll.scrollTop-domScroll.offsetHeight==="
-      );
+      // // console.log(
+      //   domScroll.scrollTop,
+      //   "domScroll.scrollTop-domScroll.offsetHeight==="
+      // );
       if (domScroll.scrollTop <= 2 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
@@ -338,7 +346,7 @@ export default {
         this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
-    console.log(this.qsVid, "this.qsVid==============");
+    // // console.log(this.qsVid, "this.qsVid==============");
     this.vid = this.qsVid || "";
     let userid = "";
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -375,7 +383,7 @@ export default {
     }
     this.getMessageList(); // 获取聊天列表
     this.initToken(true);
-    this.changeHeight()
+    
   },
   created() {
     this.uid = this.$route.query.id;
@@ -395,7 +403,7 @@ export default {
       this.handleLocalMsgList(this.ctp).map((val, index) => {
         if (val == item) {
           this.handleLocalMsgList(this.ctp).splice(index, 1);
-          // console.log(this.msgList)
+          // // console.log(this.msgList)
         }
       });
       this.msgText = item.text;
@@ -436,11 +444,11 @@ export default {
       this.$message({ message: "最多只能上传1张图片", type: "warning" });
     },
     // resend(item) {
-    //   // console.log(item)
+    //   // // console.log(item)
     //   this.handleLocalMsgList(this.ctp).map((val, index) => {
     //     if (val == item) {
     //       this.handleLocalMsgList(this.ctp).splice(index, 1);
-    //       // console.log(this.msgList)
+    //       // // console.log(this.msgList)
     //     }
     //   });
     //   this.msgText = item.text;
@@ -500,8 +508,8 @@ export default {
         }
       }
 
-      console.log("新消息变更之后的数组");
-      console.log(menuList);
+      // // console.log("新消息变更之后的数组");
+      // // console.log(menuList);
 
       return menuList;
     },
@@ -529,8 +537,8 @@ export default {
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
       if (type == 0) {
-        console.log("默认的未读消息数组");
-        console.log(msgList);
+        // // console.log("默认的未读消息数组");
+        // // console.log(msgList);
         this.msgList2 = msgList;
       } else {
         let falg = true;
@@ -547,8 +555,8 @@ export default {
         if (falg) {
           arr.push(msgList);
         }
-        console.log("我接受到了新消息");
-        console.log(arr);
+        // // console.log("我接受到了新消息");
+        // // console.log(arr);
         this.msgList2 = arr;
         this.msgCount += 1;
       }
@@ -637,8 +645,8 @@ export default {
           let element = res.data[index];
           element.unread_count = 0;
         }
-        console.log("请求拿到的数据");
-        console.log(res.data);
+        // // console.log("请求拿到的数据");
+        // // console.log(res.data);
         if (this.msgList2.length > 0) {
           res.data = this.mapList(res.data, this.msgList2);
           // this.list2 = this.mapList(this.list2, newV);
@@ -696,7 +704,7 @@ export default {
     },
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, "item-info=======");
+      // // console.log(item, "item-info=======");
       this.page = 1;
       this.handleLocalMsgList(this.ctp, "empty");
       this.roomInfo = item;
@@ -738,18 +746,18 @@ export default {
     //   }
     // },
     changeHeight(){
+      
       setTimeout(() => {
         let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
         let headerBox = document.querySelector(".header-list").clientHeight;
-        this.pinBox = this.pinInfo ? document.querySelector(".pin-info").clientHeight : 0
+        let pinBox = this.pinInfo ? document.querySelector(".pin-info").clientHeight : 0
         let senBox = document.querySelector(".send-container").clientHeight;
-        this.chatMsgHight = chatBox - headerBox - this.pinBox - senBox
+        this.chatMsgHight = chatBox - headerBox - pinBox - senBox
       }, 1000);
     },
     changeType(e) {
-      console.log(1210)
       this.pinInfo = "";
-      this.msgList = []
+      this.msgList = [];
       // if (this.showLoading) {
       //   return;
       // }
@@ -768,6 +776,7 @@ export default {
       const qVid = this.qsVid;
       this.controlIndex = -1;
       if (e == 0) {
+        this.chatMsgHight = 0
         this.parmUserInfo.vid = qVid;
         this.inRoomInfo(this.fd);
 
@@ -825,7 +834,7 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      console.log(iniPage, "========getChatHistoryMsg");
+      // // console.log(iniPage, "========getChatHistoryMsg");
       const _that = this;
       this.showLoading = true;
       let params = {
@@ -847,7 +856,7 @@ export default {
             return;
           }
           // _that.msgList.unshift(...dataList);
-          console.log(params.page);
+          // // console.log(params.page);
           this.handleLocalMsgList(
             params.type == 2 && this.ctp == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
@@ -882,14 +891,15 @@ export default {
         fd: fd,
         type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         channel: this.channel,
+
       };
       const _that = this;
       // if(_that.inRoom){
       //   return
       // }
       this.$store.dispatch("inRoom", inRoomData).then(res => {
-        console.log("inRoom的数据");
-        console.log(res);
+        // // console.log("inRoom的数据");
+        // // console.log(res);
         if (res.data.pinData && res.data.pinData != "") {
           _that.pinInfo = {
             text: res.data.pinData
@@ -898,10 +908,11 @@ export default {
 
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
+        _that.changeHeight()
       });
     },
     newSocket(data) {
-      // console.log('ws',data)
+      // // console.log('ws',data)
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -943,13 +954,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      console.log("出现错误");
+      // // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      console.log("断开连接", e);
+      // // console.log("断开连接", e);
       this.ws.close();
       //重连
       this.reconnect();
@@ -997,7 +1008,7 @@ export default {
           // this.reconnect();
         }
         // this.serverTimeoutObj = setTimeout(() => {
-        //   console.log(123456)
+        //   // console.log(123456)
         //   //超时关闭
         //   this.ws.close();
         // }, this.timeout);
@@ -1083,9 +1094,9 @@ export default {
       if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType == 2) {
           let text = this.msgText;
-          // console.log(this.msgText,text,"=======this.msgText")
+          // // console.log(this.msgText,text,"=======this.msgText")
           this.msgText = "";
-          //  console.log(this.msgText,text,"=======this.msgText2")
+          //  // console.log(this.msgText,text,"=======this.msgText2")
           this.sendMsgByApi(null, text);
         }
         return;
@@ -1095,7 +1106,7 @@ export default {
         avatar: this.info.avatar,
         sender: this.parmUserInfo.user_id,
         sender_nickname: this.info.user_nickname,
-        sender_exp: this.info.exp,
+        sender_exp: this.infos.exp,
         text: this.msgText,
         uiCode: currentDate,
         isError: false,
@@ -1266,7 +1277,7 @@ export default {
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
-      // console.log('ddddddddddddddddddddddddd')
+      // // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;
       }
@@ -1562,10 +1573,9 @@ form {
     line-height: 38px;
     background: #f4f4f4;
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
+    display: inline-block;
+    margin-right: 1px;
+    font-size: 14px;
     flex: 1;
     &:hover{
       cursor: pointer;
@@ -1588,7 +1598,7 @@ form {
   line-height: 20px;
 }
 
-::v-deep .el-drawer__header {
+::v-deep.el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }
@@ -1683,7 +1693,7 @@ form {
       height: 35px;
       align-content: center;
       .send {
-        display: inline-block;
+        // display: inline-block;
         padding: 0 20px;
         position: relative;
         right: -12px;

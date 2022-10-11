@@ -291,18 +291,18 @@
 							}
 							arr.push(obj.competition_id)
 						})
-						// console.log(list1[0]);
+						// // console.log(list1[0]);
 						let id1 = list1[list1.length - 1].id
-						console.log(id1);
-						// console.log(list2[0]);
+						// console.log(id1);
+						// // console.log(list2[0]);
 						let id2 = list2[list2.length - 1].id
-						console.log(id2);
-						// console.log(list3[0]);
+						// console.log(id2);
+						// // console.log(list3[0]);
 						let id3 = list3[list3.length - 1].id
-						console.log(id3);
-						// console.log(list5[0]);
+						// console.log(id3);
+						// // console.log(list5[0]);
 						let id4 = list5[list5.length - 1]
-						console.log(id4);
+						// console.log(id4);
 						let arrList = this.list.concat(list1).concat(list2).concat(list3).concat(list5)
 
 						// let indexArr = [id1,id2,id3,]
@@ -330,11 +330,11 @@
 						// 	let obj = {
 						// 		competition_name_zh:'标题---------------'
 						// 	}
-						// 	console.log(item);
+						// 	// console.log(item);
 						// 	arrList.splice(item,0,obj)
 						// })
 						this.list = arrList
-						console.log(this.list);
+						// console.log(this.list);
 						this.updateVisibleData()
 					})
 					.catch((res) => {});

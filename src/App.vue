@@ -30,7 +30,7 @@
 					return false
 				}
 			}
-			console.log(process.env.NODE_ENV)
+			// // console.log(process.env.NODE_ENV)
 		    // if(process.env.NODE_ENV!=='dev'){
 		    //   setInterval(()=>{
 		    //     debugger;
@@ -178,10 +178,6 @@
 	};
 </script>
 <style type="">
-	body{
-		/* height: 100vh !important;
-		overflow-y: scroll; */
-	}
 	@import url("~@/styles/index.css");
 	@import url("~@/styles/style.css");
 	::-moz-selection{

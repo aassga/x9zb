@@ -188,11 +188,11 @@
 					on: {
 						//  2. 在滚动事件中通过上面保存的swiper元素获取当前页索引,可以打印一下c_swiper看一下内部属性
 						slideChange:(e) => {
-							// console.log(this.$refs.mySwiper.swiper.realIndex)
+							// // console.log(this.$refs.mySwiper.swiper.realIndex)
 						},
 						click: (e) => {
 							const index = this.Headlinesbanner.findIndex((i) => i.id == e.target.attributes.id.nodeValue);
-							console.log(index)
+							// console.log(index)
 							this.$refs.mySwiper.swiper.realIndex = index
 						}
 					}
@@ -227,7 +227,7 @@
 					
 					this.$refs.mySwiper.swiper.realIndex = 0
 				}
-				// console.log(this.clas	sificationList[e].id);
+				// // console.log(this.clas	sificationList[e].id);
 				this.headList(this.classificationList[e].id)
 			}
 		},
@@ -252,12 +252,12 @@
 			headList(id){
 				getList({cid:id,page:this.page}).then(res=>{
 					
-					console.log(this.page);
+					// console.log(this.page);
 					if(this.page == 1){
 						this.HeadlinesList = res.data.list
 					}else {
-						console.log(this.HeadlinesList.data);
-						console.log(res.data.list.data);
+						// console.log(this.HeadlinesList.data);
+						// console.log(res.data.list.data);
 						
 						this.HeadlinesList.data = this.HeadlinesList.data.concat(res.data.list.data)
 					}

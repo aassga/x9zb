@@ -103,7 +103,7 @@
 				// 	this.titleIndex = 1
 				// 	setTimeout(res=>{
 				// 		this.$refs.anchor.setIndex(type)
-				// 		// console.log(this.$refs.anchor.titleIndex);
+				// 		// // console.log(this.$refs.anchor.titleIndex);
 				// 	},500)
 				// }else{
 				// 	this.$refs.anchor.setIndex(type)

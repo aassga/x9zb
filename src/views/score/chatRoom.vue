@@ -84,7 +84,7 @@
 				if (!this.message) {
 					return this.$message.warning('请输入聊天内容')
 				}
-				// console.log(_this.roomid)
+				// // console.log(_this.roomid)
 				this.createCustomMessage({ //发送普通消息
 					type: 105
 				}, _this.roomid)
@@ -92,25 +92,25 @@
 			// 选择聊天表情
 			setEmotion(item) {
 				this.message = this.message + item
-				// console.log(item);
+				// // console.log(item);
 			},
 			// 转换文字1.查询切换[]有的内容，替换
 			getText(str) {
 				// let str = 'jfkdsj[咒骂]dsjfkljsa[憨笑]哈哈哈，[惊恐]'
 				let exp = /\[(.*?)\]/g; //匹配[*] 大括号里面任意内容的正则
 				let arr = str.match(exp); //字符串匹配出来的数组
-				// console.log(arr);
+				// // console.log(arr);
 				if (!arr) return str;
 			
 				this.emotion.forEach((item1, index) => {
 					arr.map(item => {
-						// console.log(item1);
+						// // console.log(item1);
 						if (item1 === item) {
 							str = str.replace(item,
 								`<img src='https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${index}.gif'>`
 							);
 						}
-						// console.log(item);
+						// // console.log(item);
 						// let key = `p${item.substr(1, item.length - 2)}`;  //记录大括号里的值 用作id 方便取值
 						// if (!this.salaryVars.hasOwnProperty(key)) this.$set(this.salaryVars, key, '');
 			
@@ -120,12 +120,12 @@
 				})
 				// let arrNum = 取出所有正则匹配值并转换为input
 			
-				// console.log(str);
+				// // console.log(str);
 				return str;
 			},
 			// 编辑自定义消息
 			createCustomMessage(data, roomId) {
-				// console.log(data);
+				// // console.log(data);
 				let _this = this
 				// return
 				// 2. 创建消息实例，接口返回的实例可以上屏

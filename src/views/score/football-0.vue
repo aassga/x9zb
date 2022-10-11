@@ -1129,7 +1129,7 @@
 			},
 
 			arrList1() {
-				// console.log('出发离开');
+				// // console.log('出发离开');
 				// let topList = JSON.parse(localStorage.getItem('topList')),
 				// if(this.topList.length == 0 && this.screenListT) return this.list1
 				return this.list1.filter(item => {
@@ -1227,7 +1227,7 @@
 						}
 						item.exponent = this.$common.assignDeep(item.exponent, e.exponent)
 					}
-					// console.log();
+					// // console.log();
 				}
 				// end
 
@@ -1291,7 +1291,7 @@
 						this.lock = true //锁住
 						_this.getlist()
 
-						console.log('比赛开始了1--');
+						// console.log('比赛开始了1--');
 					}
 					if (e.type == 'football_match' && item.id == e.id && item.status != e.status) {
 						// return
@@ -1302,7 +1302,7 @@
 						if (this.lock) return
 						this.lock = true //锁住
 						_this.getlist()
-						console.log('比赛开始了2--');
+						// console.log('比赛开始了2--');
 						// this.lock = true//锁住
 					}
 
@@ -1363,10 +1363,10 @@
 				 */
 				/* 判断当前页面是足球即时比分 */
 				// football
-				// console.log(e);
+				// // console.log(e);
 				let router = this.$route
 				if (router.path != '/football') return
-				// console.log(router);
+				// // console.log(router);
 
 				/* 监听距离 已结束的距离 */
 				let value = document.documentElement.scrollTop
@@ -1427,7 +1427,7 @@
 				let length = document.querySelectorAll('.highlight').length
 				let dom = document.querySelectorAll('.highlight')
 				// 获取元素距离顶部的距离
-				console.log(status, dom[this.i].getBoundingClientRect().top + document.documentElement.scrollTop);
+				// console.log(status, dom[this.i].getBoundingClientRect().top + document.documentElement.scrollTop);
 				if (length >= this.i && status == 'up') {
 					this.i++
 					return {
@@ -1542,7 +1542,7 @@
 
 			// 对比两组数据的参数
 			getNumeExp(e) {
-				// console.log(e);
+				// // console.log(e);
 				let _this = this
 				this.list1.forEach((item, index) => {
 
@@ -1660,12 +1660,12 @@
 				// let index = this.topList.findIndex(item1 =>{
 				// 	return item1.id === item.id
 				// })
-				// console.log(index);
+				// // console.log(index);
 				// return
 				this.list4.splice(this.list4.findIndex(item1 => item1.id === item.id), 1)
 				this.topList.splice(this.topList.findIndex(item1 => item1.id === item.id), 1)
 				localStorage.setItem('topList', JSON.stringify(this.topList))
-				// console.log(this.topList);
+				// // console.log(this.topList);
 			},
 
 			// 置顶
@@ -1759,7 +1759,7 @@
 					top = this.$refs.sss[e].getBoundingClientRect().top
 					left = this.$refs.sss[e].getBoundingClientRect().left
 				} else if (type == 4) {
-					// console.log('54444444444');
+					// // console.log('54444444444');
 					top = this.$refs.sss4[e].getBoundingClientRect().top
 					left = this.$refs.sss4[e].getBoundingClientRect().left
 				} else {
@@ -1769,7 +1769,7 @@
 				this.expIndex = JSON.parse(JSON.stringify(item.exponent))
 				this.exponent = item
 				this.fightMask = true
-				console.log(this.expIndex);
+				// console.log(this.expIndex);
 				// this.footballOddsList(item)
 				this.top = (top - 194) + 'px'
 
@@ -1785,7 +1785,7 @@
 				} else if (num1 == num2 && num1 != 0 && num2 != 0) {
 					return 50
 				} else {
-					// console.log(num2 / (num1 + num2))
+					// // console.log(num2 / (num1 + num2))
 					return num1 / (num1 + num2) * 100
 				}
 			},

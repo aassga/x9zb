@@ -583,7 +583,7 @@
 				this.selectGameStartTime = new Date(item.starttime * 1000)
 				this.dialogVisible = true
 				this.setUrl()
-				// console.log(item);
+				// // console.log(item);
 				// data.id = this.id
 				// data.type = this.type
 				// data.thumb = this.thumb
@@ -633,7 +633,7 @@
 					is_web:1
 				}
 				football_match(data).then(res => {
-					// console.log(this.pages);
+					// // console.log(this.pages);
 					// this.selectList = res.data.data
 					let selectList = []
 					let list1 = []
@@ -761,7 +761,7 @@
 						}, 2000)
 					}).catch(res => {})
 				}
-				// console.log();
+				// // console.log();
 				
 			},
 
@@ -777,7 +777,7 @@
 				
 				var _this = this;
 				var clipboard = new Clipboard(".btnss"); //单页面引用
-				console.log(clipboard);
+				// console.log(clipboard);
 				// 　　　var clipboard = new this.Clipboard(".btn"); //在main.js中引用
 				clipboard.on("success", e => {
 					// 释放内存

@@ -425,7 +425,7 @@
 			},
 			// setDate(type){
 			// 	setTimeout(res=>{
-			// 		console.log(this.dateTime[this.dateIndex])
+			// 		// console.log(this.dateTime[this.dateIndex])
 			// 		if(type == 1){//月
 			// 			return (this.dateTime[this.dateIndex].day).slice(0,2)
 			// 		}else {//日
@@ -482,7 +482,7 @@
 					});
 				}
 				this.dateTime = arr;
-				console.log(this.dateTime);
+				// console.log(this.dateTime);
 				this.getScheduleMatch()
 			},
 		}
