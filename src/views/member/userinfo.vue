@@ -174,6 +174,31 @@
 				</form>
 			</div>
 		</div>
+		<div class="tab-pane-item" name="我的等级" style="padding-left: 35px;" v-if="tabIndex == 3">
+			<div class="basic-level">
+				<div class="basic-level-top">
+					<div class="basic-level-num">L{{info.exp}}</div>
+					<div class="basic-level-exp-container">
+						<div class="basic-level-exp" :style="`width:${info.current_exp / needExp * 100}%`"></div>
+					</div>
+					<div class="basic-level-exp-num">{{info.current_exp}}/{{needExp}}</div>
+				</div>
+				<div class="basic-level-bottom">
+					<div class="basic-level-bottom-info">
+						<div class="basic-level-info">Lv.{{info.exp}}</div>
+						<div class="basic-level-info">等级</div>
+					</div>
+					<div class="basic-level-bottom-info">
+						<div class="basic-level-info">{{info.current_exp}}</div>
+						<div class="basic-level-info">经验值</div>
+					</div>
+					<div class="basic-level-bottom-info">
+						<div class="basic-level-info">{{info.balances}}</div>
+						<div class="basic-level-info">钻石<i class="el-icon-warning-outline"></i></div>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<el-dialog
 		  title="选择头像"
@@ -198,6 +223,7 @@
 
 <script>
 	import { updateInfo,getCode,forgotPassword,avatarList  } from '../../api/user.js'
+	import { getLevelList } from '../../api/common.js'
 	export default {
 		props:['infos'],
 		data() {
@@ -221,7 +247,9 @@
 				QiniuToken:{},
 				avatarAllList:[],
 				centerDialogVisible:false,
-				tabList: ['基本资料', '修改手机', '修改密码']
+				// tabList: ['基本资料', '修改手机', '修改密码'],
+				tabList: ['基本资料', '修改手机', '修改密码', '我的等级'],
+				levelList: [],
 			}
 		},
 		computed:{
@@ -234,6 +262,18 @@
 			message(){
 				return this.$store.state.infos
 			},
+			needExp() {
+				let result = 0;
+				if (this.info) {
+					let level = this.info.exp ? this.info.exp : 0;
+					let level_up = this.levelList[level - 1] ? this.levelList[level - 1].level_up : 0;
+					result = level_up;
+				}
+				return result;
+			}
+		},
+		created() {
+			this.getLevelList();	
 		},
 		mounted() {
 			this.getQiniu()
@@ -241,7 +281,6 @@
 			let system = this.$store.state.system.CountryCode
 			// console.log(system);
 			this.options = system
-			
 		},
 		methods:{
 			// 修改头像（非主播账号）
@@ -358,7 +397,6 @@
 					console.log('失败' + res);
 				})
 			},
-			
 			// 验证码倒计时
 			getCount() {
 				console.log(this.timer)
@@ -377,6 +415,12 @@
 						}
 					}, 1000)
 				}
+			},
+			// 取得等級表
+			getLevelList() {
+				getLevelList().then(res => {
+					this.levelList = res.data;
+				})
 			}
 		}
 	}
@@ -437,5 +481,64 @@
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAY1BMVEUAAADctIrcs4netIzbtIrhuYzbs4nbs4nctIrbtIrft4z/4MDcs4rbs4vftorcs4rctIrctYrctYviuZDlupDowYvcs4vbtIvdtYvcs4rctIrbs4rctYvdtIrctozdt4nbs4ldXGT4AAAAIHRSTlMA2cdV+iDz7L6BMQPWQD/MrpBiFxALpIhP0b+5bmlJQ2xN8SsAAADDSURBVCjPhdPZEoMgDAXQC1ZZ3FqttXvz/1/ZEVFAKb0vPJyZoEnAGq0kKwomlcY2GaM1LAso5xSE584aQZuIZrH6QLscrOaCIhFzZU7RcPOd9CMZABa5cGynPwJ0xN7oplND7e2K3JRTkBHr56sk2NYy9JVtIwpzVo8FnVFh8YORTDqcb7SgLXsscbLWuulAkqcv30hCkdMnBr+XyjXhUiI00gBzOtx9Y0HjeRU2PjWy5LDTa2J1v2B1ajX/L3XyOXwBN4ZCE93s5u8AAAAASUVORK5CYII=);
     background-repeat: no-repeat;
     background-size: 100% 100%;
+}
+.basic-level {
+	width: 100%;
+	padding: 40px;
+	box-sizing: border-box;
+}
+.basic-level-top {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40px;
+}
+.basic-level-top .basic-level-num {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 28px;
+	border-radius: 10px;
+	color: #fff;
+	background: #aaa;
+}
+.basic-level-exp-container {
+	width: 350px;
+	height: 10px;
+	margin: 0 30px;
+	border-radius: 20px;
+	background: #ebebeb;
+}
+.basic-level-exp-container .basic-level-exp {
+	height: 100%;
+	background: #fec815;
+	border-radius: 20px;
+}
+.basic-level-exp-container .basic-level-exp-num {
+	font-weight: bold;
+}
+.basic-level-bottom {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40px;
+}
+.basic-level-bottom-info {
+	padding: 10px 0;
+    min-width: 150px;
+}
+.basic-level-bottom-info .basic-level-info {
+	width: 100%;
+	margin-bottom: 10px;
+	text-align: center;
+	font-weight: bold;
+}
+.basic-level-bottom-info .basic-level-info i {
+	position: relative;
+	top: -5px;
+	right: -5px;
+	color: #c8c8c8;
+}
+.basic-level-bottom-info:not(:last-child) {
+	border-right: 1px solid #e8e8e8;
 }
 </style>

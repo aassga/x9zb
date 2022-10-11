@@ -15,6 +15,7 @@
 							<el-checkbox-group fill="#000" v-model="checkList">
 								<el-checkbox label="足球"></el-checkbox>
 								<el-checkbox label="篮球"></el-checkbox>
+								<el-checkbox label="电竞"></el-checkbox>
 								<el-checkbox label="其它"></el-checkbox>
 							</el-checkbox-group>
 
@@ -340,6 +341,8 @@
 								this.checkList.push('篮球')
 							}else if(item == 0){
 								this.checkList.push('足球')
+							}else if(item == 3){
+								this.checkList.push('电竞')
 							}else {
 								this.checkList.push('其它')
 							}

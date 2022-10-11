@@ -72,7 +72,7 @@
 		Navbar,
 		Sidebar,
 		AppMain,
-		loginMask
+		loginMask,
 	} from './components'
 	// import menu from './components/menu.vue'
 	import ResizeMixin from './mixin/ResizeHandler'
@@ -83,7 +83,7 @@
 			Navbar,
 			Sidebar,
 			AppMain,
-			loginMask
+			loginMask,
 		},
 		data() {
 			return {
@@ -113,7 +113,7 @@
 				if(this.$store.state.goalItem.length == 0) return
 				this.playVideo()
 				return this.$store.state.goalItem
-			},
+			}
 		},
 		watch:{
 			'$store.state.user.showLoginMask'(e){
@@ -136,7 +136,7 @@
 			},
 			// 进球播放声音
 			playVideo(){
-				// console.log('触发了哨声',this.$store.state.game.voice);
+				console.log('触发了哨声',this.$store.state.game.voice);
 				if(!this.$store.state.game.voice) return
 				let that = this
 			    this.audio = new Audio();
@@ -199,7 +199,7 @@
 		position: fixed;
 		top: 0;
 		right: 0;
-		z-index: 99;
+		z-index: 101;
 		width: 100%;
 		// transition: width 0.28s;
 	}

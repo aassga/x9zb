@@ -657,3 +657,48 @@ export function recordUsageTime(data) {
     data
   })
 }
+
+// 取得每日任務列表
+export function getMission(data) {
+  return request({
+    url: 'api/task/list',
+    method: 'get',
+	  params: data
+  })
+}
+
+// 每日任務取得簽到記錄
+export function getSignInRecord(data) {
+  return request({
+    url: 'api/task/show/code/checkin',
+    method: 'get',
+	  params: data
+  })
+}
+
+// 每日任務取得補簽過的次數
+export function getAmended(data) {
+  return request({
+    url: 'api/task/show/code/amended',
+    method: 'get',
+	  params: data
+  })
+}
+
+// 每日任務簽到/補簽
+export function signIn(data) {
+  return request({
+    url: 'api/task/update/code/checkin',
+    method: 'get',
+	  params: data
+  })
+}
+
+// 每日任務領取獎勵
+export function receiveAward(data) {
+  return request({
+    url: 'api/task/update',
+    method: 'get',
+	  params: data
+  })
+}

@@ -23,7 +23,7 @@
 }
 
 // 限制高度500px
-.dialog-height500{
+::v-deep.dialog-height500{
     .el-dialog__body{
          max-height: 500px;
          overflow-y: auto;

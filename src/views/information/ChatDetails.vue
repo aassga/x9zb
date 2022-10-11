@@ -259,6 +259,8 @@ export default {
           return
         }
       this.$store.dispatch("inRoom",inRoomData).then(res=>{
+        console.log("inRoom的数据")
+        console.log(res)
         _that.inRoom=true
         })
     },
@@ -516,7 +518,7 @@ msg.focus();
       let data = JSON.parse(e.data);
       if(data.fd!==null&&data.action==='open'){
         this.fd = data.fd;
-         this.inRoomInfo( data.fd);
+         this.inRoomInfo(data.fd);
       }
       if(data.action==="pin"){
         this.pinInfo = JSON.parse(data.data);
@@ -586,7 +588,7 @@ msg.focus();
 };
 </script>
 <style lang="scss" scoped>
-.el-drawer__header {
+::v-deep .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }

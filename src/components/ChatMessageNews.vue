@@ -196,10 +196,10 @@ export default {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
-        let split = window.location.origin + "/";
+        // let split = window.location.origin + "/";
         // let split = "http://huyapretest.oxldkm.com/"
         // let split = "https://www.x9zb.live/"
-        // let split = "https://huidu.x9zb.live/"
+        let split = "https://huidu.x9zb.live/"
         newUrl = newUrl.replace(split, "");
       } else {
         return newUrl;

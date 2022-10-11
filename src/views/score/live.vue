@@ -229,10 +229,10 @@
 							<div class="video-box" style="height: 531px;">
 								<div id="dplayer contaner" style="width: 100%; height: 100%;">
 									<div style=" position: relative; width: 100%; height: 100%; z-index: 19;overflow: hidden;">
-										<iframe allowfullscreen="true" v-if="query.type == 'football' && item.id && liveIndex == 0" :src="item.live_animation_url"
-											style="position: absolute; width: 100%; height: 100%"></iframe>
+										<!-- <iframe allowfullscreen="true" v-if="query.type == 'football' && item.id && liveIndex == 0" :src="item.live_animation_url"
+											style="position: absolute; width: 100%; height: 100%"></iframe> -->
 											<!-- v-if="liveIndex == 1 && item.pushurl1" -->
-										<liveTv  v-if="liveIndex == 1 && item.pushurl1" path="tv" reserve="{}" :islive="1" :info="item"></liveTv>
+										<liveTv  v-if="item&&item.pushurl1" path="tv" reserve="{}" :islive="1" :info="item"></liveTv>
 										<div class="flex-center flex-wrap" style="margin-top: 150px;" v-else>
 											<img src="../../assets/images/live-none.png" alt="">
 											<p style="width: 100%;color: #fff;text-align: center;">暂无直播</p>
@@ -423,17 +423,17 @@
 							<liveBar v-else :item="item"></liveBar>
 							
 						</div>
-						<div class="btn-group" style="z-index: 20;">
+						<!-- <div class="btn-group" style="z-index: 20;">
 							<div class="item " :class="{'active-btn':liveIndex == 0}" @click="liveIndex = 0">
 								<span class="dh"></span><span>动画直播</span>
 							</div>
 							<div class="item" :class="{'active-btn':liveIndex == 1}"  @click="liveIndex = 1">
 								<span class="sp"></span><span>视频直播</span>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
-				<chatRoom :roomid="roomid" :qsVid="qsVid"></chatRoom>
+				<chatRoom :roomid="roomid" :qsVid="query.vid"></chatRoom>
 
 			</div>
 			<div class="live-main-down-wrap">
@@ -593,6 +593,8 @@
 				</div>
 			</div>
 		</div>
+		<!-- 下载弹框 -->
+		<downLoadModel v-if="showDownLoadModel" @close="showDownLoadModel = false" ></downLoadModel>
 	</div>
 </template>
 
@@ -620,6 +622,7 @@
 	import liveTv from '../anchor/live-tv.vue';
 	import chatRoom from "./chatRoom.vue";
 	import liveBar from "./live-bar.vue";
+	import downLoadModel from '@/components/downLoadModel.vue'
 	export default {
 		components: {
 			live0,
@@ -632,9 +635,12 @@
 			liveBar,
 			chatRoom
 		},
-		props:["qsVid"],
+		// props:["qsVid"],
 		data() {
 			return {
+								showDownLoadModel:false,
+				timerNum:0,
+				timer:null,
 				list: {},
 				tech2: {},
 				tech1: {},
@@ -728,9 +734,11 @@
 					},
 					exponent: {}
 				},
+				// qsVid:'',
 				roomid: '',
 				navIndex: 0,
 				query: {
+					vid:'',
 					competainId: 2
 				},
 				listArr: [],
@@ -802,7 +810,29 @@
 				}
 			}
 		},
+				beforeDestroy(){
+if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null;
+			}
+		},
 		created() {
+			if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null;
+			}
+			this.timerNum = 180;
+			this.timer = setInterval(() => {
+				if (this.timerNum <= 0) {
+					clearInterval(this.timer)
+					this.timer = null;
+						if (!sessionStorage.getItem('isShowDownLoad')) {
+											this.showDownLoadModel = true;
+					sessionStorage.setItem('isShowDownLoad',true)
+					}
+				}
+				this.timerNum -=1
+			}, 1000);
 			this.loading = true
 			let query = this.$route.query;
 			this.query = {
@@ -920,7 +950,7 @@
 				}
 				ranking(data).then(res => {
 					this.rankingList = res.data
-					// console.log(res.data);
+					console.log(res.data);
 				}).catch(res => {})
 			},
 			// 获取头条
@@ -1029,7 +1059,7 @@
 			// 1相等 ， 2 大于 ，3小于
 			setExp(num1, num2) {
 				if (num1 == num2) {
-					// console.log("true: ",true);
+					console.log("true: ",true);
 					return 0
 				} else {
 					return 1
@@ -1057,10 +1087,10 @@
 					//篮球
 					getInfo(data)
 						.then((res) => {
+							console.log('获取的详情')
+							console.log(res.data)
 							// res.data.tlive = res.data.tlive.reverse()
-							
 							this.item = res.data;
-
 							let arr = res.data.tlive
 							let listArr = []
 							arr.forEach(item1 => {
@@ -1080,6 +1110,8 @@
 					//足球
 					getfootballDetail(data)
 						.then((res) => {
+														console.log('获取的详情')
+							console.log(res.data)
 							res.data.tlive = res.data.tlive.reverse()
 							let obj = {
 								eu: {
@@ -1221,7 +1253,7 @@
 						.catch((res) => {});
 				}
 			},
-		},
+		}, 
 		destroyed(){
 			clearInterval(this.timeInterval)
 		}

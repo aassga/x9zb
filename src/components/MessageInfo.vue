@@ -2,7 +2,7 @@
   <div class="HuyaXWebhMessageinfo">
     <!-- 头部固定栏 -->
     <div class="HuyaXWebhMessageinfo_title">
-      <div @click="onHandleBack" class="HuyaXWebhMessageinfo_title_icon el-icon-arrow-left"></div>
+      <img class="HuyaXWebhMessageinfo_title_icon" src="../assets/images/msg-back.png" @click="onHandleBack"/>
       {{roomInfo.name || '未知'}}
     </div>
   </div>
@@ -45,25 +45,25 @@ export default {
   .HuyaXWebhMessageinfo_title {
     position: relative;
     width: 100%;
-    height: 40px;
+    height: 42px;
     display: flex;
     align-items: center;
-    justify-content: center;    
-    padding: 0 15px;
-    font-size: 14px;
+    justify-content: center;
+    font-size: 16px;
     box-sizing: border-box;
     border-bottom: 1px solid #dcd8d8;
     background-color: #ececec;
     .HuyaXWebhMessageinfo_title_icon {
       position: absolute;
+      top: 13px;
       left: 15px;
-      top: 5px;
-      width: 30px;
-      height: 30px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 25px;
+      height: 16px;
+      padding: 0 8px;
     }
   }
   .HuyaXWebhMessageinfo_context {

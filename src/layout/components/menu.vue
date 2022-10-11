@@ -81,6 +81,12 @@
 						css:'live-group-item-basketball'
 					},
 					{
+						name:'电竞',
+						url:'/anchor?type=4',
+						num:2,
+						css:'live-group-item-game'
+					},
+					{
 						name:'更多',
 						url:'/anchor?type=3',
 						num:3,
@@ -103,7 +109,7 @@
 		},
 		methods:{
 			setTabIndex(type,e){
-				// console.log(type,e);
+				console.log(type,e);
 				if(type == 0){
 					this.tabIndex = 4
 				}else if(type == 1){
@@ -223,6 +229,12 @@
 	.anchor-home-left-nav .live-group .live-group-item:hover .live-group-item-basketball,
 	.anchor-home-left-nav .live-group .live-group-item.live-group-item-active .live-group-item-basketball {
 	  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAACHUExURUdwTOrEj/PTq92xbPLQp+a+hPHQov7WneW8gPDKk+vGk/DMme3Jl+a+g/bXs/LRqO/JlfHQpvLRqOK4duK4d+G2dOK4eu7Mnd+zbuvHleG3d+/NoOrEjt+0ctywad+0ceO6feW9guG3eOa/h+jCjO/Nou7LnfHQp/PTrezJmOnEj+vGlPXWsgnz/H8AAAAedFJOUwCGZsVUtiwFNw/EGUN2yJIioeJlnVrUspLX683r+F99mhAAAAJVSURBVEjH7ZXXdqswEEUPVaKFju2QgMAGg+3//76rhm+IiZOV5+hRa087MyMBf+dXJzBTG4izOjW9H+D2y+12m0x42fk8DDubPMdDgd+maXJhD/yMY+0+wUl80/y0AzKOj/M8G18G8V4W/nw+uzCVwfXqe8/4SfHnGIH0f71eL/52DNeMXxZ+GDKg1vzl4mxaiEs31fwwujA0fzoV3pZ/0xSCmJofTdgLH275l/JnvGO24ucYruYjkMh5aICuNwbSQcrjgyj+jcDouvAhgC43BFVyHoCD4E8Gkq5jn0IEi/wD75hph4mqkgQ0NygibsCC9QRJvo7tZFPw4pWxcnUVT1lqL9qFUbzz/UMCw3eMnAq5SVkVqxbYasQSO64JdkrOBM7xeBTlygTpxhqIcRO1qvYGwqDrOgOUFZ9x16iV/GOKQMvvcYNO6kNe+75YF720d5wpbOlfGgiesQRR37avK4Ns4WvAl/5PR8INOM76PUj12aDWPA9AJc/LBSph0Pe9C/reWisDPQ6zAeJrvgKY4luLIG9Wsi7bxdscaf7oIFA8z3/P7/O1pnK7+C6GKv+jUlPzbZurdflwfOGfwH1T/rk8OUqm8bZp8ofnaL5G+MgzPnOab8R5aHTKxy78z3eMq3r33zTW1k4bKn3pX/X37v8xAB+8w2XxL+SMQBUvLfZbARwlp+J7XsI9n8bafGY8/54P6/kgWPd8rK+ePv/O9wW89+94UbbGe55RvvD7Zy8+rRTPVax0+vSbDyV0RLtKUCV/+ZMvq9xzVfaVVZTe3wf+u/MPR5Vl9QudcdIAAAAASUVORK5CYII=);
+		
+	}
+		.anchor-home-left-nav .live-group .live-group-item:hover .live-group-item-game,
+	.anchor-home-left-nav .live-group .live-group-item.live-group-item-active .live-group-item-game {
+	 background-image: url('../../assets/images/game_active.png');
+
 	}
 	.anchor-home-left-nav .live-group .live-group-item:hover .live-group-item-more,
 	.anchor-home-left-nav .live-group .live-group-item.live-group-item-active .live-group-item-more {
@@ -262,6 +274,9 @@
 	}
 	.anchor-home-left-nav .live-group .live-group-item .live-group-item-basketball {
 	  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAA8UExURUdwTNvg79re7tre7eTl9dre7dre7dre7e/5/9vf7tvg79re7dre7dzh79vf7tre7dre7dre7d7i8tnd7JZ0w7sAAAATdFJOUwAyb8gPlKW8BV08hfglTujQ2RnSjh2AAAABuklEQVRIx+1V2ZKtIAwMKPuimP//1xtFNg9zxrrP0y9aVtqkkyYA/OG/cBgZAcS2S7O+CI8KCQbWRA8vo/4ebne84APE/LawL+HaYYECSDfX/ZhkXbCBAS+vy/oiHgUcLd08B+Ouo2wA+28MQpA1KEBTJCZFMWNMoGetnJc+oY+zf1/VJAM1TECoVO3UxwBqGMjSWH2r0WdxzyyqVGKB5Tr2otrB4a/BDP7pJ8aNDVmlPphx90SOgWDyT8Wl+7MhYjvt1UPgJmLpneVCqiVRX5UUhp0z0CaJMUO2WDBi0UVPuOVHuAq0k2OwnZ2trjtuggPr5dOzrLpC1gasdyrqL/1JjqJ951LzIFBtPJurw1atfM+cUMUI0OlJ2FuCMnNfv9Lxsx73gVBM6kAX7t4Kpc5xEteDtzHjh/rLYdxMrKHWM3dNZttx4jS7T3dLDaGqJysYHBiPdYSevrEWT7Z1OCyFByTZLrZxoNfN8rnd37ZSnm9HRzs5/6mPp6LtsHQmCRTifJH9tGaGRbZ1pxbTi9UnYK0S1PpiGXcVCf1i3S/VeYv95UKx94WSl42Kr64sQV0RSb27sv4wwT/WODesMo9aZgAAAABJRU5ErkJggg==);
+	}
+		.anchor-home-left-nav .live-group .live-group-item .live-group-item-game {
+	  background-image: url('../../assets/images/game.png');
 	}
 	.anchor-home-left-nav .live-group .live-group-item .live-group-item-more {
 	  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAtUExURUdwTNre7d/i8tre7dvf7tre7d3i8OP2+dre7dre7dvf7dnd7Nzf79ve7dnd7N8+yD0AAAAOdFJOUwDwF96AnCwHrtRtvFBGS2o56gAAAMpJREFUOMtjYKArYAs2TcAmzhT37t1TBUxxdsd3QCBSgCFx+B0Y2KCLZ7+Dgm2o4qrv4CAIWbxKDiHxcDlCnHfeOyTw8gLcoX3vUMALmKOV36EBI6hEH7rEC6iEHLrEQ6jEOwxAX4nHLnbv3k1xhDKQJMyBvnxZwCQHZiBLODCwvHvFwBAHZhAlIcaQ+O6xApsckKGIIvGwAxguooFARqsc3X2OXQJnROGMWozEMIlQ8sGZ4HAnUdyJGnc2wJ1xcGc1nJkTd3amHQAA5RnYAsmaLbIAAAAASUVORK5CYII=);

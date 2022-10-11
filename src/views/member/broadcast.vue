@@ -453,6 +453,10 @@
 						label: '篮球'
 					},
 					{
+						value: 3,
+						label: '电竞'
+					},
+					{
 						value: 2,
 						label: '其它'
 					}

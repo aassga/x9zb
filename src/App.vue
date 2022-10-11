@@ -24,14 +24,13 @@
 			document.oncontextmenu = function () {
 				return false
 			}
-			//TODO
 			window.onkeydown = window.onkeyup = window.onkeypress = function (event) {
 				if (event.keyCode == 123) {
 					event.preventDefault();
 					return false
 				}
 			}
-			// console.log(process.env.NODE_ENV)
+			console.log(process.env.NODE_ENV)
 		    // if(process.env.NODE_ENV!=='dev'){
 		    //   setInterval(()=>{
 		    //     debugger;
@@ -67,6 +66,12 @@
 			
 			const self = this;
 			this.getSystem()
+			let userid = '';
+			const userInfo = JSON.parse(localStorage.getItem("userInfo"))
+			if (!userInfo && !localStorage.getItem("userid")) {
+				userid = 10000000 + Math.random().toString().slice(-6);
+				localStorage.setItem("userid", userid);
+			}
 			return;//======
 			// 监听事件
 			self.tim.on(self.TIM.EVENT.SDK_READY, function(event) {
@@ -154,7 +159,10 @@
 
 			// 获取配置
 			getSystem() {
-				getHot().then(res => {
+				const channel = getQueryString().channel_code;
+				getHot({
+					channel_code: channel
+				}).then(res => {
 					// this.websocket
 					this.$store.state.system = res.data
 					// this.init();

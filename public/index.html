@@ -50,7 +50,7 @@
         if(room=="room"){
 							// console.log(4444444444444)
 							// console.log(location.protocol + "//" + window.location.host+"/m/#/pages/live/detail"+"?id="+uid+"&channel_code="+code)
-              location.replace( location.protocol + "//" +window.location.host+"/m/#/pages/live/detail"+"?id="+uid+"&channel_code="+code)
+              location.replace( location.protocol + "//" +window.location.host+"/m/#/pages/live/detail"+"?id="+uid+(code?("&channel_code="+code):""))
 						}else{
               location.replace(location.protocol + "//" +window.location.host+"/m/#/")
 						}
@@ -59,6 +59,10 @@
 
 
 
+    }else{
+      if(room=="room"){
+        location.replace( location.protocol + "//" +window.location.host+"/live"+"?uid="+uid+(code?("&channel_code="+code):""))
+      }
     }
     function getQueryString() {
         const result = {};

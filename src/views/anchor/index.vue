@@ -66,7 +66,7 @@
 			<div class="grid-header">
 				<div class="grid-header-left"><img class="grid-header-left-icon"
 						src="../../assets/images/main-hot-titme.png" alt="">
-					<div class="grid-header-left-text">{{type==0?'全部直播':type==1?'足球':type==2?'篮球':'其它'}}</div>
+					<div class="grid-header-left-text">{{type==0?'全部直播':type==1?'足球':type==2?'篮球':(type==4?'电竞':'其它')}}</div>
 				</div>
 			</div>
 			<div class="anchor-card-outter-box" style="min-height: 600px;">
@@ -249,6 +249,8 @@
 					data.type = 1
 				} else if (type == 3) {
 					data.type = 2
+				} else if (type == 4) {
+					data.type = 3
 				} else {
 					data.type = -1
 				}

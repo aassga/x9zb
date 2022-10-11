@@ -78,7 +78,7 @@
 				<!-- <router-link v-if="path == 'main'" style="z-index: 99;" class="anchor-home-page-top-play-area-enter-button" :to="setUrl(info)" tag="a" target="_blank">
 					
 				</router-link> -->
-				<a  v-if="path == 'main'" style="z-index: 99;" class="anchor-home-page-top-play-area-enter-button" @click="setUrl(info)">
+				<a  v-if="path == 'main'&&info" style="z-index: 99;" class="anchor-home-page-top-play-area-enter-button" @click="setUrl(info)">
 					进入直播间
 				</a>
 				<div style="z-index: 999;width: 100%;height: 100%;">
@@ -337,7 +337,10 @@
 					</div>
 					<div class="dplayer-notice" style="opacity: 0;">音量 0%</div>
 				</div>
+    <el-image class="video_bottom_logo" :src="require('@/assets/images/logo.png')" alt="" srcset="" />
+
 			</div>
+
 		</div>
 		<!-- 只是为了触发 -->
 		<!-- {{item}} -->
@@ -351,6 +354,9 @@
 	import {
 		mapState
 	} from 'vuex'
+	import {
+		getInfo
+	} from "@/api/basketball.js";
 	export default {
 		components: {
 			vueDanmaku
@@ -405,6 +411,15 @@
 				liveList:[],
 			}
 		},
+		created(){
+			// console.log(888888888888888888888888888)
+			let query = this.$route.query;
+			this.query = {
+				...this.query,
+				...query
+			};
+			this.getDetail(query.type, query.id);
+		},
 		computed: {
 			danmakuSystem(){//弹幕配置
 			
@@ -429,6 +444,7 @@
 			playerOptions() { // 使用计算属性
 				//如果info为空则已结束
 				if (JSON.stringify(this.info) == "{}") return
+				console.log(this.info)
 				const playerOptionsObj = {
 					live: false,
 					muted:true,
@@ -438,7 +454,7 @@
 					aspectRatio: "16:9",
 					fluid: true,
 					sources: [{
-						src: this.info.pull,//'http://yun-live.oss-cn-shanghai.aliyuncs.com/record/yunlive/record/yunlive/meeting_1070/2020-11-25-09-27-59_2020-11-25-09-35-52.m3u8'//this.info.pull//'http://cctvalih5ca.v.myalicdn.com/live/cctv1_2/index.m3u8' //url地址 ||this.info.pull
+						src: this.info.pull||this.info.pushurl1,//'http://yun-live.oss-cn-shanghai.aliyuncs.com/record/yunlive/record/yunlive/meeting_1070/2020-11-25-09-27-59_2020-11-25-09-35-52.m3u8'//this.info.pull//'http://cctvalih5ca.v.myalicdn.com/live/cctv1_2/index.m3u8' //url地址 ||this.info.pull
 					}],
 					loop: true,
 					playbackRates: [0.7, 1.0, 1.5, 2.0], //播放速度
@@ -518,6 +534,21 @@
 			
 		},
 		methods: {
+			getDetail(type, id) {
+				// console.log(22222222222222222222222222222)
+				let data = {
+					id: id,
+				};
+				if (type == "basketball") {
+					//篮球
+					getInfo(data)
+						.then((res) => {
+							this.info = res.data.info;	
+							// console.log(this.info)
+						})
+						.catch((res) => {});
+				}
+			},
 			// 开关弹幕
 			setdanmakuShow(type,value){
 				if(type == 'show'){
@@ -709,6 +740,14 @@
 
 	#dplayer {
 		position: relative;
+	}
+
+	#dplayer .video_bottom_logo{
+		z-index: 99;
+		  position: absolute;
+  left: 20px;
+  bottom: 30px;
+  width: 120px;
 	}
 
 	.slider {

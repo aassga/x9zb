@@ -59,6 +59,8 @@
 												<a class="score-nav-popover-button" href="javascript:"
 													@click.stop="$router.push('/anchor?type=2'),index=2">篮球</a>
 													<a class="score-nav-popover-button" href="javascript:"
+													@click.stop="$router.push('/anchor?type=4'),index=2">电竞</a>
+													<a class="score-nav-popover-button" href="javascript:"
 														@click.stop="$router.push('/anchor?type=3'),index=2">其它</a>
 											</div>
 										</div>
@@ -100,6 +102,7 @@
 				<a href="javascript:" @click="$router.push('/downLoad'),index=7" :class="index==7?'active':''">
 					<div class="a-text-box" style="cursor: pointer;"><span class="a-text">APP下载</span></div>
 				</a>
+				<img class="daily-icon" src="../../assets/images/daily/daily-icon.png" @click="$router.push('/dailyMission')"/>
 			</div>
 			<div class="nav-bar-search  search-popover-container" :style="{width:search?'190px':'160px'}">
 				<el-popover placement="bottom" width="420" trigger="click">
@@ -268,17 +271,6 @@
 		initialList
 	} from '@/api/search.js'
 	export default {
-		computed: {
-			...mapGetters([
-				'sidebar',
-				'avatar',
-				'infos'
-			]),
-			infos() {
-				return this.$store.state.infos
-			},
-
-		},
 		data() {
 			return {
 				i: 0,
@@ -293,6 +285,16 @@
 				logo: require('../../assets/images/userLogo.png'),
 				list1: ['个人中心', '我的关注', , '我的空间', '申请主播']
 			}
+		},
+		computed: {
+			...mapGetters([
+				'sidebar',
+				'avatar',
+				'infos'
+			]),
+			infos() {
+				return this.$store.state.infos;
+			},
 		},
 		watch: {
 			index(e) {
@@ -315,6 +317,13 @@
 				this.info = e
 				// console.log('--------------');
 				// console.log(e);
+			},
+		},
+		created() {
+			if (localStorage.getItem('userInfo')) {
+				if (localStorage.getItem('userInfo') !== '{}' && this.$route.path.indexOf('dailyMission') === -1) {
+					this.$store.dispatch('getUserInfo', '');
+				}
 			}
 		},
 		mounted() {
@@ -396,6 +405,8 @@
 			},
 			logout() {
 				this.$store.state.user.data = {}
+				this.$store.state.infos = {}
+				this.$store.state.user.token = null
 				localStorage.clear();
 				this.$store.state.user.islogin = false
 				this.$router.push('/main')
@@ -404,6 +415,9 @@
 				logout().then(res => {
 					removeToken()
 				}).catch(res => {})
+				localStorage.removeItem("userInfo");
+				let userid = 10000000 + Math.random().toString().slice(-6);
+				localStorage.setItem("userid", userid);
 			},
 			// async logout() {
 			// await this.$store.dispatch('user/logout')
@@ -564,6 +578,12 @@
 		align-items: center;
 		justify-content: flex-start;
 		flex-grow: 1;
+	}
+
+	.daily-icon {
+		height: 58px;
+		margin: 4px 10px 0 auto;
+		cursor: pointer;
 	}
 
 	.header-container-navigation>a,

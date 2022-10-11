@@ -5,7 +5,7 @@
 			<div class="live-layout-player">
 				<div class="matchlive" id="matchlive">
 					<!-- -------------------------------------------------header -->
-					<liveHeader v-if="base.status_str && base.status_str !== '完场'" :info="detail" :query="query" :base="base" :basketball="basketball"
+					<liveHeader v-if="(base.status_str && base.status_str !== '完场') || (base.status_name && base.status_name !== '完场')" :info="detail" :query="query" :base="base" :basketball="basketball"
 						:exponent="exponent"></liveHeader>
 					<div class="matchlive-down">
 						<div class="matchInfo">
@@ -141,143 +141,160 @@
 									</div>
 									<span class="cancelConcern_date_y" v-else title="取消关注"></span>
 									<div>
-										<span  @click="copyText()" class="txt_control" title="分享"></span>
+										<span  @click="copy(shareUrl)" class="txt_control" title="分享"></span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<div class="live-player-footer-wrap">
-							<div class="live-player-footer-top-box">
-								<div class="left">
-									<ul class="activity-ul">
-										<!-- <li><img src="/_next/static/images/web-icon-rukou@2x-9c41ca45cdc88917d069f6ae94889a2b.png"> -->
-										<!-- <li><img style="border-radius: 50%;" :src="infos.avatar || require('../../assets/images/userLogo.png')"> -->
-										<!-- </li> -->
-										<!-- <li @click="setisAdvertising(1)"><img src="https://sta-prod-pic.zkreen.com/avatar/p0020200927004253037974.png" alt="分享领豪礼"></li>
-										<li @click="setisAdvertising(2)"><img src="https://sta-prod-pic.zkreen.com/avatar/p0020200922171839086844.png" alt="注册送豪礼"></li> -->
-									</ul>
+							<div class="live-player-footer-left-box">
+								<div class="balance">
+									<div class="left">
+										<img class="diamond-icon" src="../../assets/images/daily/diamond.png"/>
+										<span>{{is_login ? parseInt(infos.balances) : 0}}</span>
+										<br/>
+										我的钻石
+									</div>
+									<div class="right" @click="showDiamondDirections = true">
+										如何获得钻石?
+									</div>
 								</div>
-								<div class="right">
-									<ul class="gift-box-ul" style="justify-content: flex-start;">
-										<li class="arrow arrow-left-active" @click="num==0?'':num ++"></li>
-										<li class="" style="overflow: hidden;width: 450px;">
-											<ul class="gift-box-ul" style="float: left;"
-												:style="{'transform': 'translateX('+num * 450 + 'px'+')','transition': 'all .3s ease-out .1s',}">
-												<li class="gift-box-item" @mouseover="mouseover(item,index)"
-													v-for="(item,index) in giftList" ref="gifli" :key="index">
-													<div class="gift-icon">
-														<img :src="item.gifticon" width="80" height="80">
-													</div>
-												</li>
+							</div>
+							<div class="live-player-footer-right-box">
+								<div class="live-player-footer-top-box">
+									<div class="left">
+										<ul class="activity-ul">
+											<!-- <li><img src="/_next/static/images/web-icon-rukou@2x-9c41ca45cdc88917d069f6ae94889a2b.png"> -->
+											<!-- <li><img style="border-radius: 50%;" :src="infos.avatar || require('../../assets/images/userLogo.png')"> -->
+											<!-- </li> -->
+											<!-- <li @click="setisAdvertising(1)"><img src="https://sta-prod-pic.zkreen.com/avatar/p0020200927004253037974.png" alt="分享领豪礼"></li>
+											<li @click="setisAdvertising(2)"><img src="https://sta-prod-pic.zkreen.com/avatar/p0020200922171839086844.png" alt="注册送豪礼"></li> -->
+										</ul>
+									</div>
+									<div class="right">
+										<ul class="gift-box-ul" style="justify-content: flex-start;">
+											<li class="arrow arrow-left-active" @click="num==0?'':num ++"></li>
+											<li class="" style="overflow: hidden;width: 450px;">
+												<ul class="gift-box-ul" style="float: left;"
+													:style="{'transform': 'translateX('+num * 450 + 'px'+')','transition': 'all .3s ease-out .1s',}">
+													<li class="gift-box-item" @mouseover="mouseover(item,index)"
+														v-for="(item,index) in giftList" ref="gifli" :key="index">
+														<div class="gift-icon">
+															<img :src="item.gifticon" width="80" height="80">
+														</div>
+													</li>
 
-											</ul>
-										</li>
-										<li class="arrow arrow-right-active" @click="giftList.length / (Math.abs(num)+1) < 10?'':num --" ></li>
-										<div class="ant-popover git-popover-box ant-popover-placement-top ant-popover-hidden"
-											:style="{left:offsetLeft-100+'px'}"
-											style="left: 711px; top: -81px; transform-origin: 50% 98px; position: absolute;background-color: white;z-index: 999;padding: 10px;">
-											<div class="ant-popover-content">
-												<div class="ant-popover-arrow"><span
-														class="ant-popover-arrow-content"></span></div>
-												<div class="ant-popover-inner" role="tooltip">
-													<div class="ant-popover-inner-content">
-														<div>
-															<div class="layout-gift-detail">
-																<!-- <div class="anim-pic" id="demoCanvas">
-																</div> -->
-																<img class="anim-pic" :src="gifItem.gifticon">
-																<div class="gift-text">
-																	<div class="title" title="你真棒">{{gifItem.giftname}}
-																	</div>
-																	<!-- <div class="num-ponit">{{gifItem.needcoin}}钻石</div> -->
-																	<div class="gift-desc">{{gifItem.info}}</div>
-																</div><button class="give-btn"
-																	@click="handselGift(gifItem,0)">赠送</button>
+												</ul>
+											</li>
+											<li class="arrow arrow-right-active" @click="giftList.length / (Math.abs(num)+1) < 10?'':num --" ></li>
+											<div class="ant-popover git-popover-box ant-popover-placement-top ant-popover-hidden"
+												:style="{left:offsetLeft-100+'px'}"
+												style="left: 711px; top: -81px; transform-origin: 50% 98px; position: absolute;background-color: white;z-index: 999;padding: 10px;">
+												<div class="ant-popover-content">
+													<div class="ant-popover-arrow"><span
+															class="ant-popover-arrow-content"></span></div>
+													<div class="ant-popover-inner" role="tooltip">
+														<div class="ant-popover-inner-content">
+															<div>
+																<div class="layout-gift-detail">
+																	<!-- <div class="anim-pic" id="demoCanvas">
+																	</div> -->
+																	<img class="anim-pic" :src="gifItem.gifticon">
+																	<div class="gift-text">
+																		<div class="title">{{gifItem.giftname}}</div>
+																		<div class="num-ponit">
+																			{{gifItem.needcoin}}
+																			<img class="diamond-icon" src="../../assets/images/daily/diamond.png"/>
+																		</div>
+																		<div class="gift-desc">{{gifItem.info}}</div>
+																	</div><button class="give-btn"
+																		@click="handselGift(gifItem,0)">赠送</button>
+																</div>
 															</div>
 														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-									</ul>
-									<!-- ant-popover-hidden -->
+										</ul>
+										<!-- ant-popover-hidden -->
 
-								</div>
-							</div>
-							<div class="live-player-footer-bottom-box">
-								<div class="left">
-									<div class="live-reserve-box" v-if="JSON.stringify(reserve) !== '{}'">
-										<div class="live-reserve-btn">下一场</div>
-										<div class="live-reserve-name"><span>{{reserve.match_time}}</span><span
-												class="live-reserve-line"></span><span>{{reserve.name}}</span></div>
-										<div class="live-reserve-team"><span>{{reserve.home_name}} </span><span
-												class="live-reserve-vs"></span><span> {{reserve.away_name}}</span></div>
 									</div>
 								</div>
-								<div class="right" style="position: relative;">
-									<ul class="chongzhi-beibao-ul">
-										<!-- <li class="text-li"><img class="a-icon"
-												src="../../assets/images/icon.png"
-												alt="">
-												<span class="text1">我的钻石:</span><span class="number">{{infos.balance}}</span>
-										</li> -->
-										
-										<!-- <li class="btn-li" @click="navigate()">
-												<span class="btn btn1">充值</span>
-										</li> -->
-										<li class="btn-li beibao">
-											<div class="btn btn2">背包</div>
-								<div class="ant-popover lv-backpack-popover ant-popover-placement-top"
-									style="left: 45px; bottom: 30px; transform-origin: 50% 351px;position: absolute;z-index: 9;">
-									<div class="ant-popover-content">
-										<div class="ant-popover-arrow"><span class="ant-popover-arrow-content"></span>
+								<div class="live-player-footer-bottom-box">
+									<div class="left">
+										<div class="live-reserve-box" v-if="JSON.stringify(reserve) !== '{}'">
+											<div class="live-reserve-btn">下一场</div>
+											<div class="live-reserve-name"><span>{{reserve.match_time}}</span><span
+													class="live-reserve-line"></span><span>{{reserve.name}}</span></div>
+											<div class="live-reserve-team"><span>{{reserve.home_name}} </span><span
+													class="live-reserve-vs"></span><span> {{reserve.away_name}}</span></div>
 										</div>
-										<div class="ant-popover-inner" role="tooltip">
-											<div class="ant-popover-inner-content">
-												
-												<div class="lvBackpack_box" v-if="userGift.length == 0">
-													<div class="enpty_box"><div style="text-align: center;">
-													<img src="../../assets/images/icon-kong.png"><p>背包里什么都没有~</p></div></div><div class="lvBackpack_box_foot">
-													<div class="page"></div></div></div>
-												<div class="lvBackpack_box" v-else>
-													<div>
+									</div>
+									<div class="right" style="position: relative;">
+										<ul class="chongzhi-beibao-ul">
+											<!-- <li class="text-li"><img class="a-icon"
+													src="../../assets/images/icon.png"
+													alt="">
+													<span class="text1">我的钻石:</span><span class="number">{{infos.balance}}</span>
+											</li> -->
+											
+											<!-- <li class="btn-li" @click="navigate()">
+													<span class="btn btn1">充值</span>
+											</li> -->
+											<li class="btn-li beibao">
+												<div class="btn btn2">背包</div>
+									<div class="ant-popover lv-backpack-popover ant-popover-placement-top"
+										style="left: 45px; bottom: 30px; transform-origin: 50% 351px;position: absolute;z-index: 9;">
+										<div class="ant-popover-content">
+											<div class="ant-popover-arrow"><span class="ant-popover-arrow-content"></span>
+											</div>
+											<div class="ant-popover-inner" role="tooltip">
+												<div class="ant-popover-inner-content">
+													
+													<div class="lvBackpack_box" v-if="userGift.length == 0">
+														<div class="enpty_box"><div style="text-align: center;">
+														<img src="../../assets/images/icon-kong.png"><p>背包里什么都没有~</p></div></div><div class="lvBackpack_box_foot">
+														<div class="page"></div></div></div>
+													<div class="lvBackpack_box" v-else>
 														<div>
-															<ul class="lvBackpack_box_content_ul">
-																<li v-for="(item,index) in userGift" :key="index" @click="lvBackpackIndex = index" :class="lvBackpackIndex == index?'lvBackpack_active':''">
-																	<span>
-																		<div class="line1">
-																			<div class="img_box_flaunt">
-																				<div class="img_box1"><img
-																						:src="item.gifticon">
+															<div>
+																<ul class="lvBackpack_box_content_ul">
+																	<li v-for="(item,index) in userGift" :key="index" @click="lvBackpackIndex = index" :class="lvBackpackIndex == index?'lvBackpack_active':''">
+																		<span>
+																			<div class="line1">
+																				<div class="img_box_flaunt">
+																					<div class="img_box1"><img
+																							:src="item.gifticon">
+																					</div>
+																					<!-- <div class="img_box1"><img
+																							src="https://sta-prod-pic.hzmgrn.com/avatar/p0020200828050329053509.png">
+																					</div>
+																					<div class="img_box1"><img
+																							src="https://sta-prod-pic.hzmgrn.com/avatar/p0020200828050335019252.png">
+																					</div> -->
 																				</div>
-																				<!-- <div class="img_box1"><img
-																						src="https://sta-prod-pic.hzmgrn.com/avatar/p0020200828050329053509.png">
-																				</div>
-																				<div class="img_box1"><img
-																						src="https://sta-prod-pic.hzmgrn.com/avatar/p0020200828050335019252.png">
-																				</div> -->
 																			</div>
-																		</div>
-																		<div class="line2"><span
-																				class="name">{{item.giftname}}</span></div>
-																		<div class="line3"><span v-if="item.num!=0">剩余 {{item.num}}个</span></div>
-																	</span>
-																</li>
-															</ul>
+																			<div class="line2"><span
+																					class="name">{{item.giftname}}</span></div>
+																			<div class="line3"><span v-if="item.num!=0">剩余 {{item.num}}个</span></div>
+																		</span>
+																	</li>
+																</ul>
+															</div>
 														</div>
-													</div>
-													<div class="lvBackpack_box_foot">
-														<div class="page"></div>
-														<div v-if="userGift[lvBackpackIndex].mark == 0" @click="handselGift(userGift[lvBackpackIndex],1)"><div class="btn">赠送</div></div>
+														<div class="lvBackpack_box_foot">
+															<div class="page"></div>
+															<div v-if="userGift[lvBackpackIndex].mark == 0" @click="handselGift(userGift[lvBackpackIndex],1)"><div class="btn">赠送</div></div>
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-										</li>
-									</ul>
+											</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 							<!-- <div class="pop-pox"></div> -->
@@ -285,9 +302,20 @@
 							<!-- <div class="ip-logo-right">78e577bd</div> -->
 						</div>
 					</div>
-				</div>
-				<chatRoom v-if="qsVid" :qsVid="qsVid" ref="chatRoom" :userData="userData" :roomid="query.uid"></chatRoom>
 
+					<img class="red-envelope-icon" src="../../assets/images/daily/red-envelope.png" @click="showRedEnvelopeDialog = true"/>
+
+					<div id="demoCanvas"></div>
+				</div>
+				<chatRoom 
+					v-if="qsVid" 
+					:qsVid="qsVid" 
+					ref="chatRoom" 
+					:userData="userData" 
+					:roomid="query.uid"
+					:giftList="giftList"
+					@onhandleSendGift="onhandleSendGift"
+				></chatRoom>
 			</div>
 			<!-- ----------------------------------直接隐藏-------------------------- -->
 			<div class="layout-live-detail-left">
@@ -505,6 +533,39 @@
 			</div>
 		</div>
 		
+		<!-- 如何獲得鑽石 -->
+		<div class="diamondDirections" v-if="showDiamondDirections">
+			<div class="content">
+				<div class="contentBtns">
+					<div class="BtnLeft">
+						<img src="../../assets/images/daily/diamond-directions-btn-1.png" @click="diamondDirectionsBtnClick(true)" />
+					</div>
+					<div class="BtnCenter">
+						<img src="../../assets/images/daily/diamond-directions-btn-2.png" @click="diamondDirectionsBtnClick(false)" />
+					</div>
+					<div class="BtnRight">
+						<img src="../../assets/images/daily/diamond-directions-btn-3.png" @click="diamondDirectionsBtnClick(false)" />
+					</div>
+				</div>
+			</div>
+			<img class="closeBtn" src="../../assets/images/daily/close.png" @click="showDiamondDirections = false"/>
+		</div>
+
+		<!-- 紅包彈窗 -->
+		<div class="redEnvelopeDialog" v-if="showRedEnvelopeDialog">
+			<div class="redEnvelopeDialogBg1" v-if="!is_login">
+				<img class="redEnvelopeDialogClose" src="../../assets/images/daily/close.png" @click="showRedEnvelopeDialog = false"/>
+				<div class="redEnvelopeDialogBtns">
+					<img class="redEnvelopeDialogBtnLeft" src="../../assets/images/daily/red-envelope-dialog-btn-1-1.png" @click="regiter()"/>
+					<img class="redEnvelopeDialogBtnRight" src="../../assets/images/daily/red-envelope-dialog-btn-1-2.png" @click="login()"/>
+				</div>
+			</div>
+			<div class="redEnvelopeDialogBg2" v-else>
+				<img class="redEnvelopeDialogClose" src="../../assets/images/daily/close.png" @click="showRedEnvelopeDialog = false"/>
+			</div>
+		</div>
+		<!-- 下载弹框 -->
+		<downLoadModel v-if="showDownLoadModel" @close="showDownLoadModel = false" ></downLoadModel>
 	</div>
 </template>
 
@@ -514,6 +575,7 @@
 	import advertising from './advertising.vue'
 	import liveHeader from './live-header.vue'
 	import chatRoom from './chatRoom.vue'
+	import downLoadModel from '@/components/downLoadModel.vue'
 	import iconSvg from '../../components/svg.vue'
 	import TcVideoPlayer from '../../components/tencentPlayer.vue'
 	import {
@@ -549,9 +611,13 @@
 			liveHeader,
 			chatRoom,
 			advertising,
+			downLoadModel,
 		},
 		data() {
 			return {
+				showDownLoadModel:false,
+				timerNum:0,
+				timer:null,
 				url:'webrtc://pull.xinzhongjituan.com/live/sd-1-3757537',
 				text:'1231231',
 				heat:0,//热度
@@ -585,13 +651,24 @@
 				tabtitle: ['主播动态', '直播预告', '直播回放'],
 				timeInterval: null,
 				timeIntervals: null,
-				shareUrl:''
+				shareUrl:'',
+				showDiamondDirections: false,
+				showRedEnvelopeDialog: false,
+				haveSvga: false,
+				svgaTimeOut: null,
 			}
 		},
 		computed:{
 			infos(){
 				return this.$store.state.infos
 			},
+			is_login() {
+                let result = false;
+				if (JSON.stringify(this.$store.state.infos) !== '{}') {
+					result = true;
+				}
+                return result;
+            },
 			system(){
 				return this.$store.state.system
 			},
@@ -614,7 +691,32 @@
 				}
 			},
 		},
+		beforeDestroy(){
+			if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null;
+			}
+		},
 		mounted() {
+			// if (!localStorage.getItem('isShowDownLoad')) {
+				if (this.timer) {
+				clearInterval(this.timer)
+				this.timer = null;
+			}
+			this.timerNum = 180;
+			this.timer = setInterval(() => {
+				if (this.timerNum <= 0) {
+					clearInterval(this.timer)
+					this.timer = null;
+					if (!sessionStorage.getItem('isShowDownLoad')) {
+						this.showDownLoadModel = true;
+						sessionStorage.setItem('isShowDownLoad',true)
+					}
+
+				}
+				this.timerNum -=1
+			}, 1000);
+			// }
 			let query = this.$route.query
 			this.query = query
 			for(const i in query) {
@@ -622,7 +724,7 @@
 					localStorage.setItem('channel',query[i])
 				}
 			}
-			this.shareUrl = window.location.origin +"/room/"+ getQueryString().uid+"?&c="+getQueryString().channel_code
+			this.shareUrl = window.location.origin +"/room/"+ getQueryString().uid
 			// item.type==0?'football':'basketball'
 			this.getRoomInfo(getRoomInfo)
 			
@@ -802,22 +904,28 @@
 				let b64 = Base64.encode(url)
 				return "data:image/svg+xml;base64," + b64;
 			},
-			initMachineSVGA(url) {
-			    // var mycanvas = document.getElementById("demoCanvas");
-			    // // 修改容器大小
-			    // mycanvas.style.width = 100 + "px"; 
-			    // mycanvas.style.height = 100 + "px";
-			    
+			initMachineSVGA(item) {
+				console.log("gift svga", item);
+			    var mycanvas = document.getElementById("demoCanvas");
+				let _this = this;
 			    let player = new SVGA.Player("#demoCanvas");
 			    let parser = new SVGA.Parser("#demoCanvas");
-			    // this.imageUrl 定义一个参数接收url
-				console.log(player,parser);
-			    parser.load(url, function (videoItem) {
-					// console.log(url,videoItem);
-			      player.setVideoItem(videoItem);
-			      player.startAnimation();
+				let time = item.swftime * 1000;
+			    parser.load(item.swf, function (videoItem) {
+					player.setVideoItem(videoItem);
+					player.startAnimation();
+					console.log("1", time);
+					if (_this.haveSvga) {
+						clearTimeout(_this.svgaTimeOut);
+					} else {
+						_this.haveSvga = true;
+					}
+					_this.svgaTimeOut = setTimeout(() => {
+						console.log("2", time);
+						player.stopAnimation();
+					}, time);
 			    });
-			  },
+			},
 			// 鼠标移入
 			mouseover(e, index) {
 				this.gifMask = true
@@ -827,6 +935,7 @@
 				this.offsetLeft = this.$refs.gifli[index].offsetLeft+this.num * 450
 				// console.log(this.$refs.gifli[index].offsetLeft);
 				// console.log(e);
+				console.log("============================", e);
 				// this.initMachineSVGA(e.swf)
 			},
 			// 
@@ -848,7 +957,16 @@
 			// 获取猎物列表
 			getGiftList() {
 				getList().then(res => {
-					this.giftList = res.data
+					this.giftList = res.data;
+					if (res.data.length > 0) {
+						for (let i = 0; i < res.data.length; i++) {
+							let link = document.createElement("link");
+							link.rel = "prefetch";
+							link.as = "fetch";
+							link.href = res.data[i].swf;
+							document.body.appendChild(link);
+						}
+					}
 				}).catch(res => {
 					// this.$message.success('预约成功')
 				})
@@ -868,20 +986,24 @@
 					data.gift_id = item.gift_id
 				}
 				if(JSON.stringify(this.infos) == '{}'){
-					return this.$store.state.user.showLoginMask = true
+					return this.$message.warning('请先登录, 获得钻石。')
+					// return this.$store.state.user.showLoginMask = true
 				}
-				if(this.infos.id == this.query.id) return this.$message.warning('主播不允许给自己刷礼物')
+				if (parseFloat(this.infos.balances) < item.needcoin) {
+					return this.$message.warning('钻石不足, 先做日常任务领取钻石后再来吧~')
+				}
+				if(this.infos.id == this.query.uid) return this.$message.warning('主播不允许给自己刷礼物')
 				handselGift(data).then(res => {
 					// 第二个参数为直播房间号
 					// let obj = item
 					item.type1= item.type//是否全屏显示
 					item.type = 100//设置为100则为发送礼物
 					
-					// this.$message.success('赠送成功')
-					this.$refs.chatRoom.createCustomMessage(item,this.query.uid)
-					item.type = item.type1
-					
-					this.$store.dispatch('getUserInfo','')
+					this.$message.success('赠送成功');
+					this.$store.dispatch('getUserInfo','');
+					// this.initMachineSVGA(item);
+					// this.$refs.chatRoom.createCustomMessage(item,this.query.uid);
+					item.type = item.type1;
 					// this.giftList = res.data.data
 				}).catch(res => {
 
@@ -944,7 +1066,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					// console.log(res,"res.data==========")
+					console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)
@@ -1107,6 +1229,32 @@
 
 				},1000)
 			},
+			regiter() {
+				this.showRedEnvelopeDialog = false;
+				this.$store.state.user.isRegister = true;
+				this.$store.state.user.showLoginMask = true;
+			},
+			login() {
+				this.showRedEnvelopeDialog = false;
+				this.$store.state.user.showLoginMask = true;
+			},
+			diamondDirectionsBtnClick(isRegister = false) {
+				if (isRegister) {
+					if (this.is_login) {
+						return;
+					}
+					this.$store.state.user.isRegister = true;
+					this.$store.state.user.showLoginMask = true;
+				} else {
+					this.$router.push('/dailyMission');
+				}
+				this.showDiamondDirections = false;
+			},
+			onhandleSendGift(data) {
+				console.log(data);
+				let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
+				this.initMachineSVGA(gift);
+			}
 		},
 		// destroyed(){
 		// 	clearTimeout(this.Iime)
@@ -1268,4 +1416,108 @@
 		cursor: pointer;
 		margin-left: 10px;
 	}
+</style>
+<style lang="scss" scoped>
+.diamondDirections {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 100000;
+	.content {
+		width: 650px;
+		height: 400px;
+		background: url('../../assets/images/daily/diamond-directions.png') -15px top / 100% auto no-repeat;
+		.contentBtns {
+			display: flex;
+			align-items: center;
+			height: 100%;
+			padding: 100px 40px 130px 55px;
+			box-sizing: border-box;
+			.BtnLeft,
+			.BtnCenter,
+			.BtnRight {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				cursor: pointer;
+				img {
+					height: 150px;
+				}
+			}
+		}
+	}
+	.closeBtn {
+		position: absolute;
+		top: -20px;
+		right: 0px;
+		cursor: pointer;
+	}
+}
+
+.redEnvelopeDialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 100000;
+	.redEnvelopeDialogBg1,
+	.redEnvelopeDialogBg2 {
+		display: flex;
+		width: 600px;
+		height: 596px;
+		background: url(../../assets/images/daily/red-envelope-bg-1.png) center top / 100% auto no-repeat;
+		.redEnvelopeDialogClose {
+			position: absolute;
+			z-index: 1;
+			width: 42px;
+			height: 42px;
+			top: 186px;
+			right: 50px;
+			cursor: pointer;
+		}
+		.redEnvelopeDialogBtns {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			margin-top: auto;
+			margin-bottom: 100px;
+			padding: 0 88px;
+			box-sizing: border-box;
+			.redEnvelopeDialogBtnLeft,
+			.redEnvelopeDialogBtnRight {
+				flex: 1;
+				height: 52px;
+				cursor: pointer;
+			}
+			.redEnvelopeDialogBtnLeft {
+				margin-right: 54px;
+			}
+			.redEnvelopeDialogBtnRight {
+				margin-left: 54px;
+			}
+		}
+	}
+	.redEnvelopeDialogBg2 {
+		background: url(../../assets/images/daily/red-envelope-bg-2.png) center 64px / 100% auto no-repeat;
+	}
+	.closeBtn {
+		position: absolute;
+		top: -20px;
+		right: -20px;
+		cursor: pointer;
+	}
+}
+
+#demoCanvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 250px;
+	height: 250px;
+}
 </style>

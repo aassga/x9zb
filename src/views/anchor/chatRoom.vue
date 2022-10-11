@@ -18,28 +18,30 @@
         </div>
       </div>
       <div class="layout-contribution-list">
-        <div class="chatroom-contribution-list-comp" style="height: 220px">
+        <div class="chatroom-contribution-list-comp" style="height: 218px">
           <div class="contribution-header">
-            <div class="title" v-for="(item, index) in paiData" :key="index">
+            <div class="title">
               <span
                 class="text"
-                :class="{ active: paiIndex === index }"
-                @click="paiIndex = index"
-                >{{ item.name }}</span
+                :class="paiIndex == 0 ? 'active' : ''"
+                @click="paiIndex = 0"
+                >贡献日榜</span
               >
-              <i
-                class="el-icon-caret-top jiantou"
-                v-if="paiIndex === index"
-              ></i>
+              <i class="el-icon-caret-top jiantou" v-if="paiIndex == 0"></i>
             </div>
-            <!-- <div class="title">
-							<span class="text" :class="paiIndex == 0?'active':''" @click="paiIndex = 0">贡献日榜</span>
-							<i class="el-icon-caret-top jiantou" v-if="paiIndex == 0"></i>
-						</div>
-						<div class="title">
-							<span class=" text" :class="paiIndex == 1?'active':''" @click="paiIndex = 1">贡献周榜</span>
-							<i class="el-icon-caret-top jiantou" v-if="paiIndex == 1"></i>
-						</div> -->
+            <div class="title">
+              <span
+                class="text"
+                :class="paiIndex == 1 ? 'active' : ''"
+                @click="paiIndex = 1"
+                >贡献周榜</span
+              >
+              <img
+                class="jiantou"
+                v-if="paiIndex == 1"
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAGCAYAAAARx7TFAAAAAXNSR0IArs4c6QAAAJxJREFUCB1jYEAC/5+d4fp0Y+8qEI0kzMCCzHn74v60///+hf76+vYrUDwRJscIYzw/Oj3h35//8xkZGRn+///PwMTImChpl7kAJA9W9HBbmxYDw7/T/xkY4NYAJb4xMDCZyntVXWN8trmB68v3T0AF/7WAhgBNAeqEms/IwHSNm4PXlOXDm3vT/jEyAk0CApgKEA0GjFq/v7yeBgAU8D21crZj/QAAAABJRU5ErkJggg=="
+              />
+            </div>
           </div>
           <div class="contribution-main">
             <div>
@@ -202,11 +204,12 @@
         </div>
       </div>
 
-      <div
-        class="pc-chat-room-container"
-        style="height: 100%"
-      >
-        <ChatDetails :qsVid="qsVid"/>
+      <div class="pc-chat-room-container">
+        <ChatDetails
+          :qsVid="qsVid"
+          :giftList="giftList"
+          @onhandleSendGift="onhandleSendGift"
+        />
       </div>
 
       <!-- 	<div class="message-text">
@@ -1001,7 +1004,7 @@ import { emojiName, emojiUrl, emojiMap } from "./emojiMap";
 import emotion from "../persona/emotion.json";
 import ChatDetails from "@/views/anchor/chatRoomDetails";
 export default {
-  props: ["roomid", "userData", "qsVid"],
+  props: ["roomid", "userData", "qsVid", "giftList"],
   components: {
     ChatDetails,
   },
@@ -1014,7 +1017,6 @@ export default {
         "rgb(185, 129, 238)",
         "rgb(250, 105, 162)",
       ],
-      paiData: [{ name: "贡献日榜" }, { name: "贡献周榜" }],
       paiIndex: 0,
       nobilityIndex: 0,
       goard: [], //贵族信息
@@ -1687,6 +1689,10 @@ export default {
       if (num == 2) {
         this.dialogVisible = true;
       }
+    },
+    onhandleSendGift(data) {
+      this.$emit("onhandleSendGift", data);
+      this.roomRanking();
     },
   },
 };

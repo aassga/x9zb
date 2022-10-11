@@ -6,30 +6,14 @@
         class="demo"
         :danmus="danmus"
         v-bind="config"
-        :style="{
-          fontSize:
-            danmakuSystem.size == 1
-              ? '10px'
-              : danmakuSystem.size == 2
-              ? '20px'
-              : '30px',
-        }"
+        :style="{fontSize:danmakuSystem.size == 1?'10px':danmakuSystem.size == 2?'20px':'30px'}"
       >
         <!-- 容器slot :style="{height:danmakuSystem == 1?'20%':danmakuSystem == 2?'50%':'100%'}"-->
-        <div
-          :style="{
-            height:
-              danmakuSystem.area == 3
-                ? '10vh'
-                : danmakuSystem.area == 2
-                ? '30vh'
-                : '60vh',
-          }"
-        ></div>
+        <div :style="{height:danmakuSystem.area == 3?'10vh':danmakuSystem.area == 2?'30vh':'60vh'}"></div>
         <!-- 弹幕slot -->
         <template v-slot:dm="{ index, danmu }">
           <div class="danmu-item xuan-bg">
-            <span>{{ danmu.messageForShow }}</span>
+            <span>{{danmu.messageForShow}}</span>
           </div>
         </template>
       </vue-danmaku>
@@ -45,40 +29,25 @@
       <div>
         <img
           src="../assets/images/live-none.png"
-          style="width: 64px; height: 64px; margin: 0 auto; display: block"
+          style="width: 64px;height: 64px;margin: 0 auto;display: block;"
         />
         <div
-          style="
-            font-size: 20px;
-            text-align: center;
-            color: #666;
-            padding: 10px 0;
-            margin-bottom: 40px;
-          "
-        >
-          主播暂未开播
-        </div>
+          style="font-size: 20px;text-align: center;color: #666;padding: 10px 0;margin-bottom: 40px;"
+        >主播暂未开播</div>
       </div>
     </div>
     <div class="layout-anchor-nostart-content" v-if="TcPlayerUrlLoding">
       <div>
         <img
           src="../assets/images/giphy.gif"
-          style="width: 250px; height: 100px; margin: 0 auto; display: block"
+          style="width: 250px;height: 100px;margin: 0 auto;display: block;"
         />
         <div
-          style="
-            font-size: 20px;
-            text-align: center;
-            color: #666;
-            padding: 10px 0;
-            margin-bottom: 40px;
-          "
-        >
-          加载中。。。
-        </div>
+          style="font-size: 20px;text-align: center;color: #666;padding: 10px 0;margin-bottom: 40px;"
+        >加载中。。。</div>
       </div>
     </div>
+    <el-image class="video_bottom_logo" :src="require('@/assets/images/logo.png')" alt srcset />
   </div>
 </template>
 <!--播放器脚本文件-->
@@ -90,7 +59,7 @@ import { getRoomInfo } from "../../src/api/user.js";
 export default {
   name: "TcVideoPlayer",
   components: {
-    vueDanmaku,
+    vueDanmaku
   },
   props: {
     // info: {
@@ -99,8 +68,8 @@ export default {
     // },
     options: {
       type: Object,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -116,19 +85,19 @@ export default {
         fontSize: 20, // 文本模式下的字号
         top: 10, // 弹幕轨道间的垂直间距
         right: 0, // 同一轨道弹幕的水平间距
-        debounce: 100, // 弹幕刷新频率（多少毫秒插入一条弹幕，建议不小于50）
+        debounce: 100 // 弹幕刷新频率（多少毫秒插入一条弹幕，建议不小于50）
       },
       UpSowing: false, //主播是否上播
       TcPlayerUrlLoding: true, //数据加载前loding
       timer: null, //直播倒计时
       counttDown: 0, //开赛倒计时
-      urlPlayer: "", //直播链接
+      urlPlayer: "" //直播链接
     };
   },
   mounted() {
     let query = this.$route.query;
     this.query = query;
-    this.getRoomInfo();
+    this.getRoomInfo(getRoomInfo);
     this.eventAdd();
     // this.Iime()
   },
@@ -136,9 +105,9 @@ export default {
     "$store.state.item"(e) {
       let list = this.$store.state.item;
       if (this.$refs.danmaku == null) return;
-      // console.log(list,"=========");
+      console.log(list, "=========");
       this.$refs.danmaku.push(list);
-    },
+    }
   },
   computed: {
     danmakuSystem() {
@@ -146,18 +115,18 @@ export default {
       let system = this.$store.state.danmakuSystem;
       this.config.channels = system == 3 ? 3 : system == 2 ? 6 : 10;
       return this.$store.state.danmakuSystem;
-    },
+    }
   },
   methods: {
     // 获取直播详情
     getRoomInfo() {
       getRoomInfo({
-        uid: this.query.uid,
+        uid: this.query.uid
       })
-        .then((res) => {
+        .then(res => {
           this.qsVid = res.data.vid;
-          // console.log(res,"resvid=======")
-          setTimeout((res1) => {
+          console.log(res, "resvid=======");
+          setTimeout(res1 => {
             this.$store.dispatch("joinGroup", this.query.uid);
           }, 500);
           let info = res.data.info;
@@ -187,18 +156,18 @@ export default {
             return;
           }
         })
-        .catch((res) => {});
+        .catch(res => {});
     },
     eventAdd(e) {
-      window.addEventListener("keydown", (e) => {
-        if (e.key == F5) {
+      window.addEventListener("keydown", e => {
+        if (e.key == 'F5') {
           window.location.reload(true);
         }
       });
     },
     initTcPlayer(url) {
       if (url == "") return;
-      // console.log(url);
+      console.log(url);
       // console.log(this);
       // sdk引入有顺序
       new Promise((resolve, reject) => {
@@ -222,10 +191,10 @@ export default {
         script3.type = "text/javascript";
         script3.src = "/sdk/player/flv.min.1.6.2.js";
         document.getElementsByTagName("head")[0].appendChild(script3);
-        script2.onload = function () {
+        script2.onload = function() {
           resolve(1);
         };
-      }).then((data) => {
+      }).then(data => {
         if (data == 1) {
           let script = document.createElement("script");
           script.type = "text/javascript";
@@ -243,38 +212,38 @@ export default {
           // console.log(this)
           let _this = this;
           // 引入成功
-          script.onload = function () {
-            // console.log("js资源加载成功了");
+          script.onload = function() {
+            console.log("js资源加载成功了");
             tcPlayer = TCPlayer("player-container-id", {
               autoplay: true,
-              width: "1098", //播放器宽度
+              width: "1098" //播放器宽度
               // height: "720", //播放器高度
             });
             tcPlayer.src(url);
             // 音量改變時
-            tcPlayer.on("volumechange", function () {
+            tcPlayer.on("volumechange", function() {
               let muted = tcPlayer.muted();
               let valume = tcPlayer.volume();
-              // console.log("muted:", muted, "valume:", valume);
+              console.log("muted:", muted, "valume:", valume);
               if (muted || valume == 0) _this.showUnmute = true;
               else {
                 _this.showUnmute = false;
               }
             });
-            tcPlayer.on("webrtcevent", (event) => {
-              // console.log(event.data)
+            tcPlayer.on("webrtcevent", event => {
+              console.log(event.data);
               if (event.data.code == 1010) {
                 tcPlayer.play();
               }
             });
-            tcPlayer.on("canplay", (canplay) => {
+            tcPlayer.on("canplay", canplay => {
               tcPlayer.play();
             });
           };
 
           // 引入失败
-          script.onerror = function () {
-            // console.log("js资源加载失败了");
+          script.onerror = function() {
+            console.log("js资源加载失败了");
           };
         }
       });
@@ -296,12 +265,12 @@ export default {
           clearInterval(this.timeInterval);
         }
       }, 1000);
-    },
+    }
   },
   destroyed() {
     // clearTimeout(this.Iime)
     // clearInterval(this.timeInterval)
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -315,8 +284,15 @@ export default {
 }
 .tencent_player_container {
   position: relative;
-  min-height: 628px;
+  min-height: 500px;
   background: #14092a;
+  .video_bottom_logo {
+    z-index: 99;
+    position: absolute;
+    left: 20px;
+    bottom: 30px;
+    width: 120px;
+  }
   .layout-anchor-nostart-content {
     padding-top: 24%;
   }

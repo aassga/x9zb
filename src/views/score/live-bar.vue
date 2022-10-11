@@ -4,7 +4,7 @@
 			12313212
 		</div> -->
 		<div class="match-progress basketball-progress">
-			<div class="basketball-cloumn cloumn1" v-if="item.players">
+			<div class="basketball-cloumn cloumn1" v-if="item.players&&item.players.home">
 				<div>失误
 					<!-- -->{{item.players.home.number_of_mistakes}}
 				</div>
@@ -12,7 +12,7 @@
 					<!-- -->{{item.players.home.individual_fouls}}
 				</div>
 			</div>
-			<div class="basketball-cloumn cloumn2" v-if="item.players">
+			<div class="basketball-cloumn cloumn2" v-if="item.players&&item.players.home">
 				<div class="basketball-bar">
 					<div class="basketball-left-score">{{item.players.home.hits}}/{{item.players.home.shots}}</div>
 					<div class="ant-progress ant-progress-line ant-progress-status-normal ant-progress-default bar-1">
@@ -87,7 +87,7 @@
 					<div class="basketball-right-score">{{item.players.away.free_throw}}/{{item.players.away.free_throw_shots}}</div>
 				</div>
 			</div>
-			<div class="basketball-cloumn cloumn3" v-if="item.players">
+			<div class="basketball-cloumn cloumn3" v-if="item.players&&item.players.away">
 				<div>失误
 					<!-- -->{{item.players.away.number_of_mistakes}}
 				</div>

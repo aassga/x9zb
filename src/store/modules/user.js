@@ -10,6 +10,7 @@ const getDefaultState = () => {
     name: '',
     avatar: '',
     islogin: getToken() ? true : false,
+    isRegister: false,
     showLoginMask:false,
     data: {},
     QiniuToken: {}

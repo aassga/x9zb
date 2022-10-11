@@ -80,19 +80,19 @@ export default {
     display: none;
   }
   .HuyaXWebhMessagelist_i {
-    padding-left: 10px;
     box-sizing: border-box;
     width: 100%;
     height: 80px;
     display: flex;
     align-items: center;
-    cursor: pointer;
     justify-content: space-between;
+    border-bottom: 1px solid #dcd8d8;
+    cursor: pointer;
     &.active {
-      background-color: #f5f7fa;
+      background-color: #fffbf5;
     }
     &:hover {
-      background-color: #f5f7fa;
+      background-color: #fffbf5;
     }
     .HuyaXWebhMessagelist_i_avater_box {
       width: 25%;
@@ -130,24 +130,28 @@ export default {
       .HuyaXWebhMessagelist_i_context_t {
         width: 100%;
         height: 30px;
+        padding-right: 15px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         .HuyaXWebhMessagelist_i_context_t_name {
-          width: 70%;
+          width: 48%;
           height: 30px;
-          color: #222;
+          color: #000;
           font-size: 16px;
+          font-weight: bold;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           line-height: 30px;
         }
         .HuyaXWebhMessagelist_i_context_t_date {
-          width: 30%;
+          width: 52%;
           height: 30px;
-          font-size: 12px;
+          font-size: 14px;
           color: #a5a5a5;
+          white-space: nowrap;
+          line-height: 30px;
         }
       }
       .HuyaXWebhMessagelist_i_context_b {

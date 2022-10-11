@@ -333,7 +333,7 @@
 				   // if(this.top == (this.$refs.bbb[e].getBoundingClientRect().top + 'px')){
 					  //  return
 				   // }
-				  //  console.log(this.fightMask)
+				   console.log(this.fightMask)
 				  this.tlive = item
 				  top = this.$refs.bbb[e].getBoundingClientRect().top + 'px'
 				  left = this.$refs.bbb[e].getBoundingClientRect().left + 50 + 'px'
@@ -360,7 +360,7 @@
 					id: item.id,
 					type: 2
 				}
-				// console.log(data);
+				console.log(data);
 				collect(data).then(res => {
 					if(item.is_collect == 0){
 						this.$message.success('收藏成功')
@@ -403,9 +403,9 @@
 					}
 					let arr = ['asia','eu','bs']
 					arr.forEach((item,index)=>{
-						// console.log(r.arr[index])
+						console.log(r.arr[index])
 						r.arr[index].forEach(item1=>{
-							// console.log(item1)
+							console.log(item1)
 							if(item1.company_id === company_id){
 								data[index] = item1
 							}
@@ -428,7 +428,7 @@
 					// 		data.bs = item
 					// 	}
 					// })
-					// console.log(data)
+					console.log(data)
 					this.OddsList = data
 				}).catch(res => {
 				

@@ -1090,7 +1090,7 @@
 
 			// 选择公司
 			selectTab(item, type) {
-				// console.log(type);
+				console.log(type);
 				if (type == 2) {
 					this.id = item.id
 					this.boxLi = item.name

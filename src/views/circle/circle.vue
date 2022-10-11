@@ -407,7 +407,7 @@
 				designatedCategory(data).then(res => {
 					if (this.page == 1) {
 						this.allcircleList = res.data.list
-						// console.log(this.allcircleList);
+						console.log(this.allcircleList);
 					} else {
 
 						this.allcircleList.data = [...this.allcircleList.data, ...res.data.list.data]
@@ -483,7 +483,7 @@
 			// 删除已上传的图片
 			del(index) {
 				this.flie.splice(index, 1)
-				// console.log(this.flie);
+				console.log(this.flie);
 
 			},
 			// 圈子分类
@@ -500,7 +500,7 @@
 			beforeAvatarUpload(file) {
 
 				let QiniuToken = this.$store.state.user.QiniuToken
-				// console.log(QiniuToken);
+				console.log(QiniuToken);
 				const fileName =
 					new Date().valueOf().toString() +
 					this.$common.rand() +

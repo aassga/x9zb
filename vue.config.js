@@ -28,7 +28,7 @@ module.exports = {
   productionSourceMap: false,
   // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
   devServer: {
-    // before: require('./mock/index.js'),
+    before: require('./mock/index.js'),
     port: port,
     open: true, // npm run serve后自动打开页面
     disableHostCheck : true,

@@ -121,7 +121,13 @@ const routes = [
 				path: '/downLoad',
 				name: 'downLoad',
 				component: () => import('@/views/downLoad/downLoad'),
-				meta: { title: '下载', icon: 'el-icon-s-home',index:7 }
+				meta: { title: '下载', icon: 'el-icon-s-home',index:null }
+			},
+			{
+				path: '/dailyMission',
+				name: 'dailyMission',
+				component: () => import('@/views/dailyMission/dailyMission'),
+				meta: { title: '每日任务', icon: 'el-icon-s-home',index:7 }
 			},
 			{
 				path: '/live',

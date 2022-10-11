@@ -27,3 +27,11 @@ export function recommend(params) {
   })
 }
 
+// 等級列表
+export function getLevelList(params) {
+  return request({
+    url: 'api/level/list',
+    method: 'get',
+    params
+  })
+}

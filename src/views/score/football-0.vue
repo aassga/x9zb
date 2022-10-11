@@ -1291,7 +1291,7 @@
 						this.lock = true //锁住
 						_this.getlist()
 
-						// console.log('比赛开始了1--');
+						console.log('比赛开始了1--');
 					}
 					if (e.type == 'football_match' && item.id == e.id && item.status != e.status) {
 						// return
@@ -1302,7 +1302,7 @@
 						if (this.lock) return
 						this.lock = true //锁住
 						_this.getlist()
-						// console.log('比赛开始了2--');
+						console.log('比赛开始了2--');
 						// this.lock = true//锁住
 					}
 
@@ -1427,7 +1427,7 @@
 				let length = document.querySelectorAll('.highlight').length
 				let dom = document.querySelectorAll('.highlight')
 				// 获取元素距离顶部的距离
-				// console.log(status, dom[this.i].getBoundingClientRect().top + document.documentElement.scrollTop);
+				console.log(status, dom[this.i].getBoundingClientRect().top + document.documentElement.scrollTop);
 				if (length >= this.i && status == 'up') {
 					this.i++
 					return {

@@ -282,6 +282,7 @@
 									<div :class="{active2:type===0}" @click="type = 0">全部</div>
 									<div :class="{active2:type===1}" @click="type = 1">足球</div>
 									<div :class="{active2:type===2}" @click="type = 2">篮球</div>
+									<div :class="{active2:type===3}" @click="type = 3">电竞</div>
 								</div>
 							</div>
 							<div class="grid-header-right">
@@ -457,14 +458,14 @@
 							
 						</div>
 					</div>
-					<div>
+					<!-- <div>
 						<div class="grid-header">
 							<div class="grid-header-left"><img class="grid-header-left-icon"
 									src="../../assets/images/main-star.png" alt="">
 								<div class="grid-header-left-text">联赛积分榜</div>
 							</div>
-							<!-- <div class="grid-header-right"><a class="grid-header-right-more" target="_blank"
-									href="/database/football/9/1/232894">更多 <i></i></a></div> -->
+							<div class="grid-header-right"><a class="grid-header-right-more" target="_blank"
+									href="/database/football/9/1/232894">更多 <i></i></a></div>
 						</div>
 						<div class="rank-content">
 							<div class="rank-content-tabs">
@@ -482,7 +483,6 @@
 									<div class="rank-col-4">积分</div>
 								</div>
 								<div v-if="group == 0">
-									<!-- <div class="top-n top1" style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">A组</div> -->
 									<div class="rank-content-info-item top-n" v-for="(item,index) in rangingList"
 										:key="index">
 										<div class="rank-col-1">
@@ -505,7 +505,6 @@
 									</div>
 								</div>
 								<div v-else>
-									<!-- a组 -->
 									<div class="top-n top1"
 										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
 										A组</div>
@@ -528,7 +527,6 @@
 										<div class="rank-col-3">{{item.won}}/{{item.draw}}/{{item.loss}}</div>
 										<div class="rank-col-4">{{item.points}}</div>
 									</div>
-									<!-- B组 -->
 									<div class="top-n top1"
 										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
 										B组</div>
@@ -554,7 +552,7 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				<div class="official-activity">
 					<div class="title">
@@ -741,7 +739,7 @@
 			let data = {
 				id: this.titleTab[0].id
 			}
-			this.getRanking(data)
+			//this.getRanking(data)
 			this.getLiveList()
 			this.recommend()
 			this.classification()

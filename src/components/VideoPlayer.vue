@@ -1,5 +1,5 @@
 <template>
-  <div  v-if="reseted">
+  <div id="video_context"  v-if="reseted">
     <video class="video-js" ref="video">
       <track v-for="(crtTrack,index) in trackList"
              :key="index"
@@ -11,6 +11,9 @@
         <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
       </p>
     </video>
+    <!-- <img class="video_bottom_logo" src="@/assets/images/logo.png" alt="" srcset=""> -->
+    <el-image class="video_bottom_logo" :src="require('@/assets/images/logo.png')" alt="" srcset="" />
+
   </div>
 </template>
 
@@ -183,4 +186,13 @@ export default {
 </script>
 
 <style scoped>
+#video_context{
+  position: relative;
+}
+	#video_context .video_bottom_logo{
+		  position: absolute;
+  left: 20px;
+  bottom: 30px;
+  width: 120px;
+	}
 </style>

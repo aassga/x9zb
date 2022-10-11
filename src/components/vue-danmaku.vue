@@ -308,7 +308,7 @@
       },
       // 添加弹幕（插入到当前播放的弹幕位置）
       add(danmu) {
-        // console.log(danmu);
+        console.log(danmu);
 		// return
         const index = this.index % this.danmuList.length
         // console.log(index);

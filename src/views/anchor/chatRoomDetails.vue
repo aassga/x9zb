@@ -11,12 +11,12 @@
         >
           {{ item.name }}
           <i
-            v-show="(oneChat && oneChat > 0 && item.id == 2 && !hideChat) || inviteCount"
+            v-show="((oneChat && oneChat > 0 && !hideChat) || inviteCount) && item.id === 2"
             class="new-msg-icon"
             >{{ oneChat > 99 ? "99+" : inviteCount ? 1 :oneChat }}</i
           >
           <i
-            v-show="msgCount && msgCount > 0 && item.id == 1"
+            v-show="msgCount && msgCount > 0 && item.id === 1"
             class="new-msg-icon"
             >{{ msgCount > 99 ? "99+" : msgCount }}</i
           >
@@ -170,6 +170,7 @@ import ChatMessageNew from "@/components/ChatMessageNews";
 // import { mapGetters } from "vuex";
 export default {
   name: "ChatDetails",
+  props: ["hideChat", "qsVid", "giftList"],
   components: {
     MessageList,
     MessageInfo,
@@ -207,6 +208,7 @@ export default {
       info: {
         token: "",
       },
+      initInvite: true,
       dialogVisible: false,
       gift_jpg: "",
       targetUserInfo: {},
@@ -253,30 +255,39 @@ export default {
       leaveVid: "",
       type0_local_msg_list: [],
       type2_local_msg_list: [],
-      fileList: [],
-      uploadImgShow: false,
-      fullscreenLoading: false,
+
       chatMsgHight:0,
-      HuyaXBox:0
+      fullscreenLoading:false,
+      uploadImgShow:false,
+      fileList:[]
     };
   },
-  props: ["hideChat", "qsVid"],
   computed: {
     token() {
       return this.$store.state.user.islogin;
-    },
+    }
   },
-
   //给新的ws实例添加监听事件
   watch: {
     msgList2: {
       handler(newV, oldV) {
+        console.log("未读消息列表数据变化");
+        console.log(newV);
+        console.log("消息列表的数据");
+        console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
         this.onHandleGroupMsgChange(this.messageList);
         // 刷新视图
         this.$forceUpdate();
       },
       deep: true,
+    },
+    fd(newV, oldV) {
+      if (newV != oldV) {
+        console.log(99999999);
+        this.inviteRoom(true);
+      }
+      // c
     },
     showLoading(newV, oldV) {
       !newV ? this.toBottom() : false;
@@ -313,22 +324,21 @@ export default {
   async mounted() {
     const _that = this;
     const domScroll = document.querySelector(".chat-window");
-    domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop <=2 && this.isMore) {
+    domScroll.addEventListener("scroll", e => {
+      console.log(
+        domScroll.scrollTop,
+        "domScroll.scrollTop-domScroll.offsetHeight==="
+      );
+      if (domScroll.scrollTop <= 2 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
-        setTimeout(() => {
-          this.getChatHistoryMsg(this.initTab ? 1 : "");
-        }, 1000)
+        this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
-
-    
-    
-    // console.log(this.qsVid,"this.qsVid==============")
+    console.log(this.qsVid, "this.qsVid==============");
     this.vid = this.qsVid || "";
     let userid = "";
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -364,7 +374,7 @@ export default {
       }
     }
     this.getMessageList(); // 获取聊天列表
-    this.initToken();
+    this.initToken(true);
     this.changeHeight()
   },
   created() {
@@ -490,8 +500,8 @@ export default {
         }
       }
 
-      // console.log("新消息变更之后的数组");
-      // console.log(menuList);
+      console.log("新消息变更之后的数组");
+      console.log(menuList);
 
       return menuList;
     },
@@ -519,8 +529,8 @@ export default {
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
       if (type == 0) {
-        // console.log("默认的未读消息数组");
-        // console.log(msgList);
+        console.log("默认的未读消息数组");
+        console.log(msgList);
         this.msgList2 = msgList;
       } else {
         let falg = true;
@@ -537,8 +547,8 @@ export default {
         if (falg) {
           arr.push(msgList);
         }
-        // console.log("我接受到了新消息");
-        // console.log(arr);
+        console.log("我接受到了新消息");
+        console.log(arr);
         this.msgList2 = arr;
         this.msgCount += 1;
       }
@@ -557,7 +567,7 @@ export default {
       }
       this.msgList2 = msgList2;
     },
-    initToken() {
+    initToken(init = false) {
       const _that = this;
       this.$store.dispatch("getImToken", this.parmUserInfo)
       .then((res) => {
@@ -627,8 +637,8 @@ export default {
           let element = res.data[index];
           element.unread_count = 0;
         }
-        // console.log("请求拿到的数据");
-        // console.log(res.data);
+        console.log("请求拿到的数据");
+        console.log(res.data);
         if (this.msgList2.length > 0) {
           res.data = this.mapList(res.data, this.msgList2);
           // this.list2 = this.mapList(this.list2, newV);
@@ -686,7 +696,7 @@ export default {
     },
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      // console.log(item, "item-info=======");
+      console.log(item, "item-info=======");
       this.page = 1;
       this.handleLocalMsgList(this.ctp, "empty");
       this.roomInfo = item;
@@ -737,6 +747,7 @@ export default {
       }, 1000);
     },
     changeType(e) {
+      console.log(1210)
       this.pinInfo = "";
       this.msgList = []
       // if (this.showLoading) {
@@ -759,10 +770,11 @@ export default {
       if (e == 0) {
         this.parmUserInfo.vid = qVid;
         this.inRoomInfo(this.fd);
+
         this.handleLocalMsgList(0);
       } else {
         if (e == 2) {
-          this.inviteCount = 0
+          this.inviteCount = 0;
           this.handleLocalMsgList(2);
           this.newMsg.oneChat = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
@@ -780,7 +792,7 @@ export default {
       }
       this.changeHeight()
     },    
-    inviteRoom() {
+    inviteRoom(init = false) {
       if (!this.fd) {
         return;
       }
@@ -789,7 +801,7 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$store
         .dispatch("inviteRoom", {
-          type: this.ctp,
+          type: init ? 2 : this.ctp,
           is_new: 1,
           token: this.imUserInfo.token,
           // vid:this.parmUserInfo.vid,
@@ -798,18 +810,22 @@ export default {
           user_id: getQueryString().uid,
           channel: this.channel,
         })
-        .then((res) => {
-          // console.log(res, "res=======");
+        .then(res => {
+          if (this.initInvite) {
+            this.initInvite = false;
+            roomInfo[roomId] = res.data.vid;
+            localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+            return;
+          }
           this.parmUserInfo.vid = res.data.vid;
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-          // localStorage.setItem("vid", res.data.vid);
           this.inRoomInfo(this.fd);
           this.controlIndex = -1;
         });
     },
     getChatHistoryMsg(iniPage) {
-      // console.log(iniPage,"========getChatHistoryMsg")
+      console.log(iniPage, "========getChatHistoryMsg");
       const _that = this;
       this.showLoading = true;
       let params = {
@@ -817,30 +833,37 @@ export default {
         limit: 20,
         type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         vid: this.parmUserInfo.vid,
-        user_id: this.parmUserInfo.user_id,
+        user_id: this.parmUserInfo.user_id
       };
 
-      this.$store.dispatch("getChatHistory", params).then((res) => {
-        
-        let dataList = res.data.reverse();
-        this.showLoading = false;
-        this.initTab = false;
-        if (dataList.length === 0) {
-          this.isMore = false;
-          return;
-        }
-        // _that.msgList.unshift(...dataList);
-        // console.log(params.page)
-        this.handleLocalMsgList(
-          params.type == 2 && this.ctp == 1 ? 1 : params.type,
-          params.page != 1 ? "unshift" : "init",
-          dataList
-        );
-      })
-      .catch(err => {
-        // localStorage.clear();
-				// window.location.reload()
-      })
+      this.$store
+        .dispatch("getChatHistory", params)
+        .then(res => {
+          let dataList = res.data.reverse();
+          this.showLoading = false;
+          this.initTab = false;
+          if (dataList.length === 0) {
+            this.isMore = false;
+            return;
+          }
+          // _that.msgList.unshift(...dataList);
+          console.log(params.page);
+          this.handleLocalMsgList(
+            params.type == 2 && this.ctp == 1 ? 1 : params.type,
+            params.page != 1 ? "unshift" : "init",
+            dataList
+          );
+        })
+        .catch(res => {
+          this.showLoading = false;
+        });
+    },
+    showControl(index) {
+      if (this.controlIndex == index) {
+        this.controlIndex = -1;
+        return;
+      }
+      this.controlIndex = index;
     },
     // showControl(index) {
     //   if (this.controlIndex == index) {
@@ -864,7 +887,15 @@ export default {
       // if(_that.inRoom){
       //   return
       // }
-      this.$store.dispatch("inRoom", inRoomData).then((res) => {
+      this.$store.dispatch("inRoom", inRoomData).then(res => {
+        console.log("inRoom的数据");
+        console.log(res);
+        if (res.data.pinData && res.data.pinData != "") {
+          _that.pinInfo = {
+            text: res.data.pinData
+          };
+        }
+
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
       });
@@ -912,13 +943,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      // console.log("出现错误");
+      console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      // console.log("断开连接", e);
+      console.log("断开连接", e);
       this.ws.close();
       //重连
       this.reconnect();
@@ -935,6 +966,7 @@ export default {
       this.timeoutnum = setTimeout(() => {
         //新连接
         _that.initToken();
+        _that.initInvite = true;
         _that.lockReconnect = false;
       }, 5000);
     },
@@ -1008,7 +1040,7 @@ export default {
 
       this.$store
         .dispatch("sendMessage", data)
-        .then((res) => {
+        .then(res => {
           if (res.msg == "connection error") {
             this.initToken();
           }
@@ -1060,8 +1092,10 @@ export default {
       }
       let currentDate = new Date().getTime();
       let msgItem = {
+        avatar: this.info.avatar,
         sender: this.parmUserInfo.user_id,
         sender_nickname: this.info.user_nickname,
+        sender_exp: this.info.exp,
         text: this.msgText,
         uiCode: currentDate,
         isError: false,
@@ -1092,8 +1126,8 @@ export default {
         this.handleLocalMsgList(this.ctp, "empty");
       }
       if (data.action === "newRoom") {
-        if(this.ctp !== 2 && data.room_type === "2"){
-          this.inviteCount = this.inviteCount + 1
+        if (this.ctp != 2 && data.room_type === "2") {
+          this.inviteCount = this.inviteCount + 1;
         }
         if (data.fd != this.fd) {
           if (data.room_type === "2") {
@@ -1101,6 +1135,7 @@ export default {
           }
           if (data.room_type === "1") {
             this.newMsg.groupChat = true;
+            this.msgCount++;
           }
         }
       }
@@ -1150,6 +1185,15 @@ export default {
         }
         this.handleLocalMsgList(this.ctp, "push", data);
       }
+      if (data.action === "gift") {
+        if (this.ctp != 0) {
+          return;
+        }
+        let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
+        data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
+        this.handleLocalMsgList(this.ctp, "push", data);
+        this.$emit("onhandleSendGift", data);
+      }
       if (data.status == 200) {
         if (data.data) {
           // 晚点封装成switch case
@@ -1190,7 +1234,7 @@ export default {
             if (data.data.content.type == 1) {
               this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
-                uid: this.uid,
+                uid: this.uid
               });
               this.msgText = "";
               this.toBottom();
@@ -1198,7 +1242,7 @@ export default {
             if (data.data.content.type == 2) {
               this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
-                uid: this.uid,
+                uid: this.uid
               });
               this.toBottom();
             }
@@ -1298,20 +1342,68 @@ export default {
   left: 10px;
   margin-right: 4px;
 }
+.hi-tag {
+  display: inline-block;
+  height: 18px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+}
 .text-name {
   display: inline-block;
   color: rgb(0 0 0 / 40%);
   width: 130px;
 }
-.level-1 {
-  background: #69c331;
-  border-radius: 2px;
+.anchor-tag {
+  display: inline-block;
+  padding: 0 6px;
+  height: 18px;
+  margin-right: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 18px;
+  border-radius: 10px;
+  background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
+  color: #9c583d;
+}
+.level-tag {
   color: #fff;
   display: inline-block;
   padding: 0 4px;
+  height: 18px;
   margin-right: 4px;
-  height: 16px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 18px;
+  border-radius: 2px;
+  &.level0 {
+    background: #d1d1d1;
+  }
+  &.level1 {
+    background: #8bf093;
+  }
+  &.level2 {
+    background: #63d671;
+  }
+  &.level3 {
+    background: #5ac8b5;
+  }
+  &.level4 {
+    background: #3b8ea9;
+  }
+  &.level5 {
+    background: #235b8a;
+  }
+  &.level6 {
+    background: #3244b4;
+  }
+  &.level7 {
+    background: #602ad0;
+  }
+  &.level8 {
+    background: #9f2ad0;
+  }
+  &.level9 {
+    background: #bd20ff;
+  }
 }
 .text-info {
   display: initial;
@@ -1470,11 +1562,12 @@ form {
     line-height: 38px;
     background: #f4f4f4;
     text-align: center;
-    display: inline-block;
-    margin-right: 1px;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
     flex: 1;
-    &:hover {
+    &:hover{
       cursor: pointer;
     }
     &.on {
@@ -1486,16 +1579,16 @@ form {
     }
   }
 }
+
 #msg {
   border: 1px solid #c41d48;
   border-radius: 4px;
   padding: 6px;
   width: 75%;
   line-height: 20px;
-  // margin-top: 38px;
 }
 
-.el-drawer__header {
+::v-deep .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }
@@ -1504,8 +1597,6 @@ form {
 }
 .emoji-btn {
   position: relative;
-  // left: 10px;
-  // top: 10px;
   cursor: pointer;
 }
 ::v-deep.emoji-box {
@@ -1536,13 +1627,14 @@ form {
   height: 100%;
   .send-container {
     height: 122px;
-    position: absolute;
+    // position: absolute;
     bottom: 0;
     min-width: 335px;
     line-height: 50px;
     background: #fff;
     padding: 10px;
     border-top: 1px solid #f1f1f1;
+    border-right: 1px solid #f1f1f1;
     text-align: left;
     .inputcover {
       position: absolute;
@@ -1586,14 +1678,12 @@ form {
     }
 
     .control-footer {
-      // position: absolute;
-      // bottom: 0;
       width: 96%;
       display: flex;
       height: 35px;
       align-content: center;
-
       .send {
+        display: inline-block;
         padding: 0 20px;
         position: relative;
         right: -12px;
@@ -1627,9 +1717,12 @@ form {
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
+    &.isChat {
+      padding-top: 46px;
+    }
   }
   .chat-detail-main {
-    background: #f3f3f3;
+    background: #fff;
     padding: 0 10px 30px 10px;
     .system-tips {
       margin-top: -26px;
@@ -1654,10 +1747,16 @@ form {
 
     .msg-content {
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 16px;
       padding: 4px 0;
       word-break: break-all;
       color: #343a40;
+      &.anchor-msg {
+        .text-name, 
+        .text-info {
+          color: #ffa930;
+        }
+      }
       .msg-footer {
         font-size: 12px;
         color: #707070;
@@ -1679,6 +1778,61 @@ form {
       }
       .msg-footer {
         text-align: left;
+      }
+    }
+    .is-anchor {
+      .msg-content {
+        display: flex;
+        margin-top: 10px;
+        padding: 0 5px;
+        .msg-avatar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          max-width: 40px;
+          height: 40px;
+          margin-right: 5px;
+          border-radius: 5px;
+          overflow: hidden;
+          .avatar {
+            width: 40px;
+          } 
+        }
+        .text-info {
+          align-self: flex-start;
+          position: relative;
+          max-width: 65%;
+          min-height: 30px;
+          margin-left: 10px;
+          padding: 4px;
+          border-radius: 7px;
+          background: #eee;
+          &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 10px;
+            margin-top: 5px;
+            margin-left: -18px;
+            border-color: transparent #eee transparent transparent;
+            border-style: solid;
+            border-width: 4px 10px;
+          }
+        }
+        &.my-self {
+          flex-direction: row-reverse;
+          .text-info {
+            margin-right: 10px;
+            margin-left: 0;
+            &::after {
+              margin-left: calc(100% - 3px);
+              border-color: transparent transparent transparent #eee;
+            }
+          }
+        }
       }
     }
   }
