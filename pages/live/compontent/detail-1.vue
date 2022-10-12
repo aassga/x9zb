@@ -656,18 +656,18 @@ export default {
     // this.addDom();
     if (window.ws) {
       window.ws.close();
-      console.log("close init");
+      // console.log("close init");
     }
     this.getReportList();
     this.initInfo(true);
     this.getGiftList();
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      console.log(
-        domScroll.scrollTop,
-        domScroll.scrollTop - domScroll.offsetHeight,
-        "domScroll.scrollTop-domScroll.offsetHeight==="
-      );
+      // console.log(
+      //   domScroll.scrollTop,
+      //   domScroll.scrollTop - domScroll.offsetHeight,
+      //   "domScroll.scrollTop-domScroll.offsetHeight==="
+      // );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
         if (!this.isErrorMsg) {
@@ -714,8 +714,8 @@ export default {
       if (item.avatar === "") {
         return require("./../../../static/images/home/userLogo.png");
       } else {
-        // return window.location.origin + item.avatar;
-        return 'http://huidu.x9zb.live' + item.avatar;
+        return window.location.origin + item.avatar;
+        // return 'http://huidu.x9zb.live' + item.avatar;
       }
     },
 		clearStatus() {
@@ -743,7 +743,7 @@ export default {
       this.sendMsgByApi(currentDate);
     },
     onHandleClickImg(img) {
-      console.log("我是点击图片事件");
+      // console.log("我是点击图片事件");
       let url = img;
       if (img.indexOf("/") == 0) {
         url = window.location.origin + img;
@@ -769,11 +769,11 @@ export default {
       this.isScroller = false;
     },
     resend(item) {
-      console.log(item);
+      // console.log(item);
       this.handleLocalMsgList(this.current).map((val, index) => {
         if (val == item) {
           this.handleLocalMsgList(this.current).splice(index, 1);
-          console.log(this.msgList);
+          // console.log(this.msgList);
         }
       });
       this.msgText = item.text;
@@ -792,8 +792,8 @@ export default {
     getReportList() {
       const _this = this;
       this.$u.get("api/report/classifyList").then((res) => {
-        console.log("举报列表");
-        console.log(res);
+        // console.log("举报列表");
+        // console.log(res);
         _this.reportList = res;
         if (res.length > 0) {
           _this.reportValue = res[0].id;
@@ -835,7 +835,7 @@ export default {
       this.msgType = e;
       if (e == 2) {
         var dol = document.getElementById("add-img");
-        console.log(dol, "dol--------");
+        // console.log(dol, "dol--------");
         dol.innerHtml += "<div>666</div>";
       }
     },
@@ -914,7 +914,7 @@ export default {
         })
         .then((res) => {
           this.modalMsgList = res;
-          console.log(this.modalMsgList, "this.modalMsgList======");
+          // console.log(this.modalMsgList, "this.modalMsgList======");
           this.controlIndex = -1;
         });
     },
@@ -954,15 +954,15 @@ export default {
         message: str,
       };
       if (this.hidevideo) {
-        console.log("开始调用======");
-        console.log("Android======", JSON.stringify(data), data);
+        // console.log("开始调用======");
+        // console.log("Android======", JSON.stringify(data), data);
         if (getQueryString().device == "iphone") {
-          console.log("开始调用IOS======", data);
+          // console.log("开始调用IOS======", data);
           window.webkit.messageHandlers.interOp.postMessage(data);
           return;
         }
         if (typeof AndroidInterface !== undefined) {
-          console.log("Android======", JSON.stringify(data), data);
+          // console.log("Android======", JSON.stringify(data), data);
           AndroidInterface.postmaessage(JSON.stringify(data));
         }
       } else {
@@ -1035,11 +1035,11 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      console.log(
-        this.reconnectStatus,
-        this.isMore,
-        "this.reconnectStatus========"
-      );
+      // console.log(
+      //   this.reconnectStatus,
+      //   this.isMore,
+      //   "this.reconnectStatus========"
+      // );
       if (
         this.parmUserInfo.vid == null ||
         this.parmUserInfo.vid == "" ||
@@ -1097,17 +1097,17 @@ export default {
             this.isMore = false;
             return;
           }
-          console.log(params, "======params", dataList);
+          // console.log(params, "======params", dataList);
           this.handleLocalMsgList(
             params.type == 2 && this.current == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
             dataList
           );
-          console.log("///////////////////");
+          // console.log("///////////////////");
           // _that.msgList.unshift(...dataList);
         })
         .catch((res) => {
-          console.log(123123123);
+          // console.log(123123123);
           this.isErrorMsg = false;
         })
         .finally((res) => {
@@ -1115,7 +1115,7 @@ export default {
         });
     },
     showControl(index) {
-      console.log("我是点击消息事件");
+      // console.log("我是点击消息事件");
       this.controlIndex = index;
     },
     // mute(item) {
@@ -1241,8 +1241,8 @@ export default {
           this.initInfo(true);
           return;
         }
-        console.log("inRoom的数据");
-        console.log(res);
+        // console.log("inRoom的数据");
+        // console.log(res);
         if (res.pinData && res.pinData != "") {
           _that.pinInfo = {
             text: res.pinData,
@@ -1302,13 +1302,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      console.log("出现错误");
+      // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      console.log("断开连接", e);
+      // console.log("断开连接", e);
       // this.ws.close()
       //重连
       this.reconnect();
@@ -1497,7 +1497,7 @@ export default {
       if (data.action === "send") {
         // let list = this.msgList;
         // list.push(data);
-        console.log(this.senderid, "123123", data, " this.info======");
+        // console.log(this.senderid, "123123", data, " this.info======");
         //自己发送的消息不渲染到列表
 
         if (data.sender_nickname.includes("游客") && this.current == 0) {
@@ -1617,7 +1617,6 @@ export default {
           this.messageDataList = data;
           break;
         case "push":
-          console.log('data',data)
           if(data.pic !== undefined) {
             data.pic = window.location.origin + data.pic
           }
@@ -1736,7 +1735,7 @@ export default {
       if (type == 1) {
         data.gift_id = item.gift_id;
       }
-      console.log("is_login: ", this.is_login());
+      // console.log("is_login: ", this.is_login());
       if (!this.is_login()) {
         return this.$u.toast("请先登录");
       }
@@ -1759,7 +1758,7 @@ export default {
     },
     // 禮物顯示
     initMachineSVGA(item) {
-      console.log("gift svga", item);
+      // console.log("gift svga", item);
       var mycanvas = document.getElementById("demoCanvas");
       let _this = this;
       let player = new SVGA.Player("#demoCanvas");
@@ -1768,20 +1767,20 @@ export default {
       parser.load(item.swf, function (videoItem) {
         player.setVideoItem(videoItem);
         player.startAnimation();
-        console.log("1", time);
+        // console.log("1", time);
         if (_this.haveSvga) {
           clearTimeout(_this.svgaTimeOut);
         } else {
           _this.haveSvga = true;
         }
         _this.svgaTimeOut = setTimeout(() => {
-          console.log("2", time);
+          // console.log("2", time);
           player.stopAnimation();
         }, time);
       });
     },
     onhandleSendGift(data) {
-      console.log(data);
+      // console.log(data);
       let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
       this.initMachineSVGA(gift);
     },

@@ -353,7 +353,7 @@
             },
             // 返回
             back() {
-                this.$u.route({type:'back'});
+               this.$router.back()
             }
         },  
     }

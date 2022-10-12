@@ -684,7 +684,6 @@ export default {
 
         this.msgList2 = arr;
         this.msgCount += 1;
-        console.log(this.msgCount)
         this.messageList = this.mapList(this.messageList, this.msgList2);
         this.onHandleGroupMsgChange(this.messageList);
       }
@@ -727,7 +726,6 @@ export default {
       } else if (type == 4) {
         //刷新重置
         this.player.pause();
-        console.log(this.player);
         this.player.src({
           src: this.qualityArr[this.qualityIndex],
         });
@@ -784,8 +782,8 @@ export default {
           element.unread_count = num.unreead_count;
         })
       }
-      console.log("请求拿到的数据");
-      console.log(res);
+      // console.log("请求拿到的数据");
+      // console.log(res);
       if (this.msgList2.length > 0) {
         res = this.mapList(res, this.msgList2);
         // this.list2 = this.mapList(this.list2, newV);
@@ -795,8 +793,8 @@ export default {
         this.onHandleGroupMsgChange(res);
       }
       // this.onHandleMenuChange(this.messageList);
-      console.log("列表的数据");
-      console.log(res);
+      // console.log("列表的数据");
+      // console.log(res);
       this.messageList = res;
     },
     // 获取礼物列表
@@ -808,7 +806,7 @@ export default {
 
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, this.current, "item-info=======");
+      // console.log(item, this.current, "item-info=======");
 
       this.showMsgInfo = true;
       this.roomInfo = item;
@@ -843,7 +841,7 @@ export default {
         .then((res) => {
           this.userInfo = res.userData;
           this.qsVid = res.vid;
-          console.log("==============res.userData.vid", res.vid);
+          // console.log("==============res.userData.vid", res.vid);
           this.chat_msg_close = res.chat_msg_close;
           // 编辑主播公告
           res.userData.announcement1 = [];
@@ -858,12 +856,12 @@ export default {
           this.$store.dispatch("joinGroup", {
             id: id,
           });
-          console.log(res.info.starttime, res.info.servertime);
+          // console.log(res.info.starttime, res.info.servertime);
           if (
             res.info.starttime - res.info.servertime > 0 &&
             res.info.starttime > 0
           ) {
-            console.log("qsqweqweqewqerwerqqwrqer");
+            // console.log("qsqweqweqewqerwerqqwrqer");
             this.counttDown = res.info.starttime - res.info.servertime;
           }
           if (JSON.stringify(res.info.clarity) == "{}") {
@@ -898,7 +896,7 @@ export default {
     },
 
     change(e) {
-      console.log(e, "e==========");
+      // console.log(e, "e==========");
       this.current = e;
       this.showMsgInfo = false;
       if (e == 4) {
