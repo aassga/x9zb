@@ -146,7 +146,7 @@
       },
       setTimeOut() {
         setTimeout(() => {
-          // console.log('转动结束')
+          console.log('转动结束')
           this.$emit('afterClick', {
             type: 'end',
             content: this.prizeList[this.targetIndex],
@@ -156,7 +156,7 @@
         }, this.duration * 1000 + 100)
       },
       endAction() {
-        // console.log('本次选中的：' + this.prizeList[this.targetIndex].gift_name)
+        console.log('本次选中的：' + this.prizeList[this.targetIndex].gift_name)
       }
     }
   }

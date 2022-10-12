@@ -57,9 +57,10 @@
 		},
 		methods:{
 			getList(type){
+				let arr = [-1,-1,0,1,3,2]
 				// 正在直播
 				let data = {
-					type:type == 2?0:type == 3?1:2
+					type:arr[type]
 				}
 				this.$u.get('/api/live_streaming/getLiveList', data).then(res => {
 					this.liveList = res

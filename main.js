@@ -9,7 +9,7 @@ import httpInterceptor from '@/common/http.interceptor.js'
 import Vue from 'vue'
 // 引入video.js
 import Videojs from 'video.js'
-// import VEmojiPicker from 'v-emoji-picker'
+import VEmojiPicker from 'v-emoji-picker'
 import 'video.js/dist/video-js.min.css' 
 Vue.prototype.$video = Videojs //使用video.js时用$video
 
@@ -45,7 +45,7 @@ Vue.prototype.$common = common
 Vue.component('downloadHead',downloadHead)
 Vue.use(downloadHead)
 Vue.use(uView);
-// Vue.use(VEmojiPicker)
+Vue.use(VEmojiPicker)
 
 Vue.prototype.$store = store;
 // #ifdef VUE3

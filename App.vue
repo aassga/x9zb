@@ -5,7 +5,7 @@
 	export default {
 		onLaunch: function() {
 			let _this = this
-			// console.log("小九直播");
+			console.log("小九直播");
 			setTimeout(res => {
 				this.getSystem()
 				let information = this.$common.get('information') || {}
@@ -64,7 +64,12 @@
 					}
 				}
 			});
-			
+			let userid = '';
+			const userInfo = JSON.parse(localStorage.getItem("userInfo"))
+			if (!userInfo && !localStorage.getItem("userid")) {
+				userid = 10000000 + Math.random().toString().slice(-6);
+				localStorage.setItem("userid", userid);
+			}
 		},
 		onShow: function() {},
 		onHide: function() {},
@@ -72,9 +77,9 @@
 			// 获取系统配置
 			getSystem() {
 				const channel = getQueryString().channel_code || localStorage.getItem('channel');
-				// console.log('获取url参数')
-				// console.log(getQueryString())
-				// console.log(channel)
+				console.log('获取url参数')
+				console.log(getQueryString())
+				console.log(channel)
 				this.$u.get(channel ? `/api/universal/getHot?channel_code=${channel}` : '/api/universal/getHot', {}).then(res => {
 					// this.$db.set('system'.res.data)
 					res.announcement1 = []
@@ -88,7 +93,7 @@
 				// 监听事件
 				self.tim.on(self.TIM.EVENT.SDK_READY, function(event) {
 					// 收到离线消息和会话列表同步完毕通知，接入侧可以调用 sendMessage 等需要鉴权的接口
-					// console.log("SDK_READY ===================");
+					console.log("SDK_READY ===================");
 				});
 
 				self.tim.on(self.TIM.EVENT.ERROR, function(event) {

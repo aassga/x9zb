@@ -181,7 +181,10 @@
 			}
 		},
 		mounted() {
-			
+			if (localStorage.getItem('isRegister') == '1') {
+				this.type = 3;
+			}
+			localStorage.removeItem('isRegister');
 		},
 		methods:{
 			onHandleGoPrivacy(){
@@ -207,18 +210,24 @@
 					this.$u.get('/api/user/login',obj).then(res => {
 						this.$store.state.info = res
 						localStorage.setItem("userInfo",JSON.stringify(res))
+						localStorage.removeItem("userid");
 						uni.setStorage({
 							key:'information',
 							data:res
 						})
-						this.$store.dispatch('getInfo',this.$u)
-						this.$store.dispatch('logout','')
-						// setTimeout(res=>{
-						// 	this.$store.dispatch('loginTim','')
-						// },200)
-						uni.reLaunch({
-							url:'/pages/competition/index'
-						})
+						// this.$store.dispatch('getInfo',this.$u)
+						// this.$store.dispatch('logout','')
+						setTimeout(() => {
+							// this.$store.dispatch('loginTim','')
+							let hash = localStorage.getItem('backTo');
+							localStorage.removeItem('backTo');
+							if (hash) {
+								return location.hash = hash;
+							}
+							uni.reLaunch({
+								url:'/pages/competition/index'
+							})
+						}, 200)
 					})
 				}
 				if(type == 3) {//忘记密码
@@ -240,7 +249,9 @@
 						this.from.guest_id = userid
 					}
 					this.$u.get('/api/user/registered',this.from).then(res => {
-						
+						if(res){
+							this.type = 1;
+						}
 					})
 				}
 				
@@ -281,9 +292,8 @@
 				// console.log();
 			},
 			back(){
-				console.log(this.type)
 				if(this.type == 1){
-					this.$router.back(-1);
+					this.$u.route({type:'back'})
 				}else {
 					this.type = 1
 					this.tabList = [

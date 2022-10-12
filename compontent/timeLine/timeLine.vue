@@ -113,7 +113,7 @@
 				if(this.sum==this.tlive.length){this.isScroll=false;}
 			},
 			async getScroll(){
-				// console.log('0');
+				console.log('0');
 				if(!this.isScroll){return;}
 				let info=[];
 				// 返回位置信息加入数组

@@ -5,17 +5,16 @@
     v-show="showMsgInfo || current != 2"
     :class="{
       'app-version': hidevideo,
-      'add-margin': current == 2,
+      'add-margin': current == 1,
       'is-ios': iosDevice,
     }"
   >
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div
-      class="announcement"
-      v-if="current !== 2 || $store.state.system.announcement === undefined"
-    >
+    <div class="announcement"
+			v-if="current !== 2 || $store.state.system.announcement === undefined"		
+		>
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -29,35 +28,31 @@
         <div v-if="pinInfo" class="pin-info">
           {{ pinInfo.text }}
         </div>
-        <div
-          class="chat-window"
-          :class="{ 'chat-pin': pinInfo }"
-          @click="clearStatus()"
-        >
-          <div class="chat-detail-main current0" ref="content-list">
+        <div class="chat-window" :class="{ 'chat-pin': pinInfo }" @click="clearStatus()">
+          <div
+            class="chat-detail-main current0"
+            ref="content-list"
+          >
             <div v-for="(item, index) in messageDataList" :key="index">
               <div class="system-tips" v-if="item.action === 'system'">
-                <template v-if="current === 0">
-                  <img
-                    src="../../../static/images/live/HiTag.png"
-                    class="hi-tag"
-                    v-if="
-                      item.text ? item.text.indexOf('进入直播间') !== -1 : false
-                    "
-                  />
-                  <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                  <span
-                    class="level-tag"
-                    :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                    v-if="
-                      item.sender_exp &&
-                      item.action !== 'gift' &&
-                      item.sender != uid
-                    "
-                    >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                  >
-                </template>
-
+                <img
+                  src="../../../static/images/live/HiTag.png"
+                  class="hi-tag"
+                  v-if="
+                    item.text ? item.text.indexOf('进入直播间') !== -1 : false
+                  "
+                />
+                <span class="anchor-tag" v-if="item.sender == uid">主播</span>
+                <span
+                  class="level-tag"
+                  :class="`level${item.sender_exp ? item.sender_exp : 0}`"
+                  v-if="
+                    item.sender_exp &&
+                    item.action !== 'gift' &&
+                    item.sender != uid
+                  "
+                  >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                >
                 {{ item.text }}
               </div>
               <template v-else>
@@ -67,50 +62,51 @@
                     item.channel == 'null' ||
                     !item.channel ||
                     item.channel === channel ||
-                    (!channel && item.channel === '000') ||
-                    item.channel === null
+                    (!channel && item.channel === '000')
                   "
                 >
                   <div class="msg-box">
                     <div class="msg-container"
-                      :class="{'anchor-msg': current === 1 }"
-                    >
+										:class="{'anchor-msg': current === 1 }"
+										>
                       <div
                         class="msg-content"
                         :class="{
                           'my-self': (Number(item.sender) === parmUserInfo.user_id || item.sender === parmUserInfo.user_id) && current === 1,
                         }"
-                        @click.stop="showControl(index)"
+												@click.stop="showControl(index)"
                       >
-                        <template v-if="current === 0">
-                          <img
-                            src="../../../static/images/live/HiTag.png"
-                            class="hi-tag"
-                            v-if="
-                              item.text
-                                ? item.text.indexOf('进入直播间') !== -1
-                                : false
-                            "
-                          />
-                          <span class="anchor-tag" v-if="item.sender == uid"
-                            >主播</span
-                          >
-                          <span
-                            class="level-tag"
-                            :class="`level${
-                              item.sender_exp ? item.sender_exp : 0
-                            }`"
-                            v-if="
-                              item.sender_exp &&
-                              item.action !== 'gift' &&
-                              item.sender != uid
-                            "
-                            >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                          >
-                        </template>
-                        <div
+												<template v-if="current === 0">												
+													<img
+														src="../../../static/images/live/HiTag.png"
+														class="hi-tag"
+														v-if="
+															item.text
+																? item.text.indexOf('进入直播间') !== -1
+																: false
+														"
+													/>
+													<span class="anchor-tag" v-if="item.sender == uid"
+														>主播</span
+													>
+													<span
+														class="level-tag"
+														:class="`level${
+															item.sender_exp ? item.sender_exp : 0
+														}`"
+														v-if="
+															item.sender_exp &&
+															item.action !== 'gift' &&
+															item.sender != uid
+														"
+														>Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+													>
+												</template>
+												<div
                           class="msg-avatar"
-                          v-if="(item.sender != parmUserInfo.user_id) && current === 1"
+                          v-if="
+                            item.sender != parmUserInfo.user_id && current === 1
+                          "
                         >
                           <img class="avatar" :src="avararImg(item)" />
                         </div>
@@ -158,7 +154,7 @@
                           </div>
                         </template>
                         <div
-                        v-if="!item.pic && item.text"
+                          v-if="!item.pic && item.text"
                           @click="openAppUrl(item.text)"
                           class="text-info"
                           v-html="getText(item.text)"
@@ -178,6 +174,8 @@
                           v-if="controlIndex === index"
                           class="msg-control other"
                         >
+                          <!--  <div @click="mute(item)">禁言</div>
+														<div @click="freeze(item)">冻结</div> -->
                           <div @click="copyText(item)">复制</div>
                           <div
                             v-if="system.report == 1"
@@ -329,6 +327,47 @@
         <img v-else :src="prevImg" />
       </div> -->
     </div>
+
+    <div class="gift-box" v-show="isShowGiftBox">
+      <div class="gift-header">
+        <img
+          class="close"
+          src="/static/images/live/close.png"
+          @click="isShowGiftBox = false"
+        />
+      </div>
+      <div class="gift-content">
+        <div class="arrow-left" @click="giftScroll(0)"></div>
+        <div class="gift-list" ref="giftList">
+          <div
+            class="gift-item"
+            :class="{ selected: selectGiftIndex === index }"
+            v-for="(it, index) in giftList"
+            :key="it.id"
+            @click="giftClick(index)"
+          >
+            <img class="gift-icon" :src="it.gifticon" />
+            <div class="gift-name">{{ it.giftname }}</div>
+            <div class="gift-cost">{{ it.needcoin }}钻石</div>
+          </div>
+        </div>
+        <div class="arrow-right" @click="giftScroll(1)"></div>
+      </div>
+      <div class="balance">
+        <div class="left">
+          <span
+            >我的钻石:
+            {{ is_login() ? parseInt($store.state.info.balances) : 0 }}</span
+          >
+        </div>
+        <div class="right" @click="showDiamondDirections = true">
+          如何获得钻石?
+        </div>
+        <div class="gift-send" @click="handselGift(0)">赠送</div>
+      </div>
+    </div>
+    <div id="demoCanvas" v-if="current == 0"></div>
+
     <u-popup border-radius="20" mode="bottom" v-model="reportListShow">
       <scroll-view class="reportList">
         <div class="reportList_context">
@@ -349,6 +388,7 @@
         </div>
       </scroll-view>
     </u-popup>
+
     <u-popup v-model="share" mode="center" border-radius="20" :closeable="true">
       <view class="share-box">
         <view class="share-box-title">分享直播间</view>
@@ -358,6 +398,7 @@
         </view>
       </view>
     </u-popup>
+
     <u-popup
       v-model="uploadImg"
       mode="center"
@@ -372,32 +413,65 @@
       ></u-upload>
       <u-button @click="submit">上傳</u-button>
     </u-popup>
+    <!-- 如何獲得鑽石 -->
+    <view class="diamondDirections" v-if="showDiamondDirections">
+      <view class="content">
+        <view class="contentBtns">
+          <!-- <image class="btnImg" src="/static/images/daily/diamond-directions-btn-1.png" @click="diamondDirectionsBtnClick(true)" />
+					<image class="btnImg" src="/static/images/daily/diamond-directions-btn-2.png" @click="diamondDirectionsBtnClick(false)" />
+					<image class="btnImg" src="/static/images/daily/diamond-directions-btn-3.png" @click="diamondDirectionsBtnClick(false)" /> -->
+          <view class="BtnLeft">
+            <view class="icon-border" @click="diamondDirectionsBtnClick(true)">
+              <view class="icon">成功<br />注冊</view>
+            </view>
+            <view class="text">注冊成功即送188元紅包和豪华钻石礼包一份</view>
+          </view>
+          <view class="BtnCenter">
+            <view class="icon-border" @click="diamondDirectionsBtnClick(false)">
+              <view class="icon">登录<br />获得钻石</view>
+            </view>
+            <view class="text"
+              >每日登录即刻获得钻石, 连续登录天数越长, 钻石越多</view
+            >
+          </view>
+          <view class="BtnRight">
+            <view class="icon-border" @click="diamondDirectionsBtnClick(false)">
+              <view class="icon">完成<br />每日任务</view>
+            </view>
+            <view class="text">完成每日任务, 即刻领取相应的钻石奖励</view>
+          </view>
+        </view>
+      </view>
+      <img
+        class="closeBtn"
+        src="static/images/daily/close2.png"
+        @click="showDiamondDirections = false"
+      />
+    </view>
   </div>
 </template>
 
 <script>
+import SVGA from "@/common/svga.min.js";
 import { getQueryString } from "@/common/Qs";
 import { getUUID } from "@/common/uuid";
-import _assertThisInitialized from "@babel/runtime/helpers/assertThisInitialized";
-import { VEmojiPicker } from "v-emoji-picker";
 export default {
   name: "information-detail",
   props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
-  components: {
-    VEmojiPicker,
-  },
+  components: {},
   data() {
     return {
       reportListShow: false,
       reportList: [],
       reportValue: "",
+      isMore: true,
       isErrorMsg: true,
       url: window.location.href,
       modalMsgList: [],
       isReadOnly: false,
       uploadImg: false,
       msgText: "",
-      messageDataList: [],
+			messageDataList: [],
       msgList0: [],
       msgList1: [],
       msgList2: [],
@@ -450,16 +524,26 @@ export default {
       reconnectStatus: false,
       share: false,
       shareUrl: "",
-      info: null,
+      info: {},
+      canGet: true,
+      lastVid: "",
       type0_local_msg_list: [],
       type2_local_msg_list: [],
-      historyData: [],
+      isShowGiftBox: false,
+      giftList: [], //礼物列表
+      selectGiftIndex: null,
+      showDiamondDirections: false,
       initInvite: true,
+      haveSvga: false,
+      svgaTimeOut: null,
     };
   },
   computed: {
     system() {
       return this.$store.state.system;
+    },
+    userInfo() {
+      return this.$store.state.info;
     },
   },
   //给新的ws实例添加监听事件
@@ -475,7 +559,6 @@ export default {
         }
       }
     },
-
     fd(newVal, oldVal) {
       if (newVal != oldVal) {
         if (this.current == 0) {
@@ -485,7 +568,7 @@ export default {
       }
     },
     showLoading(newV, oldV) {
-      if (!newV && !this.isScroller) {
+      if (!newV && this.page == 1) {
         setTimeout(() => {
           this.toBottom();
         }, 20);
@@ -503,12 +586,13 @@ export default {
       }
     },
     current(newVal, oldVal) {
-      this.messageDataList = [];
+			this.messageDataList = [];
       this.initBase();
       if (oldVal == 2) {
         // this.leaveRoom();
         this.$emit("leaveRoom");
       }
+
       if (newVal != oldVal) {
         //this.addDom();
         this.msgType = 1;
@@ -538,7 +622,6 @@ export default {
       }
     },
     showMsgInfo(newVal, oldVal) {
-      // console.log(123123,newVal,"newVal=====")
       if (this.roomDetailData.room_type == 2 && newVal == false) {
         this.leaveRoom();
         this.$emit("leaveRoom");
@@ -563,21 +646,28 @@ export default {
   updated() {
     this.toBottom();
   },
-
+  created() {
+    if (this.is_login()) {
+      this.$store.dispatch("getInfo", this.$u);
+    }
+    this.uid = this.$route.query.id;
+  },
   mounted() {
     // this.addDom();
     if (window.ws) {
       window.ws.close();
-      // console.log("close init")
+      console.log("close init");
     }
     this.getReportList();
     this.initInfo(true);
+    this.getGiftList();
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      // console.log( domScroll.scrollTop,
-      //   domScroll.scrollTop - domScroll.offsetHeight,
-      //   "domScroll.scrollTop-domScroll.offsetHeight==="
-      // );
+      console.log(
+        domScroll.scrollTop,
+        domScroll.scrollTop - domScroll.offsetHeight,
+        "domScroll.scrollTop-domScroll.offsetHeight==="
+      );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
         if (!this.isErrorMsg) {
@@ -585,7 +675,7 @@ export default {
           this.getChatHistoryMsg();
           return;
         }
-        this.debounce(this.addPage(), 2000);
+        this.debounce(this.addPage(), 1000);
         this.isScroller = true;
       }
     });
@@ -620,27 +710,15 @@ export default {
     });
   },
   methods: {
-    avararImg(item){
-      if(item.avatar === ""){
-        return require('./../../../static/images/home/userLogo.png')
-      }else{
-        return window.location.origin + item.avatar
+		avararImg(item) {
+      if (item.avatar === "") {
+        return require("./../../../static/images/home/userLogo.png");
+      } else {
+        // return window.location.origin + item.avatar;
+        return 'http://huidu.x9zb.live' + item.avatar;
       }
     },
-    addPage() {
-      console.log("page", this.page);
-      return this.page++;
-    },
-    debounce(fn, delay) {
-      let timer = null;
-      return function () {
-        if (timer) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(fn, delay);
-      };
-    },
-    clearStatus() {
+		clearStatus() {
       this.controlIndex = -1;
     },
     submit() {
@@ -665,14 +743,12 @@ export default {
       this.sendMsgByApi(currentDate);
     },
     onHandleClickImg(img) {
-      // console.log('我是点击图片事件')
+      console.log("我是点击图片事件");
       let url = img;
       if (img.indexOf("/") == 0) {
         url = window.location.origin + img;
       }
       uni.previewImage({
-        indicator: "number",
-        loop: true,
         urls: [url],
       });
     },
@@ -693,10 +769,11 @@ export default {
       this.isScroller = false;
     },
     resend(item) {
-      // console.log(item)
+      console.log(item);
       this.handleLocalMsgList(this.current).map((val, index) => {
         if (val == item) {
           this.handleLocalMsgList(this.current).splice(index, 1);
+          console.log(this.msgList);
         }
       });
       this.msgText = item.text;
@@ -715,8 +792,8 @@ export default {
     getReportList() {
       const _this = this;
       this.$u.get("api/report/classifyList").then((res) => {
-        // console.log('举报列表')
-        // console.log(res)
+        console.log("举报列表");
+        console.log(res);
         _this.reportList = res;
         if (res.length > 0) {
           _this.reportValue = res[0].id;
@@ -758,11 +835,10 @@ export default {
       this.msgType = e;
       if (e == 2) {
         var dol = document.getElementById("add-img");
-        // console.log(dol,'dol--------')
+        console.log(dol, "dol--------");
         dol.innerHtml += "<div>666</div>";
       }
     },
-
     openLink(link) {
       window.open(link);
     },
@@ -838,7 +914,7 @@ export default {
         })
         .then((res) => {
           this.modalMsgList = res;
-          // console.log(this.modalMsgList, "this.modalMsgList======")
+          console.log(this.modalMsgList, "this.modalMsgList======");
           this.controlIndex = -1;
         });
     },
@@ -871,25 +947,26 @@ export default {
       this.msgText = result;
     },
     openAppUrl(str) {
-      var strRegex = /(https?:\/\/[^\s]+)/g;
-      var re = new RegExp(strRegex);
-      if (re.test(str)) {
-        let data = { action: "blank", message: str };
-        if (this.hidevideo) {
-          // console.log("开始调用======")
-          // console.log("Android======",JSON.stringify(data),data)
-          if (getQueryString().device == "iphone") {
-            // console.log("开始调用IOS======",data)
-            window.webkit.messageHandlers.interOp.postMessage(data);
-            return;
-          }
-          if (typeof AndroidInterface !== undefined) {
-            // console.log("Android======",JSON.stringify(data),data)
-            AndroidInterface.postmaessage(JSON.stringify(data));
-          }
-        } else {
-          window.open(str);
+      var reg = /(https?:\/\/[^\s]+)/g;
+      str = str.match(reg)[0];
+      let data = {
+        action: "blank",
+        message: str,
+      };
+      if (this.hidevideo) {
+        console.log("开始调用======");
+        console.log("Android======", JSON.stringify(data), data);
+        if (getQueryString().device == "iphone") {
+          console.log("开始调用IOS======", data);
+          window.webkit.messageHandlers.interOp.postMessage(data);
+          return;
         }
+        if (typeof AndroidInterface !== undefined) {
+          console.log("Android======", JSON.stringify(data), data);
+          AndroidInterface.postmaessage(JSON.stringify(data));
+        }
+      } else {
+        window.open(str);
       }
     },
     getText(str) {
@@ -958,17 +1035,24 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      // console.log(this.reconnectStatus,"this.reconnectStatus========")
+      console.log(
+        this.reconnectStatus,
+        this.isMore,
+        "this.reconnectStatus========"
+      );
       if (
         this.parmUserInfo.vid == null ||
         this.parmUserInfo.vid == "" ||
-        this.reconnectStatus
+        this.reconnectStatus ||
+        !this.isMore ||
+        !this.canGet
       ) {
         return;
       }
+      this.canGet = false;
       const _that = this;
       const params = {
-        page: 1,
+        page: iniPage || this.page,
         limit: 50,
         type:
           this.current == 2
@@ -980,11 +1064,12 @@ export default {
         user_id: this.parmUserInfo.user_id,
       };
       this.lastpage = params.page;
+      this.lastVid = params.vid;
       if (!iniPage && this.page == 1) {
         return;
       }
-      // console.log(this.roomDetailData,"this.roomDetailData======")
       this.showLoading = true;
+
       this.$u
         .get(
           `api/chat/getChatHistory?type=${params.type}&user_id=${
@@ -1003,7 +1088,6 @@ export default {
             return;
           }
           let dataList = res.reverse();
-          this.historyData = res;
           this.lockPage = true;
           if (dataList.length <= 10) {
             this.isScroller = true;
@@ -1013,79 +1097,87 @@ export default {
             this.isMore = false;
             return;
           }
-          // console.log(params,"======params",dataList)
+          console.log(params, "======params", dataList);
           this.handleLocalMsgList(
             params.type == 2 && this.current == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
             dataList
           );
-          // console.log('///////////////////')
+          console.log("///////////////////");
           // _that.msgList.unshift(...dataList);
+        })
+        .catch((res) => {
+          console.log(123123123);
+          this.isErrorMsg = false;
+        })
+        .finally((res) => {
+          this.canGet = true;
         });
     },
     showControl(index) {
-      // console.log('我是点击消息事件')
+      console.log("我是点击消息事件");
       this.controlIndex = index;
     },
-    mute(item) {
-      const _that = this;
-      const data = {
-        type: 0,
-        mute: 1,
-        token: this.imUserInfo.token,
-        vid: item.vid,
-        fd: this.fd,
-        user_id: item.sender,
-      };
-      this.$u.post("api/chat/mute", data).then((res) => {
-        this.controlIndex = "";
-      });
-    },
-    freeze(item) {
-      const _that = this;
-      const data = {
-        type: 0,
-        freeze: 1,
-        token: this.imUserInfo.token,
-        vid: item.vid,
-        fd: this.fd,
-        user_id: item.sender,
-      };
-      this.$u.post("api/chat/freeze", data).then((res) => {
-        this.controlIndex = "";
-      });
-    },
-    pin(item) {
-      const _that = this;
-      const data = {
-        type: 0,
-        pin: 1,
-        token: this.imUserInfo.token,
-        vid: item.vid,
-        fd: this.fd,
-        msg_id: item.msg_id,
-      };
-      this.$u.post("api/chat/pin", data).then((res) => {
-        this.controlIndex = "";
-      });
-    },
-    delMsg(item) {
-      const _that = this;
-      const data = {
-        type: 0,
-        msg_id: item.msg_id,
-        token: this.imUserInfo.token,
-        both: 2,
-        vid: item.vid,
-        fd: this.fd,
-      };
-      this.$u.post("api/chat/deleteMessage", data).then((res) => {
-        this.controlIndex = "";
-        this.getChatHistoryMsg();
-        // console.log('shanchu')
-      });
-    },
-    inviteRoom() {
+    // mute(item) {
+    // 	const _that = this;
+    // 	const data = {
+    // 		type: 0,
+    // 		mute: 1,
+    // 		token: this.imUserInfo.token,
+    // 		vid: item.vid,
+    // 		fd: this.fd,
+    // 		user_id: item.sender
+    // 	};
+    // 	this.$u.post('api/chat/mute', data).then(res => {
+    // 		this.controlIndex = "";
+    // 	})
+
+    // },
+    // freeze(item) {
+    // 	const _that = this;
+    // 	const data = {
+    // 		type: 0,
+    // 		freeze: 1,
+    // 		token: this.imUserInfo.token,
+    // 		vid: item.vid,
+    // 		fd: this.fd,
+    // 		user_id: item.sender
+    // 	};
+    // 	this.$u.post('api/chat/freeze', data).then(res => {
+    // 		this.controlIndex = "";
+    // 	})
+    // },
+    // pin(item) {
+    // 	const _that = this;
+    // 	const data = {
+    // 		type: 0,
+    // 		pin: 1,
+    // 		token: this.imUserInfo.token,
+    // 		vid: item.vid,
+    // 		fd: this.fd,
+    // 		msg_id: item.msg_id
+    // 	};
+    // 	this.$u.post('api/chat/pin', data).then(res => {
+    // 		this.controlIndex = "";
+    // 	})
+    // },
+    // delMsg(item) {
+    // 	const _that = this;
+    // 	const data = {
+    // 		type: 0,
+    // 		msg_id: item.msg_id,
+    // 		token: this.imUserInfo.token,
+    // 		both: 2,
+    // 		vid: item.vid,
+    // 		fd: this.fd
+    // 	}
+    // 	this.$u.post('api/chat/deleteMessage', data).then(res => {
+    // 		this.controlIndex = "";
+    // 		this.getChatHistoryMsg();
+    // 		console.log('shanchu')
+    // 	})
+    // },
+    inviteRoom(init = false) {
       if (!this.fd) {
         return;
       }
@@ -1094,8 +1186,8 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-          // type: this.current === 1 ? 2 : this.current,
-          type: 2,
+          // type: this.initInvite ? 2 : this.current,
+					type: 2,
           is_new: 1,
           token: this.imUserInfo.token,
           // vid:this.parmUserInfo.vid,
@@ -1136,7 +1228,7 @@ export default {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
         fd: fd,
-        type: this.current === 1 ? 2 : this.current || 0,
+        type: this.current || 0,
         channel: this.channel,
         channel_code: this.channel_code ? this.channel_code : "",
       };
@@ -1149,11 +1241,14 @@ export default {
           this.initInfo(true);
           return;
         }
-        if (res.pinData && res.pinData !== "") {
+        console.log("inRoom的数据");
+        console.log(res);
+        if (res.pinData && res.pinData != "") {
           _that.pinInfo = {
             text: res.pinData,
           };
         }
+
         _that.getChatHistoryMsg(1);
       });
     },
@@ -1175,14 +1270,7 @@ export default {
       this.$u.post("api/chat/leaveRoom", data).then((res) => {});
     },
     newSocket(data) {
-      // this.WSURL = `${wsprotocol}${
-      // 	window.location.hostname.includes('10')
-      // 		? '10.83.107.92:9021'
-      // 		: window.location.hostname
-      // 	// '10.83.107.92:9021'
-      // }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${data.token}&tokenid=${data.id}`;
-      const wsprotocol =
-        window.location.protocol == "http:" ? "ws" : "wss";
+      const wsprotocol = window.location.protocol == "http:" ? "ws" : "wss";
       const locationHost = window.location.hostname;
       // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
@@ -1214,13 +1302,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      // console.log("出现错误");
+      console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      // console.log("断开连接", e);
+      console.log("断开连接", e);
       // this.ws.close()
       //重连
       this.reconnect();
@@ -1329,12 +1417,12 @@ export default {
         // file = "";
         return;
       }
+
       this.$u
         .post("api/chat/sendMessage", data)
         .then((res) => {
           this.msgText = "";
           if (res.code == 0) {
-            this.uploadImg = false;
           } else {
             this.handleLocalMsgList(this.current).find(function (item) {
               return item.uiCode == uiCode;
@@ -1351,8 +1439,7 @@ export default {
     sendMsg() {
       this.isShowEmoji = false;
       let currentDate = new Date().getTime();
-      console.log(this.current)
-      if (this.info.user_nickname === undefined && this.current === 0) {
+			if (this.info.user_nickname === undefined && this.current === 0) {
         this.$u.toast("游客不能在广场发言 请您先登录");
         this.msgText = "";
         return;
@@ -1403,14 +1490,16 @@ export default {
         // this.$emit('getMessageList')
         this.$emit('onHandleUnRead',msgList, 1);
       }
+
       if (data.action === "pin") {
         this.pinInfo = JSON.parse(data.data);
       }
       if (data.action === "send") {
         // let list = this.msgList;
         // list.push(data);
-        // console.log( this.senderid,"123123",data," this.info======")
+        console.log(this.senderid, "123123", data, " this.info======");
         //自己发送的消息不渲染到列表
+
         if (data.sender_nickname.includes("游客") && this.current == 0) {
           return;
         }
@@ -1422,8 +1511,17 @@ export default {
         if (data.text.includes("进入直播间") && this.current != 0) {
           return;
         }
-        this.handleLocalMsgList(this.current, "push", data);
+        this.handleLocalMsgList(this.current).push(data);
         this.toBottom();
+      }
+      if (data.action === "gift") {
+        if (this.current != 0) {
+          return;
+        }
+        let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
+        data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
+        this.handleLocalMsgList(this.current).push(data);
+        this.onhandleSendGift(data);
       }
       if (data.status == 200) {
         if (data.data) {
@@ -1511,17 +1609,18 @@ export default {
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
-      // console.log(type,m,data,"========2222")
       if (type != this.current) {
         return;
       }
-      const set = new Set();
       switch (m) {
         case "init":
-          data.forEach((el) => {});
           this.messageDataList = data;
           break;
         case "push":
+          console.log('data',data)
+          if(data.pic !== undefined) {
+            data.pic = window.location.origin + data.pic
+          }
           this.messageDataList.push(data);
           break;
         case "unshift":
@@ -1536,7 +1635,155 @@ export default {
         default:
           break;
       }
-      this.toBottom();
+      // this.toBottom()
+    },
+    // 判斷登入狀態
+    is_login() {
+      let result = false;
+      if (localStorage.getItem("userInfo")) {
+        if (localStorage.getItem("userInfo") !== "{}") {
+          result = true;
+        }
+      }
+      if (JSON.stringify(this.$store.state.info) !== "{}") {
+        result = true;
+      }
+      // app 有 token 代表有登入
+      if (getQueryString().token) {
+        result = true;
+      }
+      return result;
+    },
+    // 鑽石說明彈窗按鈕
+    diamondDirectionsBtnClick(isRegister = false) {
+      if (this.hidevideo) {
+        return;
+      }
+      if (isRegister) {
+        if (this.is_login()) {
+          return;
+        }
+        localStorage.setItem("isRegister", "1");
+        localStorage.setItem("backTo", location.hash);
+        this.$navigateTo("../login/index");
+      } else {
+        this.$navigateTo("../dailyMission");
+      }
+      this.showDiamondDirections = false;
+    },
+    // 取得禮物列表
+    getGiftList() {
+      this.$u.get("api/Gift/getList").then((res) => {
+        this.giftList = res;
+        if (res.length > 0) {
+          for (let i = 0; i < res.length; i++) {
+            let link = document.createElement("link");
+            link.rel = "prefetch";
+            link.as = "fetch";
+            link.href = res[i].swf;
+            document.body.appendChild(link);
+          }
+        }
+      });
+    },
+    // 打開禮物列表
+    showGiftBox() {
+      this.isShowGiftBox = true;
+    },
+    // 禮物左右按鈕 0: 左, 1: 右
+    giftScroll(type) {
+      let timer = null;
+      let offsetWidth = this.$refs.giftList.offsetWidth;
+      let speed = 7.5;
+      if (type === 0) {
+        speed *= -1;
+      }
+      let scrollCount = 0;
+      timer = setInterval(() => {
+        if (Math.abs(scrollCount) < offsetWidth) {
+          this.$refs.giftList.scrollLeft =
+            this.$refs.giftList.scrollLeft + speed;
+          scrollCount += speed;
+        } else {
+          clearInterval(timer);
+          timer = null;
+        }
+      }, 1);
+    },
+    // 選擇禮物
+    giftClick(index) {
+      if (this.selectGiftIndex === index) {
+        this.selectGiftIndex = null;
+        return;
+      }
+      this.selectGiftIndex = index;
+    },
+    // 贈送禮物
+    handselGift(type = 0) {
+      if (this.selectGiftIndex === null) {
+        return this.$u.toast("请选择礼物");
+      }
+      let item = this.giftList[this.selectGiftIndex];
+      let data = {
+        gift_id: item.id,
+        anchor_id: this.uid, //主播id
+        type: type, //是否是背包礼物 1是 0否 默认0
+        exp_icon: this.userInfo.exp_icon,
+        is_guard: this.userInfo.is_guard,
+        is_room: this.userInfo.id == this.uid ? 1 : 0,
+        guard_icon: this.userInfo.is_guard == 1 ? this.userInfo.guard.icon : "",
+      };
+      if (type == 1) {
+        data.gift_id = item.gift_id;
+      }
+      console.log("is_login: ", this.is_login());
+      if (!this.is_login()) {
+        return this.$u.toast("请先登录");
+      }
+      if (parseFloat(this.userInfo.balances) < item.needcoin) {
+        return this.$u.toast("钻石不足, 先做日常任务领取钻石后再来吧~");
+      }
+      if (this.userInfo.id == this.uid) {
+        return this.$u.toast("主播不允许给自己刷礼物");
+      }
+      this.$u
+        .get("api/member/handselGift", data)
+        .then((res) => {
+          this.$u.toast("赠送成功");
+          this.$store.dispatch("getInfo", this.$u);
+          // this.initMachineSVGA(item);
+        })
+        .catch((res) => {
+          this.$u.toast(res.msg || "赠送失败");
+        });
+    },
+    // 禮物顯示
+    initMachineSVGA(item) {
+      console.log("gift svga", item);
+      var mycanvas = document.getElementById("demoCanvas");
+      let _this = this;
+      let player = new SVGA.Player("#demoCanvas");
+      let parser = new SVGA.Parser("#demoCanvas");
+      let time = item.swftime * 1000;
+      parser.load(item.swf, function (videoItem) {
+        player.setVideoItem(videoItem);
+        player.startAnimation();
+        console.log("1", time);
+        if (_this.haveSvga) {
+          clearTimeout(_this.svgaTimeOut);
+        } else {
+          _this.haveSvga = true;
+        }
+        _this.svgaTimeOut = setTimeout(() => {
+          console.log("2", time);
+          player.stopAnimation();
+        }, time);
+      });
+    },
+    onhandleSendGift(data) {
+      console.log(data);
+      let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
+      this.initMachineSVGA(gift);
     },
   },
 };
@@ -1546,12 +1793,14 @@ export default {
   opacity: 1 !important;
   z-index: 99;
 }
+
 #fileUp {
   width: 100px;
   height: 100px;
   position: absolute;
   z-index: 999;
 }
+
 .send-type-container {
   display: inline-block;
   margin-right: 15px;
@@ -1567,14 +1816,17 @@ export default {
     }
   }
 }
+
 @-webkit-keyframes el-skeleton-loading {
   0% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0 50%;
   }
 }
+
 .animation-loading-container {
   position: absolute;
   top: 0;
@@ -1584,6 +1836,7 @@ export default {
   background: #fbfbfb;
   overflow: scroll;
 }
+
 .animation-loading {
   margin-bottom: 30px;
   position: relative;
@@ -1594,12 +1847,14 @@ export default {
   background-size: 400% 100%;
   animation: el-skeleton-loading 1.4s ease infinite;
 }
+
 .error-msg {
   font-size: 12px;
   color: red;
   display: inline-block;
   margin-left: 5px;
 }
+
 form {
   position: absolute;
   top: 0;
@@ -1609,6 +1864,7 @@ form {
   z-index: 99;
   opacity: 0;
 }
+
 .add-img {
   font-size: 14px;
   width: 100% !important;
@@ -1619,6 +1875,7 @@ form {
   display: inline-block;
   opacity: 0;
 }
+
 .add-img-container img {
   width: 100% !important;
   height: 100% !important;
@@ -1626,6 +1883,7 @@ form {
   left: 0;
   top: 0;
 }
+
 .add-img-container {
   z-index: -1;
   opacity: 0;
@@ -1634,12 +1892,14 @@ form {
   position: absolute;
   width: 80px;
   top: 45px;
+
   input {
     position: absolute;
     width: 100% !important;
     height: 100% !important;
   }
 }
+
 .msg-type-container {
   position: absolute;
   left: 60px;
@@ -1649,15 +1909,18 @@ form {
   max-height: 80px;
   max-width: 100%;
 }
+
 .reportList {
   width: 750rpx;
   min-height: 400rpx;
+
   .reportList_context {
     width: 750rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   .reportList_title {
     width: 750rpx;
     height: 80rpx;
@@ -1668,6 +1931,7 @@ form {
     box-sizing: border-box;
     font-size: 26rpx;
     border-bottom: 1px solid #f6f6f6;
+
     .reportList_title_close {
       width: 120rpx;
       height: 60rpx;
@@ -1676,6 +1940,7 @@ form {
       justify-content: center;
       color: rgb(48, 49, 51);
     }
+
     .reportList_title_confirm {
       width: 120rpx;
       height: 60rpx;
@@ -1685,22 +1950,26 @@ form {
       color: rgb(227, 172, 114);
     }
   }
+
   .u-radio-group {
     margin-top: 30rpx;
     justify-content: center;
     width: 500rpx;
+
     .u-radio {
       height: 70rpx;
       justify-content: space-between;
     }
   }
 }
+
 .thumb-container {
   padding: 10px 10px 10px 90px;
   min-height: 70px;
   position: relative;
   background: #fff;
   box-shadow: 0 0 5px 2px #d9d9d9;
+
   .thumb-pic {
     width: 70px;
     height: 70px;
@@ -1708,10 +1977,12 @@ form {
     position: absolute;
     left: 10px;
   }
+
   .thumb-title {
     font-weight: bold;
     font-size: 14px;
   }
+
   .thumb-text {
     font-size: 12px;
   }
@@ -1729,15 +2000,16 @@ form {
 .detail {
   height: calc(100% - 80rpx);
   overflow-y: scroll;
-  background: #FFF;
+  background: #fff;
 }
+
 .add-margin {
-  margin-top: 40px;
+  // margin-top:40px;
   height: calc(100vh - 300px) !important;
   width: 100%;
   position: fixed;
-  border-top: 1px solid #dcd8d8;
 }
+
 .detail.app-version {
   height: calc(100vh - 82px) !important;
   padding-bottom: 40px;
@@ -1753,6 +2025,86 @@ form {
   }
 }
 
+.diamondDirections {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  z-index: 1000001;
+
+  .content {
+    width: 100%;
+    height: 440rpx;
+    margin: 0 auto;
+    background: url(../../../static/images/daily/diamond-directions.png) -20rpx top /
+      100% auto no-repeat;
+
+    .contentBtns {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 100rpx 48rpx 110rpx 60rpx;
+      box-sizing: border-box;
+
+      .BtnLeft,
+      .BtnCenter,
+      .BtnRight {
+        flex: 1;
+        // display: flex;
+        // align-items: center;
+        // justify-content: center;
+        // flex-direction: column;
+        height: 100%;
+
+        .icon-border {
+          width: 122rpx;
+          height: 122rpx;
+          margin: 0 auto;
+          padding: 4rpx;
+          border: 1px double #f58f2b;
+          border-radius: 50%;
+          transform: scale(0.9);
+          overflow: hidden;
+
+          .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            font-size: 26rpx;
+            line-height: 1;
+            text-align: center;
+            color: #fff;
+            background: #f58f2b;
+          }
+        }
+
+        .text {
+          padding: 8rpx 8rpx 0;
+          font-size: 24rpx;
+          text-align: left;
+          transform: scale(0.9);
+        }
+
+        // .btnImg {
+        // 	height: 150px;
+        // }
+      }
+    }
+  }
+
+  .closeBtn {
+    position: absolute;
+    top: -40rpx;
+    right: 20rpx;
+    width: 54rpx;
+    height: 54rpx;
+  }
+}
+
 .quick-reply-list {
   position: relative;
   width: 100%;
@@ -1761,6 +2113,10 @@ form {
   display: flex;
   align-content: center;
   margin-top: 5px;
+
+  .send-gift {
+    height: 100%;
+  }
 
   i {
     margin-right: 10px;
@@ -1867,11 +2223,10 @@ form {
     }
   }
 }
-
 .footer-box {
   display: flex;
   justify-content: space-around;
-  width:100%;
+  width: 100%;
   // margin-top: 10px;
 }
 #msg {
@@ -1884,7 +2239,6 @@ form {
   line-height: 25px;
   margin: 0 10px 0 0;
 }
-
 /deep/ .el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
@@ -1893,10 +2247,7 @@ form {
 #chat-models {
   height: calc(100% - 128px);
 }
-/deep/.u-list-item {
-  width: 160px !important;
-  height: 160px !important;
-}
+
 .send-container {
   height: 50px;
   line-height: 50px;
@@ -1966,6 +2317,130 @@ form {
   line-height: 39px;
 }
 
+.gift-box {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  padding: 20rpx;
+  box-sizing: border-box;
+  z-index: 1000000;
+
+  .gift-header {
+    width: 100%;
+    margin-bottom: 10rpx;
+    text-align: right;
+
+    .close {
+      width: 60rpx;
+      height: 60rpx;
+    }
+  }
+
+  .gift-content {
+    display: flex;
+
+    .gift-list {
+      flex: 1;
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      margin-bottom: 20rpx;
+      overflow: auto;
+
+      .gift-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        min-width: 33%;
+        margin-right: 8rpx;
+        padding: 8rpx;
+        border-radius: 10px;
+        box-sizing: border-box;
+        border: 1px solid transparent;
+
+        .gift-icon {
+          width: 90rpx;
+          height: 90rpx;
+        }
+
+        .gift-name {
+          width: 100%;
+          max-width: 200rpx;
+          margin: 10rpx 0;
+          font-size: 28rpx;
+          text-align: center;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        .gift-cost {
+          font-size: 28rpx;
+          color: #d8ad66;
+        }
+
+        &.selected {
+          border: 1px solid #d8ad66;
+        }
+
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+
+    .arrow-left {
+      width: 60rpx;
+      background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDE2IDQ4Ij4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgPGc+CiAgICAgIDxnPgogICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMyAtMTEyKSB0cmFuc2xhdGUoMzMgMzYpIG1hdHJpeCgtMSAwIDAgMSAxNiA3NikiPgogICAgICAgICAgPHJlY3Qgd2lkdGg9IjE1IiBoZWlnaHQ9IjQ3IiB4PSIuNSIgeT0iLjUiIHN0cm9rZT0iI0Q4QUQ2NiIgcng9IjQiLz4KICAgICAgICAgIDxwYXRoIGZpbGw9IiNEOEFENjYiCiAgICAgICAgICAgICAgICBkPSJNNi4wOTEgMjcuOTAxYy0uMTIxLS4xMzItLjEyMS0uMzQ2IDAtLjQ3OEw5LjI0OCAyNGwtMy4xNTctMy40MjNjLS4xMjEtLjEzMi0uMTIxLS4zNDYgMC0uNDc4LjEyMi0uMTMyLjMyLS4xMzIuNDQgMEw5LjkxIDIzLjc2Yy4xMjEuMTMyLjEyMS4zNDYgMCAuNDc4TDYuNTMyIDI3LjljLS4xMjIuMTMyLS4zMi4xMzItLjQ0IDB6Ii8+CiAgICAgICAgPC9nPgogICAgICA8L2c+CiAgICA8L2c+CiAgPC9nPgo8L3N2Zz4K);
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .arrow-right {
+      width: 60rpx;
+      background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDE2IDQ4Ij4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgPGc+CiAgICAgIDxnPgogICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01OSAtMTEyKSB0cmFuc2xhdGUoMzMgMzYpIHRyYW5zbGF0ZSgyNiA3NikiPgogICAgICAgICAgPHJlY3Qgd2lkdGg9IjE1IiBoZWlnaHQ9IjQ3IiB4PSIuNSIgeT0iLjUiIHN0cm9rZT0iI0Q4QUQ2NiIgcng9IjQiLz4KICAgICAgICAgIDxwYXRoIGZpbGw9IiNEOEFENjYiCiAgICAgICAgICAgICAgICBkPSJNNi4wOTEgMjcuOTAxYy0uMTIxLS4xMzItLjEyMS0uMzQ2IDAtLjQ3OEw5LjI0OCAyNGwtMy4xNTctMy40MjNjLS4xMjEtLjEzMi0uMTIxLS4zNDYgMC0uNDc4LjEyMi0uMTMyLjMyLS4xMzIuNDQgMEw5LjkxIDIzLjc2Yy4xMjEuMTMyLjEyMS4zNDYgMCAuNDc4TDYuNTMyIDI3LjljLS4xMjIuMTMyLS4zMi4xMzItLjQ0IDB6Ii8+CiAgICAgICAgPC9nPgogICAgICA8L2c+CiAgICA8L2c+CiAgPC9nPgo8L3N2Zz4K);
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+
+  .balance {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20rpx;
+
+    .left {
+      font-size: 32rpx;
+    }
+
+    .right {
+      margin-left: 40rpx;
+      font-size: 28rpx;
+      color: #777;
+    }
+
+    .gift-send {
+      margin-left: auto;
+      padding: 10rpx 36rpx;
+      border-radius: 5px;
+      color: #fff;
+      background: linear-gradient(180deg, #ffa90f, #f87400);
+    }
+  }
+}
+
+#demoCanvas {
+  position: absolute;
+  top: 60rpx;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 300rpx;
+  height: 300rpx;
+}
+
 .el-drawer.btt {
   height: auto;
 }
@@ -1992,7 +2467,7 @@ form {
 }
 
 .ChatDetails_container {
-  background: #FFF;
+  background: #fff;
   height: 100%;
   position: relative;
 
@@ -2010,8 +2485,9 @@ form {
   }
 
   .chat-detail-main {
-    background: #FFF;
+    background: #fff;
     padding: 0 10px 60px 10px;
+
     .msg-container {
       color: #363636;
 
@@ -2029,75 +2505,64 @@ form {
           font-size: 12px;
         }
       }
-      .hi-tag {
-        height: 36rpx;
-        margin-right: 6rpx;
-        vertical-align: sub;
+    }
+    .hi-tag {
+      height: 36rpx;
+      margin-right: 6rpx;
+      vertical-align: sub;
+    }
+
+    .anchor-tag {
+      display: inline-block;
+      height: 36rpx;
+      padding: 0 12rpx;
+      margin-right: 6rpx;
+      font-size: 24rpx;
+      line-height: 36rpx;
+      border-radius: 10px;
+      font-weight: bold;
+      background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
+      color: #9c583d;
+    }
+
+    .level-tag {
+      display: inline-block;
+      height: 36rpx;
+      margin-right: 6rpx;
+      padding: 0 8rpx;
+      line-height: 36rpx;
+      border-radius: 2px;
+      color: #fff;
+      &.level0 {
+        background: #d1d1d1;
       }
-
-      .anchor-tag {
-        display: inline-block;
-        height: 36rpx;
-        padding: 0 12rpx;
-        margin-right: 6rpx;
-        font-size: 24rpx;
-        line-height: 36rpx;
-        border-radius: 10px;
-        font-weight: bold;
-        background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
-        color: #9c583d;
+      &.level1 {
+        background: #8bf093;
       }
-
-      .level-tag {
-        display: inline-block;
-        height: 36rpx;
-        margin-right: 6rpx;
-        padding: 0 8rpx;
-        line-height: 36rpx;
-        border-radius: 2px;
-        color: #fff;
-
-        &.level0 {
-          background: #d1d1d1;
-        }
-
-        &.level1 {
-          background: #8bf093;
-        }
-
-        &.level2 {
-          background: #63d671;
-        }
-
-        &.level3 {
-          background: #5ac8b5;
-        }
-
-        &.level4 {
-          background: #3b8ea9;
-        }
-
-        &.level5 {
-          background: #235b8a;
-        }
-
-        &.level6 {
-          background: #3244b4;
-        }
-
-        &.level7 {
-          background: #602ad0;
-        }
-
-        &.level8 {
-          background: #9f2ad0;
-        }
-
-        &.level9 {
-          background: #bd20ff;
-        }
+      &.level2 {
+        background: #63d671;
       }
-
+      &.level3 {
+        background: #5ac8b5;
+      }
+      &.level4 {
+        background: #3b8ea9;
+      }
+      &.level5 {
+        background: #235b8a;
+      }
+      &.level6 {
+        background: #3244b4;
+      }
+      &.level7 {
+        background: #602ad0;
+      }
+      &.level8 {
+        background: #9f2ad0;
+      }
+      &.level9 {
+        background: #bd20ff;
+      }
     }
     .anchor-msg{
       .msg-content {
@@ -2160,11 +2625,11 @@ form {
       }
     }
     .system-tips {
+      display: inline-block;
       padding: 4px 2px;
       border-radius: 4px;
       font-size: 12px;
-
-      color: rgba(0, 0, 0, 0.2);
+      color: #000;
     }
 
     .msg-content {
@@ -2172,17 +2637,25 @@ form {
       border-radius: 4px;
       font-size: 15px;
       word-break: break-all;
+      &.anchor-msg {
+        .text-info,
+        .msg-footer {
+          color: #ffa930;
+        }
+      }
     }
+
     .text-info {
       display: initial;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.8);
+      color: #000;
     }
+
     .msg-footer {
-      font-size: 15px;
-      color: rgba(0, 0, 0, 0.4);
+      color: #707070;
       text-align: right;
       display: inline-block;
+
       span {
         margin-right: 4px;
         font-size: 12px;
@@ -2192,6 +2665,7 @@ form {
     .other-side {
       position: relative;
       text-align: left;
+      // display: inline-block;
 
       .model-img {
         width: 100%;
@@ -2210,7 +2684,6 @@ form {
         background: orange;
       }
     }
-
     .is-self {
       padding-right: 50px;
       position: relative;
@@ -2227,6 +2700,56 @@ form {
         position: absolute;
         right: 0;
         top: -8px;
+      }
+    }
+
+    &.current1 {
+      padding-top: 20rpx;
+    }
+
+    &.current2 {
+      .other-side {
+        width: 100%;
+      }
+      .msg-content {
+        display: flex;
+        .msg-avatar {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					min-width: 40px;
+					max-width: 40px;
+					height: 40px;
+					margin-right: 5px;
+					border-radius: 5px;
+					overflow: hidden;
+          .avatar {
+            width: 80rpx;
+          }
+        }
+        .text-info {
+          align-self: flex-start;
+          position: relative;
+          max-width: 65%;
+          min-height: 40rpx;
+          margin-left: 20rpx;
+          padding: 8rpx;
+          border-radius: 7px;
+          background: #eee;
+          &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 4rpx;
+            margin-top: 12rpx;
+            margin-left: -36rpx;
+            border-color: transparent #eee transparent transparent;
+            border-style: solid;
+            border-width: 8rpx 20rpx;
+          }
+        }
       }
     }
   }
@@ -2254,27 +2777,33 @@ form {
     bottom: -46px;
   }
 }
+
 .announcement {
+  position: relative;
   display: flex;
   justify-content: space-between;
+  height: 56rpx;
   width: 100%;
   box-sizing: border-box;
   background: #dde7ff;
+
   &-icon {
     background: #dde7ff;
-    width: 28px;
-    height: 28px;
+    width: 56rpx;
+    height: 100%;
     position: absolute;
     left: 0;
     z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
+
     img {
       width: 16px;
       height: 16px;
     }
   }
+
   &-item {
     white-space: nowrap;
     animation: scroll 10s linear infinite;
@@ -2282,9 +2811,10 @@ form {
     margin: 5px 0 5px 28px;
   }
 }
+
 .pin-info {
   background: #f4e8d3;
-  padding: 5px;
+  padding: 0 5px 5px;
   text-align: left;
   border-radius: 4px;
   position: absolute;
@@ -2295,6 +2825,7 @@ form {
   box-sizing: border-box;
   font-size: 13px;
 }
+
 .share-icon {
   position: absolute;
   right: 52rpx;
@@ -2302,6 +2833,7 @@ form {
   height: 60rpx;
   z-index: 10;
 }
+
 .share-box {
   width: 80vw;
   height: 100px;
@@ -2311,10 +2843,12 @@ form {
     font-size: 20px;
     font-weight: bold;
   }
+
   &-row {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
+
     input {
       border: 1px solid gray;
       font-size: 15px;
@@ -2322,6 +2856,7 @@ form {
       width: 50vw;
     }
   }
+
   &-copy {
     background: linear-gradient(90deg, #ffdfab 0%, #e3ac72 100%);
     color: white;

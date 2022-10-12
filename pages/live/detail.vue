@@ -2,6 +2,14 @@
 <template>
   <view class="detail detail_box">
     <downloadHead v-if="show1 && !hidevideo"></downloadHead>
+    <image
+      v-if="!hidevideo"
+      class="red-envelope-icon"
+      src="/static/images/daily/red-envelope.png"
+      mode=""
+      @click="showRedEnvelopeDialog = true"
+      :style="{ top: show1 ? '648rpx' : '540rpx' }"
+    ></image>
     <view
       class="video"
       @click="play(1)"
@@ -89,7 +97,11 @@
       ></image>
     </view>
 
-    <view @touchmove.stop="(e) => {}" class="tabs">
+    <view
+      @touchmove.stop="(e) => {}"
+      class="tabs"
+      :class="{ 'only-chat': onlyChat }"
+    >
       <u-tabs
         :style="{
           width: '620rpx',
@@ -118,6 +130,7 @@
     <!-- <view class="activity">
 			<image v-for="(item,index) in 4" :src="'/static/images/live/icon'+(index+1)+'.png'" mode="aspectFill" @click="getShow(index)"></image>
 		</view> -->
+
     <template v-if="chat_msg_close == '0'">
       <view
         :class="['tabs_context', show1 && !hidevideo ? '' : 'tabs_context_max']"
@@ -133,7 +146,7 @@
         <MessageInfo
           :headShow="show1 && !hidevideo"
           @close="onHandleMsgInfoBack"
-          v-if="current == 2 && showMsgInfo"
+          v-if="current == 1 && showMsgInfo"
           :current="current"
           :roomInfo="roomInfo"
         >
@@ -193,6 +206,15 @@
         >
       </view>
     </u-popup>
+    <redEnvelopeDialog
+      v-if="showRedEnvelopeDialog"
+      @close="showRedEnvelopeDialog = false"
+    ></redEnvelopeDialog>
+    <!-- 下载弹框 -->
+    <downLoadModel
+      v-if="showDownLoadModel && !hidevideo"
+      @close="showDownLoadModel = false"
+    ></downLoadModel>
   </view>
 </template>
 
@@ -203,7 +225,9 @@ import MessageInfo from "./compontent/MessageInfo.vue";
 import detail2 from "./compontent/detail-2.vue";
 import detail3 from "./compontent/detail-3.vue";
 import detail4 from "./compontent/detail-4.vue";
+import downLoadModel from "./compontent/222.vue";
 import TcVideoPlayer from "./tencentPlayer.vue";
+import redEnvelopeDialog from "./redEnvelopeDialog.vue";
 import tim from "@/store/index.js";
 import { getQueryString } from "@/common/Qs";
 import { getUUID } from "@/common/uuid";
@@ -217,9 +241,14 @@ export default {
     newDetail1,
     MessageInfo,
     TcVideoPlayer,
+    downLoadModel,
+    redEnvelopeDialog,
   },
   data() {
     return {
+      showDownLoadModel: false,
+      timerNum: 0,
+      timerLoad: null,
       showMsgInfo: false, // 房间是否显示的状态
       msgList2: [], // 红点的列表
       oneChat: 0, // 主播私聊的未读总数
@@ -228,6 +257,7 @@ export default {
       messageList: [], // 获取聊天列表
       activeIndex2: 0, // 聊天列表的选中索引
       parmUserInfo: {},
+      onlyChat: false,
       roomInfo: {},
       timer: null, //定时器
       i: 0, //计数
@@ -255,10 +285,37 @@ export default {
       channel_code: getQueryString().channel_code,
       timeInterval: null,
       qsVid: "",
+      showRedEnvelopeDialog: false,
     };
   },
+  beforeDestroy() {
+    if (this.timerLoad) {
+      clearInterval(this.timerLoad);
+      this.timerLoad = null;
+    }
+  },
   mounted() {
-    // console.log(this.$store.state.system,"system========")
+    console.log(this.$store.state.system, "system========");
+    if (this.timerLoad) {
+      clearInterval(this.timerLoad);
+      this.timerLoad = null;
+    }
+    this.timerNum = 180;
+    this.timerLoad = setInterval(() => {
+      // console.log(this.timerNum);
+      if (this.timerNum <= 0) {
+        clearInterval(this.timerLoad);
+        this.timerLoad = null;
+        console.log(sessionStorage.getItem("isShowDownLoad"));
+        if (!sessionStorage.getItem("isShowDownLoad")) {
+          this.showDownLoadModel = true;
+          console.log("弹框的状态");
+          console.log(this.showDownLoadModel);
+          sessionStorage.setItem("isShowDownLoad", true);
+        }
+      }
+      this.timerNum -= 1;
+    }, 1000);
   },
   created() {
     this.tabList = [
@@ -279,6 +336,17 @@ export default {
       this.chat_msg_close = "1";
       return;
     }
+    if (getQueryString().tabType == 1) {
+      console.log(3334);
+      this.tabList = [
+        {
+          name: "聊天",
+        },
+      ];
+      this.current = 1;
+      this.onlyChat = true;
+      return;
+    }
     let tabList = getQueryString().tabList;
     let newTabList = [];
     if (tabList) {
@@ -295,7 +363,6 @@ export default {
       if (item === "1") {
         this.tabList.unshift({
           name: "聊天",
-          
         });
       }
       if (item === "2") {
@@ -328,7 +395,7 @@ export default {
       this.recordUsageTime();
     }, 60000);
     this.Iime();
-    this.getMessageList(); // 获取聊天列表
+    // this.getMessageList(); // 获取聊天列表
   },
   onUnload() {
     // this.player = null
@@ -383,8 +450,8 @@ export default {
     },
     msgList2(e) {},
     msgCount(e) {
-      // console.log('监听到了总数的变化')
-      // console.log(e)
+      console.log("监听到了总数的变化");
+      console.log(e);
       let tablist = JSON.parse(JSON.stringify(this.tabList));
       for (let index = 0; index < tablist.length; index++) {
         let element = tablist[index];
@@ -396,8 +463,8 @@ export default {
           }
         }
       }
-      // console.log('改变后的总数tablist')
-      // console.log(tablist)
+      console.log("改变后的总数tablist");
+      console.log(tablist);
       this.tabList = tablist;
     },
     oneChat(num){
@@ -433,7 +500,7 @@ export default {
         "http://yun-live.oss-cn-shanghai.aliyuncs.com/record/yunlive/record/yunlive/meeting_1070/2020-11-25-09-27-59_2020-11-25-09-35-52.m3u8";
       source.style = "width: 100%; height: 100%;padding-top:0";
       video.appendChild(source);
-      this.$refs.video.$el.appendChild(video);
+      this.videoPlay && this.$refs.video.$el.appendChild(video);
       let that = this;
       this.player = this.$video(
         "video",
@@ -472,7 +539,7 @@ export default {
           });
           this.on("stalled", function (stalled) {
             //网速失速
-            // console.log("网速失速", stalled)
+            console.log("网速失速", stalled);
             that.isPlay = false;
             //改变播放的状态
           });
@@ -492,10 +559,10 @@ export default {
         }
       );
     });
-    // console.log(getQueryString(), "getQueryString=====")
+    console.log(getQueryString(), "getQueryString=====");
     if (getQueryString()) {
       this.parmUserInfo = {
-        vid: getQueryString().vid,
+        vid: getQueryString().vidz,
       };
     }
     let userid = "";
@@ -519,10 +586,10 @@ export default {
         ? getQueryString().user_name
         : localStorage.getItem("userid");
     }
-    // console.log('this.parmUserInfo')
-    // console.log(this.parmUserInfo)
-    // console.log(this.userInfo)
-    // this.getMessageList();
+    if (getQueryString().user_id) {
+      localStorage.setItem("userid", getQueryString().user_id);
+    }
+    this.getMessageList();
   },
   methods: {
     // 列表已读未读比对事件
@@ -562,8 +629,8 @@ export default {
         }
       }
 
-      // console.log("新消息变更之后的数组");
-      // console.log(menuList);
+      console.log("新消息变更之后的数组");
+      console.log(menuList);
 
       return menuList;
     },
@@ -585,17 +652,18 @@ export default {
     },
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
-      // console.log('已读未读的ws消息接收')
-      // console.log(msgList)
-      // console.log(type)
+      console.log("已读未读的ws消息接收");
+      console.log(msgList);
+      console.log(type);
       if (type == 0) {
-        // console.log("默认的未读消息数组");
-        // console.log(msgList);
+        console.log("默认的未读消息数组");
+        console.log(msgList);
         this.msgList2 = msgList;
       } else {
         console.log()
         this.oneChatMsgChange(msgList)
         if (this.messageList.length <= 0) {
+          this.msgList2 = [msgList];
           this.getMessageList();
           return;
         }
@@ -613,6 +681,7 @@ export default {
         if (falg) {
           arr.push(msgList);
         }
+
         this.msgList2 = arr;
         this.msgCount += 1;
         console.log(this.msgCount)
@@ -658,7 +727,7 @@ export default {
       } else if (type == 4) {
         //刷新重置
         this.player.pause();
-        // console.log(this.player);
+        console.log(this.player);
         this.player.src({
           src: this.qualityArr[this.qualityIndex],
         });
@@ -715,8 +784,8 @@ export default {
           element.unread_count = num.unreead_count;
         })
       }
-      // console.log("请求拿到的数据");
-      // console.log(res);
+      console.log("请求拿到的数据");
+      console.log(res);
       if (this.msgList2.length > 0) {
         res = this.mapList(res, this.msgList2);
         // this.list2 = this.mapList(this.list2, newV);
@@ -726,8 +795,8 @@ export default {
         this.onHandleGroupMsgChange(res);
       }
       // this.onHandleMenuChange(this.messageList);
-      // console.log('列表的数据')
-      // console.log(res)
+      console.log("列表的数据");
+      console.log(res);
       this.messageList = res;
     },
     // 获取礼物列表
@@ -739,7 +808,7 @@ export default {
 
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      // console.log(item, this.current, "item-info=======");
+      console.log(item, this.current, "item-info=======");
 
       this.showMsgInfo = true;
       this.roomInfo = item;
@@ -774,7 +843,7 @@ export default {
         .then((res) => {
           this.userInfo = res.userData;
           this.qsVid = res.vid;
-          // console.log("==============res.userData.vid",res.vid)
+          console.log("==============res.userData.vid", res.vid);
           this.chat_msg_close = res.chat_msg_close;
           // 编辑主播公告
           res.userData.announcement1 = [];
@@ -789,12 +858,12 @@ export default {
           this.$store.dispatch("joinGroup", {
             id: id,
           });
-          // console.log(res.info.starttime, res.info.servertime)
+          console.log(res.info.starttime, res.info.servertime);
           if (
             res.info.starttime - res.info.servertime > 0 &&
             res.info.starttime > 0
           ) {
-            // console.log("qsqweqweqewqerwerqqwrqer")
+            console.log("qsqweqweqewqerwerqqwrqer");
             this.counttDown = res.info.starttime - res.info.servertime;
           }
           if (JSON.stringify(res.info.clarity) == "{}") {
@@ -829,6 +898,7 @@ export default {
     },
 
     change(e) {
+      console.log(e, "e==========");
       this.current = e;
       this.showMsgInfo = false;
       if (e == 4) {
@@ -904,16 +974,31 @@ export default {
 </script>
 
 <style lang="scss">
+.only-chat .u-tabs {
+  width: 100% !important;
+}
+
+.only-chat .tabs-btn {
+  display: none;
+}
+
+/deep/ .only-chat .u-tab-item {
+  width: 100% !important;
+  font-size: 16px !important;
+}
+
 .detail {
+  position: relative;
   height: 100%;
-  &.detail_box {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
+  overflow-y: hidden;
+}
+
+.red-envelope-icon {
+  position: absolute;
+  right: 0;
+  width: 100rpx;
+  height: 100rpx;
+  z-index: 100;
 }
 
 .activity {
@@ -934,14 +1019,16 @@ export default {
   position: relative;
   padding-top: 106rpx;
   box-sizing: border-box;
+
   .video_logo {
     z-index: 999;
     position: absolute;
     bottom: 20rpx;
-    right: 20rpx;
+    left: 20rpx;
     width: 120rpx;
-    height: 45rpx;
+    height: 60rpx;
   }
+
   .thumb {
     width: 100%;
     height: 100%;
@@ -1145,6 +1232,7 @@ export default {
 
 .tabs_context_max {
   position: relative;
+
   .detail {
     height: calc(100vh - 508rpx);
   }
