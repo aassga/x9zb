@@ -9,6 +9,7 @@
           :class="{ 'on': ctp == item.id }"
           @click="changeType(item.id)"
         >
+          <img v-if="item.id === 2" src="../../assets/images/HotTag.png" class="hot-tag"/>
           {{ item.name }}
           <i
             v-show="((oneChat && oneChat > 0 && !hideChat) || inviteCount) && item.id === 2"
@@ -22,6 +23,25 @@
           >
         </span>
       </div>
+      <!-- <div class="header-list">
+        <span @click="changeType(0)" :class="{on:ctp==0}">广场</span>
+        <span v-if="!hideChat" @click="changeType(2)" class="anchor" :class="{on:ctp==2}">
+          <img src="../../assets/images/HotTag.png" class="hot-tag"/>
+          主播私聊
+          <i
+            v-show="oneChat && oneChat > 0||inviteCount"
+            class="new-msg-icon"
+          >{{oneChat > 99 ? '99+' :inviteCount?1: oneChat}}</i>
+        </span>
+        <span @click="changeType(1)" :class="{on:ctp==1}">
+          聊天
+          v-show="item.unread_count && item.unread_count > 0"
+          <i
+            v-show="msgCount && msgCount > 0"
+            class="new-msg-icon"
+          >{{msgCount > 99 ? '99+' : msgCount}}</i>
+        </span>
+      </div> -->
       <div v-if="pinInfo" class="pin-info">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
@@ -560,6 +580,7 @@ export default {
         // // console.log("我接受到了新消息");
         // // console.log(arr);
         this.msgList2 = arr;
+        this.inviteCount += 1
         this.msgCount += 1;
       }
     },
@@ -917,10 +938,10 @@ export default {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `${wsprotocol}${
       //   window.location.hostname.includes("10")
