@@ -23,25 +23,6 @@
           >
         </span>
       </div>
-      <!-- <div class="header-list">
-        <span @click="changeType(0)" :class="{on:ctp==0}">广场</span>
-        <span v-if="!hideChat" @click="changeType(2)" class="anchor" :class="{on:ctp==2}">
-          <img src="../../assets/images/HotTag.png" class="hot-tag"/>
-          主播私聊
-          <i
-            v-show="oneChat && oneChat > 0||inviteCount"
-            class="new-msg-icon"
-          >{{oneChat > 99 ? '99+' :inviteCount?1: oneChat}}</i>
-        </span>
-        <span @click="changeType(1)" :class="{on:ctp==1}">
-          聊天
-          v-show="item.unread_count && item.unread_count > 0"
-          <i
-            v-show="msgCount && msgCount > 0"
-            class="new-msg-icon"
-          >{{msgCount > 99 ? '99+' : msgCount}}</i>
-        </span>
-      </div> -->
       <div v-if="pinInfo" class="pin-info">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
@@ -557,7 +538,6 @@ export default {
     },
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
-      console.log(msgList, type)
       if (type == 0) {
         // // console.log("默认的未读消息数组");
         // // console.log(msgList);
@@ -1515,12 +1495,12 @@ form {
 
 .new-msg-icon {
   font-style: normal;
-  width: 20px;
+  width: 15px;
   z-index: 1;
-  height: 20px;
+  height: 15px;
   border-radius: 20px;
   position: absolute;
-  right: 19px;
+  right: 3px;
   top: 1px;
   font-size: 10px;
   background-color: red;
@@ -1602,16 +1582,21 @@ form {
     &:hover{
       cursor: pointer;
     }
+    .hot-tag {
+      display: inline-block;
+      height: 25px;
+      margin-right: 2px;
+      margin-bottom: 3px;
+      margin-left: -10px;
+    }
     &.on {
       // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
       //   linear-gradient(#000000, #000000);
       background-color: #c41d48;
       color: #FFF;
-
     }
   }
 }
-
 #msg {
   border: 1px solid #c41d48;
   border-radius: 4px;
