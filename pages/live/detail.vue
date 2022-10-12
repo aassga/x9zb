@@ -400,6 +400,23 @@ export default {
       // console.log(tablist)
       this.tabList = tablist;
     },
+    oneChat(num){
+      // console.log(e)
+      let tablist = JSON.parse(JSON.stringify(this.tabList));
+      for (let index = 0; index < tablist.length; index++) {
+        let element = tablist[index];
+        if (element.name == "主播私聊") {
+          if (num && num > 0) {
+            element.count = num;
+          } else if (element.hasOwnProperty("count")) {
+            delete element.count;
+          }
+        }
+      }
+      // console.log('改变后的总数tablist')
+      // console.log(tablist)
+      this.tabList = tablist;
+    }
   },
   onReady() {
     this.$nextTick((res) => {
@@ -550,6 +567,10 @@ export default {
 
       return menuList;
     },
+    oneChatMsgChange(list){
+      this.oneChat = list.unread_count;
+      console.log('oneChat', this.oneChat)
+    },
     // 群组消息总数计算事件
     onHandleGroupMsgChange(list) {
       let num = 0;
@@ -572,6 +593,8 @@ export default {
         // console.log(msgList);
         this.msgList2 = msgList;
       } else {
+        console.log()
+        this.oneChatMsgChange(msgList)
         if (this.messageList.length <= 0) {
           this.getMessageList();
           return;
@@ -587,14 +610,12 @@ export default {
             element.text = msgList.text;
           }
         }
-
         if (falg) {
           arr.push(msgList);
         }
-        // console.log("我接受到了新消息");
-        // console.log(arr);
         this.msgList2 = arr;
         this.msgCount += 1;
+        console.log(this.msgCount)
         this.messageList = this.mapList(this.messageList, this.msgList2);
         this.onHandleGroupMsgChange(this.messageList);
       }
@@ -680,6 +701,9 @@ export default {
     async getMessageList() {
       // const userid = JSON.parse(localStorage.getItem("userid"))
       // const _that = this;
+      if(this.parmUserInfo.user_id === undefined){
+        return
+      }      
       let res = await this.$u.get("/api/chat/getChatRoomList", {
         user_id: this.parmUserInfo.user_id,
         type: "1,2",
@@ -687,7 +711,9 @@ export default {
       });
       for (let index = 0; index < res.length; index++) {
         let element = res[index];
-        element.unread_count = 0;
+        this.msgList2.forEach((num)=>{
+          element.unread_count = num.unreead_count;
+        })
       }
       // console.log("请求拿到的数据");
       // console.log(res);
