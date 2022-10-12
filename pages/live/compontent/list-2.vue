@@ -47,7 +47,7 @@
 			<image class="daily-icon" src="/static/images/daily/daily-icon.png" mode="" @click="$navigateTo('../dailyMission')"></image>
 		</view>
 		<view class="detail-video-list flex-wrap" @touchstart="start" @touchend="end">
-			<view class="detail-video-li " v-for="(item,index) in liveList.data" :key="index"
+			<view class="detail-video-li " v-for="(item,index) in liveDataList" :key="index"
 				@click="$navigateTo('detail?id=' + item.uid+'&vid='+item.vid)">
 				<view class="detail-viedo-top">
 					<image class="detail-video-li-logo" :src="item.thumb" mode="aspectFill"></image>
@@ -106,7 +106,7 @@
 				current_page: 1,
 				total: 0,
 				limit: 20,
-				liveList: {},
+				liveDataList: [],
 				bannerList: [],
 				clientX: null,
 			}
@@ -119,20 +119,17 @@
 		},
 		computed: {
 			total_page() {
-                let result = 1;
-                if (this.total > 0) {
-                    result = Math.ceil(this.total / this.limit);
-                }
-                return result;
-            }
-		},
-		mounted() {
-			console.log(2);
+				let result = 1;
+				if (this.total > 0) {
+						result = Math.ceil(this.total / this.limit);
+				}
+				return result;
+			}
 		},
 		methods: {
 			// 预约赛事
 			getReserveMatch(item, index) {
-				console.log('我点击了预约')
+				// console.log('我点击了预约')
 				const _this = this;
 				this.$u.post('/api/live/reserveMatch2', {
 					type: item.type,
@@ -157,27 +154,23 @@
 						// console.log(resdata);
 					})
 				}
-
 				// 正在直播
 				this.$u.get('/api/live_streaming/getLiveList', {
 					page: page,
 					limit: this.limit
 				}).then(res => {
-					this.liveList = res;
+					this.liveDataList = res.data;
 					this.current_page = res.current_page;
 					this.total = res.total;
 				})
 			},
 			jumpPage(page) {
-				console.log(page);
 				if (!(page > 0 && page <= this.total_page)) {
 					return;
-                }
-                if (page == this.current_page) {
+				}else if (page == this.current_page) {
 					return;
-                }
+				}
 				this.getList(page, false);
-				// this.getList(page, false);
 			},
 			start(e) {
 				this.clientX = e.changedTouches[0].clientX;
