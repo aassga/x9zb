@@ -917,8 +917,8 @@ export default {
       // // console.log('ws',data)
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname
-      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
