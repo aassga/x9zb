@@ -76,7 +76,7 @@ const install = (Vue, vm) => {
 			if (showMsg) {
 				vm.$u.toast(res.msg);
 			} else {
-				console.log(res,"error-msg=============");
+				// console.log(res,"error-msg=============");
 			}
 			// vm.$u.toast(res.msg);
 			// console.log(res,"error-msg=============");
