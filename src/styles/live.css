@@ -1328,12 +1328,13 @@
 	height: 6px;
 	width: 9px;
 	position: absolute;
-	bottom: 0;
+	bottom: 3px;
+	color: #c41d48;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #bb9352
+	color: #c41d48
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {

@@ -12,11 +12,8 @@
       <div
         v-for="(item, index) in msgList"
         :key="index"
-        :class="{ 'is-anchor': ctp === 2 }"
+        :class="{ 'is-anchor': tabNumber === 2 }"
       >
-        <!--   <div class="system-tips" v-if="item.action === 'system'">
-                {{item.text}}
-              </div>-->
         <template>
           <div
             v-if="
@@ -35,10 +32,10 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id) &&
-                      ctp === 2,
+                      tabNumber === 2,
                   }"
                 >
-                  <template v-if="ctp === 0">
+                  <template v-if="tabNumber === 0">
                     <img
                       :src="hiImg"
                       class="hi-tag"
@@ -64,7 +61,7 @@
                   </template>
 
                   <div
-                    v-if="ctp !== 2"
+                    v-if="tabNumber !== 2"
                     class="text-name"
                     :style="
                       item.text.includes('进入直播间')
@@ -80,7 +77,7 @@
                     }}
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="ctp === 2 && !mySelf(item)" class="msg-avatar">
+                  <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
                     <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
                     <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
                     <img class="avatar" :src="avatarImg(item)" />
@@ -114,7 +111,7 @@
                       :style="
                         item.text.includes('进入直播间')
                           ? 'color: rgba(0 0 0 / 20%);'
-                          : ctp !== 2
+                          : tabNumber !== 2
                           ? 'width: 170px;'
                           : ''
                       "
@@ -165,11 +162,8 @@ export default {
     controlIndex: {
       type: Number,
     },
-    ctp: {
+    tabNumber: {
       type: Number,
-    },
-    pinInfo: {
-      type: null,
     },
     roomInfo: {
       type: null,

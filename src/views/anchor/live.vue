@@ -1066,7 +1066,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					console.log(res,"res.data==========")
+					// console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)
