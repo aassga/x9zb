@@ -119,6 +119,13 @@ export default {
       method: 'get',
     });
   },
+  gettoburl(params) {
+    return request({
+      url: `api/tob/gettoburl`,
+      method: 'post',
+      data: params,
+    });
+  },
   /**
  *addQuickReply
  */

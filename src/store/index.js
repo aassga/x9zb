@@ -162,6 +162,12 @@ const store = new Vuex.Store({
       return res
     });
   },
+  gettoburl({ commit }, params) {
+    return HomedApi.gettoburl(params).then((res) => {
+      return res
+    });
+  },
+  
   getQuickReplyList({ commit }, params) {
 	return HomedApi.getQuickReplyList(params).then((res) => {
 		return res

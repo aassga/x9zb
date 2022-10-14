@@ -125,7 +125,7 @@ export default {
       })
         .then(res => {
           this.qsVid = res.data.vid;
-          // console.log(res, "resvid=======");
+          console.log(res, "resvid=======");
           setTimeout(res1 => {
             this.$store.dispatch("joinGroup", this.query.uid);
           }, 500);
@@ -167,7 +167,7 @@ export default {
     },
     initTcPlayer(url) {
       if (url == "") return;
-      // console.log(url);
+      console.log(url);
       // console.log(this);
       // sdk引入有顺序
       new Promise((resolve, reject) => {
@@ -213,7 +213,7 @@ export default {
           let _this = this;
           // 引入成功
           script.onload = function() {
-            // console.log("js资源加载成功了");
+            console.log("js资源加载成功了");
             tcPlayer = TCPlayer("player-container-id", {
               autoplay: true,
               width: "1098" //播放器宽度
@@ -224,7 +224,7 @@ export default {
             tcPlayer.on("volumechange", function() {
               let muted = tcPlayer.muted();
               let valume = tcPlayer.volume();
-              // console.log("muted:", muted, "valume:", valume);
+              console.log("muted:", muted, "valume:", valume);
               if (muted || valume == 0) _this.showUnmute = true;
               else {
                 _this.showUnmute = false;

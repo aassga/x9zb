@@ -6,18 +6,22 @@
 				<div class="score-live-detail-header-wrap">
 					<div class="score-live-detail-header">
 						<div class="team">
-							<div class="host-name1 name tip-basketball"><span class="ellipsis" v-if="base.home_team_data">{{base.home_team_data.short_name_zh}}</span><img
-									src="https://sta-prod-score.zkreen.com/teams/20190311/20190311160443874_200x200.png?x-image-process=image/format,webp"><span
-									class="num">{{base.home_scores_total}}</span></div>
-							<div class="score">
-								<p class="league-name"><span>{{base.match_time}}</span> <span
-										v-if="query.type == 'basketball'">NBA</span></p>
-								<p class="time">VS</p>
-								<!-- <p class="color-999 more-data">(45-65) </p> -->
+							<div class="host-name1 name tip-basketball">
+								<span class="ellipsis" v-if="base.home_team_data">{{base.home_team_data.short_name_zh}}</span>
+								<img :src="base.home_team_data.logo">
+								<span class="num">{{base.home_scores_total}}</span>
 							</div>
-							<div class="guest-name1 name tip-basketball"><span class="num">{{base.away_scores_total}}</span><img
-									src="https://sta-prod-score.zkreen.com/teams/20190311/20190311160411520_200x200.png?x-image-process=image/format,webp"><span
-									class="ellipsis" v-if="base.away_team_data">{{base.away_team_data.short_name_zh}}</span></div>
+							<div class="score">
+								<p class="league-name">
+									<span>{{base.match_time}}</span> 
+									<span v-if="query.type == 'basketball'">NBA</span></p>
+								<p class="time">VS</p>
+							</div>
+							<div class="guest-name1 name tip-basketball">
+								<span class="num">{{base.away_scores_total}}</span>
+								<img :src="base.away_team_data.logo">
+								<span class="ellipsis" v-if="base.away_team_data">{{base.away_team_data.short_name_zh}}</span>
+							</div>
 						</div>
 					</div>
 					<div class="right-btn"><a class="btn" @click="navigate('basketball',base.id)">赛事实况</a></div>

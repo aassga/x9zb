@@ -61459,13 +61459,12 @@ li {
 	height: 6px;
 	width: 9px;
 	position: absolute;
-	bottom: 3px;
-	color: #c41d48;
+	bottom: 0;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #c41d48
+	color: #bb9352
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {
@@ -72494,13 +72493,12 @@ li {
 	height: 6px;
 	width: 9px;
 	position: absolute;
-	bottom: 3px;
-	color: #c41d48;
+	bottom: 0;
 	left: calc(33% + 10px)
 }
 
 .chatroom-contribution-list-comp .contribution-header .title span.active {
-	color: #c41d48
+	color: #bb9352
 }
 
 .chatroom-contribution-list-comp .contribution-header .title:last-child {

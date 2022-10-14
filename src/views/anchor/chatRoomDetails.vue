@@ -6,7 +6,7 @@
         <span
           v-for="(item, index) in relationsFilter(relations)"
           :key="index"
-          :class="{ 'on': tabNumber == item.id }"
+          :class="{ 'on': ctp == item.id }"
           @click="changeType(item.id)"
         >
           <img v-if="item.id === 2" src="../../assets/images/HotTag.png" class="hot-tag"/>
@@ -31,7 +31,7 @@
       <MessageList
         @onHandleClickItem="onHandleClickItem"
         :activeIndex="activeIndex2"
-        v-show="tabNumber == 1 && showChatList"
+        v-show="this.ctp == 1 && this.showChatList"
         :list="messageList"
       ></MessageList>
       <template v-if="roomInfo">
@@ -41,14 +41,15 @@
           :modalMsgList="modalMsgList"
           @close="backList"
           :roomInfo="roomInfo"
-          v-show="tabNumber == 1 && showMsgInfo"
+          v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
       <chat-message-new
         :msgList="msgList"
         :controlIndex="controlIndex"
         :parmUserInfo="parmUserInfo"
-        :tabNumber="tabNumber"
+        :ctp="ctp"
+        :pinInfo="pinInfo"
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
@@ -71,7 +72,7 @@
             />
           </svg>
           <img
-            v-if="tabNumber != 0"
+            v-if="ctp != 0"
             class="uploadImg"
             src="./../../assets/images/image.png"
             alt=""
@@ -107,7 +108,7 @@
               <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
             </el-button-group> -->
             <div
-              :class="[tabNumber == 0 && !token ? 'no_send' : 'send']"
+              :class="[ctp == 0 && !token ? 'no_send' : 'send']"
               @click="sendMsg"
             >
               发送
@@ -239,7 +240,7 @@ export default {
       controlIndex: -1,
       pinInfo: "",
       page: 1,
-      tabNumber: 0,
+      ctp: 0,
       inviteCount:0,
       prevImg: null,
       showChatList: false,
@@ -297,7 +298,7 @@ export default {
       !newV ? this.toBottom() : false;
     },
 
-    tabNumber(newV, oldV) {
+    ctp(newV, oldV) {
       if (newV === 1) {
         this.getMessageList(); // 获取聊天列表
       }
@@ -340,7 +341,7 @@ export default {
       // );
       if (domScroll.scrollTop <= 2 && this.isMore) {
         this.page++;
-        if (this.tabNumber == 1 && this.initChatTab) {
+        if (this.ctp == 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
@@ -401,9 +402,9 @@ export default {
       this.controlIndex = num;
     },
     msgAction(item) {
-      this.handleLocalMsgList(this.tabNumber).map((val, index) => {
+      this.handleLocalMsgList(this.ctp).map((val, index) => {
         if (val == item) {
-          this.handleLocalMsgList(this.tabNumber).splice(index, 1);
+          this.handleLocalMsgList(this.ctp).splice(index, 1);
           // // console.log(this.msgList)
         }
       });
@@ -446,9 +447,9 @@ export default {
     },
     // resend(item) {
     //   // // console.log(item)
-    //   this.handleLocalMsgList(this.tabNumber).map((val, index) => {
+    //   this.handleLocalMsgList(this.ctp).map((val, index) => {
     //     if (val == item) {
-    //       this.handleLocalMsgList(this.tabNumber).splice(index, 1);
+    //       this.handleLocalMsgList(this.ctp).splice(index, 1);
     //       // // console.log(this.msgList)
     //     }
     //   });
@@ -708,7 +709,7 @@ export default {
     onHandleClickItem(item, index) {
       // // console.log(item, "item-info=======");
       this.page = 1;
-      this.handleLocalMsgList(this.tabNumber, "empty");
+      this.handleLocalMsgList(this.ctp, "empty");
       this.roomInfo = item;
       this.activeIndex2 = index;
       this.msgCount -= this.messageList[index].unread_count || 0;
@@ -727,7 +728,7 @@ export default {
         vid: this.leaveVid,
         token: this.imUserInfo.token,
         fd: this.fd,
-        type: this.tabNumber == 1 ? this.room_type : 2,
+        type: this.ctp == 1 ? this.room_type : 2,
       };
       this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
@@ -763,10 +764,10 @@ export default {
       if (this.showLoading) {
         return;
       }
-      if (this.tabNumber == e) {
+      if (this.ctp == e) {
         return;
       }
-      this.tabNumber = e;
+      this.ctp = e;
       this.page = 1;
       this.showLoading = true;
       if (e == 1) {
@@ -811,7 +812,7 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$store
         .dispatch("inviteRoom", {
-          type: init ? 2 : this.tabNumber,
+          type: init ? 2 : this.ctp,
           is_new: 1,
           token: this.imUserInfo.token,
           // vid:this.parmUserInfo.vid,
@@ -841,7 +842,7 @@ export default {
       let params = {
         page: iniPage || this.page,
         limit: 20,
-        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
+        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         vid: this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id
       };
@@ -859,7 +860,7 @@ export default {
           // _that.msgList.unshift(...dataList);
           // // console.log(params.page);
           this.handleLocalMsgList(
-            params.type == 2 && this.tabNumber == 1 ? 1 : params.type,
+            params.type == 2 && this.ctp == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
             dataList
           );
@@ -883,14 +884,14 @@ export default {
     //   this.controlIndex = index;
     // },
     inRoomInfo(fd) {
-      if (this.tabNumber == 1 || this.tabNumber == 2) {
+      if (this.ctp == 1 || this.ctp == 2) {
         this.leaveVid = this.parmUserInfo.vid;
       }
       const inRoomData = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
         fd: fd,
-        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
+        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         channel: this.channel,
 
       };
@@ -913,14 +914,26 @@ export default {
       });
     },
     newSocket(data) {
+      // // console.log('ws',data)
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname
-      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+
+      // this.WSURL = `${wsprotocol}${
+      //   window.location.hostname.includes("10")
+      //     ? "10.83.107.92:9021"
+      //     : window.location.hostname
+      //   // "10.83.107.92:9021"
+      // }${window.location.protocol === "http:" ? "/wss/" : "/wss/"}?token=${
+      //   data.token
+      // }&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
+      // this.$global.setWs(this.ws);
+      //
 
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
@@ -1008,16 +1021,16 @@ export default {
       let data = {
         vid: this.parmUserInfo.vid,
         fd: this.fd,
-        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
+        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         text: text,
         method: "notice",
-        msg_type: this.tabNumber == 0 ? 0 : 1, //0为弹幕,1文字
+        msg_type: this.ctp == 0 ? 0 : 1, //0为弹幕,1文字
         color: "#000",
         sender: this.parmUserInfo.user_id,
         token: this.imUserInfo.token,
         channel: this.channel,
       };
-      if (this.tabNumber === 2) {
+      if (this.ctp === 2) {
         data.receiver = getQueryString().uid;
       }
       if (this.msgType == 2) {
@@ -1026,7 +1039,7 @@ export default {
         formData.append("fd", this.fd);
         formData.append("title", "");
         formData.append("link", "");
-        formData.append("type", this.tabNumber == 1 ? this.room_type : this.tabNumber || 0);
+        formData.append("type", this.ctp == 1 ? this.room_type : this.ctp || 0);
         formData.append("method", "notice");
         formData.append("msg_type", 2);
         formData.append("color", "#000");
@@ -1046,7 +1059,7 @@ export default {
           }
           if (res.code == 0) {
           } else {
-            this.handleLocalMsgList(this.tabNumber).find(function (item) {
+            this.handleLocalMsgList(this.ctp).find(function (item) {
               return item.uiCode == uiCode;
             }).isError = true;
           }
@@ -1058,7 +1071,7 @@ export default {
           this.toBottom();
         })
         .catch((error) => {
-          this.handleLocalMsgList(this.tabNumber).find(function (item) {
+          this.handleLocalMsgList(this.ctp).find(function (item) {
             return item.uiCode == uiCode;
           }).isError = true;
         });
@@ -1073,7 +1086,7 @@ export default {
         this.msgText = "";
         return false;
       }
-      if (this.tabNumber === 0 && !this.token) {
+      if (this.ctp === 0 && !this.token) {
         this.$message({
           type: "error",
           message: "未登录不能在直播间发言~",
@@ -1100,7 +1113,7 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-      // this.handleLocalMsgList(this.tabNumber,"push",msgItem);
+      // this.handleLocalMsgList(this.ctp,"push",msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
       return;
@@ -1115,18 +1128,18 @@ export default {
       }
 
       if (data.action === "delmsg") {
-        let msgListArr = this.handleLocalMsgList(this.tabNumber);
+        let msgListArr = this.handleLocalMsgList(this.ctp);
         let delIndex = msgListArr.findIndex(
           (item) => item.msg_id * 1 === data.msg_id * 1
         );
         msgListArr.splice(delIndex, 1);
-        this.handleLocalMsgList(this.tabNumber, "init", msgListArr);
+        this.handleLocalMsgList(this.ctp, "init", msgListArr);
       }
       if (data.action === "clearHistory") {
-        this.handleLocalMsgList(this.tabNumber, "empty");
+        this.handleLocalMsgList(this.ctp, "empty");
       }
       if (data.action === "newRoom") {
-        if (this.tabNumber != 2 && data.room_type === "2") {
+        if (this.ctp != 2 && data.room_type === "2") {
           this.inviteCount = this.inviteCount + 1;
         }
         if (data.fd != this.fd) {
@@ -1173,25 +1186,25 @@ export default {
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
-        if (data.sender_nickname.includes("游客") && this.tabNumber == 0) {
+        if (data.sender_nickname.includes("游客") && this.ctp == 0) {
           return;
         }
-        this.handleLocalMsgList(this.tabNumber, "push", data);
+        this.handleLocalMsgList(this.ctp, "push", data);
         this.toBottom();
       }
       if (data.action === "system") {
-        if (data.text.includes("进入直播间") && this.tabNumber != 0) {
+        if (data.text.includes("进入直播间") && this.ctp != 0) {
           return;
         }
-        this.handleLocalMsgList(this.tabNumber, "push", data);
+        this.handleLocalMsgList(this.ctp, "push", data);
       }
       if (data.action === "gift") {
-        if (this.tabNumber != 0) {
+        if (this.ctp != 0) {
           return;
         }
         let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
         data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-        this.handleLocalMsgList(this.tabNumber, "push", data);
+        this.handleLocalMsgList(this.ctp, "push", data);
         this.$emit("onhandleSendGift", data);
       }
       if (data.status == 200) {
@@ -1199,7 +1212,7 @@ export default {
           // 晚点封装成switch case
           if (data.data.type == "dialog") {
             this.handleLocalMsgList(
-              this.tabNumber,
+              this.ctp,
               "init",
               data.data.historyMessageList
             );
@@ -1208,7 +1221,7 @@ export default {
           }
           if (data.data.type == "call") {
             if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.tabNumber).push({
+              this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
                 uid: this.userInfo.uid,
               });
@@ -1219,7 +1232,7 @@ export default {
               }
             }
             if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.tabNumber).push({
+              this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
                 uid: this.userInfo.uid,
               });
@@ -1232,7 +1245,7 @@ export default {
           if (data.data.type == "message") {
             this.$store.dispatch("getUnReadMsgNum");
             if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.tabNumber).push({
+              this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
                 uid: this.uid
               });
@@ -1240,7 +1253,7 @@ export default {
               this.toBottom();
             }
             if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.tabNumber).push({
+              this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
                 uid: this.uid
               });
@@ -1267,7 +1280,7 @@ export default {
     //解耦合
     handleLocalMsgList(type, m, data) {
       // // console.log('ddddddddddddddddddddddddd')
-      if (type != this.tabNumber) {
+      if (type != this.ctp) {
         return;
       }
       const set = new Set();

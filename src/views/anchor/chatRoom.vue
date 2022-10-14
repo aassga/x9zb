@@ -20,11 +20,13 @@
 					<div class="contribution-header">
 						<div class="title">
 							<span class="text" :class="paiIndex == 0?'active':''" @click="paiIndex = 0">贡献日榜</span>
-							<i class="jiantou el-icon-caret-top" v-if="paiIndex == 0"></i>
+							<img class="jiantou" v-if="paiIndex == 0"
+								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAGCAYAAAARx7TFAAAAAXNSR0IArs4c6QAAAJxJREFUCB1jYEAC/5+d4fp0Y+8qEI0kzMCCzHn74v60///+hf76+vYrUDwRJscIYzw/Oj3h35//8xkZGRn+///PwMTImChpl7kAJA9W9HBbmxYDw7/T/xkY4NYAJb4xMDCZyntVXWN8trmB68v3T0AF/7WAhgBNAeqEms/IwHSNm4PXlOXDm3vT/jEyAk0CApgKEA0GjFq/v7yeBgAU8D21crZj/QAAAABJRU5ErkJggg==">
 						</div>
 						<div class="title">
 							<span class=" text" :class="paiIndex == 1?'active':''" @click="paiIndex = 1">贡献周榜</span>
-							<i class="jiantou el-icon-caret-top" v-if="paiIndex == 1"></i>
+							<img class="jiantou" v-if="paiIndex == 1"
+								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAGCAYAAAARx7TFAAAAAXNSR0IArs4c6QAAAJxJREFUCB1jYEAC/5+d4fp0Y+8qEI0kzMCCzHn74v60///+hf76+vYrUDwRJscIYzw/Oj3h35//8xkZGRn+///PwMTImChpl7kAJA9W9HBbmxYDw7/T/xkY4NYAJb4xMDCZyntVXWN8trmB68v3T0AF/7WAhgBNAeqEms/IwHSNm4PXlOXDm3vT/jEyAk0CApgKEA0GjFq/v7yeBgAU8D21crZj/QAAAABJRU5ErkJggg==">
 						</div>
 					</div>
 					<div class="contribution-main">

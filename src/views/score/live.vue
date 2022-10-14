@@ -233,6 +233,24 @@
 											style="position: absolute; width: 100%; height: 100%"></iframe> -->
 											<!-- v-if="liveIndex == 1 && item.pushurl1" -->
 										<liveTv  v-if="item&&item.pushurl1" path="tv" reserve="{}" :islive="1" :info="item"></liveTv>
+										<div class="counttDownShow" v-if="counttDown">
+											<div class="center_date">
+												<!-- <div class="title_date">{{title_name}}</div> -->
+												<div class="title_date">开赛倒计时</div>
+												<div class="date_out"><span class="d_date">{{counttDownDay[0]}}</span ><span class="h_date">{{counttDownDay[1]}}</span><span class="m_date">{{counttDownDay[2]}}</span><span class="s_date">{{counttDownDay[3]}}</span></div>
+												<div class="date_tile"><span class="d_date_d">天</span ><span class="h_date_h">小时</span><span class="m_date_m">分钟</span><span class="s_date_s">秒</span></div>
+												<!-- <div class="date_down">{{counttDownDay}}</div> -->
+											</div>
+											<div class="concern_box_shou">
+												<!-- <div class="concern_shou" v-if="userData.is_attention == 0" @click="setAttention()">
+													<span class="cancelConcern_date_n" title="关注"></span>
+												</div>
+												<span class="cancelConcern_date_y" v-else title="取消关注"></span> -->
+												<!-- <div>
+													<span  @click="copyText()" class="txt_control" title="分享"></span>
+												</div> -->
+											</div>
+										</div>
 										<div class="flex-center flex-wrap" style="margin-top: 150px;" v-else>
 											<img src="../../assets/images/live-none.png" alt="">
 											<p style="width: 100%;color: #fff;text-align: center;">暂无直播</p>
@@ -638,13 +656,18 @@
 		// props:["qsVid"],
 		data() {
 			return {
-								showDownLoadModel:false,
+				showDownLoadModel:false,
 				timerNum:0,
 				timer:null,
 				list: {},
 				tech2: {},
 				tech1: {},
 				liveIndex:0,
+				servertime:null,//服务器时间
+				details:"",//赛事详情
+				starttime:null,//比赛开时间
+				counttDown: 0, //开赛倒计时
+				counttDownDay:[], //开赛倒计时分秒
 				item: {
 					obj: {
 						eu: {
@@ -1090,7 +1113,22 @@ if (this.timer) {
 							console.log('获取的详情')
 							console.log(res.data)
 							// res.data.tlive = res.data.tlive.reverse()
-							this.item = res.data;
+							
+							this.details=res.data
+							this.servertime=res.data.servertime
+							this.starttime=res.data.starttime
+							// console.log(this.starttime-this.servertime+"倒计时")
+							// if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 &&this.details.pushurl1) {
+							if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 ) {
+								this.counttDown=(this.starttime)-(this.servertime)
+								// this.counttDown=10
+								//切换赛事先卸载定时器从新加载定时器
+								clearInterval(this.timeInterval)
+								this.Iime()
+							}else{
+								this.counttDown=false
+								this.item = this.details;
+							}
 							let arr = res.data.tlive
 							let listArr = []
 							arr.forEach(item1 => {
@@ -1110,7 +1148,7 @@ if (this.timer) {
 					//足球
 					getfootballDetail(data)
 						.then((res) => {
-														console.log('获取的详情')
+							console.log('获取的详情')
 							console.log(res.data)
 							res.data.tlive = res.data.tlive.reverse()
 							let obj = {
@@ -1200,9 +1238,23 @@ if (this.timer) {
 							}
 							res.data.pull = res.data.pushurl1
 							this.item.obj = obj
-							this.item = {
-								...this.item,
-								...res.data
+							this.details=res.data
+							this.servertime=res.data.servertime
+							this.starttime=res.data.starttime
+							// console.log(this.starttime-this.servertime+"倒计时123")
+							// if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 &&this.details.pushurl1) {
+							if ((this.starttime)-(this.servertime)>0&&(this.starttime)>0 ) {
+								this.counttDown=(this.starttime)-(this.servertime)
+								// this.counttDown=10
+								//切换赛事先卸载定时器从新加载定时器
+								clearInterval(this.timeInterval)
+								this.Iime()
+							}else{
+								this.counttDown=false
+								this.item = {
+									...this.item,
+									...this.details
+								}
 							}
 							let technology = res.data.technology
 							this.tech1 = technology[0]
@@ -1253,6 +1305,41 @@ if (this.timer) {
 						.catch((res) => {});
 				}
 			},
+			counttDownF(){
+				let d=parseInt(this.counttDown/(24*60*60))
+				d=d<10?"0"+d:d
+				let h=parseInt(this.counttDown/(60*60)%24)
+				h=h<10?"0"+h:h
+				let m=parseInt(this.counttDown/60%60)
+				m=m<10?"0"+m:m
+				let s=parseInt(this.counttDown%60)
+				s=s<10?"0"+s:s
+				let date=[d,h,m,s]
+								// console.log(date)
+				this.counttDownDay=date
+			},
+			Iime(){
+				this.timeInterval =setInterval(()=>{
+					if(this.counttDown>0){
+						this.counttDown-=1
+						this.counttDownF()
+					}else if(this.counttDown===0){
+						//倒计时结束隐藏倒计时并拉流直播，结束定时器
+						this.counttDown=0
+						this.item = this.details
+						clearInterval(this.timeInterval)
+					}
+					
+				},1000)
+			},
+			// // 服务器时间倒计时
+			// servertimeDate(times){
+			// 	this.timeIntervals =setInterval(()=>{
+			// 		if(times>0){
+			// 		this.servertime=times+=1
+			// 		}
+			// 	},1000)
+			// },
 		}, 
 		destroyed(){
 			clearInterval(this.timeInterval)
@@ -1273,5 +1360,87 @@ if (this.timer) {
 
 	.point-animation:after {
 		color: #FF4100;
+	}
+	.counttDownShow{
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-image: url(../../assets/images/live_bg.png);
+		background-size: 100% 100%;
+		z-index: 10;
+		color: #fff;
+	}
+	.center_date{
+		text-align: center;
+		margin-top: 20%;
+		display: inline-block;
+		margin-left: 32%;
+		background: rgba(0,0,0,.7);
+		padding: 6px 16px;
+		border-radius: 6px;
+		width: 300px
+
+
+	}
+	.txt_control{
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-image: url(../../assets/images/ic-share.png);
+		background-size: 100% 100%;
+		cursor: pointer;
+	    margin-top: 20px;	
+	}
+	#cp-input{
+		position:absolute;
+		z-index:-1;
+		opacity:0;
+	}
+	.concern_box_shou{
+		position: absolute;
+		right: 3%;
+		top: 41%;
+	}
+	.cancelConcern_date_n{
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-image: url(../../assets/images/ic-love-uncheck.png);
+		background-size: 100% 100%;
+		cursor: pointer;
+	}
+	.cancelConcern_date_y{
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		background-image: url(../../assets/images/ic-love-check.png);
+		background-size: 100% 100%;
+		cursor: pointer;
+	}
+	.title_date{
+		    margin: 15px 0 10px 0;
+	}
+	.d_date ,.h_date,.m_date,.s_date{
+    display: inline-block;
+    padding: 6px 0;
+    background: #000;
+    color: #fff;
+    margin: 0 2px;
+    text-align: center;
+    width: 50px;
+    font-size: 22px;
+	font-family: 'LcdD';
+	font-display: swap;
+	}
+	.d_date_d ,.h_date_h,.m_date_m,.s_date_s{
+    display: inline-block;
+    padding: 6px 0;
+    color: #fff;
+    margin: 0 2px;
+    text-align: center;
+    width: 50px;
+    font-size: 22px;
 	}
 </style>

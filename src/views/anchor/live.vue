@@ -5,8 +5,14 @@
 			<div class="live-layout-player">
 				<div class="matchlive" id="matchlive">
 					<!-- -------------------------------------------------header -->
-					<liveHeader v-if="(base.status_str && base.status_str !== '完场') || (base.status_name && base.status_name !== '完场')" :info="detail" :query="query" :base="base" :basketball="basketball"
-						:exponent="exponent"></liveHeader>
+					<liveHeader 
+						v-if="(base.status_str && base.status_str !== '完场') || (base.status_name && base.status_name !== '完场')" 
+						:detail="detail" 
+						:query="query" 
+						:base="base" 
+						:basketball="basketball"
+						:exponent="exponent"
+					></liveHeader>
 					<div class="matchlive-down">
 						<div class="matchInfo">
 							<a target="_blank" :href="'/persona?id=' + query.uid">
@@ -674,6 +680,12 @@
 			},
 		},
 		watch:{
+			// 篮球比分数据
+			'$store.state.basketball_exponent'(e) {
+				if (e.type === 'basketball_match' && this.query.id == e.match_id) {
+					this.base = {...this.base, ...e}
+				}
+			},
 			"$store.state.football_exponent"(e) {
 				// return
 				if (e.type == 'football_match' && this.query.id == e.id && e.company_id == 2) {
@@ -1066,7 +1078,7 @@
 				getRoomInfo({
 					uid: this.query.uid
 				}).then(res => {
-					// console.log(res,"res.data==========")
+					console.log(res,"res.data==========")
 					setTimeout(res1=>{
 						this.$store.dispatch('joinGroup', this.query.uid)
 					},500)

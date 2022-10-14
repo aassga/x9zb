@@ -1,7 +1,7 @@
 <template>
 	<div class="header-react is-transparent-bg" :class="index != 0?'header-active':''">
 		<div class="header-container"><a aria-current="page" class="header-container-logo active" @click="goHome()">
-		<img :src="index != 0?require('@/assets/images/logo.png'):require('@/assets/images/logo-a.png')" alt="体育"></a>
+		<img :src="index != 0?require('@/assets/images/logo-no-shadow.png'):require('@/assets/images/logo-a.png')" alt="体育"></a>
 			<div class="header-container-navigation">
 				<a aria-current="page" :class="index==0?'active':''" href="javascript:"
 					@click="$router.push('/'),index=0">

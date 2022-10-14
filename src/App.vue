@@ -24,13 +24,13 @@
 			document.oncontextmenu = function () {
 				return false
 			}
-			// window.onkeydown = window.onkeyup = window.onkeypress = function (event) {
-			// 	if (event.keyCode == 123) {
-			// 		event.preventDefault();
-			// 		return false
-			// 	}
-			// }
-			// console.log(process.env.NODE_ENV)
+			window.onkeydown = window.onkeyup = window.onkeypress = function (event) {
+				if (event.keyCode == 123) {
+					event.preventDefault();
+					return false
+				}
+			}
+			console.log(process.env.NODE_ENV)
 		    // if(process.env.NODE_ENV!=='dev'){
 		    //   setInterval(()=>{
 		    //     debugger;

@@ -12,8 +12,11 @@
       <div
         v-for="(item, index) in msgList"
         :key="index"
-        :class="{ 'is-anchor': tabNumber === 2 }"
+        :class="{ 'is-anchor': ctp === 2 }"
       >
+        <!--   <div class="system-tips" v-if="item.action === 'system'">
+                {{item.text}}
+              </div>-->
         <template>
           <div
             v-if="
@@ -32,10 +35,10 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id) &&
-                      tabNumber === 2,
+                      ctp === 2,
                   }"
                 >
-                  <template v-if="tabNumber === 0">
+                  <template v-if="ctp === 0">
                     <img
                       :src="hiImg"
                       class="hi-tag"
@@ -61,11 +64,11 @@
                   </template>
 
                   <div
-                    v-if="tabNumber !== 2"
+                    v-if="ctp !== 2"
                     class="text-name"
                     :style="
                       item.text.includes('进入直播间')
-                        ? 'color: rgba(0 0 0 / 20%);'
+                        ? 'color: #665a64;'
                         : ''
                     "
                   >
@@ -77,7 +80,7 @@
                     }}
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
+                  <div v-if="ctp === 2 && !mySelf(item)" class="msg-avatar">
                     <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
                     <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
                     <img class="avatar" :src="avatarImg(item)" />
@@ -103,23 +106,29 @@
                   </template>
                   <div
                     v-if="!item.pic && item.text"
-                    @click.stop="showControl(index)"
+                    @click.stop="showControl(index,item)"
                     style="display: contents"
                   >
+                  <div class="login-content"  v-if="item.msg_type=='4'">
+                    {{ item.text }}
+                    <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  />
+                  </div>
                     <vue-markdown
                       class="text-info"
+                     v-else
+                       :class="{ 'is-login': item.msg_type=='4' }"
                       :style="
                         item.text.includes('进入直播间')
-                          ? 'color: rgba(0 0 0 / 20%);'
-                          : tabNumber !== 2
+                          ? 'color: #665a64;'
+                          : ctp !== 2
                           ? 'width: 170px;'
                           : ''
                       "
                       :anchor-attributes="linkAttrs"
                       >{{ item.text }}{{ item.length }}</vue-markdown
                     >
+                   <!--  <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  v-if="item.msg_type=='4'" /> -->
                   </div>
-
                   <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
@@ -162,8 +171,11 @@ export default {
     controlIndex: {
       type: Number,
     },
-    tabNumber: {
+    ctp: {
       type: Number,
+    },
+    pinInfo: {
+      type: null,
     },
     roomInfo: {
       type: null,
@@ -209,6 +221,19 @@ export default {
     },
   },
   methods: {
+    play(){
+      this.$store
+        .dispatch("gettoburl", {
+          terminal: "pc",
+        })
+        .then((res) => {
+          if(res.data.length>0){
+            const url = res.data[0];
+            let newTab = window.open('about:blank')
+            newTab.location.href=url
+          }
+        });
+    },
     avatarImg(item) {
       if (item.avatar === "") {
         return require("@/assets/images/userLogo.png");
@@ -233,7 +258,10 @@ export default {
     openLink(link) {
       window.open(link);
     },
-    showControl(index) {
+    showControl(index,item) {
+      if(item.msg_type=='4'){
+        return;
+      }
       if (this.controlIndex == index) {
         this.controlIndex = -1;
         return;
@@ -279,6 +307,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@-webkit-keyframes pulse {
+  0% {
+    transform:scale(1);
+  }
+  14%{
+     transform:scale(1.2);
+  }
+  28%{
+     transform:scale(1);
+  }
+  42%{
+     transform:scale(1.2);
+  }
+  0% {
+     transform:scale(1);
+  }
+}
+.login-content{
+  max-width:170px;
+}
+.b-play-btn{
+  animation: pulse 2s ease infinite;
+  width:80px;
+  height:auto;
+  &:hover{
+    cursor:pointer;
+  }
+}
 ::v-deep.chat-detail-main {
   background: #fff;
   padding: 0 10px 30px 10px;
