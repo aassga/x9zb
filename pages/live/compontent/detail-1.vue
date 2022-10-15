@@ -74,7 +74,7 @@
                         :class="{
                           'my-self': (Number(item.sender) === parmUserInfo.user_id || item.sender === parmUserInfo.user_id) && current === 1,
                         }"
-												@click.stop="showControl(index)"
+												@click.stop="showControl(index,item)"
                       >
 												<template v-if="current === 0">												
 													<img
@@ -115,7 +115,7 @@
                             :style="
                               item.text === '进入直播间' ||
                               item.text.includes('进入直播间')
-                                ? 'color:rgba(0 0 0 /20%)'
+                                ? 'color: #665a64;'
                                 : ''
                             "
                             >{{ item.sender_nickname || "我"
@@ -154,16 +154,24 @@
                           </div>
                         </template>
                         <div
-                          v-if="!item.pic && item.text"
+                          v-if="!item.pic && item.text&&item.msg_type!='4'"
                           @click="openAppUrl(item.text)"
                           class="text-info"
                           v-html="getText(item.text)"
                           :style="
                             item.text === '进入直播间'
-                              ? 'color:rgba(0 0 0 /20%)'
+                              ? 'color: #665a64;'
                               : ''
                           "
                         ></div>
+                        <div
+                          v-if="!item.pic && item.text&&item.msg_type=='4'"
+                          class="text-info"
+                         
+                        >
+  								{{ item.text }}
+  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play"  />
+                    	</div>
                         <i
                           class="el-icon-warning error-msg"
                           v-if="item.isError"
@@ -504,7 +512,6 @@ export default {
       serverTimeoutObj: null, //心跳倒计时
       timeoutnum: null, //断开 重连倒计时
       imUserInfo: null,
-      inRoom: false,
       senderid: "",
       parmUserInfo: {
         user_id: 19,
@@ -699,9 +706,6 @@ export default {
     this.shareUrl = window.location.href;
     this.getImToken(true);
   },
-  created() {
-    this.uid = this.$route.query.id;
-  },
   beforeDestroy() {
     this.$store.dispatch("chatInOut", {
       touid: this.uid,
@@ -710,6 +714,18 @@ export default {
     });
   },
   methods: {
+  	 play(){
+   		this.$u.post('api/tob/gettoburl', {
+          terminal: "h5",
+        })
+        .then((res) => {
+          if(res.length>0){
+            const url = res[0];
+            let newTab = window.open('about:blank')
+            newTab.location.href=url
+          }
+        });
+    },
 		avararImg(item) {
       if (item.avatar === "") {
         return require("./../../../static/images/home/userLogo.png");
@@ -1114,7 +1130,11 @@ export default {
           this.canGet = true;
         });
     },
-    showControl(index) {
+    showControl(index,item) {
+    	if(item.msg_type=="4")
+    	{
+    		return;
+    	}
       // console.log("我是点击消息事件");
       this.controlIndex = index;
     },
@@ -1233,16 +1253,11 @@ export default {
         channel_code: this.channel_code ? this.channel_code : "",
       };
       const _that = this;
-      // if(_that.inRoom){
-      //   return
-      // }
       this.$u.post("api/chat/inRoom", inRoomData).then((res) => {
         if (res == "connection token error") {
           this.initInfo(true);
           return;
         }
-        // console.log("inRoom的数据");
-        // console.log(res);
         if (res.pinData && res.pinData != "") {
           _that.pinInfo = {
             text: res.pinData,
@@ -1272,11 +1287,13 @@ export default {
     newSocket(data) {
       const wsprotocol = window.location.protocol == "http:" ? "ws" : "wss";
       const locationHost = window.location.hostname;
-      // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // 開發用
+      // const locationHost = "10.83.107.92:9021";
+      this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1610,7 +1627,11 @@ export default {
     //解耦合
     handleLocalMsgList(type, m, data) {
       if (type != this.current) {
-        return;
+        if (type == 1 && this.current == 2) {
+          // 群組
+        } else {
+          return;
+        }
       }
       switch (m) {
         case "init":
@@ -1735,7 +1756,6 @@ export default {
       if (type == 1) {
         data.gift_id = item.gift_id;
       }
-      // console.log("is_login: ", this.is_login());
       if (!this.is_login()) {
         return this.$u.toast("请先登录");
       }
@@ -1750,7 +1770,6 @@ export default {
         .then((res) => {
           this.$u.toast("赠送成功");
           this.$store.dispatch("getInfo", this.$u);
-          // this.initMachineSVGA(item);
         })
         .catch((res) => {
           this.$u.toast(res.msg || "赠送失败");
@@ -1758,8 +1777,6 @@ export default {
     },
     // 禮物顯示
     initMachineSVGA(item) {
-      // console.log("gift svga", item);
-      var mycanvas = document.getElementById("demoCanvas");
       let _this = this;
       let player = new SVGA.Player("#demoCanvas");
       let parser = new SVGA.Parser("#demoCanvas");
@@ -1767,20 +1784,17 @@ export default {
       parser.load(item.swf, function (videoItem) {
         player.setVideoItem(videoItem);
         player.startAnimation();
-        // console.log("1", time);
         if (_this.haveSvga) {
           clearTimeout(_this.svgaTimeOut);
         } else {
           _this.haveSvga = true;
         }
         _this.svgaTimeOut = setTimeout(() => {
-          // console.log("2", time);
           player.stopAnimation();
         }, time);
       });
     },
     onhandleSendGift(data) {
-      // console.log(data);
       let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
       this.initMachineSVGA(gift);
     },
@@ -1788,6 +1802,33 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@-webkit-keyframes pulse {
+  0% {
+    transform:scale(1);
+  }
+  14%{
+     transform:scale(1.2);
+  }
+  28%{
+     transform:scale(1);
+  }
+  42%{
+     transform:scale(1.2);
+  }
+  0% {
+     transform:scale(1);
+  }
+}
+
+.b-play-btn{
+  animation: pulse 2s ease infinite;
+  width:80px;
+  height:auto;
+  &:hover{
+    cursor:pointer;
+  }
+}
+
 .show-img-container {
   opacity: 1 !important;
   z-index: 99;

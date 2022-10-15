@@ -8,8 +8,8 @@ const install = (Vue, vm) => {
 		// baseUrl: '/opc',  //dev测试
 		// baseUrl: 'https://www.x9zb.live',  //dev测试
 		// baseUrl: 'http://huyapre.oxldkm.com', //pre環境
-		baseUrl: 'http://huidu.x9zb.live', //灰度環境
-		// baseUrl: window.location.origin+"/",//master打包上线
+		// baseUrl: 'http://huidu.x9zb.live', //灰度環境
+		baseUrl: window.location.origin+"/",//master打包上线
 		loadingText: '努力加载中~',
 		loadingTime: 1000,
 		// ......

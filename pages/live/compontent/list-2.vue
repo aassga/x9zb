@@ -3,8 +3,53 @@
 	<view class="list">
 		<view class="list-swiper">
 			<!-- <image src="" mode="scaleToFill"></image> -->
-			<u-swiper :list="list" height="302" img-mode="scaleToFill" mode="rect" indicator-pos="bottomCenter">
-			</u-swiper>
+			<!-- <u-swiper :list="list" height="302" img-mode="scaleToFill" mode="rect" indicator-pos="bottomCenter">
+			</u-swiper> -->
+			<swiper 
+				class="swiper" 
+				circular 
+				:indicator-dots="true" 
+				:indicator-active-color="'#ffffff'"
+				:autoplay="true"
+			>
+				<swiper-item v-if="showCountDown">
+					<view class="countdown-container">
+						<img class="countdown-bg" :src="require('../../../static/images/home/countdown-bg.png')" />
+						<view class="countdown-content">
+							<view class="countdown-time">
+								<view class="countdown-group">
+									<view class="countdown-box">{{countDownD.split('')[0]}}</view>
+									<view class="countdown-box">{{countDownD.split('')[1]}}</view>
+									<view class="countdown-text">天</view>
+								</view>
+								<view class="countdown-colon">:</view>
+								<view class="countdown-group">
+									<view class="countdown-box">{{countDownH.split('')[0]}}</view>
+									<view class="countdown-box">{{countDownH.split('')[1]}}</view>
+									<view class="countdown-text">时</view>
+								</view>
+								<view class="countdown-colon">:</view>
+								<view class="countdown-group">
+									<view class="countdown-box">{{countDownM.split('')[0]}}</view>
+									<view class="countdown-box">{{countDownM.split('')[1]}}</view>
+									<view class="countdown-text">分</view>
+								</view>
+								<view class="countdown-colon">:</view>
+								<view class="countdown-group">
+									<view class="countdown-box">{{countDownS.split('')[0]}}</view>
+									<view class="countdown-box">{{countDownS.split('')[1]}}</view>
+									<view class="countdown-text">秒</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</swiper-item>
+				<swiper-item v-for="it in list" :key="it.id">
+					<view class="swiper-item">
+						<img class="swiper-image" :src="it.img"/>
+					</view>
+				</swiper-item>
+			</swiper>
 		</view>
 		<view class="list-roll">
 			<scroll-view scroll-x="true">
@@ -90,25 +135,19 @@
 		},
 		data() {
 			return {
-				// list: [{
-				// 		image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-				// 		title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-				// 	},
-				// 	{
-				// 		image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-				// 		title: '身无彩凤双飞翼，心有灵犀一点通'
-				// 	},
-				// 	{
-				// 		image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-				// 		title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-				// 	}
-				// ],
+				currentTabIndex: 1,
 				current_page: 1,
 				total: 0,
 				limit: 20,
 				liveDataList: [],
 				bannerList: [],
 				clientX: null,
+				showCountDown: true,
+				countDownIntervals: null,
+				countDownD: "",
+				countDownH: "",
+				countDownM: "",
+				countDownS: "",
 			}
 		},
 		props: {
@@ -121,37 +160,40 @@
 			total_page() {
 				let result = 1;
 				if (this.total > 0) {
-						result = Math.ceil(this.total / this.limit);
+					result = Math.ceil(this.total / this.limit);
 				}
 				return result;
 			}
 		},
+		created() {
+			this.countDownIntervals = setInterval(() => {
+				this.initCountDown();
+			}, 500);
+		},
 		methods: {
 			// 预约赛事
 			getReserveMatch(item, index) {
-				// console.log('我点击了预约')
 				const _this = this;
 				this.$u.post('/api/live/reserveMatch2', {
 					type: item.type,
 					match_id: item.sourceid
 				}).then(res => {
 					if (item.reserve == 0) {
-						item.reserve = 1
+						item.reserve = 1;
 					} else {
-						item.reserve = 0
+						item.reserve = 0;
 					}
 					_this.bannerList[index] = item;
 				}).catch(res => {
 
 				})
 			},
-			getList(page = 1, need_all_match = true) {
+			getList(currentTabIndex, page = 1, need_all_match = true) {
+				this.currentTabIndex = currentTabIndex;
 				if (need_all_match) {
 					// 全部赛事
 					this.$u.post('/api/hot_match/all_match', {}).then(res => {
-						this.bannerList = res.data
-
-						// console.log(resdata);
+						this.bannerList = res.data;
 					})
 				}
 				// 正在直播
@@ -167,7 +209,7 @@
 			jumpPage(page) {
 				if (!(page > 0 && page <= this.total_page)) {
 					return;
-				}else if (page == this.current_page) {
+				} else if (page == this.current_page) {
 					return;
 				}
 				this.getList(page, false);
@@ -184,7 +226,31 @@
 				} else {
 					return;
 				}
+			},
+			// 活動倒計時
+			initCountDown() {
+				let activityTimestamp = Date.parse(new Date('2022/11/20 23:59:59'));
+				let nowTimestamp = Date.parse(new Date());
+				let interval = activityTimestamp - nowTimestamp;
+
+				if (interval < 0) {
+					this.showCountDown = false;
+					clearInterval(this.countDownIntervals);
+					return;
+				}
+				
+				let d = Math.floor(interval / (1000*60*60*24));
+				let h = parseInt(interval % (1000*60*60*24) / (1000*60*60));
+				let m = parseInt(interval % (1000*60*60) / (1000*60));
+				let s = parseInt(interval % (1000*60) / 1000);
+				this.countDownD = d < 10 ? ('0' + d) : d + '';
+				this.countDownH = h < 10 ? ('0' + h) : h + '';
+				this.countDownM = m < 10 ? ('0' + m) : m + '';
+				this.countDownS = s < 10 ? (s >= 1 ? ('0' + s) : '00') : s + '';
 			}
+		},
+		destroyed() {
+			clearInterval(this.countDownIntervals);
 		}
 	}
 </script>
@@ -198,6 +264,67 @@
 
 	.list-swiper {
 		margin-top: 20rpx;
+		.swiper {
+			border-radius: 5px;
+			overflow: hidden;
+			/deep/ .uni-swiper-dot {
+				width: 26rpx !important;
+				height: 6rpx !important;
+				border-radius: 0px !important;
+			}
+		}
+		.swiper-image {
+			width: 100%;
+			height: 300rpx;
+		}
+	}
+
+	.countdown-container {
+		position: relative;
+		height: 300rpx;
+		.countdown-bg {
+			width: 100%;
+		}
+		.countdown-content {
+			position: absolute;
+			top: 168rpx;
+			width: 100%;
+			padding: 0 20rpx 0 220rpx;
+			box-sizing: border-box;
+			.countdown-time {
+				display: flex;
+				justify-content: center;
+				.countdown-group {
+					.countdown-box {
+						display: inline-block;
+						margin: 0 2rpx;
+						padding: 5rpx 0;
+						width: 20px;
+						border-radius: 2px;
+						font-weight: bold;
+						font-size: 32rpx;
+						text-align: center;
+						box-sizing: border-box;
+						background: #fff;
+						color: #af0f22;
+					}
+					.countdown-text {
+						width: 100%;
+    					padding-top: 2px;
+						font-size: 24rpx;
+						text-align: center;
+						color: #f9e9d6;
+						transform: scale(0.9);
+					}
+				}
+				.countdown-colon {
+					margin: 0 6rpx;
+					font-weight: bold;
+					font-size: 32rpx;
+					color: #fff;
+				}
+			}
+		}
 	}
 
 	.list-roll {
