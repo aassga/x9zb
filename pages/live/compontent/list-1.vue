@@ -7,10 +7,10 @@
 				<text :class="{'active':tabIndex == 1}" @click="setIndex(1)">篮球</text>
 			</view>
 			<view class="index-time-type flex">
-				<view class="index-time-type-i flex-center" :class="timeIndex==0?'index-time-type-li':''" @click="getTimeIndex(0)">
+				<view class="index-time-type-i flex-center" :class="timeIndex == 0 ? 'index-time-type-li' : ''" @click="getTimeIndex(0)">
 					<view>今日</view>
 				</view>
-				<view class="index-time-type-i flex-center" :class="index==timeIndex?'index-time-type-li':''"  @click="getTimeIndex(index)" v-for="(item,index) in dateTime" v-if="index!=0" :key="index">
+				<view class="index-time-type-i flex-center" :class="index==timeIndex ? 'index-time-type-li' : ''"  @click="getTimeIndex(index)" v-for="(item,index) in dateTime" v-if="index!=0" :key="index">
 					<view>{{item.data}}</view>
 					<view>{{item.time}}</view>
 				</view>

@@ -39,13 +39,13 @@
 
 <style lang="scss">
 	.detail-tips {
-		color: #87390E;
+		color: rgba(0,0,0,0.8);
 		// position: absolute;
 		// top: 0;
 		// left: 0;
 		// right: 0;
 		padding: 0 24rpx;
-		background-color: #F4E8D3;
+		background-color: #dde7ff;
 		image {
 			width: 32rpx;
 			height: 28rpx;
@@ -78,7 +78,8 @@
 			font-size: 28rpx;
 			padding: 16rpx 20rpx;
 			border-radius: 12rpx;
-			background: linear-gradient(90deg, #FFDFAB 0%, #E3AC72 100%);
+			// background: linear-gradient(90deg, #FFDFAB 0%, #E3AC72 100%);
+			background-color: #c41d48;
 			image {
 				width: 28rpx;
 				height: 25rpx;
@@ -88,5 +89,8 @@
 		.active{
 			background: #ccc;
 		}
+	}
+	/deep/.u-icon__icon--warning{
+		color: #c41d48;
 	}
 </style>

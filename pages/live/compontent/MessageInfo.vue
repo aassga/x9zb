@@ -49,7 +49,6 @@
 <style lang="scss" scoped>
 	.HuyaXWebhMessageinfo {
 		position: absolute;
-		z-index: 99;
 		top: 0;
 		left: 0;
 		width: 100%;

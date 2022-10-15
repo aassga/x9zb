@@ -18,7 +18,7 @@
 			<image src="/static/images/competition/detail01.png" mode=""></image>
 			<text style="">正在直播</text>
 		</view>
-		<view class="detail-video-list flex-wrap">
+		<view class="detail-video-list flex-wrap" @touchstart="start" @touchend="end">
 			<view class="detail-video-li" v-for="(item,index) in liveList.data" :key="index" @click="$navigateTo('./detail?id=' + item.uid + '&vid=' + item.vid)">
 				<view class="detail-viedo-top">
 					<image class="detail-video-li-logo" :src="item.thumb" mode="aspectFill"></image>
@@ -41,39 +41,93 @@
 				</view>
 			</view>
 		</view>
+		<view class="pagination-container" v-if="liveList.total != 0">
+			<pagiation
+				:current="current_page"
+				:total="total"
+				:limit="limit"
+				@jumpPage="jumpPage"
+			/>
+		</view>
 		<u-empty text="暂无直播"  v-if="liveList.total == 0" src="/static/images/competition/none.png" icon-size="400" mode="list"></u-empty>
 	</view>
 </template>
 
 <script>
+	import pagiation from '../compontent/pagination.vue';
 	export default {
+		components: {
+			pagiation
+		},
 		data() {
 			return {
+				currentTabIndex: 0,
+				current_page: 1,
+				total: 0,
+				limit: 20,
 				liveList: {}
 			}
 		},
-		mounted() {
-			console.log(3);
+		computed: {
+			total_page() {
+                let result = 1;
+                if (this.total > 0) {
+                    result = Math.ceil(this.total / this.limit);
+                }
+                return result;
+            }
 		},
 		methods:{
-			getList(type){
-				let arr = [-1,-1,0,1,3,2]
-				// 正在直播
+			getList(currentTabIndex, page = 1) {
+				this.currentTabIndex = currentTabIndex;
+				let type = {
+					"2": 0, // 足球
+					"3": 1, // 籃球
+					"4": 3, // 電競
+					"5": 2, // 其他
+				}[`${currentTabIndex}`]
 				let data = {
-					type:arr[type]
+					type: type,
+					page: page,
+					limit: this.limit
 				}
 				this.$u.get('/api/live_streaming/getLiveList', data).then(res => {
-					this.liveList = res
+					this.liveList = res;
+					this.current_page = res.current_page;
+					this.total = res.total;
 				})
-			}
+			},
+			jumpPage(page) {
+				if (!(page > 0 && page <= this.total_page)) {
+					return;
+                }
+                if (page == this.current_page) {
+					return;
+                }
+				this.getList(this.currentTabIndex, page);
+			},
+			start(e) {
+				this.clientX = e.changedTouches[0].clientX;
+			},
+			end(e) {
+				const subX = e.changedTouches[0].clientX - this.clientX;
+				if (subX > 100) {
+					this.jumpPage(this.current_page - 1);
+				} else if (subX < -100) {
+					this.jumpPage(this.current_page + 1);
+				} else {
+					return;
+				}
+			},
 		}
 	}
 </script>
 
 <style lang="scss">
 	.list {
-		padding: 0 24rpx;
 		padding-top: 6vh;
+		padding: 0 24rpx;
+		padding-bottom: 120rpx;
 	}
 	.list-head {
 		overflow: hidden;
@@ -199,5 +253,9 @@
 	.detail-video-right {
 		flex: 1;
 		min-width: 100px;
+	}
+
+	.pagination-container {
+		margin-top: 10rpx;
 	}
 </style>

@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d2104c6"],{b6fb:function(n,t,e){"use strict";e.r(t);var l=function(n,t){return n("div",[n("el-alert",{attrs:{closable:!1,title:"menu 1-2-2",type:"warning"}})],1)},c=[],u=e("0c7c"),a={},r=Object(u["a"])(a,l,c,!0,null,null,null);t["default"]=r.exports}}]);

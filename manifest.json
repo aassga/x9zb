@@ -1,6 +1,6 @@
 {
     "name" : "fossilTeeth-project-H5",
-    "appid" : "__UNI__B71FB7F",
+    "appid" : "__UNI__7640D10",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -11,7 +11,11 @@
             "disableHostCheck" : true,
             "proxy" : {
                 "/opc" : {
-                    "target" : "http://lukee.pc.com/", //实际请求服务器地址
+                    // "target" : "http://huyapreadmin.oxldkm.com", //实际请求服务器地址
+                    // "target" : "http://huidu.x9zb.live", //灰度環境
+                    // "target" : "http://huyapre.oxldkm.com", //pre環境
+                    // "target" : "https://www.x9zb.live", //实际请求服务器地址
+                    "target": "http://pc.huya.com/",
                     "changeOrigin" : true,
                     "secure" : false,
                     "pathRewrite" : {
