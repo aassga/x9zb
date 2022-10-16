@@ -16,15 +16,10 @@
           />
           {{ item.name }}
           <i
-            v-show="
-              ((privateChatTotal && privateChatTotal > 0 && !hideChat) ||
-                inviteCount) &&
-              item.id === 2
-            "
+            v-show="(inviteCount > 0 && !hideChat) && item.id === 2"
             class="new-msg-icon"
             >{{
-              privateChatTotal > 99 ? "99+" : inviteCount ? 1 : privateChatTotal
-            }}</i
+              inviteCount > 99 ? "99+" : inviteCount }}</i
           >
           <i
             v-show="unreadTotal && unreadTotal > 0 && item.id === 1"
@@ -219,7 +214,7 @@ export default {
         { name: "主播私聊", id: 2 },
         { name: "聊天", id: 1 },
       ],
-      unreadMessageList: [], // 红点的列表
+      unreadMsgList: [], // 红点的列表
       privateChatTotal: 0, // 主播私聊的未读总数
       unreadTotal: 0, // 列表红点的总数
       modalMsgList: [],
@@ -297,7 +292,7 @@ export default {
   },
   //给新的ws实例添加监听事件
   watch: {
-    unreadMessageList: {
+    unreadMsgList: {
       handler(newV, oldV) {
         this.chatList = this.mapList(this.chatList, newV);
         this.onGroupNewsTotal(this.chatList);
@@ -393,10 +388,10 @@ export default {
       this.msgText = item.text;
     },
     relationsFilter(data) {
-      if (this.hideChat) {
-        return data.filter((el) => el.id !== 2);
-      } else {
-        return data;
+      if(this.hideChat){
+        return data.filter((el) => el.id !== 2)
+      }else{
+        return data
       }
     },
     closeModel() {
@@ -446,83 +441,69 @@ export default {
     },
 
     // 列表已读未读比对事件
-    mapList(read, unRead) {
+    mapList(readData, unReadData) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
-      if (unRead.length > 0 && unRead[unRead.length - 1].text) {
-        read.sort((a, b) =>
-          a.vid == unRead[unRead.length - 1].vid
+      if (unReadData.length > 0 && unReadData[unReadData.length - 1].text) {
+        readData.sort((a, b) =>
+          a.vid == unReadData[unReadData.length - 1].vid
             ? -1
-            : b.vid == unRead[unRead.length - 1].vid
+            : b.vid == unReadData[unReadData.length - 1].vid
             ? 1
             : 0
         );
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        for (let item in read) {
-          if (read[item].vid == this.roomInfo.vid) this.activeIndex2 = item;
-        }
+        read.forEach((res)=>{
+          if (res.vid == this.roomInfo.vid) this.activeIndex2 = item;
+        })
       }
-      for (let index in read) {
-        let readList = read[index];
-        for (let index in unRead) {
-          let unReadList = unRead[index];
-          if (unReadList.vid == readList.vid) {
-            readList.unread_count = unReadList.unread_count;
-            if (unReadList.text) readList.last_msg.text = unReadList.text;
+      readData.forEach((res)=>{
+        unReadData.forEach((el)=>{
+          if (el.vid === res.vid) {
+            res.unread_count = el.unread_count;
+            res.last_msg.text = el.text ? el.text : res.last_msg.text
           }
-        }
-      }
-      return menuList;
+        })
+      })
+      return readData;
     },
     // 群组消息总数计算事件
     onGroupNewsTotal(list) {
       let num = 0;
-      for (let index in list) {
-        const element = list[index];
-        if (element.unread_count > 0) num += element.unread_count;
-      }
+      list.forEach((list)=>{
+        if (list.unread_count > 0) num += list.unread_count;
+      })
       this.unreadTotal = num;
-    },
-    onHandleMsgChange(list) {
-      let num = 0;
-      for (let index in list) {
-        const element = list[index];
-        if (element.unread_count > 0) num += element.unread_count;
-      }
-      this.privateChatTotal = num;
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
       if (type == 0) {
-        this.unreadMessageList = msgList;
+        this.unreadMsgList = msgList;
       } else {
         let falg = true;
-        let arr = JSON.parse(JSON.stringify(this.unreadMessageList));
-        for (let item in arr) {
-          let newArr = arr[item];
-          if (newArr.vid === msgList.vid) {
+        let arr = JSON.parse(JSON.stringify(this.unreadMsgList));
+        arr.forEach((res)=>{
+          if (res.vid === msgList.vid) {
             falg = false;
-            newArr.unread_count += 1;
-            newArr.text = msgList.text;
+            res.unread_count += 1;
+            res.text = msgList.text;
           }
-        }
+        })
         if (falg) {
           arr.push(msgList);
         }
-        this.unreadMessageList = arr;
+        this.unreadMsgList = arr;
         this.inviteCount += 1;
         this.unreadTotal += 1;
       }
     },
     // 已读事件
     readEvent(item) {
-      let newMessageData = this.unreadMessageList;
-      for (let index in newMessageData) {
-        let element = newMessageData[index];
-        if (element.vid == item.vid) {
-          element.unread_count = 0;
+      let newMessageData = this.unreadMsgList.forEach((res)=>{
+        if(res.vid === item.vid){
+          res.unread_count = 0
         }
-      }
-      this.unreadMessageList = newMessageData;
+      })
+      this.unreadMsgList = newMessageData;
     },
     getUserToken() {
       const _that = this;
@@ -560,7 +541,6 @@ export default {
             });
             this.quickReplyList();
           }
-          // this.dialogVisible = true;
         });
     },
     setMsg(item) {
@@ -588,12 +568,9 @@ export default {
         .then((res) => {
           this.showLoading = false;
           if (res.code == 0) {
-            for (let index in res.data) {
-              let messageListData = res.data[index];
-              messageListData.unread_count = 0;
-            }
-            if (this.unreadMessageList.length > 0) {
-              res.data = this.mapList(res.data, this.unreadMessageList);
+            res.data.forEach(data => data.unread_count = 0)
+            if (this.unreadMsgList.length > 0) {
+              res.data = this.mapList(res.data, this.unreadMsgList);
               this.onGroupNewsTotal(res.data);
             }
             this.chatList = res.data;
@@ -717,15 +694,13 @@ export default {
           channel: this.channel,
         })
         .then((res) => {
+          roomInfo[roomId] = res.data.vid;
+          localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           if (this.initInvite) {
             this.initInvite = false;
-            roomInfo[roomId] = res.data.vid;
-            localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
             return;
           }
           this.parmUserInfo.vid = res.data.vid;
-          roomInfo[roomId] = res.data.vid;
-          localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           this.inRoomInfo(this.webSocketFd);
           this.controlIndex = -1;
         });
@@ -769,8 +744,7 @@ export default {
         type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         channel: this.channel,
       };
-      if (this.tabNumber == 1 || this.tabNumber == 2)
-        this.leaveVid = this.parmUserInfo.vid;
+      if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid;
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
         if (res.data.pinData && res.data.pinData != "") {
           _that.pinInfo = {
@@ -795,14 +769,13 @@ export default {
       this.ws = new WebSocket(this.WSURL);
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
+      // 传送消息时触发
+      this.ws.onmessage = this.websocketonmessage;      
       // 通信发生错误时触发
       this.ws.onerror = this.websocketonerror;
       // 连接关闭时触发
       this.ws.onclose = this.websocketclose;
 
-      this.ws.onmessage = this.websocketonmessage;
-
-      // this.$store.commit('HANDLE_WSRECONNECT')
     },
     websocketonopen() {
       //开启心跳
@@ -810,13 +783,11 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      // // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      // // console.log("断开连接", e);
       this.ws.close();
       //重连
       this.reconnect();
@@ -830,15 +801,14 @@ export default {
       const _that = this;
       this.timeoutnum = setTimeout(() => {
         //新连接
-        // _that.getUserToken();
         _that.initInvite = true;
         _that.lockReconnect = false;
       }, 5000);
     },
     reset() {
       //重置心跳
-      //清除时间
       clearTimeout(this.timeoutObj);
+      //清除时间
       clearTimeout(this.serverTimeoutObj);
       //重启心跳
       this.start();
@@ -861,10 +831,10 @@ export default {
       let data = {
         vid: this.parmUserInfo.vid,
         fd: this.webSocketFd,
-        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
+        type: this.tabNumber === 1 ? this.room_type : this.tabNumber || 0,
         text: text,
         method: "notice",
-        msg_type: this.tabNumber == 0 ? 0 : 1, //0为弹幕,1文字
+        msg_type: this.tabNumber === 0 ? 0 : 1, //0为弹幕,1文字
         color: "#000",
         sender: this.parmUserInfo.user_id,
         token: this.imUserInfo.token,
@@ -879,7 +849,7 @@ export default {
         formData.append("link", "");
         formData.append(
           "type",
-          this.tabNumber == 1 ? this.room_type : this.tabNumber || 0
+          this.tabNumber === 1 ? this.room_type : this.tabNumber || 0
         );
         formData.append("method", "notice");
         formData.append("msg_type", 2);
@@ -1072,12 +1042,9 @@ export default {
       this.$nextTick(() => (box.scrollTop = box.scrollHeight));
     },
     //解耦合
-    mergeDataList(type, m, data) {
-      if (type !== this.tabNumber) {
-        return;
-      }
-      const set = new Set();
-      switch (m) {
+    mergeDataList(type, status, data) {
+      if (type !== this.tabNumber) return;
+      switch (status) {
         case "init":
           if (type === 0) {
             this.msgSquareList = data;
@@ -1117,6 +1084,7 @@ export default {
       }
       this.toBottom();
     },
+    
   },
 };
 </script>
