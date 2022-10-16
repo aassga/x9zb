@@ -460,12 +460,12 @@ export default {
         }
       }
       for(let index in read){
-        let menuList = read[index];
-        for(let index in changeList){
-          let changeList = unRead[index];
-          if (changeList.vid == menuList.vid) {
-            menuList.unread_count = changeList.unread_count;
-            if (changeList.text) menuList.last_msg.text = changeList.text;
+        let readList = read[index];
+        for(let index in unRead){
+          let unReadList = unRead[index];
+          if (unReadList.vid == readList.vid) {
+            readList.unread_count = unReadList.unread_count;
+            if (unReadList.text) readList.last_msg.text = unReadList.text;
           }
         }
       }
@@ -476,9 +476,7 @@ export default {
       let num = 0;
       for (let index in list) {
         const element = list[index];
-        if (element.unread_count > 0) {
-          num += element.unread_count;
-        }
+        if (element.unread_count > 0) num += element.unread_count;
       }
       this.unreadTotal = num;
     },
@@ -486,9 +484,7 @@ export default {
       let num = 0;
       for (let index in list) {
         const element = list[index];
-        if (element.unread_count > 0) {
-          num += element.unread_count;
-        }
+        if (element.unread_count > 0) num += element.unread_count;
       }
       this.privateChatTotal = num;
     },
@@ -517,14 +513,14 @@ export default {
     },
     // 已读事件
     readEvent(item) {
-      let newMegData = this.unreadMessageList;
-      for (let index in newMegData) {
-        let element = newMegData[index];
+      let newMessageData = this.unreadMessageList;
+      for (let index in newMessageData) {
+        let element = newMessageData[index];
         if (element.vid == item.vid) {
           element.unread_count = 0;
         }
       }
-      this.unreadMessageList = newMegData;
+      this.unreadMessageList = newMessageData;
     },
     getUserToken() {
       const _that = this;
@@ -670,9 +666,7 @@ export default {
       }, 1000);
     },
     changeType(e) {
-      if (this.showLoading || this.tabNumber === e) {
-        return;
-      }
+      if (this.showLoading || this.tabNumber === e) return
       const qVid = this.qsVid;
       this.page = 1;
       this.tabNumber = e;
@@ -706,9 +700,7 @@ export default {
       this.changeHeight();
     },
     inviteRoom(init = false) {
-      if (!this.webSocketFd) {
-        return;
-      }
+      if (!this.webSocketFd) return
       const _that = this;
       const roomId = this.qsVid;
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
@@ -828,9 +820,7 @@ export default {
     },
     reconnect() {
       //重新连接
-      if (this.lockReconnect) {
-        return;
-      }
+      if (this.lockReconnect) return
       this.lockReconnect = true;
       //没连接上会一直重连，设置延迟避免请求过多
       this.timeoutnum && clearTimeout(this.timeoutnum);
@@ -1028,7 +1018,6 @@ export default {
       }
       if (data.status == 200) {
         if (data.data) {
-          // 晚点封装成switch case
           switch (data.data.type) {
             case "dialog":
               this.mergeDataList(
@@ -1066,9 +1055,7 @@ export default {
     // 聊天框滚动到最底部
     toBottom() {
       let box = document.getElementsByClassName("chat-window")[0];
-      this.$nextTick(() => {
-        box.scrollTop = box.scrollHeight;
-      });
+      this.$nextTick(() => box.scrollTop = box.scrollHeight);
     },
     //解耦合
     mergeDataList(type, m, data) {
