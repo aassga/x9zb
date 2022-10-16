@@ -302,7 +302,9 @@ export default {
       deep: true,
     },
     webSocketFd(newV, oldV) {
-      if (newV != oldV) this.inviteRoom(true);
+      if (newV != oldV) {
+        this.inviteRoom(true);
+      }
     },
     showLoading(newV, oldV) {
       !newV ? this.toBottom() : false;
@@ -668,13 +670,16 @@ export default {
           this.mergeDataList(2);
           this.newMsg.privateChatTotal = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-          this.inviteRoom();
-          vInfo.hasOwnProperty(qVid)
-            ? (this.parmUserInfo.vid = vInfo[qVid])
-            : false;
+          if(!vInfo.hasOwnProperty(qVid)){
+            this.inviteRoom()
+            return
+          }
           this.parmUserInfo.vid = vInfo[qVid];
+          this.inviteRoom()
         }
-        if (!this.showChatList) this.inviteRoom();
+        if (!this.showChatList) {
+          this.inviteRoom();
+        }
       }
       this.changeHeight();
     },
@@ -921,10 +926,13 @@ export default {
     // 客户端接收服务端数据时触发
     websocketonmessage(event) {
       let data = JSON.parse(event.data);
-      this.webSocketFd = data.fd;
+     
       switch (data.action) {
         case "open":
-          if (data.fd !== null) this.inRoomInfo(this.webSocketFd);
+          if (data.fd !== null) {
+            this.webSocketFd = data.fd;
+            this.inRoomInfo(this.webSocketFd);
+          }
           break;
         case "clearHistory":
           this.mergeDataList(this.tabNumber, "empty");
