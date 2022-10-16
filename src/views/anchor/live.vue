@@ -687,20 +687,22 @@
 				}
 			},
 			"$store.state.football_exponent"(e) {
-				// return
-				if (e.type == 'football_match' && this.query.id == e.id && e.company_id == 2) {
-					this.base = {...this.base,...e}
-				} else if (e.type == 'football_exponent' && this.query.id == e.sourceid) {
-					// console.log(e.exponent);
-					console.log('指数');
-					this.base.exponent[e.name][e.name1] = e.exponent[e.name][e.name1]
-					// this.base.exponent = {
-					// 	...this.base.exponent,
-					// 	...e.exponent
-					// }
-					// this.base =this.$common.assignDeep(this.item.exponent,e.exponent)
-					// console.log(this.item.exponent);
+				if (e.type === 'football_match' && this.query.id == e.id) {
+					this.base = {...this.base, ...e}
 				}
+				// if (e.type == 'football_match' && this.query.id == e.id && e.company_id == 2) {
+				// 	this.base = {...this.base,...e}
+				// } else if (e.type == 'football_exponent' && this.query.id == e.sourceid) {
+				// 	// console.log(e.exponent);
+				// 	console.log('指数');
+				// 	this.base.exponent[e.name][e.name1] = e.exponent[e.name][e.name1]
+				// 	// this.base.exponent = {
+				// 	// 	...this.base.exponent,
+				// 	// 	...e.exponent
+				// 	// }
+				// 	// this.base =this.$common.assignDeep(this.item.exponent,e.exponent)
+				// 	// console.log(this.item.exponent);
+				// }
 			},
 		},
 		beforeDestroy(){
@@ -917,7 +919,6 @@
 				return "data:image/svg+xml;base64," + b64;
 			},
 			initMachineSVGA(item) {
-				console.log("gift svga", item);
 			    var mycanvas = document.getElementById("demoCanvas");
 				let _this = this;
 			    let player = new SVGA.Player("#demoCanvas");
@@ -926,14 +927,12 @@
 			    parser.load(item.swf, function (videoItem) {
 					player.setVideoItem(videoItem);
 					player.startAnimation();
-					console.log("1", time);
 					if (_this.haveSvga) {
 						clearTimeout(_this.svgaTimeOut);
 					} else {
 						_this.haveSvga = true;
 					}
 					_this.svgaTimeOut = setTimeout(() => {
-						console.log("2", time);
 						player.stopAnimation();
 					}, time);
 			    });
@@ -1013,7 +1012,6 @@
 					
 					this.$message.success('赠送成功');
 					this.$store.dispatch('getUserInfo','');
-					// this.initMachineSVGA(item);
 					// this.$refs.chatRoom.createCustomMessage(item,this.query.uid);
 					item.type = item.type1;
 					// this.giftList = res.data.data

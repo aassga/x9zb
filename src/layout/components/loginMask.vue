@@ -317,7 +317,9 @@
 						}
 						this.database = data
 						register(_this.database).then(res => {
-							_this.type = 'code'
+							// _this.type = 'code';
+							this.base.code="";
+							this.submit("code")
 							_this.$message.success('注册成功')
 						}).catch(res => {
 							console.log('失败' + res);

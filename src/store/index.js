@@ -80,33 +80,82 @@ const store = new Vuex.Store({
 			// store.item = obj  
 		},
 
-		updateConversationList(store, event) {
-			// 深度拷贝维问题
-			let obj = JSON.parse(JSON.stringify(event[0].lastMessage))
-			let groupProfile = JSON.parse(JSON.stringify(event[0].groupProfile))
-			// return
-			// 判断自定义消息和非自定义消息
-			obj.groupProfile = groupProfile
-			obj.avatar = event[0].groupProfile.avatar
-			if (obj.type == 'TIMCustomElem') {//自定义消息
-				obj.data = JSON.parse(obj.payload.data)
-			}
-			store.item = obj
-			console.log('监听普通消息');
-			store.messageList = [...store.messageList, ...[obj]]
-		},
-		setdanmakuShow(store, obj) {
-			store.item = obj
-		},
-		kaifazhong(state) {
-			MessageBox.confirm('开发中...', '提示', {
-				confirmButtonText: '取消',
-				cancelButtonText: '确定',
-				type: 'warning'
-			}).then(() => {
-				// router.push({path:'/'})
-			})
-		},
+	 getImToken({ commit }, params) {
+		return HomedApi.getImToken(params).then((res) => {
+		 return res
+		});
+	  },
+	  
+  sendMessage({ commit }, params) {
+    return HomedApi.sendMessage(params).then((res) => {
+      return res
+    });
+  },
+  inRoom({ commit }, params) {
+    return HomedApi.inRoom(params).then((res) => {
+      return res
+    });
+  },
+  leaveRoom({ commit }, params) {
+    return HomedApi.leaveRoom(params).then((res) => {
+      return res
+    });
+  },
+  getChatHistory({ commit }, params) {
+    return HomedApi.getChatHistory(params).then((res) => {
+      return res
+    });
+  },
+  deleteMessage({ commit }, params) {
+    return HomedApi.deleteMessage(params).then((res) => {
+      return res
+    });
+  },
+  mute({ commit }, params) {
+    return HomedApi.mute(params).then((res) => {
+      return res
+    });
+  },
+  freeze({ commit }, params) {
+    return HomedApi.freeze(params).then((res) => {
+      return res
+    });
+  },
+  pin({ commit }, params) {
+    return HomedApi.pin(params).then((res) => {
+      return res
+    });
+  },
+  inviteRoom({ commit }, params) {
+    return HomedApi.inviteRoom(params).then((res) => {
+      return res
+    });
+  },
+  gettoburl({ commit }, params) {
+    return HomedApi.gettoburl(params).then((res) => {
+      return res
+    });
+  },
+  
+  getQuickReplyList({ commit }, params) {
+	return HomedApi.getQuickReplyList(params).then((res) => {
+		return res
+		});
+	},
+	getMessageList({ commit }, params) {
+        return HomedApi.getMessageList(params).then((res) => {
+            return res
+        });
+    },
+	addQuickReply({ commit }, params) {
+		return HomedApi.addQuickReply(params).then((res) => {
+			return res
+		});
+	},
+	delQuickReply({ commit }, params) {
+		return HomedApi.delQuickReply(params).then((res) => {
+			return res
+		});
 	},
 	getters,
 	actions: {
