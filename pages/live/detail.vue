@@ -468,7 +468,7 @@ export default {
       this.tabList = tablist;
     },
     oneChat(num){
-      // console.log(e)
+      console.log('num',num)
       let tablist = JSON.parse(JSON.stringify(this.tabList));
       for (let index = 0; index < tablist.length; index++) {
         let element = tablist[index];
@@ -635,8 +635,10 @@ export default {
       return menuList;
     },
     oneChatMsgChange(list){
-      this.oneChat = list.unread_count;
-      console.log('oneChat', this.oneChat)
+      if(localStorage.getItem('anchorVid') === list.vid){
+        this.oneChat += list.unread_count ;
+        console.log('oneChat',this.oneChat)
+      }
     },
     // 群组消息总数计算事件
     onHandleGroupMsgChange(list) {
@@ -660,7 +662,6 @@ export default {
         console.log(msgList);
         this.msgList2 = msgList;
       } else {
-        console.log()
         this.oneChatMsgChange(msgList)
         if (this.messageList.length <= 0) {
           this.msgList2 = [msgList];
@@ -776,6 +777,7 @@ export default {
         type: "1,2",
         channel_code: this.channel_code ? this.channel_code : "",
       });
+      console.log(this.msgList2)
       for (let index = 0; index < res.length; index++) {
         let element = res[index];
         this.msgList2.forEach((num)=>{
@@ -806,7 +808,7 @@ export default {
 
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      // console.log(item, this.current, "item-info=======");
+      console.log(item, index, "item-info=======");
 
       this.showMsgInfo = true;
       this.roomInfo = item;
@@ -896,10 +898,14 @@ export default {
     },
 
     change(e) {
-      // console.log(e, "e==========");
+      console.log(e, "e==========");
       this.current = e;
       this.showMsgInfo = false;
-      if (e == 4) {
+      if (e === 1){
+        this.oneChat = 0;
+        this.newArr = this.messageList.filter(list => list.vid === localStorage.getItem('anchorVid'))
+        console.log(this.newArr)
+      }else if (e == 4) {
         setTimeout((res) => {
           this.$refs.detail3.getList({
             uid: this.userInfo.uid,

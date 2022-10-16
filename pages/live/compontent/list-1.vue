@@ -121,7 +121,7 @@
 					}else {
 						this.list.data = [...this.list.data,...res.data]
 					}
-					console.log(res);
+					// console.log(res);
 					if(this.list.data.length < res.total){
 						this.page++
 					}

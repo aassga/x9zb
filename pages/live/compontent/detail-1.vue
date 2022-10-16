@@ -1222,11 +1222,15 @@ export default {
             this.initInvite = false;
             roomInfo[roomId] = res.vid;
             localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+            localStorage.setItem("anchorVid", res.vid);
+
             return;
           }
           roomInfo[roomId] = res.vid;
           this.parmUserInfo.vid = res.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+          localStorage.setItem("anchorVid", res.vid);
+
           this.inRoomInfo(this.fd);
           this.controlIndex = "";
         });
@@ -1289,11 +1293,11 @@ export default {
       const locationHost = window.location.hostname;
       // 開發用
       // const locationHost = "10.83.107.92:9021";
-      this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
@@ -1528,7 +1532,7 @@ export default {
         if (data.text.includes("进入直播间") && this.current != 0) {
           return;
         }
-        this.handleLocalMsgList(this.current).push(data);
+        this.handleLocalMsgList(this.current, "push", data)
         this.toBottom();
       }
       if (data.action === "gift") {
@@ -1537,7 +1541,7 @@ export default {
         }
         let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
         data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-        this.handleLocalMsgList(this.current).push(data);
+        this.handleLocalMsgList(this.current, "push", data)
         this.onhandleSendGift(data);
       }
       if (data.status == 200) {
