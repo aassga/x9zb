@@ -45,7 +45,7 @@
         @onHandleClickItem="onClickListEvent"
       />
       <message-info
-        v-show="tabNumber == 1 && showMsgInfo && roomInfo"
+        v-show="tabNumber === 1 && showMsgInfo && roomInfo"
         :dialogVisible="dialogVisible"
         :isShowEmoji="isShowEmoji"
         :modalMsgList="modalMsgList"
@@ -104,7 +104,7 @@
             />
           </svg>
           <img
-            v-if="tabNumber != 0"
+            v-if="tabNumber !== 0"
             class="uploadImg"
             src="./../../assets/images/image.png"
             alt=""
@@ -181,7 +181,6 @@
       >
         <el-button type="danger" class="red">点击上传</el-button>
       </el-upload>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeModel()">取消</el-button>
         <el-button @click="submitMessage()">发送</el-button>
@@ -235,10 +234,8 @@ export default {
       msgChatList: [],
       myUserinfo: { uid: "" },
       webSocketFd: "",
-      giftNum: 1,
       isShowEmoji: false,
       uid: "",
-      vid: "",
       info: {
         token: "",
       },
