@@ -122,7 +122,7 @@
 				</div>
 			</div>
 
-    <div class="pc-chat-room-container">
+    <div class="pc-chat-room-container" style="height: 100%">
       	<ChatDetails 
 	  		:qsVid="qsVid"
 			:giftList="giftList"

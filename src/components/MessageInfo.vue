@@ -30,9 +30,8 @@ export default {
 
 <style lang="scss" scoped>
 .HuyaXWebhMessageinfo {
-  position: absolute;
-  z-index: 99;
-  top: 46px;
+  position: relative;
+  z-index: 1;
   min-height: 42px;
   left: 0;
   width: 100%;

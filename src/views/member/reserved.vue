@@ -137,7 +137,7 @@
 								<div class="ant-row ant-form-item ant-form-item-has-success" style="row-gap: 0px;">
 									<div class="ant-col ant-form-item-label"><label for="sportTypes"
 											class="ant-form-item-required" title="直播类型">直播类型</label></div>
-									<el-select v-model="type" placeholder="请选择" style="width: 140px;">
+									<el-select v-model="value" placeholder="请选择" style="width: 140px;">
 										<el-option v-for="item in options" :key="item.value" :label="item.label"
 											:value="item.value">
 										</el-option>
@@ -270,26 +270,23 @@
 															<tr v-for="(item,index) in baseList" :key="index"
 																class="ant-table-row ant-table-row-level-0">
 																<td class="ant-table-cell ant-table-cell-ellipsis">
-																	<div class="leagueName-box">
-																		<img
-																			src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA2CAYAAACbZ/oUAAAAAXNSR0IArs4c6QAABNtJREFUaAXtml9oHEUcx2fmbntH26CkUlAqacUzl0uKNk/VvqkVfLi9a0vRh75INYVqi5Qi4h+MQtEn/1AQDE19qVI5ku7uiQ8W9EEfipJEEC8XU2qCsSktkVJtTHJ3O37n7G0nZ+Guezu3m2sGwv72N7vz+31mfjPzm70QslpWe6CleoBWaDjnNJ9KPc8J2Q9dN+F8faVuRV4p/Rt+/wLAwbhpnqCUAo2QMnBu9+57abF4CtCPr0i4Gk4D9hseDu9LDA/PMjGyrQwr+kIM5A1GSsd1/QUoBmp0UktUY6T72I052xJAtSAEK8ND3bUebKH6brbiV+PbGQ3sPGKE76iiEngei8Q58t9+GJhOVQIM0N8i0WhXl2U9qnV03MMofRPgS0GgprlkspyBeOkMgA8AdtlWN5lKJYqcD2IL3O6lrdttS80Ic36+2pGYaebivb07CGNHUDdfXd+seyXACN9bRg3t77cTpvlBeM2arYiCb5sFKdtRAyxZyOn6zolU6hlJRR4aGrqAhP4JEfpI5q/Jdapl5cAA2FCy7dNIYc28rt9XAQIsF/OcRaMJyF9W9KqvzQAuM2Cx0hHnuXwyKY6fTunMZP4AeBIr+T6AzzkVioSmAQv/AX2XTcgJhPlZgG+RmeKW9Vk4EumC7gtZ77XcVGDHec6fBPjP+OBwmPf3Oz7EMpkriWz2WSjSGO1Z53kPBceYh23W29Q627Y/yo+OfjexZ09cfimezZpRxhJY7U/Kei9kP4HL/iPMH7OXln4aTyZfw2iHK1BbDONqwrL2A/opjPbFir7Rq+/AAgCLWQR/x8ZHR3/4NZ1+RIYC9FmmaWILK8l6t3IggB3nOd9WLJV+xNx+3dFB6BwayiMSRmSdWzlYwKBAIvJ9iNLT1UAY4Y3VOjf3zpxx87KX75QzLsZeiRvGAOAQ4TdLeX5zvvmmxr0UFOCvwpp2IDY8PINFyqERn49JofAx6NOOskHBV2CM5BzwXkbScaqaA/P4ObtYfB/6u6vrGrn3DRiwGS0UeunBM2cuywDj6fRmYtsD2KN3ynqv5KYDA3SWMXaw0zAMGUJkXPmRkRd5qfQu9OvkOi/lpgIjfD9FBnVEJBUyBE5Rnci4BjFXd8h6FXKzgKdpKNTXZRhfyxAis8qPjR3ltv0WYKNynSpZOTBl7NwGTevZmMmIX/OcMrFr18MI4ZMA7XWUTRCUA2NUp2SOyUOHIoXp6TdKxeKr0Cu3L9sWsiqDbdWGxD2+kG4vTE2JE5A49/pSlADjrPs0aKwK0cW+vrXXLl06hvA9jJzY13RWzXdpcQCi9J0QYwb20x5Avg3YByod4OdVCbCfQLVs+xpetZxTUX/nASP7WVDRk0FsU7Ay/EvLhSA6p8InwcpAnVHReBDbFKws2t7+Hk4wE0F00EufBGOZVTQ6qevbCoSY+Gngfi+NBKYtSn/XCEnFLGusvEoLQWtr68GQfwInrwfG0cYduS6YBJtgFM3hfnkRyX1xZqYDo33LfHj50wG+o/Sv8KZN07HjxxcD7OWqa573wP9Cul4Ll/fuXf/n4mIah4K19b7jxXNweL49EjGqPyjU27br4+HcwsLngE3Wa8ir52CTwHYWF91Nm65zaWQtvh3iG7HtGhjn3Q+xmf/jppcbeadsE7bdtvEvUTWIm7J2kyAAAAAASUVORK5CYII=" alt=""
-																		>
-																		<span v-if="item">
-																			{{showType == 1?item.competition_name_zh:item.short_name_zh}}
-																		</span>
+																	<div class="leagueName-box"><img
+																			src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA2CAYAAACbZ/oUAAAAAXNSR0IArs4c6QAABNtJREFUaAXtml9oHEUcx2fmbntH26CkUlAqacUzl0uKNk/VvqkVfLi9a0vRh75INYVqi5Qi4h+MQtEn/1AQDE19qVI5ku7uiQ8W9EEfipJEEC8XU2qCsSktkVJtTHJ3O37n7G0nZ+Guezu3m2sGwv72N7vz+31mfjPzm70QslpWe6CleoBWaDjnNJ9KPc8J2Q9dN+F8faVuRV4p/Rt+/wLAwbhpnqCUAo2QMnBu9+57abF4CtCPr0i4Gk4D9hseDu9LDA/PMjGyrQwr+kIM5A1GSsd1/QUoBmp0UktUY6T72I052xJAtSAEK8ND3bUebKH6brbiV+PbGQ3sPGKE76iiEngei8Q58t9+GJhOVQIM0N8i0WhXl2U9qnV03MMofRPgS0GgprlkspyBeOkMgA8AdtlWN5lKJYqcD2IL3O6lrdttS80Ic36+2pGYaebivb07CGNHUDdfXd+seyXACN9bRg3t77cTpvlBeM2arYiCb5sFKdtRAyxZyOn6zolU6hlJRR4aGrqAhP4JEfpI5q/Jdapl5cAA2FCy7dNIYc28rt9XAQIsF/OcRaMJyF9W9KqvzQAuM2Cx0hHnuXwyKY6fTunMZP4AeBIr+T6AzzkVioSmAQv/AX2XTcgJhPlZgG+RmeKW9Vk4EumC7gtZ77XcVGDHec6fBPjP+OBwmPf3Oz7EMpkriWz2WSjSGO1Z53kPBceYh23W29Q627Y/yo+OfjexZ09cfimezZpRxhJY7U/Kei9kP4HL/iPMH7OXln4aTyZfw2iHK1BbDONqwrL2A/opjPbFir7Rq+/AAgCLWQR/x8ZHR3/4NZ1+RIYC9FmmaWILK8l6t3IggB3nOd9WLJV+xNx+3dFB6BwayiMSRmSdWzlYwKBAIvJ9iNLT1UAY4Y3VOjf3zpxx87KX75QzLsZeiRvGAOAQ4TdLeX5zvvmmxr0UFOCvwpp2IDY8PINFyqERn49JofAx6NOOskHBV2CM5BzwXkbScaqaA/P4ObtYfB/6u6vrGrn3DRiwGS0UeunBM2cuywDj6fRmYtsD2KN3ynqv5KYDA3SWMXaw0zAMGUJkXPmRkRd5qfQu9OvkOi/lpgIjfD9FBnVEJBUyBE5Rnci4BjFXd8h6FXKzgKdpKNTXZRhfyxAis8qPjR3ltv0WYKNynSpZOTBl7NwGTevZmMmIX/OcMrFr18MI4ZMA7XWUTRCUA2NUp2SOyUOHIoXp6TdKxeKr0Cu3L9sWsiqDbdWGxD2+kG4vTE2JE5A49/pSlADjrPs0aKwK0cW+vrXXLl06hvA9jJzY13RWzXdpcQCi9J0QYwb20x5Avg3YByod4OdVCbCfQLVs+xpetZxTUX/nASP7WVDRk0FsU7Ay/EvLhSA6p8InwcpAnVHReBDbFKws2t7+Hk4wE0F00EufBGOZVTQ6qevbCoSY+Gngfi+NBKYtSn/XCEnFLGusvEoLQWtr68GQfwInrwfG0cYduS6YBJtgFM3hfnkRyX1xZqYDo33LfHj50wG+o/Sv8KZN07HjxxcD7OWqa573wP9Cul4Ll/fuXf/n4mIah4K19b7jxXNweL49EjGqPyjU27br4+HcwsLngE3Wa8ir52CTwHYWF91Nm65zaWQtvh3iG7HtGhjn3Q+xmf/jppcbeadsE7bdtvEvUTWIm7J2kyAAAAAASUVORK5CYII="
+																			alt=""><span
+																			v-if="item">{{value == 1?item.competition_name_zh:item.short_name_zh}}</span>
 																	</div>
 																</td>
 																<td class="ant-table-cell">
-																	{{showType == 1?$common.timeStamp1(item.time):item.match_time}}
+																	{{value == 1?$common.timeStamp1(item.time):item.match_time}}
 																</td>
 																<td title=""
 																	class="ant-table-cell ant-table-cell-ellipsis">
-																	{{showType == 1?item.home_team_name_zh:item.home_team_data.short_name_zh}}
+																	{{value == 1?item.home_team_name_zh:item.home_team_data.short_name_zh}}
 																</td>
 																<td class="ant-table-cell">-</td>
 																<td title=""
 																	class="ant-table-cell ant-table-cell-ellipsis">
-																	{{showType == 1?item.away_team_name_zh:item.away_team_data.short_name_zh}}
+																	{{value == 1?item.away_team_name_zh:item.away_team_data.short_name_zh}}
 																</td>
 																<td title=""
 																	class="ant-table-cell ant-table-cell-ellipsis">
@@ -332,10 +329,8 @@
 			return {
 				list: [],//预约列表
 				detail: {},
-				type: 1, // 直播類型 1足球 2籃球
 				value1: '', //时间选择器
-				options: [
-					{
+				options: [{
 						value: 1,
 						label: '足球'
 					},
@@ -344,8 +339,7 @@
 						label: '篮球'
 					}
 				],
-				options1: [
-					{
+				options1: [{
 						value: -1,
 						label: '全部'
 					},
@@ -360,7 +354,7 @@
 				],
 				typeS: '',
 				dateS: '',
-				showType: '',
+				value: '',
 				dialogVisible: false,
 				page: 1,
 				page1:1,
@@ -385,12 +379,12 @@
 					this.$message.success('删除成功')
 				}).catch(res=>{})
 			},
+			
 			// 切换搜索赛程列表
-			setSchedule() {
+			setSchedule(type = this.value) {
 				this.page = 1
 				this.baseList = []
-				this.showType = this.type
-				if (this.type == 1) {
+				if (type == 1) {
 					this.football_match()
 				} else {
 					this.getList()
@@ -408,7 +402,7 @@
 			load(e) {
 				if(this.loadStatus == 'more' && this.loading){
 					this.loading = false
-					if (this.showType == 1) {
+					if (this.value == 1) {
 						this.football_match()
 					} else {
 						this.getList()
@@ -418,7 +412,7 @@
 			// 预约比赛
 			reserveMatch(item) {
 				setReserveLive({
-					type:this.showType == 1?0:1,
+					type:this.value == 1?0:1,
 					match_id: item.id
 				}).then(res => {
 					this.getUserReserveLiveList()

@@ -1,35 +1,37 @@
 <template>
-  <div id="chat-models">
+  <div id="chat-models" style="height: 100%" >
     <input id="cp-input" />
     <div class="ChatDetails_container">
       <div class="header-list">
-        <span @click="changeType(0)" :class="{on:ctp==0}">广场</span>
-        <span v-if="!hideChat" @click="changeType(2)" class="anchor" :class="{on:ctp==2}">
-          <img src="../../assets/images/HotTag.png" class="hot-tag"/>
-          主播私聊
+        <span
+          v-for="(item, index) in relationsFilter(relations)"
+          :key="index"
+          :class="{ 'on': ctp == item.id }"
+          @click="changeType(item.id)"
+        >
+          <img v-if="item.id === 2" src="../../assets/images/HotTag.png" class="hot-tag"/>
+          {{ item.name }}
           <i
-            v-show="oneChat && oneChat > 0||inviteCount"
+            v-show="((oneChat && oneChat > 0 && !hideChat) || inviteCount) && item.id === 2"
             class="new-msg-icon"
-          >{{oneChat > 99 ? '99+' :inviteCount?1: oneChat}}</i>
-        </span>
-        <span @click="changeType(1)" :class="{on:ctp==1}">
-          聊天
-          <!-- v-show="item.unread_count && item.unread_count > 0" -->
+            >{{ oneChat > 99 ? "99+" : inviteCount ? 1 :oneChat }}</i
+          >
           <i
-            v-show="msgCount && msgCount > 0"
+            v-show="msgCount && msgCount > 0 && item.id === 1"
             class="new-msg-icon"
-          >{{msgCount > 99 ? '99+' : msgCount}}</i>
+            >{{ msgCount > 99 ? "99+" : msgCount }}</i
+          >
         </span>
       </div>
       <div v-if="pinInfo" class="pin-info">
         <i class="el-icon-message-solid"></i>
-        {{pinInfo.text}}
+        {{ pinInfo.text }}
       </div>
       <!-- 聊天列表页面 -->
       <MessageList
         @onHandleClickItem="onHandleClickItem"
         :activeIndex="activeIndex2"
-        v-show="this.ctp == 1&&this.showChatList"
+        v-show="this.ctp == 1 && this.showChatList"
         :list="messageList"
       ></MessageList>
       <template v-if="roomInfo">
@@ -42,177 +44,26 @@
           v-show="this.ctp == 1 && showMsgInfo"
         ></MessageInfo>
       </template>
-      <div class="chat-window" :class="{'isChat': ctp === 1}" @click="clearStatus()">
-        <div v-if="false" class="animation-loading-container">
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-          <div class="animation-loading" />
-        </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 0">
-          <div v-for="(item,index) in msgList_0" :key="index">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
-            <template>
-              <div
-                v-if="(!item.channel || item.channel === channel || (!channel && item.channel==='000'))"
-                class="other-side"
-              >
-                <div class="msg-box" @click="console.log(item)">
-                  <div class="msg-container">
-                    <div class="msg-content" :class="{'anchor-msg': item.sender == anchor_id || item.userid == anchor_id}" @click.stop="showControl(index)">
-                      <img src="../../assets/images/HiTag.png" class="hi-tag" v-if="item.text ? item.text.indexOf('进入直播间') !== -1 : false"/>
-                      <span class="anchor-tag" v-if="item.sender == anchor_id || item.userid == anchor_id">主播</span>
-                      <span class="level-tag" :class="`level${item.sender_exp ? item.sender_exp : 0}`" v-if="item.sender_exp && item.action !== 'gift' && item.sender != anchor_id && item.userid != anchor_id">Lv.{{item.sender_exp ? item.sender_exp : 0}}</span>
-                      <div class="text-name" v-if="item.action !== 'gift'">{{item.sender_nickname ? item.sender_nickname + ':' : ''}}</div>
-                      <template v-if="item.pic&&!item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic|picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic&&item.text">
-                        <div class="thumb-container" @click.stop="openLink(item.link)">
-                          <img class="thumb-pic" :src="item.pic|picFilter" />
-                          <div class="thumb-title">{{item.title}}</div>
-                          <br />
-                          <div class="thumb-text">{{item.text}}</div>
-                        </div>
-                      </template>
-                      <div class="text-info" v-else v-html="getText(item.text)"></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div v-if="controlIndex===index" class="msg-control other">
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 1">
-          <div v-for="(item,index) in msgList_1" :key="index">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
-            <template>
-              <div
-                v-if="(!item.channel || item.channel === channel || (!channel && item.channel==='000'))"
-                class="other-side"
-              >
-                <div class="msg-box">
-                  <div class="msg-container">
-                    <div class="msg-content" @click.stop="showControl(index)">
-                      <!-- <span class="level-1">Lv1</span> -->
-                      <div class="text-name">{{item.sender_nickname}}:</div>
-                      <template v-if="item.pic&&!item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic|picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic&&item.text">
-                        <div class="thumb-container" @click.stop="openLink(item.link)">
-                          <img class="thumb-pic" :src="item.pic|picFilter" />
-                          <div class="thumb-title">{{item.title}}</div>
-                          <br />
-                          <div class="thumb-text">{{item.text}}</div>
-                        </div>
-                      </template>
-                      <div class="text-info" v-else v-html="getText(item.text)"></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div v-if="controlIndex===index" class="msg-control other">
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        <div class="chat-detail-main" ref="content-list" v-if="ctp == 2">
-          <div v-for="(item,index) in msgList_2" :key="index" class="is-anchor">
-            <!--   <div class="system-tips" v-if="item.action === 'system'">
-              {{item.text}}
-            </div>-->
-            <template>
-              <div
-                v-if="(!item.channel || item.channel === channel || (!channel && item.channel==='000'))"
-                class="other-side"
-              >
-                <div class="msg-box">
-                  <div class="msg-container">
-                    <div class="msg-content" :class="{'my-self': item.sender == parmUserInfo.user_id}" @click.stop="showControl(index)">
-                      <div class="msg-avatar" v-if="item.sender != parmUserInfo.user_id">
-                        <img class="avatar" :src="item.avatar">
-                      </div>
-                      <!-- <div class="text-name">{{item.sender_nickname}}:</div> -->
-                      <template v-if="item.pic&&!item.text">
-                        <el-image
-                          :preview-src-list="[item.pic]"
-                          fit="cover"
-                          :src="item.pic|picFilter"
-                          class="pic-info"
-                        />
-                      </template>
-                      <template v-if="item.pic&&item.text">
-                        <div class="thumb-container" @click.stop="openLink(item.link)">
-                          <img class="thumb-pic" :src="item.pic|picFilter" />
-                          <div class="thumb-title">{{item.title}}</div>
-                          <br />
-                          <div class="thumb-text">{{item.text}}</div>
-                        </div>
-                      </template>
-                      <div class="text-info" v-if="!item.pic&&item.text" v-html="getText(item.text)"></div>
-                      <i
-                        class="el-icon-warning error-msg"
-                        v-if="item.isError"
-                        @click="resend(item)"
-                      ></i>
-                      <div v-if="controlIndex===index" class="msg-control other">
-                        <div @click="copyText(item)">
-                          复制
-                          <i />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
+      <chat-message-new
+        :msgList="msgList"
+        :controlIndex="controlIndex"
+        :parmUserInfo="parmUserInfo"
+        :ctp="ctp"
+        :pinInfo="pinInfo"
+        :roomInfo="roomInfo"
+        :channel="channel"
+        :chatMsgHight="chatMsgHight"
+        @controlNumber="controlNumber"
+        @msgAction="msgAction"
+      />
       <div class="send-container">
         <div>
           <svg
             @click="isShowEmoji = !isShowEmoji"
             class="emoji-btn"
-            style="max-height:30px;"
-            width="30"
-            height="30"
+            style="max-height: 30px"
+            width="20"
+            height="20"
             fill="#c1c1c1"
             viewBox="0 0 106.059 106.059"
           >
@@ -220,56 +71,96 @@
               d="M90.544 90.542c20.687-20.684 20.685-54.341.002-75.024-20.688-20.689-54.347-20.689-75.031-.006-20.688 20.687-20.686 54.346.002 75.034 20.682 20.684 54.341 20.684 75.027-.004zM21.302 21.3c17.494-17.493 45.959-17.495 63.457.002 17.494 17.494 17.492 45.963-.002 63.455-17.494 17.494-45.96 17.496-63.455.003-17.498-17.498-17.496-45.966 0-63.46zM27 69.865s-2.958-11.438 6.705-8.874c0 0 17.144 9.295 38.651 0 9.662-2.563 6.705 8.874 6.705 8.874C73.539 86.824 53.03 85.444 53.03 85.444S32.521 86.824 27 69.865zm6.24-31.194a6.202 6.202 0 1 1 12.399.001 6.202 6.202 0 0 1-12.399-.001zm28.117 0a6.202 6.202 0 1 1 12.403.001 6.202 6.202 0 0 1-12.403-.001z"
             />
           </svg>
-          <el-button-group class="msg-type-container" v-if="ctp != 0">
-            <el-button type="primary" round size="mini" @click="sendImg(1)">文字</el-button>
-            <el-button type="primary" round size="mini" icon="el-icon-picture" @click="sendImg(2)"></el-button>
-          </el-button-group>
+          <img
+            v-if="ctp != 0"
+            class="uploadImg"
+            src="./../../assets/images/image.png"
+            alt=""
+            @click="uploadImgShow = true"
+          />
         </div>
         <div class="msg-arr" v-if="dialogVisible">
           <div class="ma-header">
             一键回复
-            <i class="el-icon-close" @click.stop="dialogVisible=false" />
+            <i class="el-icon-close" @click.stop="dialogVisible = false"></i>
           </div>
-          <div v-for="(item,index) in modalMsgList" :key="index">
+          <div v-for="(item, index) in modalMsgList" :key="index">
             <div @click.stop="setMsg(item)">
-              {{JSON.parse(item.content).text}}
-              <i
-                class="el-icon-delete-solid"
-                @click.stop="delQuickReply(item)"
-              />
+              {{ JSON.parse(item.content).text }}
+              <i class="el-icon-delete-solid" @click.stop="delQuickReply(item)">
+              </i>
             </div>
           </div>
         </div>
-
-        <textarea
-          v-if="msgType==1"
-          id="msg"
-          type="text"
-          placeholder="请输入聊天内容"
-          rows="1"
-          v-model="msgText"
-          ref="msg"
-          v-on:keyup.enter="sendMsg"
-        ></textarea>
-        <div v-if="msgType==2" class="add-img-container">
-          <form id="msgForm" ref="mf" method="post" enctype="multipart/form-data">
-            <input type="file" id="fileUp" name="pic" @change="changeFile" />
-          </form>
-          <span v-if="!prevImg" class="add-img">添加图片</span>
-          <img v-else :src="prevImg" />
-        </div>
         <div class="control-footer">
-          <!--    <el-button-group class="quick-container">
-            <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
-            <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
-          </el-button-group>-->
-          <div :class="[ctp == 0 &&  !token ? 'no_send' :  'send']" @click="sendMsg">发送</div>
+          <textarea
+            id="msg"
+            ref="msg"
+            type="text"
+            rows="1"
+            v-model="msgText"
+            v-on:keyup.enter="sendMsg"
+            placeholder="请输入聊天内容"
+          ></textarea>
+          <div>
+            <!-- <el-button-group class="quick-container">
+              <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
+              <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
+            </el-button-group> -->
+            <div
+              :class="[ctp == 0 && !token ? 'no_send' : 'send']"
+              @click="sendMsg"
+            >
+              发送
+            </div>
+          </div>
         </div>
       </div>
       <div class="emoji-box">
-        <VEmojiPicker @select="selectEmoji" v-show="isShowEmoji" />
+        <VEmojiPicker
+          :showSearch="false"
+          :showCategories="false"
+          :emojisByRow="10"
+          @select="selectEmoji"
+          v-show="isShowEmoji"
+        />
       </div>
     </div>
+    <el-dialog
+      title="上传图片"
+      :before-close="closeModel"
+      :visible.sync="uploadImgShow"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+      :append-to-body="false"
+      v-loading.fullscreen.lock="fullscreenLoading"
+      width="100%"
+      class="el-upload-img el-dialog-loginOut"
+      element-loading-text="圖片上传中"
+      center
+    >
+      <el-upload
+        class="upload-demo"
+        action="#"
+        :on-change="changeFile"
+        :on-remove="handleRemove"
+        :on-exceed="limitCheck"
+        :auto-upload="false"
+        :file-list="fileList"
+        list-type="picture"
+        multiple
+        :limit="1"
+      >
+        <el-button type="danger" class="red">点击上传</el-button>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeModel()"
+          >取消</el-button
+        >
+        <el-button @click="sendMsg">发送</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -277,16 +168,23 @@
 import { getQueryString } from "@/utils/Qs";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
+import ChatMessageNew from "@/components/ChatMessageNews";
 // import { mapGetters } from "vuex";
 export default {
   name: "ChatDetails",
   props: ["hideChat", "qsVid", "giftList"],
   components: {
     MessageList,
-    MessageInfo
+    MessageInfo,
+    ChatMessageNew,
   },
   data() {
     return {
+      relations: [
+        { name: "广场", id: 0 },
+        { name: "主播私聊", id: 2 },
+        { name: "聊天", id: 1 },
+      ],
       msgList2: [], // 红点的列表
       oneChat: 0, // 主播私聊的未读总数
       msgCount: 0, // 列表红点的总数
@@ -297,6 +195,7 @@ export default {
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
+      msgList: [],
       msgList_0: [],
       msgList_1: [],
       msgList_2: [],
@@ -309,7 +208,7 @@ export default {
       uid: "",
       vid: "",
       info: {
-        token: ""
+        token: "",
       },
       initInvite: true,
       dialogVisible: false,
@@ -317,6 +216,7 @@ export default {
       targetUserInfo: {},
       isAllowedSendMsg: true,
       hasSendMsgCount: 0,
+
       needBuy: false,
       that: this,
       active: 0,
@@ -334,20 +234,20 @@ export default {
       parmUserInfo: {
         user_id: 19,
         username: "手机用户8",
-        vid: "12"
+        vid: "12",
       },
       formData: {},
       controlIndex: -1,
       pinInfo: "",
       page: 1,
       ctp: 0,
-      inviteCount: 0,
+      inviteCount:0,
       prevImg: null,
       showChatList: false,
       isMore: true,
       newMsg: {
         oneChat: false,
-        groupChat: false
+        groupChat: false,
       },
       room_type: "",
       channel: getQueryString().channel_code||localStorage.getItem("channel"),
@@ -357,6 +257,10 @@ export default {
       leaveVid: "",
       type0_local_msg_list: [],
       type2_local_msg_list: [],
+      chatMsgHight:0,
+      fullscreenLoading:false,
+      uploadImgShow:false,
+      fileList:[],
       anchor_id: "",
     };
   },
@@ -372,70 +276,69 @@ export default {
   watch: {
     msgList2: {
       handler(newV, oldV) {
-        console.log("未读消息列表数据变化");
-        console.log(newV);
-        console.log("消息列表的数据");
-        console.log(this.messageList);
+        // // console.log("未读消息列表数据变化");
+        // // console.log(newV);
+        // // console.log("消息列表的数据");
+        // // console.log(this.messageList);
         this.messageList = this.mapList(this.messageList, newV);
-        // this.list2 = this.mapList(this.list2, newV);
-        // if (this.activeIndex == 1) {
-        //   this.$emit("onHandleGroupMsgChange", this.modalMsgList);
-        // } else if (this.activeIndex == 2) {
         this.onHandleGroupMsgChange(this.messageList);
-        // }
         // 刷新视图
         this.$forceUpdate();
       },
-      deep: true
+      deep: true,
     },
     fd(newV, oldV) {
       if (newV != oldV) {
-        console.log(99999999);
+        // // console.log(99999999);
         this.inviteRoom(true);
       }
       // c
     },
     showLoading(newV, oldV) {
-      if (!newV) {
-        this.toBottom();
-      }
+      !newV ? this.toBottom() : false;
     },
 
     ctp(newV, oldV) {
-      if (newV == 1) {
+      if (newV === 1) {
         this.getMessageList(); // 获取聊天列表
       }
       if (newV != oldV) {
         this.initTab = true;
       }
-      if (oldV == 2) {
-        this.leaveRoom(2);
+      if (newV === 2) {
+        // this.leaveRoom(2);
+      }
+    },
+    pinInfo(newV, oldV){
+      if(newV !== ""){
+        this.changeHeight()
       }
     }
   },
-  filters: {
-    picFilter(url) {
-      let newUrl = url;
-      if (url.includes("base64")) {
-        let split = window.location.hostname.includes("10")
-          ? "http://lukee.huya.com/upload/"
-          : window.location.origin + "/";
-        newUrl = newUrl.replace(split, "");
-      }
-      return newUrl;
-    }
-  },
+  // filters: {
+  //   picFilter(url) {
+  //     let newUrl = url;
+  //     if (url.includes("base64")) {
+  //       let split = window.location.hostname.includes("10")
+  //         ? "http://huyapre.oxldkm.com/"
+  //         : window.location.origin + "/";
+  //       newUrl = newUrl.replace(split, "");
+  //     } else {
+  //       return newUrl;
+  //     }
+  //   },
+  // },
   updated() {
-    this.toBottom();
+    // this.toBottom();
   },
   async mounted() {
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", e => {
-      console.log(
-        domScroll.scrollTop,
-        "domScroll.scrollTop-domScroll.offsetHeight==="
-      );
+      // // console.log(
+      //   domScroll.scrollTop,
+      //   "domScroll.scrollTop-domScroll.offsetHeight==="
+      // );
       if (domScroll.scrollTop <= 2 && this.isMore) {
         this.page++;
         if (this.ctp == 1 && this.initChatTab) {
@@ -445,34 +348,30 @@ export default {
         this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
-    console.log(this.qsVid, "this.qsVid==============");
+    // // console.log(this.qsVid, "this.qsVid==============");
     this.vid = this.qsVid || "";
     let userid = "";
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     this.info = userInfo || {
-      token: ""
+      token: "",
     };
     if (getQueryString()) {
       if (!userInfo) {
         if (!localStorage.getItem("userid")) {
-          userid =
-            10000000 +
-            Math.random()
-              .toString()
-              .slice(-6);
+          userid = 10000000 + Math.random().toString().slice(-6);
           localStorage.setItem("userid", userid);
           this.parmUserInfo = {
             user_id: userid,
             username: userid,
             vid: this.vid,
-            type: 0
+            type: 0,
           };
         } else {
           this.parmUserInfo = {
             user_id: localStorage.getItem("userid"),
             username: localStorage.getItem("userid"),
             vid: this.vid,
-            type: 0
+            type: 0,
           };
         }
       } else {
@@ -480,12 +379,13 @@ export default {
           user_id: userInfo.id,
           username: userInfo.user_nickname,
           vid: this.vid,
-          type: userInfo.user_type
+          type: userInfo.user_type,
         };
       }
     }
     this.getMessageList(); // 获取聊天列表
     this.initToken(true);
+    
   },
   created() {
     this.uid = this.$route.query.id;
@@ -494,31 +394,80 @@ export default {
     this.$store.dispatch("chatInOut", {
       touid: this.uid,
       dateline: new Date().getTime(),
-      status: 2
+      status: 2,
     });
   },
   methods: {
-    resend(item) {
-      console.log(item);
+    controlNumber(num) {
+      this.controlIndex = num;
+    },
+    msgAction(item) {
       this.handleLocalMsgList(this.ctp).map((val, index) => {
         if (val == item) {
           this.handleLocalMsgList(this.ctp).splice(index, 1);
-          console.log(this.msgList);
+          // // console.log(this.msgList)
         }
       });
       this.msgText = item.text;
     },
+    relationsFilter(data) {
+      if (this.hideChat) {
+        return data.filter((el) => el.id !== 2);
+      } else {
+        return data;
+      }
+    },
+    closeModel() {
+      this.msgText = "";
+      this.msgType = 1;
+      this.formData.pic = "";
+      this.fileList = [];
+      this.uploadImgShow = false;
+      this.fullscreenLoading = false;
+    },
+    handleRemove(file, fileList) {
+      this.fileList = fileList;
+    },
+    handleChange(file, fileList) {
+      let fileFilter = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (file.name.length > 50) {
+        this.$message.error("档案名称过长无法传送");
+        fileList.splice(-1, 1);
+        return false;
+      } else if (["exe", "apk", "ipa"].includes(fileFilter)) {
+        this.$message.error("不支援exe、apk、ipa档案格式上传");
+        fileList.splice(-1, 1);
+        return false;
+      }
+      this.fileData = fileList;
+    },
+    // 选择的文件超出限制的文件总数量时触发
+    limitCheck() {
+      this.$message({ message: "最多只能上传1张图片", type: "warning" });
+    },
+    // resend(item) {
+    //   // // console.log(item)
+    //   this.handleLocalMsgList(this.ctp).map((val, index) => {
+    //     if (val == item) {
+    //       this.handleLocalMsgList(this.ctp).splice(index, 1);
+    //       // // console.log(this.msgList)
+    //     }
+    //   });
+    //   this.msgText = item.text;
+    // },
     sendImg(e) {
       this.msgType = e;
     },
-    changeFile() {
-      const fileUp = document.querySelector("#fileUp");
-      const file = fileUp.files[0];
+    //取得圖片
+    changeFile(fileList) {
+      this.msgType = 2;
+      // const fileUp = document.querySelector("#fileUp");
+      const file = fileList.raw;
       this.formData.pic = file;
       var reader = new FileReader();
       reader.readAsDataURL(file);
       const _that = this;
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         var newUrl = this.result;
         _that.prevImg = newUrl;
       };
@@ -561,8 +510,8 @@ export default {
         }
       }
 
-      console.log("新消息变更之后的数组");
-      console.log(menuList);
+      // // console.log("新消息变更之后的数组");
+      // // console.log(menuList);
 
       return menuList;
     },
@@ -590,8 +539,8 @@ export default {
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
       if (type == 0) {
-        console.log("默认的未读消息数组");
-        console.log(msgList);
+        // // console.log("默认的未读消息数组");
+        // // console.log(msgList);
         this.msgList2 = msgList;
       } else {
         let falg = true;
@@ -608,15 +557,16 @@ export default {
         if (falg) {
           arr.push(msgList);
         }
-        console.log("我接受到了新消息");
-        console.log(arr);
+        // // console.log("我接受到了新消息");
+        // // console.log(arr);
         this.msgList2 = arr;
+        this.inviteCount += 1
         this.msgCount += 1;
       }
     },
-    openLink(link) {
-      window.open(link);
-    },
+    // openLink(link) {
+    //   window.open(link);
+    // },
     // 已读事件
     readItem(item) {
       let msgList2 = this.msgList2;
@@ -630,9 +580,14 @@ export default {
     },
     initToken(init = false) {
       const _that = this;
-      this.$store.dispatch("getImToken", this.parmUserInfo).then(res => {
+      this.$store.dispatch("getImToken", this.parmUserInfo)
+      .then((res) => {
         _that.imUserInfo = res.data;
         _that.newSocket(res.data);
+      })
+      .catch((err) => {
+        localStorage.clear();
+				// window.location.reload()
       });
     },
     backList() {
@@ -652,13 +607,13 @@ export default {
       this.$store
         .dispatch("delQuickReply", {
           user_id: item.user_id,
-          id: item.id
+          id: item.id,
         })
-        .then(res => {
+        .then((res) => {
           if (res.msg == "成功") {
             this.$message({
               type: "success",
-              message: "删除成功"
+              message: "删除成功",
             });
             this.quickReplyList();
           }
@@ -673,19 +628,19 @@ export default {
       const _that = this;
       this.$store
         .dispatch("getQuickReplyList", {
-          user_id: this.parmUserInfo.user_id
+          user_id: this.parmUserInfo.user_id,
         })
-        .then(res => {
+        .then((res) => {
           this.modalMsgList = res.data;
           this.dialogVisible = true;
-          this.controlIndex = "";
+          this.controlIndex = -1;
         });
     },
     async getMessageList() {
       // const _that = this;
       let res = await this.$store.dispatch("getMessageList", {
         id: this.parmUserInfo.user_id,
-        type: "1,2"
+        type: "1,2",
       });
       this.showLoading = false;
       if (res.code == 0) {
@@ -693,8 +648,8 @@ export default {
           let element = res.data[index];
           element.unread_count = 0;
         }
-        console.log("请求拿到的数据");
-        console.log(res.data);
+        // // console.log("请求拿到的数据");
+        // // console.log(res.data);
         if (this.msgList2.length > 0) {
           res.data = this.mapList(res.data, this.msgList2);
           // this.list2 = this.mapList(this.list2, newV);
@@ -713,13 +668,13 @@ export default {
       this.$store
         .dispatch("addQuickReply", {
           user_id: this.parmUserInfo.user_id,
-          text: this.msgText
+          text: this.msgText,
         })
-        .then(res => {
+        .then((res) => {
           if (res.code == 0) {
             this.$message({
               type: "success",
-              message: "保存成功"
+              message: "保存成功",
             });
           }
         });
@@ -733,7 +688,7 @@ export default {
         this.msgText.substring(0, startpos) +
         emoji.data +
         this.msgText.substring(endpos);
-      this.isShowEmoji = false;
+      // this.isShowEmoji = false;
       this.msgText = result;
     },
     getText(str) {
@@ -752,7 +707,7 @@ export default {
     },
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, "item-info=======");
+      // // console.log(item, "item-info=======");
       this.page = 1;
       this.handleLocalMsgList(this.ctp, "empty");
       this.roomInfo = item;
@@ -773,30 +728,39 @@ export default {
         vid: this.leaveVid,
         token: this.imUserInfo.token,
         fd: this.fd,
-        type: this.ctp == 1 ? this.room_type : 2
+        type: this.ctp == 1 ? this.room_type : 2,
       };
-
-      this.$store.dispatch("leaveRoom", data).then(res => {});
+      this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
-    copyText(item) {
-      const str = item.text;
-      const qrUrlContent = document.getElementById("cp-input");
-      qrUrlContent.value = str;
-      qrUrlContent.select();
-      let range = document.createRange();
-      let selection = document.getSelection();
-      range.selectNode(qrUrlContent);
-      selection.addRange(range);
-      qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-      let isSucess = document.execCommand("copy");
-      if (isSucess) {
-        this.$alert("复制成功", "提示");
-        this.tipsId = "";
-      }
+    // copyText(item) {
+    //   const str = item.text;
+    //   const qrUrlContent = document.getElementById("cp-input");
+    //   qrUrlContent.value = str;
+    //   qrUrlContent.select();
+    //   let range = document.createRange();
+    //   let selection = document.getSelection();
+    //   range.selectNode(qrUrlContent);
+    //   selection.addRange(range);
+    //   qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
+    //   let isSucess = document.execCommand("copy");
+    //   if (isSucess) {
+    //     this.$alert("复制成功", "提示");
+    //     this.tipsId = "";
+    //   }
+    // },
+    changeHeight(){
+      
+      setTimeout(() => {
+        let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
+        let headerBox = document.querySelector(".header-list").clientHeight;
+        let pinBox = this.pinInfo ? document.querySelector(".pin-info").clientHeight : 0
+        let senBox = document.querySelector(".send-container").clientHeight;
+        this.chatMsgHight = chatBox - headerBox - pinBox - senBox
+      }, 1000);
     },
     changeType(e) {
       this.pinInfo = "";
-
+      this.msgList = [];
       if (this.showLoading) {
         return;
       }
@@ -825,6 +789,7 @@ export default {
           this.handleLocalMsgList(2);
           this.newMsg.oneChat = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
+        
           if (!vInfo.hasOwnProperty(qVid)) {
             this.inviteRoom();
             return;
@@ -836,10 +801,8 @@ export default {
           this.inviteRoom();
         }
       }
-    },
-    clearStatus() {
-      this.controlIndex = -1;
-    },
+      this.changeHeight()
+    },    
     inviteRoom(init = false) {
       if (!this.fd) {
         return;
@@ -857,7 +820,6 @@ export default {
           name: this.parmUserInfo.username,
           user_id: getQueryString().uid,
           channel: this.channel,
-          channel_code: this.channel,
         })
         .then(res => {
           if (this.initInvite) {
@@ -870,11 +832,11 @@ export default {
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           this.inRoomInfo(this.fd);
-          this.controlIndex = "";
+          this.controlIndex = -1;
         });
     },
     getChatHistoryMsg(iniPage) {
-      console.log(iniPage, "========getChatHistoryMsg");
+      // // console.log(iniPage, "========getChatHistoryMsg");
       const _that = this;
       this.showLoading = true;
       let params = {
@@ -896,7 +858,7 @@ export default {
             return;
           }
           // _that.msgList.unshift(...dataList);
-          console.log(params.page);
+          // // console.log(params.page);
           this.handleLocalMsgList(
             params.type == 2 && this.ctp == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
@@ -914,8 +876,14 @@ export default {
       }
       this.controlIndex = index;
     },
+    // showControl(index) {
+    //   if (this.controlIndex == index) {
+    //     this.controlIndex = -1;
+    //     return;
+    //   }
+    //   this.controlIndex = index;
+    // },
     inRoomInfo(fd) {
-
       if (this.ctp == 1 || this.ctp == 2) {
         this.leaveVid = this.parmUserInfo.vid;
       }
@@ -925,15 +893,15 @@ export default {
         fd: fd,
         type: this.ctp == 1 ? this.room_type : this.ctp || 0,
         channel: this.channel,
-          channel_code: this.channel,
+
       };
       const _that = this;
       // if(_that.inRoom){
       //   return
       // }
       this.$store.dispatch("inRoom", inRoomData).then(res => {
-        console.log("inRoom的数据");
-        console.log(res);
+        // // console.log("inRoom的数据");
+        // // console.log(res);
         if (res.data.pinData && res.data.pinData != "") {
           _that.pinInfo = {
             text: res.data.pinData
@@ -942,22 +910,33 @@ export default {
 
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
+        _that.changeHeight()
       });
     },
     newSocket(data) {
-      const wsprotocol =
-        window.location.protocol == "http:" ? "ws://" : "wss://";
-      this.WSURL = `${wsprotocol}${
-        window.location.hostname.includes("10")
-          ? "10.83.107.92:9021"
-          : window.location.hostname
-        // "10.83.107.92:9021"
-      }${window.location.protocol == "http:" ? "/wss/" : "/wss/"}?token=${
-        data.token
-      }&tokenid=${data.id}&vid=${this.qsVid}`;
+      // // console.log('ws',data)
+      let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
+      let windowHost = window.location.hostname
+      // 開發用
+      // let windowHost = "10.83.107.92:9021";
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+
+      // this.WSURL = `${wsprotocol}${
+      //   window.location.hostname.includes("10")
+      //     ? "10.83.107.92:9021"
+      //     : window.location.hostname
+      //   // "10.83.107.92:9021"
+      // }${window.location.protocol === "http:" ? "/wss/" : "/wss/"}?token=${
+      //   data.token
+      // }&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       // this.$global.setWs(this.ws);
       //
+
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 通信发生错误时触发
@@ -979,13 +958,13 @@ export default {
     },
     // 通信发生错误时触发
     websocketonerror() {
-      console.log("出现错误");
+      // // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
       //关闭
-      console.log("断开连接", e);
+      // // console.log("断开连接", e);
       this.ws.close();
       //重连
       this.reconnect();
@@ -1033,7 +1012,7 @@ export default {
           // this.reconnect();
         }
         // this.serverTimeoutObj = setTimeout(() => {
-        //   console.log(123456)
+        //   // console.log(123456)
         //   //超时关闭
         //   this.ws.close();
         // }, this.timeout);
@@ -1052,7 +1031,6 @@ export default {
         sender: this.parmUserInfo.user_id,
         token: this.imUserInfo.token,
         channel: this.channel,
-          channel_code: this.channel,
       };
       if (this.ctp === 2) {
         data.receiver = getQueryString().uid;
@@ -1083,39 +1061,46 @@ export default {
           }
           if (res.code == 0) {
           } else {
-            this.handleLocalMsgList(this.ctp).find(function(item) {
+            this.handleLocalMsgList(this.ctp).find(function (item) {
               return item.uiCode == uiCode;
             }).isError = true;
           }
-
+          this.msgText = "";
+          this.msgType = 1;
+          this.formData.pic = "";
+          this.fileList = [];
+          this.uploadImgShow = false;
           this.toBottom();
         })
-        .catch(error => {
-          this.handleLocalMsgList(this.ctp).find(function(item) {
+        .catch((error) => {
+          this.handleLocalMsgList(this.ctp).find(function (item) {
             return item.uiCode == uiCode;
           }).isError = true;
-        })
-        .finally(res => {
-          this.msgText = "";
-          this.formData.pic = "";
-          this.prevImg = null;
         });
     },
     sendMsg() {
       this.isShowEmoji = false;
-      if (this.ctp == 0 && !this.token) {
+      var strRegex =
+          /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+      var re = new RegExp(strRegex);
+      if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
+        this.$message.error("无法发送超连结");
+        this.msgText = "";
+        return false;
+      }
+      if (this.ctp === 0 && !this.token) {
         this.$message({
           type: "error",
-          message: "未登录不能在直播间发言~"
+          message: "未登录不能在直播间发言~",
         });
         return;
       }
       if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType == 2) {
           let text = this.msgText;
-          console.log(this.msgText, text, "=======this.msgText");
+          // // console.log(this.msgText,text,"=======this.msgText")
           this.msgText = "";
-          console.log(this.msgText, text, "=======this.msgText2");
+          //  // console.log(this.msgText,text,"=======this.msgText2")
           this.sendMsgByApi(null, text);
         }
         return;
@@ -1128,26 +1113,12 @@ export default {
         sender_exp: this.infos.exp,
         text: this.msgText,
         uiCode: currentDate,
-        isError: false
+        isError: false,
       };
-
-      this.handleLocalMsgList(this.ctp).push(msgItem);
+      // this.handleLocalMsgList(this.ctp,"push",msgItem);
       this.sendMsgByApi(currentDate, this.msgText);
       this.msgText = "";
-
       return;
-      let msg = {
-        action: "system",
-        server: "notice",
-        uid: this.uid,
-        fd: this.fd,
-        txt: this.msgText,
-        method: "notice"
-      };
-
-      this.$global.ws.send(JSON.stringify(msg));
-      this.msgText = "";
-      this.toBottom();
     },
     // 客户端接收服务端数据时触发
     websocketonmessage(e) {
@@ -1155,12 +1126,13 @@ export default {
       if (data.fd !== null && data.action === "open") {
         this.fd = data.fd;
         this.inRoomInfo(data.fd);
+        // this.inviteRoom()  
       }
 
       if (data.action === "delmsg") {
         let msgListArr = this.handleLocalMsgList(this.ctp);
         let delIndex = msgListArr.findIndex(
-          item => item.msg_id * 1 === data.msg_id * 1
+          (item) => item.msg_id * 1 === data.msg_id * 1
         );
         msgListArr.splice(delIndex, 1);
         this.handleLocalMsgList(this.ctp, "init", msgListArr);
@@ -1194,7 +1166,7 @@ export default {
           vid: data.newMsgRoomvid,
           room_type: data.room_type,
           unread_count: 1,
-          text: data.text
+          text: data.text,
         };
         this.onHandleUnRead(msgList, 1);
       }
@@ -1216,9 +1188,6 @@ export default {
         // let list = this.msgList;
         // list.push(data);
         //自己发送的消息不渲染到列表
-        if (data.sender_nickname == this.info.user_nickname) {
-          return;
-        }
         if (data.sender_nickname.includes("游客") && this.ctp == 0) {
           return;
         }
@@ -1256,7 +1225,7 @@ export default {
             if (data.data.content.type == 1) {
               this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
-                uid: this.userInfo.uid
+                uid: this.userInfo.uid,
               });
               this.msgText = "";
               this.toBottom();
@@ -1267,7 +1236,7 @@ export default {
             if (data.data.content.type == 2) {
               this.handleLocalMsgList(this.ctp).push({
                 ...data.data.content,
-                uid: this.userInfo.uid
+                uid: this.userInfo.uid,
               });
               this.toBottom();
             }
@@ -1300,65 +1269,51 @@ export default {
     },
     // 聊天框滚动到最底部
     toBottom() {
-      let main = document.querySelector(".chat-window");
-      let content = document.querySelector(".chat-detail-main");
-      main.scrollTop = content.clientHeight - main.clientHeight + 500;
+      // let main = document.querySelector(".chat-window");
+      // let content = document.querySelector(".chat-detail-main");
+      // main.scrollTop = content.clientHeight - main.clientHeight + 500;
+      let box = document.getElementsByClassName('chat-window')[0]
+      this.$nextTick(() => {
+        setTimeout(() =>{
+          box.scrollTop = box.scrollHeight
+        },500)
+      })
     },
     //解耦合
     handleLocalMsgList(type, m, data) {
-      console.log(type, m, data);
-      console.log("ddddddddddddddddddddddddd");
+      // // console.log('ddddddddddddddddddddddddd')
       if (type != this.ctp) {
         return;
       }
-      if (type == 0) {
-        if (m == "init") {
-          this.msgList_0 = data;
-        }
-        if (m == "push") {
-          this.msgList_0.push(data);
-        }
-        if (m == "unshift") {
-          this.msgList_0.unshift(data);
-        }
-        if (m == "empty") {
-          this.msgList_0 = [];
-        }
-        return this.msgList_0;
+      const set = new Set();
+      switch (m) {
+        case "init":
+          this.msgList = data
+          break;
+        case "push":
+          if (data.pic !== undefined) {
+            data.pic = window.location.origin + data.pic;
+            // data.pic = "http://huyapre.oxldkm.com" + data.pic;
+            // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
+            // data.pic = "https://www.x9zb.live" + data.pic;
+            // data.pic = "http://huidu.x9zb.live" + data.pic;
+          }
+          this.msgList.push(data);
+          break;
+        case "unshift":
+          data.forEach((el) => {
+            this.msgList.unshift(el);
+          });
+          this.toBottom();
+          break;
+        case "empty":
+          this.msgList = [];
+          break;
+        default:
+          break;
       }
-      if (type == 2) {
-        if (m == "init") {
-          this.msgList_2 = data;
-        }
-        if (m == "push") {
-          this.msgList_2.push(data);
-        }
-        if (m == "unshift") {
-          // this.msgList_2.unshift(data)
-        }
-        if (m == "empty") {
-          this.msgList_2 = [];
-        }
-        return this.msgList_2;
-      }
-      if (type == 1) {
-        if (m == "init") {
-          this.msgList_1 = data;
-        }
-        if (m == "push") {
-          this.msgList_1.push(data);
-        }
-        if (m == "unshift") {
-          this.msgList_1.unshift(data);
-        }
-        if (m == "empty") {
-          this.msgList_1 = [];
-        }
-        return this.msgList_1;
-      }
-      // this.toBottom()
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -1395,7 +1350,7 @@ export default {
   margin-left: 5px;
 }
 .el-icon-message-solid {
-  color: #f4951f;
+  color: #c41d48;
   font-size: 16px;
   position: absolute;
   top: 10px;
@@ -1410,7 +1365,8 @@ export default {
 }
 .text-name {
   display: inline-block;
-  color: #666;
+  color: rgb(0 0 0 / 40%);
+  width: 130px;
 }
 .anchor-tag {
   display: inline-block;
@@ -1466,7 +1422,7 @@ export default {
 }
 .text-info {
   display: initial;
-  color: #000;
+  color: rgb(0 0 0 / 80%);
 }
 form {
   position: absolute;
@@ -1505,14 +1461,18 @@ form {
     height: 100% !important;
   }
 }
-.msg-type-container {
-  position: absolute;
-  left: 60px;
+.uploadImg {
+  height: 20px;
+  margin-left: 10px;
+  position: relative;
+  top: -6px;
+  left: 7px;
+  cursor: pointer;
 }
 
 .pic-info {
   max-height: 80px;
-  max-width: 100%;
+  max-width: 80px;
 }
 .thumb-container {
   padding: 10px 10px 10px 90px;
@@ -1537,15 +1497,14 @@ form {
 
 .new-msg-icon {
   font-style: normal;
-  min-width: 22px;
-  z-index: 100;
-  height: 22px;
-  padding: 0 2px;
+  width: 15px;
+  z-index: 1;
+  height: 15px;
   border-radius: 20px;
-  // position: absolute;
-  // right: -7px;
-  // top: -9px;
-  font-size: 16px;
+  position: absolute;
+  right: 3px;
+  top: 1px;
+  font-size: 10px;
   background-color: red;
   color: #fff;
   display: flex;
@@ -1610,57 +1569,45 @@ form {
   opacity: 0;
 }
 .header-list {
+  height: 38px;
   display: flex;
-  height: 46px;
-  background: #fff;
   span {
     position: relative;
-    color: #000000;
-    line-height: 46px;
+    color: #000;
+    line-height: 38px;
     background: #f4f4f4;
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
     margin-right: 1px;
-    font-size: 16px;
+    font-size: 14px;
     flex: 1;
-    &:last-child {
-      margin: 0;
-    }
-    &:hover {
+    &:hover{
       cursor: pointer;
     }
-    &.on {
-      background: linear-gradient(114deg, #ebcaa9 0%, #dab16f 100%);
-      color: #9c583d;
+    .hot-tag {
+      display: inline-block;
+      height: 25px;
+      margin-right: 2px;
+      margin-bottom: 3px;
+      margin-left: -10px;
     }
-    &.anchor {
-      color: #fd1817;
-      .hot-tag {
-        display: none;
-        height: 25px;
-        margin-right: 2px;
-        margin-bottom: 3px;
-      }
-      &.on {
-        .hot-tag {
-          display: inline-block;
-        }
-      }
+    &.on {
+      // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
+      //   linear-gradient(#000000, #000000);
+      background-color: #c41d48;
+      color: #FFF;
     }
   }
 }
 #msg {
-  border: 1px solid #d8ad66;
+  border: 1px solid #c41d48;
   border-radius: 4px;
   padding: 6px;
-  width: 100%;
-  line-height: 32px;
-  margin-top: 38px;
+  width: 75%;
+  line-height: 20px;
 }
 
-/deep/ .el-drawer__header {
+::v-deep.el-drawer__header {
   margin-bottom: 0;
   padding-top: 2vw;
 }
@@ -1668,15 +1615,23 @@ form {
   height: auto;
 }
 .emoji-btn {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  position: relative;
   cursor: pointer;
 }
-.emoji-box {
+::v-deep.emoji-box {
   position: absolute;
-  bottom: 139px;
-  right: 25px;
+  bottom: 110px;
+  right: 20px;
+  .emoji-picker {
+    width: 300px;
+    .container-emoji{
+      .grid-emojis{
+        .emoji{
+          font-size: 21px !important;
+        }
+      }
+    }
+  }
 }
 .switch-box {
   text-align: right;
@@ -1684,12 +1639,13 @@ form {
   padding-right: 2vw;
 }
 .ChatDetails_container {
-  background: #e9e9f5;
-  height: 549px;
+  background: #FFF;
+  min-height: 549px;
   position: relative;
   min-width: 334px;
+  height: 100%;
   .send-container {
-    height: 140px;
+    height: 122px;
     position: absolute;
     bottom: 0;
     min-width: 335px;
@@ -1741,42 +1697,42 @@ form {
     }
 
     .control-footer {
-      position: absolute;
-      bottom: 0;
       width: 96%;
-      height: 50px;
+      display: flex;
+      height: 35px;
+      align-content: center;
       .send {
-        display: inline-block;
+        // display: inline-block;
         padding: 0 20px;
-        position: absolute;
-        right: 6px;
-        bottom: 10px;
-        border-radius: 6px;
+        position: relative;
+        right: -12px;
+        border-radius: 4px;
         color: #fff;
-        background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
-        height: 30px;
-        line-height: 30px;
+        // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
+        background-color: #c41d48;
+        height: 34px;
+        line-height: 34px;
         &:hover {
           cursor: pointer;
         }
       }
       .no_send {
-        display: inline-block;
         padding: 0 20px;
-        position: absolute;
-        right: 6px;
-        bottom: 10px;
-        border-radius: 6px;
+        position: relative;
+        right: -12px;
+        border-radius: 4px;
         background-color: rgba(149, 152, 230, 0.1);
         color: #959db0;
-        height: 30px;
-        line-height: 30px;
+        height: 34px;
+        line-height: 34px;
       }
     }
   }
   .chat-window {
-    background: #fff;
-    height: calc(100% - 46px - 140px); // header-list & send-container
+    background: #FFF;
+    // height: 27.3em;
+    // padding-top: 80px;
+    // margin-top: 76px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
@@ -1936,14 +1892,32 @@ form {
   padding: 10px;
   text-align: left;
   border-radius: 4px;
-  position: absolute;
+  position: relative;
   color: #7d4628;
   width: 100%;
   left: 0;
-  top: 38px;
+  // top: 38px;
   font-size: 12px;
   padding-left: 30px;
-  z-index: 99;
+  z-index: 1;
   word-break: break-all;
+}
+.el-button--danger{
+  background-color: #c41d48;
+
+}
+.el-button--danger:hover, 
+.el-button--danger:focus{
+  background-color: #c41d47a1;
+}
+::v-deep.el-dialog-loginOut{
+  .el-dialog{
+    width: 25%;
+    .el-dialog__body{
+      .upload-demo{
+        text-align: center;
+      }
+    }
+  }
 }
 </style>

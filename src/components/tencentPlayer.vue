@@ -290,7 +290,7 @@ export default {
     z-index: 99;
     position: absolute;
     left: 20px;
-    bottom: 30px;
+    bottom: 20px;
     width: 120px;
   }
   .layout-anchor-nostart-content {

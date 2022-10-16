@@ -458,101 +458,30 @@
 							
 						</div>
 					</div>
-					<!-- <div>
-						<div class="grid-header">
-							<div class="grid-header-left"><img class="grid-header-left-icon"
-									src="../../assets/images/main-star.png" alt="">
-								<div class="grid-header-left-text">联赛积分榜</div>
+					<div class="countdown-container" v-if="showCountDown">
+						<img class="countdown-bg" :src="require('../../assets/images/countdown.png')" />
+						<div class="countdown-content">
+							<div class="countdown-time">
+								<div class="countdown-box">{{countDownD.split('')[0]}}</div>
+								<div class="countdown-box">{{countDownD.split('')[1]}}</div>
+								<div class="countdown-colon">:</div>
+								<div class="countdown-box">{{countDownH.split('')[0]}}</div>
+								<div class="countdown-box">{{countDownH.split('')[1]}}</div>
+								<div class="countdown-colon">:</div>
+								<div class="countdown-box">{{countDownM.split('')[0]}}</div>
+								<div class="countdown-box">{{countDownM.split('')[1]}}</div>
+								<div class="countdown-colon">:</div>
+								<div class="countdown-box">{{countDownS.split('')[0]}}</div>
+								<div class="countdown-box">{{countDownS.split('')[1]}}</div>
 							</div>
-							<div class="grid-header-right"><a class="grid-header-right-more" target="_blank"
-									href="/database/football/9/1/232894">更多 <i></i></a></div>
-						</div>
-						<div class="rank-content">
-							<div class="rank-content-tabs">
-								<div class="" :class="index == titleIndex?'tab-active':''"
-									@click="getRanking(item,index)" v-for="(item,index) in titleTab" :key="index">
-									{{item.name}}
-								</div>
-							</div>
-							<div class="rank-content-info">
-								<div class="rank-content-info-title"
-									style="border-bottom: 1px solid rgb(242, 242, 242);">
-									<div class="rank-col-1">排名</div>
-									<div class="rank-col-2">球队</div>
-									<div class="rank-col-3">胜/平/负</div>
-									<div class="rank-col-4">积分</div>
-								</div>
-								<div v-if="group == 0">
-									<div class="rank-content-info-item top-n" v-for="(item,index) in rangingList"
-										:key="index">
-										<div class="rank-col-1">
-											<div style="background: rgb(253, 82, 82); color: rgb(255, 255, 255);">
-												{{index+1}}
-											</div>
-										</div>
-										<div class="rank-col-2">
-											<div class="rank-team-logo">
-												<div class="lazyload-wrapper ">
-													<div class="lazyload-placeholder">
-														<img :src="item.logo" width="36" height="36">
-													</div>
-												</div>
-											</div>
-											<div class="rank-team-name">{{item.name}}</div>
-										</div>
-										<div class="rank-col-3">{{item.won}}/{{item.draw}}/{{item.loss}}</div>
-										<div class="rank-col-4">{{item.points}}</div>
-									</div>
-								</div>
-								<div v-else>
-									<div class="top-n top1"
-										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
-										A组</div>
-									<div class="rank-content-info-item top-n" v-for="(item,index1) in rangingList1"
-										:key="item.id">
-										<div class="rank-col-1">
-											<div style="background: rgb(253, 82, 82); color: rgb(255, 255, 255);">
-												{{index1+1}}
-											</div>
-										</div>
-										<div class="rank-col-2">
-											<div class="rank-team-logo">
-												<div class="lazyload-wrapper ">
-													<div class="lazyload-placeholder"><img :src="item.logo" width="36"
-															height="36"></div>
-												</div>
-											</div>
-											<div class="rank-team-name">{{item.name}}</div>
-										</div>
-										<div class="rank-col-3">{{item.won}}/{{item.draw}}/{{item.loss}}</div>
-										<div class="rank-col-4">{{item.points}}</div>
-									</div>
-									<div class="top-n top1"
-										style="height: 49px; border-bottom: 1px solid rgb(242, 242, 242); color: rgb(176, 138, 91); font-size: 14px; font-family: MicrosoftYaHeiUI; display: flex; align-items: center; padding-left: 142px;">
-										B组</div>
-									<div class="rank-content-info-item top-n" v-for="(item,index2) in rangingList2"
-										:key="item.id">
-										<div class="rank-col-1">
-											<div style="background: rgb(253, 82, 82); color: rgb(255, 255, 255);">
-												{{index2+1}}
-											</div>
-										</div>
-										<div class="rank-col-2">
-											<div class="rank-team-logo">
-												<div class="lazyload-wrapper ">
-													<div class="lazyload-placeholder"><img :src="item.logo" width="36"
-															height="36"></div>
-												</div>
-											</div>
-											<div class="rank-team-name">{{item.name}}</div>
-										</div>
-										<div class="rank-col-3">{{item.won}}/{{item.draw}}/{{item.loss}}</div>
-										<div class="rank-col-4">{{item.points}}</div>
-									</div>
-								</div>
+							<div class="countdown-footer">
+								<div class="countdown-text">天</div>
+								<div class="countdown-text">时</div>
+								<div class="countdown-text">分</div>
+								<div class="countdown-text">秒</div>
 							</div>
 						</div>
-					</div> -->
+					</div>
 				</div>
 				<div class="official-activity">
 					<div class="title">
@@ -703,8 +632,13 @@
 						nextEl: '.live-match-grid-next',
 					 prevEl: '.live-match-grid-prev'
 					},
-				}
-
+				},
+				showCountDown: true,
+				countDownIntervals: null,
+				countDownD: "",
+				countDownH: "",
+				countDownM: "",
+				countDownS: "",
 			}
 		},
 		watch: {
@@ -734,12 +668,17 @@
 				this.headList(this.classificationList[e].id)
 			}
 		},
+		created() {
+			this.countDownIntervals = setInterval(() => {
+				this.initCountDown();
+			}, 500);
+		},
 		mounted() {
 			this.getList()
 			let data = {
 				id: this.titleTab[0].id
 			}
-			//this.getRanking(data)
+			this.getRanking(data)
 			this.getLiveList()
 			this.recommend()
 			this.classification()
@@ -1081,10 +1020,33 @@
 					this.list = res.data.data
 				}).catch(res => {})
 			},
+
+			// 活動倒計時
+			initCountDown() {
+				let activityTimestamp = Date.parse(new Date('2022-11-20 23:59:59'));
+				let nowTimestamp = Date.parse(new Date());
+				let interval = activityTimestamp - nowTimestamp;
+
+				if (interval < 0) {
+					this.showCountDown = false;
+					clearInterval(this.countDownIntervals);
+					return
+				}
+				
+				let d = Math.floor(interval / (1000*60*60*24));
+				let h = parseInt(interval % (1000*60*60*24) / (1000*60*60));
+				let m = parseInt(interval % (1000*60*60) / (1000*60));
+				let s = parseInt(interval % (1000*60) / 1000);
+				this.countDownD = d < 10 ? ('0' + d) : d + '';
+				this.countDownH = h < 10 ? ('0' + h) : h + '';
+				this.countDownM = m < 10 ? ('0' + m) : m + '';
+				this.countDownS = s < 10 ? (s >= 1 ? ('0' + s) : '00') : s + '';
+			}
 		},
 		destroyed(){
 			clearTimeout(this.servertimeDate)
 			clearTimeout(this.servertimes)
+			clearInterval(this.countDownIntervals)
 		}
 	}
 </script>
@@ -1579,5 +1541,49 @@
 	  background-repeat: no-repeat;
 	  background-size: 24px 24px;
 	  background-position: center center;
+	}
+	.countdown-container {
+		position: relative;
+		padding-top: 50px;
+		.countdown-bg {
+			width: 100%;
+		}
+		.countdown-content {
+			position: absolute;
+			top: 360px;
+			width: 100%;
+			.countdown-time {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				.countdown-box {
+					margin: 0 1.5px;
+					padding: 1px 8px;
+					border-radius: 4px;
+					font-weight: bold;
+					font-size: 22px;
+					background: #fff;
+					color: #af0f22;
+				}
+				.countdown-colon {
+					margin: 0 4px;
+					font-weight: bold;
+					font-size: 28px;
+					color: #fff;
+				}
+			}
+			.countdown-footer {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 9px;
+				.countdown-text {
+					flex: 1;
+					font-size: 14px;
+					text-align: center;
+					color: #f9e9d6;
+				}
+			}
+		}
 	}
 </style>

@@ -68,10 +68,10 @@ export default {
 .HuyaXWebhMessagelist {
   position: absolute;
   z-index: 99;
-  top: 46px;
+  // top: 46px;
   left: 0;
   width: 100%;
-  height: calc(100% - 46px);
+  height: calc(100% - 38px);
   background-color: #fff;
   overflow-y: scroll;
   overflow-x: hidden;

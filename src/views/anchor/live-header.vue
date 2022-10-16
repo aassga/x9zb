@@ -6,18 +6,22 @@
 				<div class="score-live-detail-header-wrap">
 					<div class="score-live-detail-header">
 						<div class="team">
-							<div class="host-name1 name tip-basketball"><span class="ellipsis" v-if="base.home_team_data">{{base.home_team_data.short_name_zh}}</span><img
-									src="https://sta-prod-score.zkreen.com/teams/20190311/20190311160443874_200x200.png?x-image-process=image/format,webp"><span
-									class="num">{{base.home_scores_total}}</span></div>
-							<div class="score">
-								<p class="league-name"><span>{{base.match_time}}</span> <span
-										v-if="query.type == 'basketball'">NBA</span></p>
-								<p class="time">VS</p>
-								<!-- <p class="color-999 more-data">(45-65) </p> -->
+							<div class="host-name1 name tip-basketball">
+								<span class="ellipsis" v-if="base.home_team_data">{{base.home_team_data.short_name_zh}}</span>
+								<img :src="base.home_team_data.logo">
+								<span class="num">{{base.home_scores_total}}</span>
 							</div>
-							<div class="guest-name1 name tip-basketball"><span class="num">{{base.away_scores_total}}</span><img
-									src="https://sta-prod-score.zkreen.com/teams/20190311/20190311160411520_200x200.png?x-image-process=image/format,webp"><span
-									class="ellipsis" v-if="base.away_team_data">{{base.away_team_data.short_name_zh}}</span></div>
+							<div class="score">
+								<p class="league-name">
+									<span>{{base.match_time}}</span> 
+									<span v-if="query.type == 'basketball'">NBA</span></p>
+								<p class="time">VS</p>
+							</div>
+							<div class="guest-name1 name tip-basketball">
+								<span class="num">{{base.away_scores_total}}</span>
+								<img :src="base.away_team_data.logo">
+								<span class="ellipsis" v-if="base.away_team_data">{{base.away_team_data.short_name_zh}}</span>
+							</div>
 						</div>
 					</div>
 					<div class="right-btn"><a class="btn" @click="navigate('basketball',base.id)">赛事实况</a></div>
@@ -103,9 +107,11 @@
 				<div class="score-live-detail-header-wrap">
 					<div class="score-live-detail-header">
 						<div class="team" v-if="base">
-							<div class="host-name name"><span class="ellipsis">{{base.home_team_name_zh}}</span><img
-									:src="base.home_team_log"><span
-									class="num" v-if="base.away_data">{{base.home_data[0]}}</span></div>
+							<div class="host-name name">
+								<span class="ellipsis">{{base.home_team_name_zh}}</span>
+								<img :src="base.home_team_log">
+								<span class="num" v-if="base.home_data">{{base.home_score ? base.home_score : base.home_data[0]}}</span>
+							</div>
 							<div class="score">
 								<p class="league-name"><span>{{base.time}}</span></p>
 								<div>
@@ -116,15 +122,18 @@
 									</div>
 								</div>
 							</div>
-							<div class="guest-name name"><span class="num" v-if="base.away_data">{{base.away_data[0]}}</span><img
-									:src="base.away_team_log"><span
-									class="ellipsis">{{base.away_team_name_zh}}</span></div>
+							<div class="guest-name name">
+								<span class="num" v-if="base.away_data">{{base.away_score ? base.away_score : base.away_data[0]}}</span>
+								<img :src="base.away_team_log">
+								<span class="ellipsis">{{base.away_team_name_zh}}</span>
+							</div>
 							<div class="custom-matchData-info"></div>
 						</div>
 					</div>
 					<div class="right-btn"><a class="btn" @click="navigate('football',base.id)">赛事实况</a></div>
 				</div>
-				<div class="score-detail-odd-table " style="top: 55.5556px;">
+				<!-- 指數隱藏 -->
+				<!-- <div class="score-detail-odd-table " style="top: 55.5556px;">
 					<ul class="odd" v-if="isShow">
 						<li class="odd-item odd-item-header">
 							<div class="cell cell0 borderR"></div>
@@ -197,7 +206,7 @@
 						</li>
 					</ul>
 					<p class="color-999 more-data" @click="isShow=!isShow">{{isShow?'关闭':'更多'}}数据 <span :class="!isShow?'xiala-icon':'shangla-icon'"></span></p>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>

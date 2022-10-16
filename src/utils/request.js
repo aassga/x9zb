@@ -14,6 +14,7 @@ import {
 
 let baseURL = process.env;
 console.log(apiUrl);
+
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);
 // }
@@ -72,23 +73,20 @@ service.interceptors.response.use(
 		let showMsg = api_url.indexOf("api/chat") < 0
 		// if the custom code is not 20000, it is judged as an error.
 		// if(res.msg!="connection error"&&res.msg!="成功"&&res.msg!="success"&&res.msg!=""&&res.msg!="操作成功"&&res.msg!="登录成功"&&res.msg!="赠送礼物成功"){
-			// Message({
-			// 	message: res.msg || 'Error',
-			// 	type: 'error',
-			// 	duration: 5 * 1000
-			// })
-
-			// console.log(res.msg,"res.msg======")
+		// 	// Message({
+		// 	// 	message: res.msg || 'Error',
+		// 	// 	type: 'error',
+		// 	// 	duration: 5 * 1000
+		// 	// })
+		// 	console.log(res.msg,"res.msg======")
 		// }
-		// if (res.code == 1&&res.msg!="connection error") {
-		if (res.code !== 0) {
-
+		if (res.code == 1&&res.msg!="connection error") {
 			// Message({
 			// 	message: res.msg || 'Error',
 			// 	type: 'error',
 			// 	duration: 5 * 1000
 			// })
-			// console.log(res.msg,"res.msg1======")
+			console.log(res.msg,"res.msg1======")
 			// 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
 			if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
 				// to re-login
@@ -101,16 +99,15 @@ service.interceptors.response.use(
 						location.reload()
 					})
 				})
+			}
+			if (showMsg) {
+				Message({
+					message: res.msg || 'Error',
+					type: 'error',
+					duration: 5 * 1000
+				})
 			} else {
-				if (showMsg&&!res.msg.includes("注册成功")) {
-					Message({
-						message: res.msg || 'Error',
-						type: 'error',
-						duration: 5 * 1000
-					})
-				} else {
-					console.log(res.msg,"res.msg======")
-				}
+				console.log(res.msg,"res.msg======")
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else if (res.code == 700) { //登录过期

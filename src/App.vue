@@ -36,12 +36,12 @@
 		    //     debugger;
 		    //   },50)
 		    // }
-			window.addEventListener('resize',function(){
-				let screenWidth = document.body.offsetWidth;
-				// if (screenWidth <= 500) {
-				// 	location.href = 'https://m.longya.live'
-				// }
-			})
+			// window.addEventListener('resize',function(){
+			// 	let screenWidth = document.body.offsetWidth;
+			// 	// if (screenWidth <= 500) {
+			// 	// 	location.href = 'https://m.longya.live'
+			// 	// }
+			// })
 			window.callback = function(res){
 			    // res（用户主动关闭验证码）= {ret: 2, ticket: null}
 			    // res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
