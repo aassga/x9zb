@@ -17,11 +17,14 @@
           {{ item.name }}
           <i
             v-show="
-              ((privateChatTotal && privateChatTotal > 0 && !hideChat) || inviteCount) &&
+              ((privateChatTotal && privateChatTotal > 0 && !hideChat) ||
+                inviteCount) &&
               item.id === 2
             "
             class="new-msg-icon"
-            >{{ privateChatTotal > 99 ? "99+" : inviteCount ? 1 : privateChatTotal }}</i
+            >{{
+              privateChatTotal > 99 ? "99+" : inviteCount ? 1 : privateChatTotal
+            }}</i
           >
           <i
             v-show="unreadTotal && unreadTotal > 0 && item.id === 1"
@@ -132,10 +135,6 @@
             placeholder="请输入聊天内容"
           ></textarea>
           <div>
-            <!-- <el-button-group class="quick-container">
-              <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
-              <el-button type="primary" round size="mini" @click="saveMessage">保存</el-button>
-            </el-button-group> -->
             <div
               :class="[tabNumber == 0 && !token ? 'no_send' : 'send']"
               @click="submitMessage()"
@@ -163,7 +162,7 @@
       :modal-append-to-body="false"
       :append-to-body="false"
       v-loading.fullscreen.lock="fullscreenLoading"
-      width="100%"
+      width="25%"
       class="el-upload-img el-dialog-loginOut"
       element-loading-text="圖片上传中"
       center
@@ -284,10 +283,10 @@ export default {
       initChatTab: true,
       initTab: true,
       leaveVid: "",
-      chatMsgHight: 0,// 註記高度
-      fullscreenLoading: false,// 全螢幕Loading
-      uploadImgShow: false,// 上傳圖片
-      fileList: [],//圖片清單
+      chatMsgHight: 0, // 註記高度
+      fullscreenLoading: false, // 全螢幕Loading
+      uploadImgShow: false, // 上傳圖片
+      fileList: [], //圖片清單
       anchor_id: "",
     };
   },
@@ -317,8 +316,8 @@ export default {
       !newV ? this.toBottom() : false;
     },
     tabNumber(newV, oldV) {
-      if (newV === 1)  this.getChatMessageList(); // 获取聊天列表
-      if (newV != oldV)this.initTab = true;
+      if (newV === 1) this.getChatMessageList(); // 获取聊天列表
+      if (newV != oldV) this.initTab = true;
     },
     pinInfo(newV, oldV) {
       if (newV !== "") {
@@ -453,15 +452,21 @@ export default {
     mapList(read, unRead) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
       if (unRead.length > 0 && unRead[unRead.length - 1].text) {
-        read.sort((a, b) =>  a.vid == unRead[unRead.length - 1].vid ? -1 : b.vid == unRead[unRead.length - 1].vid ? 1 : 0);
+        read.sort((a, b) =>
+          a.vid == unRead[unRead.length - 1].vid
+            ? -1
+            : b.vid == unRead[unRead.length - 1].vid
+            ? 1
+            : 0
+        );
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        for(let item in read){
+        for (let item in read) {
           if (read[item].vid == this.roomInfo.vid) this.activeIndex2 = item;
         }
       }
-      for(let index in read){
+      for (let index in read) {
         let readList = read[index];
-        for(let index in unRead){
+        for (let index in unRead) {
           let unReadList = unRead[index];
           if (unReadList.vid == readList.vid) {
             readList.unread_count = unReadList.unread_count;
@@ -666,7 +671,7 @@ export default {
       }, 1000);
     },
     changeType(e) {
-      if (this.showLoading || this.tabNumber === e) return
+      if (this.showLoading || this.tabNumber === e) return;
       const qVid = this.qsVid;
       this.page = 1;
       this.tabNumber = e;
@@ -700,7 +705,7 @@ export default {
       this.changeHeight();
     },
     inviteRoom(init = false) {
-      if (!this.webSocketFd) return
+      if (!this.webSocketFd) return;
       const _that = this;
       const roomId = this.qsVid;
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
@@ -767,7 +772,8 @@ export default {
         type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         channel: this.channel,
       };
-      if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid   
+      if (this.tabNumber == 1 || this.tabNumber == 2)
+        this.leaveVid = this.parmUserInfo.vid;
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
         if (res.data.pinData && res.data.pinData != "") {
           _that.pinInfo = {
@@ -820,7 +826,7 @@ export default {
     },
     reconnect() {
       //重新连接
-      if (this.lockReconnect) return
+      if (this.lockReconnect) return;
       this.lockReconnect = true;
       //没连接上会一直重连，设置延迟避免请求过多
       this.timeoutnum && clearTimeout(this.timeoutnum);
@@ -874,7 +880,10 @@ export default {
         formData.append("fd", this.webSocketFd);
         formData.append("title", "");
         formData.append("link", "");
-        formData.append("type", this.tabNumber == 1 ? this.room_type : this.tabNumber || 0 );
+        formData.append(
+          "type",
+          this.tabNumber == 1 ? this.room_type : this.tabNumber || 0
+        );
         formData.append("method", "notice");
         formData.append("msg_type", 2);
         formData.append("color", "#000");
@@ -948,41 +957,54 @@ export default {
       this.webSocketFd = data.fd;
       switch (data.action) {
         case "open":
-          if(data.fd !== null) this.inRoomInfo(this.webSocketFd);
-        break
+          if (data.fd !== null) this.inRoomInfo(this.webSocketFd);
+          break;
         case "clearHistory":
           this.mergeDataList(this.tabNumber, "empty");
-        break
+          break;
         case "delmsg":
           let mergeArrData = this.mergeDataList(this.tabNumber);
-          let delIndex = mergeArrData.findIndex(item => item.msg_id * 1 === data.msg_id * 1)
+          let delIndex = mergeArrData.findIndex(
+            (item) => item.msg_id * 1 === data.msg_id * 1
+          );
           mergeArrData.splice(delIndex, 1);
           this.mergeDataList(this.tabNumber, "init", mergeArrData);
-        break
+          break;
         case "newRoom":
-          if (this.tabNumber !== 2 && data.room_type === "2") this.inviteCount = this.inviteCount + 1;
+          if (this.tabNumber !== 2 && data.room_type === "2")
+            this.inviteCount = this.inviteCount + 1;
           if (data.fd !== this.webSocketFd) {
-            if (data.room_type === "2") {
-              this.newMsg.privateChatTotal = true;
+            switch (data.room_type) {
+              case "1":
+                this.newMsg.groupChat = true;
+                this.unreadTotal++;
+                break;
+              case "2":
+                this.newMsg.privateChatTotal = true;
+                break;
             }
-            if (data.room_type === "1") {
-              this.newMsg.groupChat = true;
-              this.unreadTotal++;
-            }
-          }          
-        break
+          }
+          break;
         case "unread":
           let unreadMsgList = data.data || [];
           this.refreshUnreadEvent(unreadMsgList, 0);
-        break
+          break;
         case "newMsg":
-          let newMsgList = { vid: data.newMsgRoomvid, room_type: data.room_type, unread_count: 1, text: data.text,};
-          this.refreshUnreadEvent(newMsgList, 1);          
-        break
+          let newMsgList = {
+            vid: data.newMsgRoomvid,
+            room_type: data.room_type,
+            unread_count: 1,
+            text: data.text,
+          };
+          this.refreshUnreadEvent(newMsgList, 1);
+          break;
         case "send":
         case "system":
           if (data.action === "send" && data.msg_type === "0") {
-            let sendMsgList = { messageForShow: data.text, textContent: data.text };
+            let sendMsgList = {
+              messageForShow: data.text,
+              textContent: data.text,
+            };
             this.$store.commit("setdanmakuShow", sendMsgList);
           }
           //自己发送的消息不渲染到列表
@@ -997,24 +1019,18 @@ export default {
           }
           this.mergeDataList(this.tabNumber, "push", data);
           this.toBottom();
-        break
+          break;
         case "pin":
-          if (data.pin === 1){
-            this.pinInfo = JSON.parse(data.data);
-          } else if (data.pin === 2){
-            this.pinInfo = "";
-          }
-          this.pinInfo.msg_id = data.msg_id; 
-        break
+          this.pinInfo = data.pin === 1 ? JSON.parse(data.data) : "";
+          this.pinInfo.msg_id = data.msg_id;
+          break;
         case "gift":
-          if (this.tabNumber !== 0) {
-            return;
-          }
+          if (this.tabNumber !== 0) return;
           let gift = this.giftList.filter((item) => item.id == data.gift_id)[0];
           data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
           this.mergeDataList(this.tabNumber, "push", data);
           this.$emit("onhandleSendGift", data);
-        break
+          break;
       }
       if (data.status == 200) {
         if (data.data) {
@@ -1036,9 +1052,10 @@ export default {
               this.toBottom();
               if (data.data.content.type == 1) {
                 this.msgText = "";
-                if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
+                if (this.hasSendMsgCount > 0)
+                  this.hasSendMsgCount = this.hasSendMsgCount - 1;
               }
-              break 
+              break;
             case "message":
               this.$store.dispatch("getUnReadMsgNum");
               this.mergeDataList(this.tabNumber).push({
@@ -1047,7 +1064,7 @@ export default {
               });
               this.toBottom();
               if (data.data.content.type == 1) this.msgText = "";
-              break
+              break;
           }
         }
       }
@@ -1055,7 +1072,7 @@ export default {
     // 聊天框滚动到最底部
     toBottom() {
       let box = document.getElementsByClassName("chat-window")[0];
-      this.$nextTick(() => box.scrollTop = box.scrollHeight);
+      this.$nextTick(() => (box.scrollTop = box.scrollHeight));
     },
     //解耦合
     mergeDataList(type, m, data) {
@@ -1074,13 +1091,8 @@ export default {
           }
           break;
         case "push":
-          if (data.pic !== undefined) {
+          if (data.pic !== undefined)
             data.pic = window.location.origin + data.pic;
-            // data.pic = "http://huyapre.oxldkm.com" + data.pic;
-            // data.pic = "http://huyapretest.oxldkm.com" + data.pic;
-            // data.pic = "https://www.x9zb.live" + data.pic;
-            // data.pic = "http://huidu.x9zb.live" + data.pic;
-          }
           if (type === 0) {
             this.msgSquareList.push(data);
           } else if (type === 1) {
@@ -1105,8 +1117,7 @@ export default {
           this.msgChatList = [];
           this.msgAnchorList = [];
           break;
-
-        }
+      }
       this.toBottom();
     },
   },
@@ -1327,7 +1338,6 @@ form {
 
   to {
     transform: translateX(calc(-100% - 4em));
-    /*总长再加上margin-left*/
   }
 }
 
@@ -1388,8 +1398,6 @@ form {
       margin-left: -10px;
     }
     &.on {
-      // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
-      //   linear-gradient(#000000, #000000);
       background-color: #c41d48;
       color: #fff;
     }
@@ -1498,13 +1506,11 @@ form {
       height: 35px;
       align-content: center;
       .send {
-        // display: inline-block;
         padding: 0 20px;
         position: relative;
         right: -12px;
         border-radius: 4px;
         color: #fff;
-        // background: linear-gradient(114deg, #eecfb5 -2%, #d8ad66);
         background-color: #c41d48;
         height: 34px;
         line-height: 34px;
@@ -1526,9 +1532,6 @@ form {
   }
   .chat-window {
     background: #fff;
-    // height: 27.3em;
-    // padding-top: 80px;
-    // margin-top: 76px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
@@ -1692,7 +1695,6 @@ form {
   color: #7d4628;
   width: 100%;
   left: 0;
-  // top: 38px;
   font-size: 12px;
   padding-left: 30px;
   z-index: 1;
