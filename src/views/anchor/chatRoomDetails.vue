@@ -1,55 +1,84 @@
 <template>
-  <div id="chat-models" style="height: 100%" >
+  <div id="chat-models" style="height: 100%">
     <input id="cp-input" />
     <div class="ChatDetails_container">
       <div class="header-list">
         <span
           v-for="(item, index) in relationsFilter(relations)"
           :key="index"
-          :class="{ 'on': ctp == item.id }"
+          :class="{ on: tabNumber == item.id }"
           @click="changeType(item.id)"
         >
-          <img v-if="item.id === 2" src="../../assets/images/HotTag.png" class="hot-tag"/>
+          <img
+            v-if="item.id === 2"
+            src="../../assets/images/HotTag.png"
+            class="hot-tag"
+          />
           {{ item.name }}
           <i
-            v-show="((oneChat && oneChat > 0 && !hideChat) || inviteCount) && item.id === 2"
+            v-show="
+              ((privateChatTotal && privateChatTotal > 0 && !hideChat) || inviteCount) &&
+              item.id === 2
+            "
             class="new-msg-icon"
-            >{{ oneChat > 99 ? "99+" : inviteCount ? 1 :oneChat }}</i
+            >{{ privateChatTotal > 99 ? "99+" : inviteCount ? 1 : privateChatTotal }}</i
           >
           <i
-            v-show="msgCount && msgCount > 0 && item.id === 1"
+            v-show="unreadTotal && unreadTotal > 0 && item.id === 1"
             class="new-msg-icon"
-            >{{ msgCount > 99 ? "99+" : msgCount }}</i
+            >{{ unreadTotal > 99 ? "99+" : unreadTotal }}</i
           >
         </span>
       </div>
-      <div v-if="pinInfo" class="pin-info">
+      <div v-if="pinInfo && tabNumber === 0" class="pin-info">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
       </div>
       <!-- 聊天列表页面 -->
-      <MessageList
-        @onHandleClickItem="onHandleClickItem"
+      <message-list
+        v-show="tabNumber === 1 && showChatList"
+        :list="chatList"
         :activeIndex="activeIndex2"
-        v-show="this.ctp == 1 && this.showChatList"
-        :list="messageList"
-      ></MessageList>
-      <template v-if="roomInfo">
-        <MessageInfo
-          :dialogVisible="dialogVisible"
-          :isShowEmoji="isShowEmoji"
-          :modalMsgList="modalMsgList"
-          @close="backList"
-          :roomInfo="roomInfo"
-          v-show="this.ctp == 1 && showMsgInfo"
-        ></MessageInfo>
-      </template>
+        @onHandleClickItem="onClickListEvent"
+      />
+      <message-info
+        v-show="tabNumber == 1 && showMsgInfo && roomInfo"
+        :dialogVisible="dialogVisible"
+        :isShowEmoji="isShowEmoji"
+        :modalMsgList="modalMsgList"
+        :roomInfo="roomInfo"
+        @close="backBefore"
+      />
       <chat-message-new
-        :msgList="msgList"
+        v-if="tabNumber === 0"
+        :msgList="msgSquareList"
         :controlIndex="controlIndex"
         :parmUserInfo="parmUserInfo"
-        :ctp="ctp"
-        :pinInfo="pinInfo"
+        :tabNumber="tabNumber"
+        :roomInfo="roomInfo"
+        :channel="channel"
+        :chatMsgHight="chatMsgHight"
+        @controlNumber="controlNumber"
+        @msgAction="msgAction"
+      />
+      <chat-message-new
+        v-if="tabNumber === 2"
+        :msgList="msgAnchorList"
+        :controlIndex="controlIndex"
+        :parmUserInfo="parmUserInfo"
+        :tabNumber="tabNumber"
+        :roomInfo="roomInfo"
+        :channel="channel"
+        :chatMsgHight="chatMsgHight"
+        @controlNumber="controlNumber"
+        @msgAction="msgAction"
+      />
+      <chat-message-new
+        v-if="tabNumber === 1"
+        :msgList="msgChatList"
+        :controlIndex="controlIndex"
+        :parmUserInfo="parmUserInfo"
+        :tabNumber="tabNumber"
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
@@ -72,7 +101,7 @@
             />
           </svg>
           <img
-            v-if="ctp != 0"
+            v-if="tabNumber != 0"
             class="uploadImg"
             src="./../../assets/images/image.png"
             alt=""
@@ -99,17 +128,17 @@
             type="text"
             rows="1"
             v-model="msgText"
-            v-on:keyup.enter="sendMsg"
+            v-on:keyup.enter="submitMessage()"
             placeholder="请输入聊天内容"
           ></textarea>
           <div>
             <!-- <el-button-group class="quick-container">
               <el-button type="primary" round size="mini" @click="quickReplyList">一键回复</el-button>
-              <el-button type="primary" round size="mini" @click="saveMsg">保存</el-button>
+              <el-button type="primary" round size="mini" @click="saveMessage">保存</el-button>
             </el-button-group> -->
             <div
-              :class="[ctp == 0 && !token ? 'no_send' : 'send']"
-              @click="sendMsg"
+              :class="[tabNumber == 0 && !token ? 'no_send' : 'send']"
+              @click="submitMessage()"
             >
               发送
             </div>
@@ -155,10 +184,8 @@
       </el-upload>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeModel()"
-          >取消</el-button
-        >
-        <el-button @click="sendMsg">发送</el-button>
+        <el-button @click="closeModel()">取消</el-button>
+        <el-button @click="submitMessage()">发送</el-button>
       </span>
     </el-dialog>
   </div>
@@ -169,10 +196,19 @@ import { getQueryString } from "@/utils/Qs";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
 import ChatMessageNew from "@/components/ChatMessageNews";
-// import { mapGetters } from "vuex";
 export default {
   name: "ChatDetails",
-  props: ["hideChat", "qsVid", "giftList"],
+  props: {
+    hideChat: {
+      type: null,
+    },
+    qsVid: {
+      type: null,
+    },
+    giftList: {
+      type: null,
+    },
+  },
   components: {
     MessageList,
     MessageInfo,
@@ -185,25 +221,22 @@ export default {
         { name: "主播私聊", id: 2 },
         { name: "聊天", id: 1 },
       ],
-      msgList2: [], // 红点的列表
-      oneChat: 0, // 主播私聊的未读总数
-      msgCount: 0, // 列表红点的总数
+      unreadMessageList: [], // 红点的列表
+      privateChatTotal: 0, // 主播私聊的未读总数
+      unreadTotal: 0, // 列表红点的总数
       modalMsgList: [],
       showMsgInfo: false, // 房间是否显示的状态
-      messageList: [], // 获取聊天列表
+      chatList: [], // 获取聊天列表
       activeIndex2: 0, // 聊天列表的选中索引
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
-      msgList: [],
-      msgList_0: [],
-      msgList_1: [],
-      msgList_2: [],
+      msgSquareList: [],
+      msgAnchorList: [],
+      msgChatList: [],
       myUserinfo: { uid: "" },
-      fd: "",
-      isShowGiftBox: false,
+      webSocketFd: "",
       giftNum: 1,
-      currentGiftId: "",
       isShowEmoji: false,
       uid: "",
       vid: "",
@@ -212,13 +245,9 @@ export default {
       },
       initInvite: true,
       dialogVisible: false,
-      gift_jpg: "",
       targetUserInfo: {},
       isAllowedSendMsg: true,
       hasSendMsgCount: 0,
-
-      needBuy: false,
-      that: this,
       active: 0,
       ws: "",
       WSURL: "",
@@ -240,27 +269,25 @@ export default {
       controlIndex: -1,
       pinInfo: "",
       page: 1,
-      ctp: 0,
-      inviteCount:0,
+      tabNumber: 0,
+      inviteCount: 0,
       prevImg: null,
       showChatList: false,
       isMore: true,
       newMsg: {
-        oneChat: false,
+        privateChatTotal: false,
         groupChat: false,
       },
       room_type: "",
-      channel: getQueryString().channel_code||localStorage.getItem("channel"),
+      channel: getQueryString().channel_code || localStorage.getItem("channel"),
       showLoading: true,
       initChatTab: true,
       initTab: true,
       leaveVid: "",
-      type0_local_msg_list: [],
-      type2_local_msg_list: [],
-      chatMsgHight:0,
-      fullscreenLoading:false,
-      uploadImgShow:false,
-      fileList:[],
+      chatMsgHight: 0,// 註記高度
+      fullscreenLoading: false,// 全螢幕Loading
+      uploadImgShow: false,// 上傳圖片
+      fileList: [],//圖片清單
       anchor_id: "",
     };
   },
@@ -268,87 +295,50 @@ export default {
     token() {
       return this.$store.state.user.islogin;
     },
-    infos(){
-      return this.$store.state.infos
+    infos() {
+      return this.$store.state.infos;
     },
   },
   //给新的ws实例添加监听事件
   watch: {
-    msgList2: {
+    unreadMessageList: {
       handler(newV, oldV) {
-        // // console.log("未读消息列表数据变化");
-        // // console.log(newV);
-        // // console.log("消息列表的数据");
-        // // console.log(this.messageList);
-        this.messageList = this.mapList(this.messageList, newV);
-        this.onHandleGroupMsgChange(this.messageList);
+        this.chatList = this.mapList(this.chatList, newV);
+        this.onGroupNewsTotal(this.chatList);
         // 刷新视图
         this.$forceUpdate();
       },
       deep: true,
     },
-    fd(newV, oldV) {
-      if (newV != oldV) {
-        // // console.log(99999999);
-        this.inviteRoom(true);
-      }
-      // c
+    webSocketFd(newV, oldV) {
+      if (newV != oldV) this.inviteRoom(true);
     },
     showLoading(newV, oldV) {
       !newV ? this.toBottom() : false;
     },
-
-    ctp(newV, oldV) {
-      if (newV === 1) {
-        this.getMessageList(); // 获取聊天列表
-      }
-      if (newV != oldV) {
-        this.initTab = true;
-      }
-      if (newV === 2) {
-        // this.leaveRoom(2);
+    tabNumber(newV, oldV) {
+      if (newV === 1)  this.getChatMessageList(); // 获取聊天列表
+      if (newV != oldV)this.initTab = true;
+    },
+    pinInfo(newV, oldV) {
+      if (newV !== "") {
+        this.changeHeight();
       }
     },
-    pinInfo(newV, oldV){
-      if(newV !== ""){
-        this.changeHeight()
-      }
-    }
   },
-  // filters: {
-  //   picFilter(url) {
-  //     let newUrl = url;
-  //     if (url.includes("base64")) {
-  //       let split = window.location.hostname.includes("10")
-  //         ? "http://huyapre.oxldkm.com/"
-  //         : window.location.origin + "/";
-  //       newUrl = newUrl.replace(split, "");
-  //     } else {
-  //       return newUrl;
-  //     }
-  //   },
-  // },
-  updated() {
-    // this.toBottom();
-  },
-  async mounted() {
+  mounted() {
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
-    domScroll.addEventListener("scroll", e => {
-      // // console.log(
-      //   domScroll.scrollTop,
-      //   "domScroll.scrollTop-domScroll.offsetHeight==="
-      // );
+    domScroll.addEventListener("scroll", (e) => {
       if (domScroll.scrollTop <= 2 && this.isMore) {
         this.page++;
-        if (this.ctp == 1 && this.initChatTab) {
+        if (this.tabNumber == 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
         this.getChatHistoryMsg(this.initTab ? 1 : "");
       }
     });
-    // // console.log(this.qsVid, "this.qsVid==============");
     this.vid = this.qsVid || "";
     let userid = "";
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -383,9 +373,8 @@ export default {
         };
       }
     }
-    this.getMessageList(); // 获取聊天列表
-    this.initToken(true);
-    
+    this.getChatMessageList(); // 获取聊天列表
+    this.getUserToken();
   },
   created() {
     this.uid = this.$route.query.id;
@@ -402,11 +391,8 @@ export default {
       this.controlIndex = num;
     },
     msgAction(item) {
-      this.handleLocalMsgList(this.ctp).map((val, index) => {
-        if (val == item) {
-          this.handleLocalMsgList(this.ctp).splice(index, 1);
-          // // console.log(this.msgList)
-        }
+      this.mergeDataList(this.tabNumber).map((val, index) => {
+        if (val == item) this.mergeDataList(this.tabNumber).splice(index, 1);
       });
       this.msgText = item.text;
     },
@@ -445,16 +431,6 @@ export default {
     limitCheck() {
       this.$message({ message: "最多只能上传1张图片", type: "warning" });
     },
-    // resend(item) {
-    //   // // console.log(item)
-    //   this.handleLocalMsgList(this.ctp).map((val, index) => {
-    //     if (val == item) {
-    //       this.handleLocalMsgList(this.ctp).splice(index, 1);
-    //       // // console.log(this.msgList)
-    //     }
-    //   });
-    //   this.msgText = item.text;
-    // },
     sendImg(e) {
       this.msgType = e;
     },
@@ -474,132 +450,101 @@ export default {
     },
 
     // 列表已读未读比对事件
-    mapList(list1, list2) {
+    mapList(read, unRead) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
-      if (list2.length > 0 && list2[list2.length - 1].text) {
-        list1.sort((x, y) => {
-          return x.vid == list2[list2.length - 1].vid
-            ? -1
-            : y.vid == list2[list2.length - 1].vid
-            ? 1
-            : 0;
-        });
+      if (unRead.length > 0 && unRead[unRead.length - 1].text) {
+        read.sort((a, b) =>  a.vid == unRead[unRead.length - 1].vid ? -1 : b.vid == unRead[unRead.length - 1].vid ? 1 : 0);
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        for (let index = 0; index < list1.length; index++) {
-          let element = list1[index];
-          if (element.vid == this.roomInfo.vid) {
-            this.activeIndex2 = index;
+        for(let item in read){
+          if (read[item].vid == this.roomInfo.vid) this.activeIndex2 = item;
+        }
+      }
+      for(let index in read){
+        let menuList = read[index];
+        for(let index in changeList){
+          let changeList = unRead[index];
+          if (changeList.vid == menuList.vid) {
+            menuList.unread_count = changeList.unread_count;
+            if (changeList.text) menuList.last_msg.text = changeList.text;
           }
         }
       }
-
-      let menuList = list1;
-      let changeList = list2;
-
-      for (let indexs = 0; indexs < menuList.length; indexs++) {
-        let elements = menuList[indexs];
-        for (let index = 0; index < changeList.length; index++) {
-          let element = changeList[index];
-          if (element.vid == elements.vid) {
-            elements.unread_count = element.unread_count;
-            // 如果页面有text则替换最后的text
-            if (element.text) {
-              elements.last_msg.text = element.text;
-            }
-          }
-        }
-      }
-
-      // // console.log("新消息变更之后的数组");
-      // // console.log(menuList);
-
       return menuList;
     },
     // 群组消息总数计算事件
-    onHandleGroupMsgChange(list) {
+    onGroupNewsTotal(list) {
       let num = 0;
-      for (let index = 0; index < list.length; index++) {
+      for (let index in list) {
         const element = list[index];
         if (element.unread_count > 0) {
           num += element.unread_count;
         }
       }
-      this.msgCount = num;
+      this.unreadTotal = num;
     },
     onHandleMsgChange(list) {
       let num = 0;
-      for (let index = 0; index < list.length; index++) {
+      for (let index in list) {
         const element = list[index];
         if (element.unread_count > 0) {
           num += element.unread_count;
         }
       }
-      this.oneChat = num;
+      this.privateChatTotal = num;
     },
     // 列表红点刷新事件
-    onHandleUnRead(msgList, type) {
+    refreshUnreadEvent(msgList, type) {
       if (type == 0) {
-        // // console.log("默认的未读消息数组");
-        // // console.log(msgList);
-        this.msgList2 = msgList;
+        this.unreadMessageList = msgList;
       } else {
         let falg = true;
-        let arr = JSON.parse(JSON.stringify(this.msgList2));
-        for (let index = 0; index < arr.length; index++) {
-          let element = arr[index];
-          if (element.vid === msgList.vid) {
+        let arr = JSON.parse(JSON.stringify(this.unreadMessageList));
+        for (let item in arr) {
+          let newArr = arr[item];
+          if (newArr.vid === msgList.vid) {
             falg = false;
-            element.unread_count += 1;
-            element.text = msgList.text;
+            newArr.unread_count += 1;
+            newArr.text = msgList.text;
           }
         }
-
         if (falg) {
           arr.push(msgList);
         }
-        // // console.log("我接受到了新消息");
-        // // console.log(arr);
-        this.msgList2 = arr;
-        this.inviteCount += 1
-        this.msgCount += 1;
+        this.unreadMessageList = arr;
+        this.inviteCount += 1;
+        this.unreadTotal += 1;
       }
     },
-    // openLink(link) {
-    //   window.open(link);
-    // },
     // 已读事件
-    readItem(item) {
-      let msgList2 = this.msgList2;
-      for (let index = 0; index < msgList2.length; index++) {
-        let element = msgList2[index];
+    readEvent(item) {
+      let newMegData = this.unreadMessageList;
+      for (let index in newMegData) {
+        let element = newMegData[index];
         if (element.vid == item.vid) {
           element.unread_count = 0;
         }
       }
-      this.msgList2 = msgList2;
+      this.unreadMessageList = newMegData;
     },
-    initToken(init = false) {
+    getUserToken() {
       const _that = this;
-      this.$store.dispatch("getImToken", this.parmUserInfo)
-      .then((res) => {
-        _that.imUserInfo = res.data;
-        _that.newSocket(res.data);
-      })
-      .catch((err) => {
-        localStorage.clear();
-				// window.location.reload()
-      });
+      this.$store
+        .dispatch("getImToken", this.parmUserInfo)
+        .then((res) => {
+          _that.imUserInfo = res.data;
+          _that.newSocket(res.data);
+        })
+        .catch((err) => {
+          localStorage.clear();
+        });
     },
-    backList() {
-      this.showChatList = true;
-      this.msgList = [];
+    backBefore() {
       this.roomInfo = false;
+      this.showChatList = true;
       this.showLoading = true;
       this.showMsgInfo = false;
-      this.getMessageList();
-      if (this.room_type == "2") {
-        this.leaveRoom(2);
-      }
+      this.getChatMessageList();
+      if (this.room_type == "2") this.leaveRoom(2);
       this.room_type = "";
     },
     delQuickReply(item) {
@@ -636,33 +581,28 @@ export default {
           this.controlIndex = -1;
         });
     },
-    async getMessageList() {
-      // const _that = this;
-      let res = await this.$store.dispatch("getMessageList", {
-        id: this.parmUserInfo.user_id,
-        type: "1,2",
-      });
-      this.showLoading = false;
-      if (res.code == 0) {
-        for (let index = 0; index < res.data.length; index++) {
-          let element = res.data[index];
-          element.unread_count = 0;
-        }
-        // // console.log("请求拿到的数据");
-        // // console.log(res.data);
-        if (this.msgList2.length > 0) {
-          res.data = this.mapList(res.data, this.msgList2);
-          // this.list2 = this.mapList(this.list2, newV);
-          // if (this.activeIndex == 1) {
-          //   this.$emit("onHandleGroupMsgChange", this.modalMsgList);
-          // } else if (this.activeIndex == 2) {
-          this.onHandleGroupMsgChange(res.data);
-        }
-        this.messageList = res.data;
-        // this.onHandleMenuChange(this.messageList);
-      }
+    getChatMessageList() {
+      this.$store
+        .dispatch("getMessageList", {
+          id: this.parmUserInfo.user_id,
+          type: "1,2",
+        })
+        .then((res) => {
+          this.showLoading = false;
+          if (res.code == 0) {
+            for (let index in res.data) {
+              let messageListData = res.data[index];
+              messageListData.unread_count = 0;
+            }
+            if (this.unreadMessageList.length > 0) {
+              res.data = this.mapList(res.data, this.unreadMessageList);
+              this.onGroupNewsTotal(res.data);
+            }
+            this.chatList = res.data;
+          }
+        });
     },
-    saveMsg() {
+    saveMessage() {
       if (!this.msgText) return;
       const _that = this;
       this.$store
@@ -688,38 +628,22 @@ export default {
         this.msgText.substring(0, startpos) +
         emoji.data +
         this.msgText.substring(endpos);
-      // this.isShowEmoji = false;
       this.msgText = result;
     },
-    getText(str) {
-      if (!str) {
-        return;
-      }
-      var reg = /(https?:\/\/[^\s]+)/g;
-      str = str.replace(
-        reg,
-        "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
-      );
-      str = str.replace(/\r\n/g, "<br>");
-      str = str.replace(/\n/g, "<br>");
-      str = str.replace(/\r/g, "<br>");
-      return str;
-    },
     // 点击聊天列表事件
-    onHandleClickItem(item, index) {
-      // // console.log(item, "item-info=======");
+    onClickListEvent(item, index) {
       this.page = 1;
-      this.handleLocalMsgList(this.ctp, "empty");
+      this.showMsgInfo = true;
       this.roomInfo = item;
+      this.showChatList = false;
       this.activeIndex2 = index;
-      this.msgCount -= this.messageList[index].unread_count || 0;
-      this.messageList[index].unread_count = 0;
-      this.readItem(item);
+      this.unreadTotal -= this.chatList[index].unread_count || 0;
+      this.chatList[index].unread_count = 0;
       this.parmUserInfo.vid = item.vid;
       this.room_type = item.room_type;
-      this.showChatList = false;
-      this.showMsgInfo = true;
-      this.inRoomInfo(this.fd);
+      this.readEvent(item);
+      this.inRoomInfo(this.webSocketFd);
+      this.mergeDataList(this.tabNumber, "empty");
     },
     // 私聊(type=2)離開聊天室
     leaveRoom() {
@@ -727,84 +651,62 @@ export default {
       const data = {
         vid: this.leaveVid,
         token: this.imUserInfo.token,
-        fd: this.fd,
-        type: this.ctp == 1 ? this.room_type : 2,
+        fd: this.webSocketFd,
+        type: this.tabNumber == 1 ? this.room_type : 2,
       };
       this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
-    // copyText(item) {
-    //   const str = item.text;
-    //   const qrUrlContent = document.getElementById("cp-input");
-    //   qrUrlContent.value = str;
-    //   qrUrlContent.select();
-    //   let range = document.createRange();
-    //   let selection = document.getSelection();
-    //   range.selectNode(qrUrlContent);
-    //   selection.addRange(range);
-    //   qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-    //   let isSucess = document.execCommand("copy");
-    //   if (isSucess) {
-    //     this.$alert("复制成功", "提示");
-    //     this.tipsId = "";
-    //   }
-    // },
-    changeHeight(){
-      
+    changeHeight() {
       setTimeout(() => {
-        let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
+        let chatBox = document.querySelector(
+          ".ChatDetails_container"
+        ).clientHeight;
         let headerBox = document.querySelector(".header-list").clientHeight;
-        let pinBox = this.pinInfo ? document.querySelector(".pin-info").clientHeight : 0
+        let pinBox = this.pinInfo
+          ? document.querySelector(".pin-info").clientHeight
+          : 0;
         let senBox = document.querySelector(".send-container").clientHeight;
-        this.chatMsgHight = chatBox - headerBox - pinBox - senBox
+        this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
       }, 1000);
     },
     changeType(e) {
-      this.pinInfo = "";
-      this.msgList = [];
-      if (this.showLoading) {
+      if (this.showLoading || this.tabNumber === e) {
         return;
       }
-      if (this.ctp == e) {
-        return;
-      }
-      this.ctp = e;
+      const qVid = this.qsVid;
       this.page = 1;
+      this.tabNumber = e;
+      this.controlIndex = -1;
       this.showLoading = true;
-      if (e == 1) {
+      if (e === 1) {
         this.newMsg.groupChat = false;
         this.showChatList = true;
       } else {
-        this.backList();
+        this.backBefore();
       }
-      const qVid = this.qsVid;
-      this.controlIndex = -1;
-      if (e == 0) {
-        this.parmUserInfo.vid = qVid;
-        this.inRoomInfo(this.fd);
 
-        this.handleLocalMsgList(0);
+      if (e === 0) {
+        this.parmUserInfo.vid = qVid;
+        this.inRoomInfo(this.webSocketFd);
+        this.mergeDataList(0);
       } else {
-        if (e == 2) {
+        if (e === 2) {
           this.inviteCount = 0;
-          this.handleLocalMsgList(2);
-          this.newMsg.oneChat = false;
+          this.mergeDataList(2);
+          this.newMsg.privateChatTotal = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-        
-          if (!vInfo.hasOwnProperty(qVid)) {
-            this.inviteRoom();
-            return;
-          }
+          this.inviteRoom();
+          vInfo.hasOwnProperty(qVid)
+            ? (this.parmUserInfo.vid = vInfo[qVid])
+            : false;
           this.parmUserInfo.vid = vInfo[qVid];
-          this.inviteRoom();
         }
-        if (!this.showChatList) {
-          this.inviteRoom();
-        }
+        if (!this.showChatList) this.inviteRoom();
       }
-      this.changeHeight()
-    },    
+      this.changeHeight();
+    },
     inviteRoom(init = false) {
-      if (!this.fd) {
+      if (!this.webSocketFd) {
         return;
       }
       const _that = this;
@@ -812,16 +714,15 @@ export default {
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$store
         .dispatch("inviteRoom", {
-          type: init ? 2 : this.ctp,
+          type: init ? 2 : this.tabNumber,
           is_new: 1,
           token: this.imUserInfo.token,
-          // vid:this.parmUserInfo.vid,
-          fd: this.fd,
+          fd: this.webSocketFd,
           name: this.parmUserInfo.username,
           user_id: getQueryString().uid,
           channel: this.channel,
         })
-        .then(res => {
+        .then((res) => {
           if (this.initInvite) {
             this.initInvite = false;
             roomInfo[roomId] = res.data.vid;
@@ -831,25 +732,23 @@ export default {
           this.parmUserInfo.vid = res.data.vid;
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-          this.inRoomInfo(this.fd);
+          this.inRoomInfo(this.webSocketFd);
           this.controlIndex = -1;
         });
     },
     getChatHistoryMsg(iniPage) {
-      // // console.log(iniPage, "========getChatHistoryMsg");
       const _that = this;
       this.showLoading = true;
       let params = {
         page: iniPage || this.page,
         limit: 20,
-        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
+        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         vid: this.parmUserInfo.vid,
-        user_id: this.parmUserInfo.user_id
+        user_id: this.parmUserInfo.user_id,
       };
-
       this.$store
         .dispatch("getChatHistory", params)
-        .then(res => {
+        .then((res) => {
           let dataList = res.data.reverse();
           this.showLoading = false;
           this.initTab = false;
@@ -857,84 +756,48 @@ export default {
             this.isMore = false;
             return;
           }
-          // _that.msgList.unshift(...dataList);
-          // // console.log(params.page);
-          this.handleLocalMsgList(
-            params.type == 2 && this.ctp == 1 ? 1 : params.type,
+          this.mergeDataList(
+            params.type == 2 && this.tabNumber == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
             dataList
           );
         })
-        .catch(res => {
+        .catch((res) => {
           this.showLoading = false;
         });
     },
-    showControl(index) {
-      if (this.controlIndex == index) {
-        this.controlIndex = -1;
-        return;
-      }
-      this.controlIndex = index;
-    },
-    // showControl(index) {
-    //   if (this.controlIndex == index) {
-    //     this.controlIndex = -1;
-    //     return;
-    //   }
-    //   this.controlIndex = index;
-    // },
-    inRoomInfo(fd) {
-      if (this.ctp == 1 || this.ctp == 2) {
-        this.leaveVid = this.parmUserInfo.vid;
-      }
+    inRoomInfo(webSocketFd) {
+      const _that = this;
       const inRoomData = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
-        fd: fd,
-        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
+        fd: webSocketFd,
+        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         channel: this.channel,
-
       };
-      const _that = this;
-      // if(_that.inRoom){
-      //   return
-      // }
-      this.$store.dispatch("inRoom", inRoomData).then(res => {
-        // // console.log("inRoom的数据");
-        // // console.log(res);
+      if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid   
+      this.$store.dispatch("inRoom", inRoomData).then((res) => {
         if (res.data.pinData && res.data.pinData != "") {
           _that.pinInfo = {
-            text: res.data.pinData
+            text: res.data.pinData,
           };
         }
 
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
-        _that.changeHeight()
+        _that.changeHeight();
       });
     },
     newSocket(data) {
-      // // console.log('ws',data)
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
-      let windowHost = window.location.hostname
-      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      let windowHost = window.location.hostname;
+      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
-      // this.WSURL = `${wsprotocol}${
-      //   window.location.hostname.includes("10")
-      //     ? "10.83.107.92:9021"
-      //     : window.location.hostname
-      //   // "10.83.107.92:9021"
-      // }${window.location.protocol === "http:" ? "/wss/" : "/wss/"}?token=${
-      //   data.token
-      // }&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
-      // this.$global.setWs(this.ws);
-      //
-
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 通信发生错误时触发
@@ -949,10 +812,6 @@ export default {
     websocketonopen() {
       //开启心跳
       this.start();
-
-      // setTimeout(()=>{
-      //   this.ws.close()
-      // },10000)
     },
     // 通信发生错误时触发
     websocketonerror() {
@@ -978,7 +837,7 @@ export default {
       const _that = this;
       this.timeoutnum = setTimeout(() => {
         //新连接
-        _that.initToken();
+        // _that.getUserToken();
         _that.initInvite = true;
         _that.lockReconnect = false;
       }, 5000);
@@ -1001,45 +860,31 @@ export default {
     heart(i) {
       this.timeoutObj = setTimeout(() => {
         //这里发送一个心跳，后端收到后，返回一个心跳消息，
-        if (this.ws.readyState == 1) {
-          //如果连接正常
-          let actions = "heart";
-          this.ws.send(actions); //这里可以自己跟后端约定
-        } else {
-          //否则重连
-          // this.reconnect();
-        }
-        // this.serverTimeoutObj = setTimeout(() => {
-        //   // console.log(123456)
-        //   //超时关闭
-        //   this.ws.close();
-        // }, this.timeout);
+        this.ws.readyState === 1 ? this.ws.send("heart") : false;
         this.heart(i);
       }, this.timeout);
     },
-    sendMsgByApi(uiCode, text) {
+    sendMessage(uiCode, text) {
       let data = {
         vid: this.parmUserInfo.vid,
-        fd: this.fd,
-        type: this.ctp == 1 ? this.room_type : this.ctp || 0,
+        fd: this.webSocketFd,
+        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         text: text,
         method: "notice",
-        msg_type: this.ctp == 0 ? 0 : 1, //0为弹幕,1文字
+        msg_type: this.tabNumber == 0 ? 0 : 1, //0为弹幕,1文字
         color: "#000",
         sender: this.parmUserInfo.user_id,
         token: this.imUserInfo.token,
         channel: this.channel,
       };
-      if (this.ctp === 2) {
-        data.receiver = getQueryString().uid;
-      }
-      if (this.msgType == 2) {
-        var formData = new FormData();
+      if (this.tabNumber === 2) data.receiver = getQueryString().uid;
+      if (this.msgType === 2) {
+        let formData = new FormData();
         formData.append("vid", this.parmUserInfo.vid);
-        formData.append("fd", this.fd);
+        formData.append("fd", this.webSocketFd);
         formData.append("title", "");
         formData.append("link", "");
-        formData.append("type", this.ctp == 1 ? this.room_type : this.ctp || 0);
+        formData.append("type", this.tabNumber == 1 ? this.room_type : this.tabNumber || 0 );
         formData.append("method", "notice");
         formData.append("msg_type", 2);
         formData.append("color", "#000");
@@ -1050,18 +895,15 @@ export default {
         formData.append("text", "");
         data = formData;
       }
-
       this.$store
         .dispatch("sendMessage", data)
-        .then(res => {
+        .then((res) => {
           if (res.msg == "connection error") {
-            this.initToken();
-          }
-          if (res.code == 0) {
-          } else {
-            this.handleLocalMsgList(this.ctp).find(function (item) {
-              return item.uiCode == uiCode;
-            }).isError = true;
+            this.getUserToken();
+          } else if (res.code !== 0) {
+            this.mergeDataList(this.tabNumber).find(
+              (item) => item.uiCode === uiCode
+            ).isError = true;
           }
           this.msgText = "";
           this.msgType = 1;
@@ -1071,40 +913,32 @@ export default {
           this.toBottom();
         })
         .catch((error) => {
-          this.handleLocalMsgList(this.ctp).find(function (item) {
-            return item.uiCode == uiCode;
-          }).isError = true;
+          this.mergeDataList(this.tabNumber).find(
+            (item) => item.uiCode === uiCode
+          ).isError = true;
         });
     },
-    sendMsg() {
+    submitMessage() {
       this.isShowEmoji = false;
       var strRegex =
-          /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+        /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
       var re = new RegExp(strRegex);
       if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
         this.$message.error("无法发送超连结");
         this.msgText = "";
-        return false;
-      }
-      if (this.ctp === 0 && !this.token) {
-        this.$message({
-          type: "error",
-          message: "未登录不能在直播间发言~",
-        });
         return;
-      }
-      if (!this.isAllowedSendMsg || this.msgText == "") {
-        if (this.msgType == 2) {
-          let text = this.msgText;
-          // // console.log(this.msgText,text,"=======this.msgText")
+      } else if (this.tabNumber === 0 && !this.token) {
+        this.$message.error("未登录不能在直播间发言~");
+        return;
+      } else if (!this.isAllowedSendMsg || this.msgText == "") {
+        if (this.msgType === 2) {
           this.msgText = "";
-          //  // console.log(this.msgText,text,"=======this.msgText2")
-          this.sendMsgByApi(null, text);
+          this.sendMessage(null, this.msgText);
         }
         return;
       }
       let currentDate = new Date().getTime();
-      let msgItem = {
+      let sendMessageList = {
         avatar: this.info.avatar,
         sender: this.parmUserInfo.user_id,
         sender_nickname: this.info.user_nickname,
@@ -1113,180 +947,144 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
-      // this.handleLocalMsgList(this.ctp,"push",msgItem);
-      this.sendMsgByApi(currentDate, this.msgText);
+      this.mergeDataList(this.tabNumber, "push", sendMessageList);
+      this.sendMessage(currentDate, this.msgText);
       this.msgText = "";
       return;
     },
     // 客户端接收服务端数据时触发
-    websocketonmessage(e) {
-      let data = JSON.parse(e.data);
-      if (data.fd !== null && data.action === "open") {
-        this.fd = data.fd;
-        this.inRoomInfo(data.fd);
-        // this.inviteRoom()  
-      }
-
-      if (data.action === "delmsg") {
-        let msgListArr = this.handleLocalMsgList(this.ctp);
-        let delIndex = msgListArr.findIndex(
-          (item) => item.msg_id * 1 === data.msg_id * 1
-        );
-        msgListArr.splice(delIndex, 1);
-        this.handleLocalMsgList(this.ctp, "init", msgListArr);
-      }
-      if (data.action === "clearHistory") {
-        this.handleLocalMsgList(this.ctp, "empty");
-      }
-      if (data.action === "newRoom") {
-        if (this.ctp != 2 && data.room_type === "2") {
-          this.inviteCount = this.inviteCount + 1;
-        }
-        if (data.fd != this.fd) {
-          if (data.room_type === "2") {
-            this.newMsg.oneChat = true;
+    websocketonmessage(event) {
+      let data = JSON.parse(event.data);
+      this.webSocketFd = data.fd;
+      switch (data.action) {
+        case "open":
+          if(data.fd !== null) this.inRoomInfo(this.webSocketFd);
+        break
+        case "clearHistory":
+          this.mergeDataList(this.tabNumber, "empty");
+        break
+        case "delmsg":
+          let mergeArrData = this.mergeDataList(this.tabNumber);
+          let delIndex = mergeArrData.findIndex(item => item.msg_id * 1 === data.msg_id * 1)
+          mergeArrData.splice(delIndex, 1);
+          this.mergeDataList(this.tabNumber, "init", mergeArrData);
+        break
+        case "newRoom":
+          if (this.tabNumber !== 2 && data.room_type === "2") this.inviteCount = this.inviteCount + 1;
+          if (data.fd !== this.webSocketFd) {
+            if (data.room_type === "2") {
+              this.newMsg.privateChatTotal = true;
+            }
+            if (data.room_type === "1") {
+              this.newMsg.groupChat = true;
+              this.unreadTotal++;
+            }
+          }          
+        break
+        case "unread":
+          let unreadMsgList = data.data || [];
+          this.refreshUnreadEvent(unreadMsgList, 0);
+        break
+        case "newMsg":
+          let newMsgList = { vid: data.newMsgRoomvid, room_type: data.room_type, unread_count: 1, text: data.text,};
+          this.refreshUnreadEvent(newMsgList, 1);          
+        break
+        case "send":
+        case "system":
+          if (data.action === "send" && data.msg_type === "0") {
+            let sendMsgList = { messageForShow: data.text, textContent: data.text };
+            this.$store.commit("setdanmakuShow", sendMsgList);
           }
-          if (data.room_type === "1") {
-            this.newMsg.groupChat = true;
-            this.msgCount++;
+          //自己发送的消息不渲染到列表
+          //遊客判斷sender過濾相同訊息
+          if (
+            data.sender === localStorage.getItem("userid") ||
+            data.sender_nickname === this.info.user_nickname ||
+            (data.sender_nickname.includes("游客") && this.tabNumber === 0) ||
+            (data.text.includes("进入直播间") && this.tabNumber !== 0)
+          ) {
+            return;
           }
-        }
-      }
-
-      // 未读的消息列表
-      if (data.action === "unread") {
-        let msgList = data.data || [];
-        this.onHandleUnRead(msgList, 0);
-      }
-      // 新收到的未读消息
-      if (data.action === "newMsg") {
-        let msgList = {
-          vid: data.newMsgRoomvid,
-          room_type: data.room_type,
-          unread_count: 1,
-          text: data.text,
-        };
-        this.onHandleUnRead(msgList, 1);
-      }
-
-      if (data.action === "send" && data.msg_type === "0") {
-        let dataMsg = { messageForShow: data.text, textContent: data.text };
-        this.$store.commit("setdanmakuShow", dataMsg);
-      }
-      if (data.action === "pin") {
-        if (data.pin == "1") {
-          this.pinInfo = JSON.parse(data.data);
-        }
-        this.pinInfo.msg_id = data.msg_id;
-        if (data.pin == "2") {
-          this.pinInfo = "";
-        }
-      }
-      if (data.action === "send") {
-        // let list = this.msgList;
-        // list.push(data);
-        //自己发送的消息不渲染到列表
-        if (data.sender_nickname.includes("游客") && this.ctp == 0) {
-          return;
-        }
-        this.handleLocalMsgList(this.ctp, "push", data);
-        this.toBottom();
-      }
-      if (data.action === "system") {
-        if (data.text.includes("进入直播间") && this.ctp != 0) {
-          return;
-        }
-        this.handleLocalMsgList(this.ctp, "push", data);
-      }
-      if (data.action === "gift") {
-        if (this.ctp != 0) {
-          return;
-        }
-        let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
-        data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-        this.handleLocalMsgList(this.ctp, "push", data);
-        this.$emit("onhandleSendGift", data);
+          this.mergeDataList(this.tabNumber, "push", data);
+          this.toBottom();
+        break
+        case "pin":
+          if (data.pin === 1){
+            this.pinInfo = JSON.parse(data.data);
+          } else if (data.pin === 2){
+            this.pinInfo = "";
+          }
+          this.pinInfo.msg_id = data.msg_id; 
+        break
+        case "gift":
+          if (this.tabNumber !== 0) {
+            return;
+          }
+          let gift = this.giftList.filter((item) => item.id == data.gift_id)[0];
+          data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
+          this.mergeDataList(this.tabNumber, "push", data);
+          this.$emit("onhandleSendGift", data);
+        break
       }
       if (data.status == 200) {
         if (data.data) {
           // 晚点封装成switch case
-          if (data.data.type == "dialog") {
-            this.handleLocalMsgList(
-              this.ctp,
-              "init",
-              data.data.historyMessageList
-            );
-            this.myUserinfo = data.data.targetUserInfo;
-            this.fd = data.data.targetUserInfo.fd;
-          }
-          if (data.data.type == "call") {
-            if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.ctp).push({
+          switch (data.data.type) {
+            case "dialog":
+              this.mergeDataList(
+                this.tabNumber,
+                "init",
+                data.data.historyMessageList
+              );
+              this.myUserinfo = data.data.targetUserInfo;
+              this.webSocketFd = data.data.targetUserInfo.fd;
+              break;
+            case "call":
+              this.mergeDataList(this.tabNumber).push({
                 ...data.data.content,
                 uid: this.userInfo.uid,
               });
-              this.msgText = "";
               this.toBottom();
-              if (this.hasSendMsgCount > 0) {
-                this.hasSendMsgCount = this.hasSendMsgCount - 1;
+              if (data.data.content.type == 1) {
+                this.msgText = "";
+                if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
               }
-            }
-            if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.ctp).push({
+              break 
+            case "message":
+              this.$store.dispatch("getUnReadMsgNum");
+              this.mergeDataList(this.tabNumber).push({
                 ...data.data.content,
-                uid: this.userInfo.uid,
+                uid: this.uid,
               });
               this.toBottom();
-            }
-          }
-          // if (data.data.type == "userinfo") {
-          //   this.fd = data.data.userinfo.fd
-          // }
-          if (data.data.type == "message") {
-            this.$store.dispatch("getUnReadMsgNum");
-            if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.ctp).push({
-                ...data.data.content,
-                uid: this.uid
-              });
-              this.msgText = "";
-              this.toBottom();
-            }
-            if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.ctp).push({
-                ...data.data.content,
-                uid: this.uid
-              });
-              this.toBottom();
-            }
+              if (data.data.content.type == 1) this.msgText = "";
+              break
           }
         }
-      } else {
-        // this.$message.warning(data.message);
       }
     },
     // 聊天框滚动到最底部
     toBottom() {
-      // let main = document.querySelector(".chat-window");
-      // let content = document.querySelector(".chat-detail-main");
-      // main.scrollTop = content.clientHeight - main.clientHeight + 500;
-      let box = document.getElementsByClassName('chat-window')[0]
+      let box = document.getElementsByClassName("chat-window")[0];
       this.$nextTick(() => {
-        setTimeout(() =>{
-          box.scrollTop = box.scrollHeight
-        },500)
-      })
+        box.scrollTop = box.scrollHeight;
+      });
     },
     //解耦合
-    handleLocalMsgList(type, m, data) {
-      // // console.log('ddddddddddddddddddddddddd')
-      if (type != this.ctp) {
+    mergeDataList(type, m, data) {
+      if (type !== this.tabNumber) {
         return;
       }
       const set = new Set();
       switch (m) {
         case "init":
-          this.msgList = data
+          if (type === 0) {
+            this.msgSquareList = data;
+          } else if (type === 1) {
+            this.msgChatList = data;
+          } else {
+            this.msgAnchorList = data;
+          }
           break;
         case "push":
           if (data.pic !== undefined) {
@@ -1296,20 +1094,33 @@ export default {
             // data.pic = "https://www.x9zb.live" + data.pic;
             // data.pic = "http://huidu.x9zb.live" + data.pic;
           }
-          this.msgList.push(data);
+          if (type === 0) {
+            this.msgSquareList.push(data);
+          } else if (type === 1) {
+            this.msgChatList.push(data);
+          } else {
+            this.msgAnchorList.push(data);
+          }
           break;
         case "unshift":
           data.forEach((el) => {
-            this.msgList.unshift(el);
+            if (type === 0) {
+              this.msgSquareList.unshift(el);
+            } else if (type === 1) {
+              this.msgChatList.unshift(el);
+            } else {
+              this.msgAnchorList.unshift(el);
+            }
           });
-          this.toBottom();
           break;
         case "empty":
-          this.msgList = [];
+          this.msgSquareList = [];
+          this.msgChatList = [];
+          this.msgAnchorList = [];
           break;
-        default:
-          break;
-      }
+
+        }
+      this.toBottom();
     },
   },
 };
@@ -1579,7 +1390,7 @@ form {
     margin-right: 1px;
     font-size: 14px;
     flex: 1;
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
     .hot-tag {
@@ -1593,7 +1404,7 @@ form {
       // background: linear-gradient(-23deg, #ffcc0b 0%, #fdd632 100%),
       //   linear-gradient(#000000, #000000);
       background-color: #c41d48;
-      color: #FFF;
+      color: #fff;
     }
   }
 }
@@ -1622,9 +1433,9 @@ form {
   right: 20px;
   .emoji-picker {
     width: 300px;
-    .container-emoji{
-      .grid-emojis{
-        .emoji{
+    .container-emoji {
+      .grid-emojis {
+        .emoji {
           font-size: 21px !important;
         }
       }
@@ -1637,7 +1448,7 @@ form {
   padding-right: 2vw;
 }
 .ChatDetails_container {
-  background: #FFF;
+  background: #fff;
   min-height: 549px;
   position: relative;
   min-width: 334px;
@@ -1727,7 +1538,7 @@ form {
     }
   }
   .chat-window {
-    background: #FFF;
+    background: #fff;
     // height: 27.3em;
     // padding-top: 80px;
     // margin-top: 76px;
@@ -1769,7 +1580,7 @@ form {
       word-break: break-all;
       color: #343a40;
       &.anchor-msg {
-        .text-name, 
+        .text-name,
         .text-info {
           color: #ffa930;
         }
@@ -1814,7 +1625,7 @@ form {
           overflow: hidden;
           .avatar {
             width: 40px;
-          } 
+          }
         }
         .text-info {
           align-self: flex-start;
@@ -1826,7 +1637,7 @@ form {
           border-radius: 7px;
           background: #eee;
           &::after {
-            content: '';
+            content: "";
             position: absolute;
             left: 0;
             top: 0;
@@ -1900,19 +1711,18 @@ form {
   z-index: 1;
   word-break: break-all;
 }
-.el-button--danger{
+.el-button--danger {
   background-color: #c41d48;
-
 }
-.el-button--danger:hover, 
-.el-button--danger:focus{
+.el-button--danger:hover,
+.el-button--danger:focus {
   background-color: #c41d47a1;
 }
-::v-deep.el-dialog-loginOut{
-  .el-dialog{
+::v-deep.el-dialog-loginOut {
+  .el-dialog {
     width: 25%;
-    .el-dialog__body{
-      .upload-demo{
+    .el-dialog__body {
+      .upload-demo {
         text-align: center;
       }
     }

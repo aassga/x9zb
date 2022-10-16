@@ -168,6 +168,7 @@
 				info({
 					id: this.$route.query.id
 				}).then(res => {
+					console.log(res)
 					this.detail = res.data.info
 					this.list = res.data.list
 					this.userPostList(this.detail.uid)

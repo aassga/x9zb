@@ -167,7 +167,6 @@ export default {
     },
     initTcPlayer(url) {
       if (url == "") return;
-      console.log(url);
       // console.log(this);
       // sdk引入有顺序
       new Promise((resolve, reject) => {

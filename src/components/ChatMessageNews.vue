@@ -12,7 +12,7 @@
       <div
         v-for="(item, index) in msgList"
         :key="index"
-        :class="{ 'is-anchor': ctp === 2 }"
+        :class="{ 'is-anchor': tabNumber === 2 }"
       >
         <!--   <div class="system-tips" v-if="item.action === 'system'">
                 {{item.text}}
@@ -35,10 +35,10 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id) &&
-                      ctp === 2,
+                      tabNumber === 2,
                   }"
                 >
-                  <template v-if="ctp === 0">
+                  <template v-if="tabNumber === 0">
                     <img
                       :src="hiImg"
                       class="hi-tag"
@@ -64,11 +64,11 @@
                   </template>
 
                   <div
-                    v-if="ctp !== 2"
+                    v-if="tabNumber !== 2"
                     class="text-name"
                     :style="
                       item.text.includes('进入直播间')
-                        ? 'color: #665a64;'
+                        ? 'color: #575757;'
                         : ''
                     "
                   >
@@ -80,7 +80,7 @@
                     }}
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="ctp === 2 && !mySelf(item)" class="msg-avatar">
+                  <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
                     <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
                     <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
                     <img class="avatar" :src="avatarImg(item)" />
@@ -119,8 +119,8 @@
                        :class="{ 'is-login': item.msg_type=='4' }"
                       :style="
                         item.text.includes('进入直播间')
-                          ? 'color: #665a64;'
-                          : ctp !== 2
+                          ? 'color: #575757;'
+                          : tabNumber !== 2
                           ? 'width: 170px;'
                           : ''
                       "
@@ -132,8 +132,7 @@
                   <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
-                    @click="resend(item)"
-                    >重新发送</i
+                    @click="resend(item)"></i
                   >
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
@@ -171,7 +170,7 @@ export default {
     controlIndex: {
       type: Number,
     },
-    ctp: {
+    tabNumber: {
       type: Number,
     },
     pinInfo: {

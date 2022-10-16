@@ -37,8 +37,8 @@ module.exports = {
         // target : "http://huyapre.oxldkm.com/", //实际请求服务器地址
         // target : "http://huyapretest.oxldkm.com/", //实际请求服务器地址
         // target : "https://www.x9zb.live/", //实际请求服务器地址
-        // target : "http://huidu.x9zb.live/", //实际请求服务器地址
-        target : "http://pc.huya.com/", //实际请求服务器地址
+        target : "http://huidu.x9zb.live/", //实际请求服务器地址
+        // target : "http://pc.huya.com/", //实际请求服务器地址
         changeOrigin : true,
         secure : false,
         pathRewrite : {
