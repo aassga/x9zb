@@ -146,7 +146,7 @@
         <MessageInfo
           :headShow="show1 && !hidevideo"
           @close="onHandleMsgInfoBack"
-          v-if="current == 1 && showMsgInfo"
+          v-if="showMsgInfo"
           :current="current"
           :roomInfo="roomInfo"
         >

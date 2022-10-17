@@ -7,6 +7,7 @@
       'app-version': hidevideo,
       'add-margin': current == 1,
       'is-ios': iosDevice,
+      'add-padding': showMsgInfo
     }"
   >
     <div v-if="false" class="animation-loading-container">
@@ -596,8 +597,7 @@ export default {
 			this.messageDataList = [];
       this.initBase();
       if (oldVal == 2) {
-        // this.leaveRoom();
-        this.$emit("leaveRoom");
+        this.leaveRoom();
       }
 
       if (newVal != oldVal) {
@@ -631,7 +631,6 @@ export default {
     showMsgInfo(newVal, oldVal) {
       if (this.roomDetailData.room_type == 2 && newVal == false) {
         this.leaveRoom();
-        this.$emit("leaveRoom");
       }
     },
   },
@@ -1282,7 +1281,9 @@ export default {
             : this.current || 0,
       };
 
-      this.$u.post("api/chat/leaveRoom", data).then((res) => {});
+      this.$u.post("api/chat/leaveRoom", data).then((res) => {
+        this.$emit("leaveRoom");
+      });
     },
     newSocket(data) {
       const wsprotocol = window.location.protocol == "http:" ? "ws" : "wss";
@@ -1500,12 +1501,14 @@ export default {
           unread_count: 1,
           text: data.text,
         };
-        this.$store.dispatch("updateMsg", {
-          msgList,
-          type: 1,
-        });
-        // this.$emit('getMessageList')
-        this.$emit('onHandleUnRead',msgList, 1);
+        if (this.roomInfo.vid !== data.newMsgRoomvid) {
+          this.$store.dispatch("updateMsg", {
+            msgList,
+            type: 1,
+          });
+          // this.$emit('getMessageList')
+          this.$emit('onHandleUnRead',msgList, 1);
+        }
       }
 
       if (data.action === "pin") {
@@ -2048,6 +2051,10 @@ form {
   height: calc(100vh - 300px) !important;
   width: 100%;
   position: fixed;
+}
+
+.add-padding {
+  padding-top: 41px;
 }
 
 .detail.app-version {
