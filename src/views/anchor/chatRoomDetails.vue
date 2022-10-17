@@ -319,13 +319,15 @@ export default {
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop === 0 && this.isMore) {
+      if (domScroll.scrollTop === 0 && this.isMore && this.tabNumber !==2) {
         this.page++;
-        if (this.tabNumber == 1 && this.initChatTab) {
+        if (this.tabNumber === 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
-        this.getChatHistoryMsg(this.initTab ? 1 : "");
+        if(this.tabNumber !==2 || (this.tabNumber === 2 && this.msgAnchorList.length !== 0) ){
+          this.getChatHistoryMsg(this.initTab ? 1 : "");
+        }
       }
     });
     this.vid = this.qsVid || "";
@@ -420,8 +422,8 @@ export default {
     limitCheck() {
       this.$message({ message: "最多只能上传1张图片", type: "warning" });
     },
-    sendImg(e) {
-      this.msgType = e;
+    sendImg(num) {
+      this.msgType = num;
     },
     //取得圖片
     changeFile(fileList) {
@@ -486,9 +488,7 @@ export default {
             res.text = msgList.text;
           }
         })
-        if (falg) {
-          arr.push(msgList);
-        }
+        if (falg) arr.push(msgList);
         this.unreadMsgList = arr;
         this.inviteCount += 1;
         this.unreadTotal += 1;
@@ -496,10 +496,9 @@ export default {
     },
     // 已读事件
     readEvent(item) {
-      let newMessageData = this.unreadMsgList.forEach((res)=>{
-        if(res.vid === item.vid){
-          res.unread_count = 0
-        }
+      let newMessageData = this.unreadMsgList
+      newMessageData.forEach((res)=>{
+        if(res.vid === item.vid) res.unread_count = 0
       })
       this.unreadMsgList = newMessageData;
     },
@@ -616,7 +615,7 @@ export default {
       this.room_type = item.room_type;
       this.readEvent(item);
       this.inRoomInfo(this.webSocketFd);
-      this.mergeDataList(this.tabNumber, "empty");
+      // this.mergeDataList(this.tabNumber, "empty");
     },
     // 私聊(type=2)離開聊天室
     leaveRoom() {
@@ -642,40 +641,35 @@ export default {
         this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
       }, 1000);
     },
-    changeType(e) {
-      if (this.showLoading || this.tabNumber === e) return;
+    changeType(num) {
+      if (this.showLoading || this.tabNumber === num) return;
       const qVid = this.qsVid;
       this.page = 1;
-      this.tabNumber = e;
+      this.tabNumber = num;
       this.controlIndex = -1;
       this.showLoading = true;
-      if (e === 1) {
-        this.newMsg.groupChat = false;
-        this.showChatList = true;
-      } else {
-        this.backBefore();
-      }
-
-      if (e === 0) {
-        this.parmUserInfo.vid = qVid;
-        this.inRoomInfo(this.webSocketFd);
-        this.mergeDataList(0);
-      } else {
-        if (e === 2) {
+      switch (num) {
+        case 0:
+          this.parmUserInfo.vid = qVid;
+          this.inRoomInfo(this.webSocketFd);
+          this.backBefore();
+          break;
+        case 1:
+          this.newMsg.groupChat = false;
+          this.showChatList = true;
+          if (!this.showChatList) this.inRoomInfo(this.webSocketFd);
+          break;
+        case 2:
           this.inviteCount = 0;
-          this.mergeDataList(2);
+          this.inRoomInfo(this.webSocketFd);
           this.newMsg.privateChatTotal = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
           if(!vInfo.hasOwnProperty(qVid)){
-            this.inviteRoom()
             return
           }
           this.parmUserInfo.vid = vInfo[qVid];
-          this.inviteRoom()
-        }
-        if (!this.showChatList) {
-          this.inviteRoom();
-        }
+          this.backBefore();
+          break;  
       }
       this.changeHeight();
     },
