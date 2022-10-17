@@ -65,7 +65,6 @@ export default {
   },
   watch: {
     numericalIndex(e) {
-			console.log(e)
       this.getList({ uid: this.userInfo.uid, type: e });
     },
   },
