@@ -731,7 +731,6 @@ export default {
         return require("./../../../static/images/home/userLogo.png");
       } else {
         return window.location.origin + item.avatar;
-        // return 'http://huidu.x9zb.live' + item.avatar;
       }
     },
 		clearStatus() {
@@ -1293,11 +1292,11 @@ export default {
       const locationHost = window.location.hostname;
       // 開發用
       // const locationHost = "10.83.107.92:9021";
-      // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       window.ws = this.ws;
       // this.$global.setWs(this.ws);
