@@ -14,7 +14,7 @@
 			>
 				<swiper-item v-if="showCountDown">
 					<view class="countdown-container">
-						<img class="countdown-bg" :src="require('../../../static/images/home/countdown-bg.png')" />
+						<img class="countdown-bg" :src="require('../../../static/images/home/countdown-bg.jpg')" />
 						<view class="countdown-content">
 							<view class="countdown-time">
 								<view class="countdown-group">
