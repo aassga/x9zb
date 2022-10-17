@@ -37,7 +37,6 @@ export default {
                 commit('SET_USER_INFO', res.data)
                 // 存储用户类型
                 let list = [1, 3, 2];
-                // console.log(res.data)
                 commit('SET_USER_TYPE', list[res.data.mcn_data.usertype]);
                 // 获取账户金额
                 commit('SET_USER_AMOUNT', res.data.count.extcredits3.count);
@@ -155,7 +154,6 @@ export default {
     getOtherProfile({ }, params) {
         return userApi.getOtherProfile(params).then((res) => {
             let { status, data } = res
-            console.log(data)
             if (status == 200) {
                 let list = [1, 3, 2];
                 data.forEach((ele, idx) => {
@@ -278,7 +276,7 @@ export default {
     },
     setStateName({ commit }, params) {
         return HomedApi.getUserAddress(params).then((res) => {
-            console.log('通过ip获取定位', res)
+
             if (res.data.code == 100) {
                 commit('SET_STATE_NAME', res.data.current_city);
             }

@@ -136,7 +136,6 @@
 			},
 			// 进球播放声音
 			playVideo(){
-				console.log('触发了哨声',this.$store.state.game.voice);
 				if(!this.$store.state.game.voice) return
 				let that = this
 			    this.audio = new Audio();

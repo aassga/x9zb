@@ -200,7 +200,6 @@
 		},
 		mounted() {
 			let system = this.$store.state.system.CountryCode
-			// console.log(system);
 			this.options = system
 			// this.logData('admin',user)
 			if (this.$store.state.user.isRegister) {
@@ -235,14 +234,12 @@
 							}
 						}).catch(res1 => {})
 					}).catch(res1 => {
-						console.log('失败' + res1);
 					})
 				} else {
 					register(_this.database).then(res => {
 						_this.type = 'code'
 						_this.$message.success('注册成功')
 					}).catch(res => {
-						console.log('失败' + res);
 					})
 				}
 			},
@@ -298,7 +295,6 @@
 						forgotPassword(data).then(res => {
 							this.type = 'code'
 						}).catch(res => {
-							console.log('失败' + res);
 						})
 						// this.verificationCode(data)
 					} else { //注册
@@ -322,7 +318,7 @@
 							this.submit("code")
 							_this.$message.success('注册成功')
 						}).catch(res => {
-							console.log('失败' + res);
+
 						})
 					}
 					
@@ -333,7 +329,7 @@
 
 					// this.$message.error('错了哦，这是一条错误消息');
 				}
-				// console.log(type);
+
 				// data.mobile = ''
 				// data.password = ''
 				// $store.state.user.islogin=false
@@ -356,7 +352,6 @@
 				getCode(data).then(res => {
 					this.getCount()
 				}).catch(res => {
-					console.log('失败' + res);
 				})
 			},
 
@@ -364,7 +359,6 @@
 			getCount() {
 				const TIME_COUNT = 60;
 				if (!this.timer) {
-					console.log(1);
 					this.count = TIME_COUNT;
 					this.show = false;
 					this.timer = setInterval(() => {

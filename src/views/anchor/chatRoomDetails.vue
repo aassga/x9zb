@@ -302,28 +302,24 @@ export default {
       deep: true,
     },
     webSocketFd(newV, oldV) {
-      if (newV != oldV) {
-        this.inviteRoom(true);
-      }
+      if (newV !== oldV) this.inviteRoom(true);
     },
     showLoading(newV, oldV) {
       !newV ? this.toBottom() : false;
     },
     tabNumber(newV, oldV) {
       if (newV === 1) this.getChatMessageList(); // 获取聊天列表
-      if (newV != oldV) this.initTab = true;
+      if (newV !== oldV) this.initTab = true;
     },
     pinInfo(newV, oldV) {
-      if (newV !== "") {
-        this.changeHeight();
-      }
+      if (newV !== "") this.changeHeight();
     },
   },
   mounted() {
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop <= 2 && this.isMore) {
+      if (domScroll.scrollTop === 0 && this.isMore) {
         this.page++;
         if (this.tabNumber == 1 && this.initChatTab) {
           this.initChatTab = false;
@@ -454,13 +450,13 @@ export default {
             : 0
         );
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        read.forEach((res)=>{
+        readData.forEach((res)=>{
           if (res.vid == this.roomInfo.vid) this.activeIndex2 = item;
         })
       }
       readData.forEach((res)=>{
         unReadData.forEach((el)=>{
-          if (el.vid === res.vid) {
+          if (res.vid === el.vid) {
             res.unread_count = el.unread_count;
             res.last_msg.text = el.text ? el.text : res.last_msg.text
           }

@@ -39,7 +39,6 @@ const actions = {
   SET_QINIU_TOKEN: (state) => {
     return new Promise((resolve, reject) => {
       getQiniuToken().then(res => {
-        // console.log(res.data);
         const { data } = res
 
         if (!data) {
@@ -52,12 +51,9 @@ const actions = {
     })
   },
   login({ commit }, userInfo) {
-    console.log('登录触发')
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        console.log('登录触发2')
-        console.log(response)
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
@@ -72,7 +68,6 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        console.log(response)
         const { data } = response
 
         if (!data) {
