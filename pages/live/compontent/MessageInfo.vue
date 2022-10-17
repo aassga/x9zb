@@ -55,6 +55,7 @@
 		height: 41px!important;
 		background-color: #fff;
 		overflow: hidden;
+		z-index: 1;
 		// overflow-y: scroll;
 		// overflow-x: hidden;
 
