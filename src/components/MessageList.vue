@@ -2,7 +2,7 @@
   <div class="HuyaXWebhMessagelist">
     <div
       @click="onHandleClickItem(item,index)"
-      :class="['HuyaXWebhMessagelist_i',activeIndex == index ? 'active' : '']"
+      :class="['HuyaXWebhMessagelist_i',activeIndex === index ? 'active' : '']"
       v-for="(item,index) in list"
       :key="index"
     >

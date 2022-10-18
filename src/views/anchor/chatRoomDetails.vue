@@ -28,7 +28,7 @@
           >
         </span>
       </div>
-      <div v-if="pinInfo && tabNumber === 0" class="pin-info">
+      <div v-if="pinInfo.text !=='' && tabNumber === 0" class="pin-info">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
       </div>
@@ -36,7 +36,7 @@
       <message-list
         v-show="tabNumber === 1 && showChatList"
         :list="chatList"
-        :activeIndex="activeIndex2"
+        :activeIndex="chatListActive"
         @onHandleClickItem="onClickListEvent"
       />
       <message-info
@@ -56,8 +56,10 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
+        :showLoading="showLoading"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
+        @goBottom="goBottom"
       />
       <chat-message-new
         v-if="tabNumber === 2"
@@ -68,8 +70,10 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
+        :showLoading="showLoading"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
+        @goBottom="goBottom"
       />
       <chat-message-new
         v-if="tabNumber === 1"
@@ -80,8 +84,10 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
+        :showLoading="showLoading"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
+        @goBottom="goBottom"
       />
       <div class="send-container">
         <div>
@@ -220,13 +226,14 @@ export default {
       modalMsgList: [],
       showMsgInfo: false, // 房间是否显示的状态
       chatList: [], // 获取聊天列表
-      activeIndex2: 0, // 聊天列表的选中索引
+      chatListActive: 0, // 聊天列表的选中索引
       roomInfo: {}, //聊天室的详情
       isReadOnly: false,
       msgText: "",
       msgSquareList: [],
       msgAnchorList: [],
       msgChatList: [],
+      anchorList:{},
       myUserinfo: { uid: "" },
       webSocketFd: "",
       isShowEmoji: false,
@@ -258,7 +265,9 @@ export default {
       },
       formData: {},
       controlIndex: -1,
-      pinInfo: "",
+      pinInfo: {
+        text:"",
+      },
       page: 1,
       tabNumber: 0,
       inviteCount: 0,
@@ -312,7 +321,7 @@ export default {
       if (newV !== oldV) this.initTab = true;
     },
     pinInfo(newV, oldV) {
-      if (newV !== "") this.changeHeight();
+      if (newV.text !== "") this.chatAreaHeight();
     },
   },
   mounted() {
@@ -329,6 +338,7 @@ export default {
           this.getChatHistoryMsg(this.initTab ? 1 : "");
         }
       }
+      this.showLoading = domScroll.scrollHeight - domScroll.scrollTop - domScroll.clientHeight > 1
     });
     this.vid = this.qsVid || "";
     let userid = "";
@@ -378,6 +388,9 @@ export default {
     });
   },
   methods: {
+    goBottom(boolean){
+      this.showLoading = boolean
+    },
     controlNumber(num) {
       this.controlIndex = num;
     },
@@ -445,15 +458,15 @@ export default {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
       if (unReadData.length > 0 && unReadData[unReadData.length - 1].text) {
         readData.sort((a, b) =>
-          a.vid == unReadData[unReadData.length - 1].vid
+          a.vid === unReadData[unReadData.length - 1].vid
             ? -1
-            : b.vid == unReadData[unReadData.length - 1].vid
+            : b.vid === unReadData[unReadData.length - 1].vid
             ? 1
             : 0
         );
-        // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
+        // 如果是重整之后的数组，则重新校对chatListActive的索引，使页面样式规范
         readData.forEach((res)=>{
-          if (res.vid == this.roomInfo.vid) this.activeIndex2 = item;
+          if (res.vid === this.roomInfo.vid) this.chatListActive = item;
         })
       }
       readData.forEach((res)=>{
@@ -498,7 +511,7 @@ export default {
     readEvent(item) {
       let newMessageData = this.unreadMsgList
       newMessageData.forEach((res)=>{
-        if(res.vid === item.vid) res.unread_count = 0
+        if(res.vid === item.vid) res.unread_count = 0 
       })
       this.unreadMsgList = newMessageData;
     },
@@ -510,18 +523,16 @@ export default {
           _that.imUserInfo = res.data;
           _that.newSocket(res.data);
         })
-        .catch((err) => {
-          localStorage.clear();
-        });
+        .catch((err) => localStorage.clear());
     },
     backBefore() {
+      this.room_type = "";
       this.roomInfo = false;
       this.showChatList = true;
-      this.showLoading = true;
+      this.showLoading = false;
       this.showMsgInfo = false;
-      this.getChatMessageList();
+      // this.getChatMessageList();
       if (this.room_type == "2") this.leaveRoom(2);
-      this.room_type = "";
     },
     delQuickReply(item) {
       const _that = this;
@@ -563,7 +574,7 @@ export default {
           type: "1,2",
         })
         .then((res) => {
-          this.showLoading = false;
+          // this.showLoading = false;
           if (res.code == 0) {
             res.data.forEach(data => data.unread_count = 0)
             if (this.unreadMsgList.length > 0) {
@@ -608,14 +619,14 @@ export default {
       this.showMsgInfo = true;
       this.roomInfo = item;
       this.showChatList = false;
-      this.activeIndex2 = index;
+      this.chatListActive = index;
       this.unreadTotal -= this.chatList[index].unread_count || 0;
       this.chatList[index].unread_count = 0;
       this.parmUserInfo.vid = item.vid;
       this.room_type = item.room_type;
       this.readEvent(item);
       this.inRoomInfo(this.webSocketFd);
-      // this.mergeDataList(this.tabNumber, "empty");
+      this.mergeDataList(this.tabNumber, "empty");
     },
     // 私聊(type=2)離開聊天室
     leaveRoom() {
@@ -628,18 +639,18 @@ export default {
       };
       this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
-    changeHeight() {
-      setTimeout(() => {
-        let chatBox = document.querySelector(
-          ".ChatDetails_container"
-        ).clientHeight;
-        let headerBox = document.querySelector(".header-list").clientHeight;
-        let pinBox = this.pinInfo
-          ? document.querySelector(".pin-info").clientHeight
-          : 0;
-        let senBox = document.querySelector(".send-container").clientHeight;
-        this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
-      }, 1000);
+    chatAreaHeight() {
+      let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
+      let headerBox = document.querySelector(".header-list").clientHeight;
+      let senBox = document.querySelector(".send-container").clientHeight;
+      if(this.tabNumber === 0){
+        setTimeout(() => {
+          let pinBox = this.pinInfo.text !== "" ? document.querySelector(".pin-info").clientHeight: 0
+          this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
+        }, 1000);
+      }else {
+        this.chatMsgHight = chatBox - headerBox - senBox;
+      }
     },
     changeType(num) {
       if (this.showLoading || this.tabNumber === num) return;
@@ -647,12 +658,12 @@ export default {
       this.page = 1;
       this.tabNumber = num;
       this.controlIndex = -1;
-      this.showLoading = true;
       switch (num) {
         case 0:
           this.parmUserInfo.vid = qVid;
           this.inRoomInfo(this.webSocketFd);
           this.backBefore();
+          this.toBottom()
           break;
         case 1:
           this.newMsg.groupChat = false;
@@ -661,17 +672,17 @@ export default {
           break;
         case 2:
           this.inviteCount = 0;
-          this.inRoomInfo(this.webSocketFd);
+          this.inviteRoom()
+          this.chatAreaHeight()
+          this.readEvent(this.anchorList)
           this.newMsg.privateChatTotal = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-          if(!vInfo.hasOwnProperty(qVid)){
-            return
-          }
+          if(!vInfo.hasOwnProperty(qVid)) return
           this.parmUserInfo.vid = vInfo[qVid];
           this.backBefore();
+          this.toBottom()
           break;  
       }
-      this.changeHeight();
     },
     inviteRoom(init = false) {
       if (!this.webSocketFd) return;
@@ -691,6 +702,7 @@ export default {
         .then((res) => {
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+          this.anchorList = res.data
           if (this.initInvite) {
             this.initInvite = false;
             return;
@@ -702,7 +714,6 @@ export default {
     },
     getChatHistoryMsg(iniPage) {
       const _that = this;
-      this.showLoading = true;
       let params = {
         page: iniPage || this.page,
         limit: 20,
@@ -714,7 +725,6 @@ export default {
         .dispatch("getChatHistory", params)
         .then((res) => {
           let dataList = res.data.reverse();
-          this.showLoading = false;
           this.initTab = false;
           if (dataList.length === 0) {
             this.isMore = false;
@@ -726,9 +736,6 @@ export default {
             dataList
           );
         })
-        .catch((res) => {
-          this.showLoading = false;
-        });
     },
     inRoomInfo(webSocketFd) {
       const _that = this;
@@ -741,15 +748,13 @@ export default {
       };
       if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid;
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
-        if (res.data.pinData && res.data.pinData != "") {
+        if (res.data.pinData && res.data.pinData !== "") {
           _that.pinInfo = {
             text: res.data.pinData,
           };
         }
-
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
-        _that.changeHeight();
       });
     },
     newSocket(data) {
@@ -862,9 +867,7 @@ export default {
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
-            this.mergeDataList(this.tabNumber).find(
-              (item) => item.uiCode === uiCode
-            ).isError = true;
+            this.mergeDataList(this.tabNumber,'error',uiCode)
           }
           this.msgText = "";
           this.msgType = 1;
@@ -873,10 +876,8 @@ export default {
           this.uploadImgShow = false;
           this.toBottom();
         })
-        .catch((error) => {
-          this.mergeDataList(this.tabNumber).find(
-            (item) => item.uiCode === uiCode
-          ).isError = true;
+        .catch((err) => {
+          this.mergeDataList(this.tabNumber,'error',uiCode)
         });
     },
     submitMessage() {
@@ -908,6 +909,10 @@ export default {
         uiCode: currentDate,
         isError: false,
       };
+      if(this.tabNumber === 2){
+        this.inviteCount = 0;
+        this.readEvent(this.anchorList)
+      }
       this.mergeDataList(this.tabNumber, "push", sendMessageList);
       this.sendMessage(currentDate, this.msgText);
       this.msgText = "";
@@ -974,6 +979,7 @@ export default {
           }
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
+          
           if (
             data.sender === localStorage.getItem("userid") ||
             data.sender_nickname === this.info.user_nickname ||
@@ -983,7 +989,7 @@ export default {
             return;
           }
           this.mergeDataList(this.tabNumber, "push", data);
-          this.toBottom();
+          if(!this.showLoading) this.toBottom();
           break;
         case "pin":
           this.pinInfo = data.pin === 1 ? JSON.parse(data.data) : "";
@@ -1044,6 +1050,7 @@ export default {
       if (type !== this.tabNumber) return;
       switch (status) {
         case "init":
+          data.forEach( res => res.isError = false )
           if (type === 0) {
             this.msgSquareList = data;
           } else if (type === 1) {
@@ -1065,6 +1072,7 @@ export default {
           break;
         case "unshift":
           data.forEach((el) => {
+            el.isError = false
             if (type === 0) {
               this.msgSquareList.unshift(el);
             } else if (type === 1) {
@@ -1075,12 +1083,28 @@ export default {
           });
           break;
         case "empty":
-          this.msgSquareList = [];
           this.msgChatList = [];
-          this.msgAnchorList = [];
           break;
+        case "error":
+          setTimeout(() => {
+            if (type === 0) {
+              this.msgSquareList.forEach( list => {
+                if(list.uiCode === data) list.isError = true
+              })
+            } else if (type === 1) {
+              this.msgChatList.forEach(list => {
+                if(list.uiCode === data) list.isError = true
+              })
+            } else {
+              this.msgAnchorList.forEach(list => {
+                if(list.uiCode === data) list.isError = true
+              })
+            }
+          }, 1500);
+          break;  
       }
-      this.toBottom();
+      console.log(this.msgSquareList)
+      this.toBottom()
     },
     
   },

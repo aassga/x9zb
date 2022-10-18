@@ -113,7 +113,19 @@
                     {{ item.text }}
                     <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  />
                   </div>
-                    <vue-markdown
+                  <div 
+                    v-else
+                    class="text-info"
+                    :class="{ 'is-login': item.msg_type=='4' }"
+                    :style="
+                        item.text.includes('进入直播间')
+                          ? 'color: #575757;'
+                          : tabNumber !== 2
+                          ? 'width: 170px;'
+                          : ''
+                      ">{{getText(item.text)}}<i v-if="item.isError" class="el-icon-loading" @click="resend(item)"></i></div>
+                      
+                    <!-- <vue-markdown
                       class="text-info"
                      v-else
                        :class="{ 'is-login': item.msg_type=='4' }"
@@ -125,15 +137,17 @@
                           : ''
                       "
                       :anchor-attributes="linkAttrs"
-                      >{{ item.text }}{{ item.length }}</vue-markdown
-                    >
+                      > 
+                      {{ item.text }} <span>123</span>
+                      </vue-markdown
+                    > -->
                    <!--  <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  v-if="item.msg_type=='4'" /> -->
                   </div>
-                  <i
+                  <!-- <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
                     @click="resend(item)"></i
-                  >
+                  > -->
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -145,6 +159,16 @@
             </div>
           </div>
         </template>
+      </div>
+      <div v-show="showLoading && showBottom" class="go-btn-style" @click="gotoBottom()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 45 45">
+          <g id="Group_36" data-name="Group 36" transform="translate(-364 -774)">
+            <circle id="Ellipse_1" data-name="Ellipse 1" cx="22.5" cy="22.5" r="22.5" transform="translate(364 774)" fill="#bbc0cc"/>
+            <g id="Group_1" data-name="Group 1" transform="translate(645.803 539.06) rotate(90)">
+              <path id="Path_1" data-name="Path 1" d="M249.073,267.244a1.475,1.475,0,0,1-1.043-2.518l8.981-8.981-8.936-8.938a1.475,1.475,0,0,1,2.086-2.086l9.979,9.981a1.476,1.476,0,0,1,0,2.086l-10.024,10.024A1.476,1.476,0,0,1,249.073,267.244Z" transform="translate(6.016 3.558)" fill="#fff"/>
+            </g>
+          </g>
+        </svg>
       </div>
     </div>
   </div>
@@ -181,6 +205,14 @@ export default {
     },
     channel:{
       type: null,
+    },
+    showLoading:{
+      type:Boolean
+    }
+  },
+  watch:{
+    showLoading(boolean){
+      this.showBottom = boolean
     }
   },
   computed: {
@@ -199,6 +231,7 @@ export default {
         class: "linkified",
       },
       uid: "",
+      showBottom:false,
       hiImg: require("./../assets/images/HiTag.png"),
     };
   },
@@ -210,9 +243,6 @@ export default {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.origin + "/";
-        // let split = "http://huyapretest.oxldkm.com/"
-        // let split = "https://www.x9zb.live/"
-        // let split = "https://huidu.x9zb.live/"
         newUrl = newUrl.replace(split, "");
       } else {
         return newUrl;
@@ -220,6 +250,9 @@ export default {
     },
   },
   methods: {
+    gotoBottom(){
+      this.$emit('goBottom',false)
+    },
     play(){
       this.$store
         .dispatch("gettoburl", {
@@ -277,9 +310,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      str = str.replace(/\r\n/g, "<br>");
-      str = str.replace(/\n/g, "<br>");
-      str = str.replace(/\r/g, "<br>");
+      // str = str.replace(/\r\n/g, "<br>");
+      // str = str.replace(/\n/g, "<br>");
+      // str = str.replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -300,6 +333,11 @@ export default {
         this.$alert("复制成功", "提示");
         this.tipsId = "";
       }
+    },
+    // 聊天框滚动到最底部
+    toBottom() {
+      let box = document.getElementsByClassName("chat-window")[0];
+      this.$nextTick(() => (box.scrollTop = box.scrollHeight));
     },
   },
 };
@@ -457,6 +495,14 @@ export default {
         color: #47a2ff;
       }
     }
+    .el-icon-loading{
+      display: flex !important;
+      justify-content: center;
+      position: relative;
+      top: -16px;
+      left: -53px;
+    }
+
     &.my-self {
       flex-direction: row-reverse;
       .text-info {
@@ -466,6 +512,11 @@ export default {
           margin-left: calc(100% - 3px);
           border-color: transparent transparent transparent #eee;
         }
+      }
+      .el-icon-loading{
+        display: flex !important;
+        align-items: center; 
+        margin: 0 3px;
       }
     }
   }
@@ -573,5 +624,11 @@ export default {
 }
 .el-image {
   height: 8em;
+}
+.go-btn-style{
+  position: fixed;
+  right: 255px;
+  bottom: 180px;
+  cursor: pointer;
 }
 </style>
