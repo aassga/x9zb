@@ -14,9 +14,6 @@
         :key="index"
         :class="{ 'is-anchor': tabNumber === 2 }"
       >
-        <!--   <div class="system-tips" v-if="item.action === 'system'">
-                {{item.text}}
-              </div>-->
         <template>
           <div
             v-if="
@@ -81,8 +78,6 @@
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
                   <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
-                    <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
-                    <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
                     <img class="avatar" :src="avatarImg(item)" />
                   </div>
                   <template v-if="item.pic && !item.text">
@@ -160,16 +155,6 @@
           </div>
         </template>
       </div>
-      <div v-show="showLoading && showBottom" class="go-btn-style" @click="gotoBottom()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 45 45">
-          <g id="Group_36" data-name="Group 36" transform="translate(-364 -774)">
-            <circle id="Ellipse_1" data-name="Ellipse 1" cx="22.5" cy="22.5" r="22.5" transform="translate(364 774)" fill="#bbc0cc"/>
-            <g id="Group_1" data-name="Group 1" transform="translate(645.803 539.06) rotate(90)">
-              <path id="Path_1" data-name="Path 1" d="M249.073,267.244a1.475,1.475,0,0,1-1.043-2.518l8.981-8.981-8.936-8.938a1.475,1.475,0,0,1,2.086-2.086l9.979,9.981a1.476,1.476,0,0,1,0,2.086l-10.024,10.024A1.476,1.476,0,0,1,249.073,267.244Z" transform="translate(6.016 3.558)" fill="#fff"/>
-            </g>
-          </g>
-        </svg>
-      </div>
     </div>
   </div>
 </template>
@@ -206,14 +191,9 @@ export default {
     channel:{
       type: null,
     },
-    showLoading:{
-      type:Boolean
-    }
   },
-  watch:{
-    showLoading(boolean){
-      this.showBottom = boolean
-    }
+  created() {
+    this.uid = this.$route.query.id;
   },
   computed: {
     reversedHeight: function () {
@@ -235,9 +215,7 @@ export default {
       hiImg: require("./../assets/images/HiTag.png"),
     };
   },
-  created() {
-    this.uid = this.$route.query.id;
-  },
+
   filters: {
     picFilter(url) {
       let newUrl = url;
@@ -250,9 +228,6 @@ export default {
     },
   },
   methods: {
-    gotoBottom(){
-      this.$emit('goBottom',false)
-    },
     play(){
       this.$store
         .dispatch("gettoburl", {
@@ -624,11 +599,5 @@ export default {
 }
 .el-image {
   height: 8em;
-}
-.go-btn-style{
-  position: fixed;
-  right: 255px;
-  bottom: 180px;
-  cursor: pointer;
 }
 </style>

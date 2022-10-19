@@ -16,19 +16,18 @@
           />
           {{ item.name }}
           <i
-            v-show="(inviteCount > 0 && !hideChat) && item.id === 2"
+            v-show="inviteCount > 0 && !hideChat && item.id === 2"
             class="new-msg-icon"
-            >{{
-              inviteCount > 99 ? "99+" : inviteCount }}</i
+            >{{ inviteCount > 99 ? "99+" : inviteCount }}</i
           >
           <i
-            v-show="unreadTotal && unreadTotal > 0 && item.id === 1"
+            v-show="unreadTotal > 0 && item.id === 1"
             class="new-msg-icon"
             >{{ unreadTotal > 99 ? "99+" : unreadTotal }}</i
           >
         </span>
       </div>
-      <div v-if="pinInfo.text !=='' && tabNumber === 0" class="pin-info">
+      <div v-if="pinInfo.text !== '' && tabNumber === 0" class="pin-info">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
       </div>
@@ -56,10 +55,9 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
-        :showLoading="showLoading"
+        :showSetDownBtn="showSetDownBtn"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
-        @goBottom="goBottom"
       />
       <chat-message-new
         v-if="tabNumber === 2"
@@ -70,10 +68,9 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
-        :showLoading="showLoading"
+        :showSetDownBtn="showSetDownBtn"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
-        @goBottom="goBottom"
       />
       <chat-message-new
         v-if="tabNumber === 1"
@@ -84,11 +81,20 @@
         :roomInfo="roomInfo"
         :channel="channel"
         :chatMsgHight="chatMsgHight"
-        :showLoading="showLoading"
+        :showSetDownBtn="showSetDownBtn"
         @controlNumber="controlNumber"
         @msgAction="msgAction"
-        @goBottom="goBottom"
       />
+      <div v-show="showSetDownBtn" class="go-btn-style" @click="toBottom()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 45 45">
+          <g id="Group_36" data-name="Group 36" transform="translate(-364 -774)">
+            <circle id="Ellipse_1" data-name="Ellipse 1" cx="22.5" cy="22.5" r="22.5" transform="translate(364 774)" fill="#bbc0cc"/>
+            <g id="Group_1" data-name="Group 1" transform="translate(645.803 539.06) rotate(90)">
+              <path id="Path_1" data-name="Path 1" d="M249.073,267.244a1.475,1.475,0,0,1-1.043-2.518l8.981-8.981-8.936-8.938a1.475,1.475,0,0,1,2.086-2.086l9.979,9.981a1.476,1.476,0,0,1,0,2.086l-10.024,10.024A1.476,1.476,0,0,1,249.073,267.244Z" transform="translate(6.016 3.558)" fill="#fff"/>
+            </g>
+          </g>
+        </svg>
+      </div>
       <div class="send-container">
         <div>
           <svg
@@ -280,7 +286,7 @@ export default {
       },
       room_type: "",
       channel: getQueryString().channel_code || localStorage.getItem("channel"),
-      showLoading: true,
+      showSetDownBtn: true,
       initChatTab: true,
       initTab: true,
       leaveVid: "",
@@ -313,7 +319,7 @@ export default {
     webSocketFd(newV, oldV) {
       if (newV !== oldV) this.inviteRoom(true);
     },
-    showLoading(newV, oldV) {
+    showSetDownBtn(newV, oldV) {
       !newV ? this.toBottom() : false;
     },
     tabNumber(newV, oldV) {
@@ -338,7 +344,7 @@ export default {
           this.getChatHistoryMsg(this.initTab ? 1 : "");
         }
       }
-      this.showLoading = domScroll.scrollHeight - domScroll.scrollTop - domScroll.clientHeight > 1
+      this.showSetDownBtn = domScroll.scrollHeight - domScroll.scrollTop - domScroll.clientHeight > 1
     });
     this.vid = this.qsVid || "";
     let userid = "";
@@ -376,6 +382,7 @@ export default {
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
+    this.chatAreaHeight()
   },
   created() {
     this.uid = this.$route.query.id;
@@ -389,7 +396,7 @@ export default {
   },
   methods: {
     goBottom(boolean){
-      this.showLoading = boolean
+      this.showSetDownBtn = boolean
     },
     controlNumber(num) {
       this.controlIndex = num;
@@ -529,7 +536,7 @@ export default {
       this.room_type = "";
       this.roomInfo = false;
       this.showChatList = true;
-      this.showLoading = false;
+      this.showSetDownBtn = false;
       this.showMsgInfo = false;
       // this.getChatMessageList();
       if (this.room_type == "2") this.leaveRoom(2);
@@ -574,7 +581,7 @@ export default {
           type: "1,2",
         })
         .then((res) => {
-          // this.showLoading = false;
+          // this.showSetDownBtn = false;
           if (res.code == 0) {
             res.data.forEach(data => data.unread_count = 0)
             if (this.unreadMsgList.length > 0) {
@@ -653,7 +660,7 @@ export default {
       }
     },
     changeType(num) {
-      if (this.showLoading || this.tabNumber === num) return;
+      if (this.tabNumber === num) return;
       const qVid = this.qsVid;
       this.page = 1;
       this.tabNumber = num;
@@ -763,8 +770,8 @@ export default {
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
       // 连接建立时触发
@@ -989,7 +996,7 @@ export default {
             return;
           }
           this.mergeDataList(this.tabNumber, "push", data);
-          if(!this.showLoading) this.toBottom();
+          if(!this.showSetDownBtn) this.toBottom();
           break;
         case "pin":
           this.pinInfo = data.pin === 1 ? JSON.parse(data.data) : "";
@@ -1103,7 +1110,6 @@ export default {
           }, 1500);
           break;  
       }
-      console.log(this.msgSquareList)
       this.toBottom()
     },
     
@@ -1703,5 +1709,11 @@ form {
       }
     }
   }
+}
+.go-btn-style{
+  position: absolute;
+  bottom: 128px;
+  right: 18px;
+  cursor: pointer;
 }
 </style>
