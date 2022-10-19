@@ -31102,7 +31102,7 @@ a {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 92%;
+	width: 100%;
 	max-width: 1160px
 }
 

@@ -280,7 +280,7 @@ export default {
   width: 100%;
   left: 0;
   top: 0;
-  z-index: 2000;
+  z-index: 99;
 }
 .tencent_player_container {
   position: relative;

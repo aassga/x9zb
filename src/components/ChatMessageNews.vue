@@ -111,7 +111,7 @@
                   >
                   <div class="login-content"  v-if="item.msg_type=='4'">
                     {{ item.text }}
-                    <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  />
+                    <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play(item)"  />
                   </div>
                     <vue-markdown
                       class="text-info"
@@ -221,10 +221,11 @@ export default {
     },
   },
   methods: {
-    play(){
+    play(item){
       this.$store
         .dispatch("gettoburl", {
           terminal: "pc",
+          share:item.sender
         })
         .then((res) => {
           if(res.data.length>0){

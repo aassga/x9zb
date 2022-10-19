@@ -22,7 +22,7 @@
 							class="live-reserve-guest">{{reserve.away_name}}</span></div>
 				</div>
 				<div class="recommd-list">
-					<div class="recommd-list-item" v-for="(item,index) in liveList" :key="index" v-if="index<5">
+					<div class="recommd-list-item" v-for="(item,index) in liveList" :key="index">
 						<div>
 							<div :style="{backgroundImage:'url('+item.thumb+')'}">
 								<div class="footer">
@@ -565,7 +565,7 @@
 				let data = {
 					page: 1,
 					type: -1, //-1全部 0足球 1篮球 2其他
-					isweb: 1
+					limit:5
 				}
 				getLiveList(data).then(res => {
 					res.data.data.filter(res=>{

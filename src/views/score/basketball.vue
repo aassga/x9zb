@@ -209,8 +209,8 @@
 								
 							</div>
 							<img class="score-banner"
-								src="../../assets/images/main-banner.png"
-								alt="score-banner"  @click="applyFor()" />
+								src="../../assets/images/main-banner.jpg"
+								alt="score-banner"  @click="$router.push('/downLoad')" />
 							<div class="header-date-filter" v-if="tabIndex == 2 || tabIndex == 1">
 								<div class="date-button" :class="index == timeIndex?'active':''"
 									@click="timeIndex = index" v-for="(item,index) in dateTime" :key="index">

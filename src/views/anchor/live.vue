@@ -48,7 +48,7 @@
 												style="font-size: 12px; vertical-align: top;">关注
 											</span>
 										</div>
-										<span class="cancelConcern" v-else>已关注</span>
+										<span class="cancelConcern" v-else  @click="setAttention()">已关注</span>
 										<span class="num"><img class="icon_man"
 												src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAA5ZJREFUSA2VVU1sVFUUPue9Tv+clJQSY4zGEPkJMcwknYIVKXToVGAW8rNgIeiCdEeikrBwIaY7TRrtyoULEwgbQmIgxswUmOlAIKTYmQlU0ZCaRtsYK2JoKdJ2Zt49fld7k9u+9xqd5OWce853fu+5Z5j+w+9yvrxLkddHxNtI5Hli+p7IuS0R/ji9q/2P1VzwasrM+HiDMznziRC/JyQPWHhEmKeIVAyG2yF/4jCf2LcncSHMz6oBhvKjg0r4XWb6rNFpO51Mrl8wjoYKpQ1KyRlU1EmuszOdTIwYnU1DA2SvlV+TmrqJdgymezpO2UaGv3Vrqmnm6fQdfW5y18XtBAzGMYyPeuokMv+zyWn70KdbEuzY8eK8y+77OG5akEevB+FCA4jQq0QyEpSV7ajeabiBy1ckapstN3xoACaJ4hJ/NcAwmky+8gTYGQR5NggTGgDgX1gkHmRkyzKFuy8I0Vpc5ne23PChAZD9N/gSV6+XthhwEGVVPcbMgmm7HaQPDdDSGB3ABP1Wq6qzhcK9aJDx5eFSgoT6UcEX6VT7D0GY0DHV4KFcMSksV+Bkih066bbwtd6Ojtl8vvxSVeQoHt9HwjRNz6yJpTs3Pg4KUBckNDLFNAn+Ib71ouiSzJJkc6Nzi+K1GAwy/Llxvq5izitpaIsy+eLLAF+Hg5pDfAp9/haVVNCOFiaehe4rZqcf47xzwXt4Ua+Vlc71ObAC3YKKeAXsnVqkvmFPqis2AeynIsJXxsaa98bjfxln2Vz5PrF3jidnLkB/CIkoo9PUV4F2UhF1BrpmfD1LzsFi0jEttnMt259qP08O96GSN7PDpRNaZv98l5wZLh8n5X2J8g/v70lctMGr8Zlc8SxWy+GINGxIpbb+brC+Clipt5HpT//HuXbmupEBVB+t0sJB41xTXwDsnxiAJQMaGi4duVosrjFnm2YLo91662rZG92xH/Fu5tHImI3xB2BuRQXjBoQnOlh7zJ3mbFOM7jviyVtaBhsP/Z5AkFYb4wugLxm9XDYJOPvuynZieJjCDk/P+vnHlGkOmcWzudIxjcNLbl5mYRn/y8pmC7sW+2vOhvgCINnPsQI+gOsD/wDxstAA22Y5L9ILfO8SCo/SOW8DAi2x3J6rRebrq4scxx/J12jROftejAPczyFk3Mauu1vLonXubFdX7JHRaxoYwAByN+5sqizW9J73VWow8DCK/+zAIdCYvwHtClj1ByoRhAAAAABJRU5ErkJggg=="><span
 												class="num_text">{{userData.attention}}</span></span>
@@ -145,7 +145,7 @@
 									<div class="concern_shou" v-if="userData.is_attention == 0" @click="setAttention()">
 										<span class="cancelConcern_date_n" title="关注"></span>
 									</div>
-									<span class="cancelConcern_date_y" v-else title="取消关注"></span>
+									<span class="cancelConcern_date_y" v-else title="取消关注"  @click="setAttention()"></span>
 									<div>
 										<span  @click="copy(shareUrl)" class="txt_control" title="分享"></span>
 									</div>
@@ -951,17 +951,19 @@
 			},
 			// 
 			setAttention() {
-				let userData = this.userData.is_attention
+				let is_attention = this.userData.is_attention
 				let data = {
 					id: this.userData.uid
 				}
 				attention(data).then(res => {
-					if (userData == 1) { //1是
+					if (is_attention == 1) { //1是
 						this.userData.is_attention = 0
-						this.$message.success('操作成功')
+						this.userData.attention -=1
 					} else {
 						this.userData.is_attention = 1
+						this.userData.attention +=1
 					}
+					this.$message.success('操作成功')
 				}).catch(res => {})
 
 			},

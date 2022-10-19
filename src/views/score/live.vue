@@ -255,6 +255,25 @@
 											<img src="../../assets/images/live-none.png" alt="">
 											<p style="width: 100%;color: #fff;text-align: center;">暂无直播</p>
 										</div>
+										<div class="recommd-list"  v-if="!item.pushurl1">
+											<div class="recommd-list-item" v-for="(item,index) in liveList" :key="index" >
+												<div>
+													<div :style="{backgroundImage:'url('+item.thumb+')'}">
+														<div class="footer">
+															<div class="title">{{item.title}}</div>
+															<div class="status">直播</div>
+														</div>
+														
+														<a class="mark" @click="setUrl(item)">
+														<!-- <router-link class="mark" tag="a" target="_blank"
+															:to="'/live?router=live&type='+(item.type==0?'football':'basketball')+'&id='+item.match_id+'&uid=' + item.uid"> -->
+															<img
+																src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAAhFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8g2+bRAAAAK3RSTlMA+g400D/HfWTgWusi9gvx7dSn3alXSy+OGBSQhsG3npZwUAewgUY6bOZHJ9ipHQAAA1lJREFUaN6s1+lysjAUBuCXQNmhQNncl1bbb3L/9/dNTqCZMhoT4PnR6ox6krMkCjPMjW+170WJ4ySR59e32GVYC2t7jz/g9e0KQVh4cPhTziFcFqOtM/5CVreYKy6nCy6isoyK6ZbKGHOEH1yJqqDpcgzyrgmqiCsfIWx9q7q+V2GKB9KwelcV/4aN7ek3K8cmx1N5c/zN12kLY9diXPx+gxc2+3EbxRVmPnsuJQGDARYkXOo/YSD1h+TsGAyx3ZAoP8VLbjK8toOFzh827eKFeyaXf4Gli9xEdodW7Mi+dmHN/ZBLi7Wfz8kXwwzsixNNhLtc/xkzneUe7k83KfMfYLZA1sF90p+yf36wwI/spfThfPlq/Uv34D+auJ0m/9Z16B+cP7J/sJjspSsmtgX1/xqXLM1DMT1bT9RgLlbgUrOfJvcLFy5YxYULf28gj2qPlVA/eoASUoI6rKSjJIVQqC47rGZHHTM54xKG1bDk76lXakZ4wUCXGLR0vzOsiNE3gRZSLZ7ssaq9+Mx6iJaJFtpAJ93CzkY0UsZUjx61r/Y49++wclSdehAPG2h4nNbgwkIj3nKgDDmixLkuP3xQpzCWizI7bOyhChpvfOScNzBVjX3UU7L0AZRsz2CGStuPCU6NApDiksNEOpx4TPyPYBiA/Athgn6hMLhUAvMApLyaFsGVB11gE4D4b2bnUYwbTYFtABoLk0m4yYOosw1AqhQ6HY2OvN5yqwCGY5FTKqlLHdgGUGOhWZtDfRqJ1rYOoHhbPFPQACT0d34AXmkHIaF9lLMDaFdXUvYXBzjoAyxOUfa/WWtJQRiGgiNRKhKr4qa2StEoWu9/QBHBbea9MDQ3KE0y/1XmFxUe8uGJzCEXXdNpnZC5piUPbd+0yD40P1Rszz0IqPCC3WI8gQI7J1zfI0i4dhHOJYAmHAdlLt8wUKaZ9I8bwED6VtkyvRJMsoUSXuGfPzYtjMKLko7Y/S5+18MsHTnxe/t+wxhhF7+kfEd4XCM88p02IIDPgMgtlN4E6m2s3ojrowR9GKKPc/SBlD5S04eC+lgT6ATBrDBaVofj6nhfXVCoKxZ1SaSuudRF3fxVI5AGb1k6pDrqXndhXVPlbh8N1Dh74IcbNU9P9OOZ8vnPBxkKMfzzjMchAAAAAElFTkSuQmCC">
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -629,7 +648,8 @@
 		ranking
 	} from "@/api/headline.js";
 	import {
-		recordUsageTime
+		recordUsageTime,
+		getLiveList,
 	} from '../../api/user.js'
 	import live0 from "./live-0.vue";
 	import live1 from "./live-1.vue";
@@ -668,6 +688,7 @@
 				starttime:null,//比赛开时间
 				counttDown: 0, //开赛倒计时
 				counttDownDay:[], //开赛倒计时分秒
+				liveList:[],
 				item: {
 					obj: {
 						eu: {
@@ -834,7 +855,7 @@
 			}
 		},
 				beforeDestroy(){
-if (this.timer) {
+				if (this.timer) {
 				clearInterval(this.timer)
 				this.timer = null;
 			}
@@ -902,6 +923,7 @@ if (this.timer) {
 			}, 1000)
 		},
 		mounted() {
+			this.getLiveList()
 			setTimeout(res => {
 				this.init()
 			}, 1000)
@@ -929,6 +951,29 @@ if (this.timer) {
 					this.retundata();
 					this.onclose();
 				});
+			},
+						// 获取相关直播
+			getLiveList() {
+				let data = {
+					page: 1,
+					type: -1, //-1全部 0足球 1篮球 2其他
+					limit:5
+				}
+				getLiveList(data).then(res => {
+					this.liveList = res.data.data
+				}).catch(res => {})
+			},
+			// 设置首页播放的按钮
+			setUrl(item){
+				// localStorage.setItem('index',2)
+				let url = '/live?router=live&type='+(item.type==0?'football':'basketball')+'&id='+item.match_id+'&uid=' + item.uid+'&vid=' + item.vid
+				// return url
+				// localStorage.setItem('index', type)
+				// this.$router.push('/schedule')
+				// console.log(url,type);
+				// return
+				let routeData = this.$router.resolve({ path:url})
+				window.open(routeData.href,'_blank')
 			},
 			retundata() {
 				//监听接受到websocket的信息
@@ -1442,5 +1487,121 @@ if (this.timer) {
     text-align: center;
     width: 50px;
     font-size: 22px;
+	}
+	.recommd-list {
+		margin-top: 20px;
+		display: flex;
+		justify-content: center;
+		width: 100%
+	}
+
+	.recommd-list>div {
+		width: 25%;
+		padding: 0 10px
+	}
+
+	.recommd-list>div>div {
+		position: relative
+	}
+
+	.recommd-list>div>div:before {
+		content: "";
+		display: block;
+		padding-top: 58%
+	}
+
+	.recommd-list>div>div>div {
+		position: absolute;
+		left: 0;
+		top: 0;
+		border-radius: 5px;
+		background-size: cover;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		cursor: pointer;
+		width: 100%;
+		height: 100%;
+		overflow: hidden
+	}
+
+	.recommd-list .recommd-list-item .type {
+		width: 50px;
+		height: 25px;
+		line-height: 25px;
+		text-align: center;
+		font-size: 12px;
+		color: #fff;
+		background-size: cover;
+		background-position: 50%;
+		background-repeat: no-repeat
+	}
+
+	.recommd-list .recommd-list-item .footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		position: absolute;
+		padding: 0 10px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 55px;
+		background-image: linear-gradient(180deg, transparent -29%, #000)
+	}
+
+	.recommd-list .recommd-list-item .footer .title {
+		display: inline-block;
+		width: 180px;
+		height: 36px;
+		line-height: 36px;
+		font-size: 14px;
+		color: #fff;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap
+	}
+
+	.recommd-list .recommd-list-item .footer .status {
+		display: inline-block;
+		margin-left: 5px;
+		margin-bottom: 10px;
+		width: 50px;
+		height: 18px;
+		font-size: 12px;
+		border-radius: 10px;
+		border: 1px solid #ff5d5d;
+		background-color: rgba(0, 0, 0, .5);
+		color: #ff5d5d;
+		line-height: 16px;
+		text-align: center
+	}
+
+	.recommd-list .recommd-list-item .mark {
+		display: none;
+		position: absolute;
+		background-color: rgba(0, 0, 0, .4);
+		cursor: pointer;
+		width: 100%;
+		height: 100%
+	}
+
+	.recommd-list .recommd-list-item .mark img {
+		display: block;
+		width: 55px;
+		height: 55px;
+		top: 20px
+	}
+
+	.recommd-list .recommd-list-item:hover .mark {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column
+	}
+
+	.recommd-list .recommd-list-item:hover .mark img {
+		width: 40px;
+		height: 40px;
+		margin-bottom: 25px
 	}
 </style>

@@ -241,7 +241,7 @@ export default {
       pinInfo: "",
       page: 1,
       ctp: 0,
-      inviteCount:0,
+      inviteCount:0, //歡迎語?
       prevImg: null,
       showChatList: false,
       isMore: true,
@@ -560,7 +560,7 @@ export default {
         // // console.log("我接受到了新消息");
         // // console.log(arr);
         this.msgList2 = arr;
-        this.inviteCount += 1
+        // this.inviteCount += 1
         this.msgCount += 1;
       }
     },
@@ -759,14 +759,14 @@ export default {
       }, 1000);
     },
     changeType(e) {
-      this.pinInfo = "";
-      this.msgList = [];
       if (this.showLoading) {
         return;
       }
       if (this.ctp == e) {
         return;
       }
+      this.pinInfo = "";
+      this.msgList = [];
       this.ctp = e;
       this.page = 1;
       this.showLoading = true;
@@ -1168,7 +1168,9 @@ export default {
           unread_count: 1,
           text: data.text,
         };
-        this.onHandleUnRead(msgList, 1);
+        if (this.roomInfo.vid !== data.newMsgRoomvid) {
+          this.onHandleUnRead(msgList, 1);
+        }
       }
 
       if (data.action === "send" && data.msg_type === "0") {
