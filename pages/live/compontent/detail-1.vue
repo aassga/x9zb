@@ -171,7 +171,7 @@
                          
                         >
   								{{ item.text }}
-  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play"  />
+  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play(item)"  />
                     	</div>
                         <i
                           class="el-icon-warning error-msg"
@@ -638,12 +638,7 @@ export default {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
-        let split = window.location.hostname.includes("10")
-            // ? "https://www.x9zb.live/upload/"
-            ? window.location.origin + "/"
-            // ? "http://huyapre.oxldkm.com/upload/"
-            // ? "http://huidu.x9zb.live/upload/"
-            : window.location.origin + "/";
+        let split = window.location.origin + "/"
             (newUrl = newUrl.replace(split, ""));
       }
       return newUrl;
@@ -716,6 +711,7 @@ export default {
   	 play(){
    		this.$u.post('api/tob/gettoburl', {
           terminal: "h5",
+          share:item.sender
         })
         .then((res) => {
           if(res.length>0){
@@ -730,7 +726,6 @@ export default {
         return require("./../../../static/images/home/userLogo.png");
       } else {
         return window.location.origin + item.avatar;
-        // return 'http://huidu.x9zb.live' + item.avatar;
       }
     },
 		clearStatus() {
@@ -1221,11 +1216,15 @@ export default {
             this.initInvite = false;
             roomInfo[roomId] = res.vid;
             localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+            localStorage.setItem("anchorVid", res.vid);
+
             return;
           }
           roomInfo[roomId] = res.vid;
           this.parmUserInfo.vid = res.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+          localStorage.setItem("anchorVid", res.vid);
+
           this.inRoomInfo(this.fd);
           this.controlIndex = "";
         });
@@ -1531,7 +1530,7 @@ export default {
         if (data.text.includes("进入直播间") && this.current != 0) {
           return;
         }
-        this.handleLocalMsgList(this.current).push(data);
+        this.handleLocalMsgList(this.current, "push", data)
         this.toBottom();
       }
       if (data.action === "gift") {
@@ -1540,7 +1539,7 @@ export default {
         }
         let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
         data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-        this.handleLocalMsgList(this.current).push(data);
+        this.handleLocalMsgList(this.current, "push", data)
         this.onhandleSendGift(data);
       }
       if (data.status == 200) {
