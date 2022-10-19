@@ -14,7 +14,8 @@
 							<div class="score">
 								<p class="league-name">
 									<span>{{base.match_time}}</span> 
-									<span v-if="query.type == 'basketball'">NBA</span></p>
+									<span v-if="query.type == 'basketball'">{{base.short_name_zh}}</span>
+								</p>
 								<p class="time">VS</p>
 							</div>
 							<div class="guest-name1 name tip-basketball">
@@ -216,6 +217,7 @@
 import { getQueryString } from "@/utils/Qs";
 
 	export default {
+		name: 'liveHeader',
 		props: ['query','detail','base','exponent','basketball'],
 		data() {
 			return {

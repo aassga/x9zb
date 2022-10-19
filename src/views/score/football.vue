@@ -292,7 +292,7 @@
 								</div>
 
 							</div>
-							<img class="score-banner" @click="applyFor()" src="../../assets/images/main-banner.png"
+							<img class="score-banner" @click="$router.push('/downLoad')" src="../../assets/images/main-banner.jpg"
 								alt="score-banner" />
 							<ul v-if="tabIndex == 0" class="football-score-container-header">
 								<li class="width40" style="background: rgb(58, 48, 64); height: 100%"

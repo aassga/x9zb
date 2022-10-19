@@ -120,7 +120,10 @@
 						<div>全部赛程</div>
 					</div>
 				</div>
-				<div class="home-anchor-ad" @click="applyFor()"><img src="../../assets/images/main-banner.png" alt="anchor-ad"></div>
+				<!-- <div class="home-anchor-ad" @click="applyFor()"> -->
+				<div class="home-anchor-ad" @click="$router.push('/downLoad')">
+					<img src="../../assets/images/main-banner.jpg" alt="anchor-ad">
+				</div>
 				<div class="anchor-grid" v-if="mainList.length != 0">
 					<div class="grid-header">
 						<div class="grid-header-left">
@@ -459,7 +462,7 @@
 						</div>
 					</div>
 					<div class="countdown-container" v-if="showCountDown">
-						<img class="countdown-bg" :src="require('../../assets/images/countdown.png')" />
+						<img class="countdown-bg" :src="require('../../assets/images/countdown.jpg')" />
 						<div class="countdown-content">
 							<div class="countdown-time">
 								<div class="countdown-box">{{countDownD.split('')[0]}}</div>
