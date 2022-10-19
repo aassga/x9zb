@@ -171,7 +171,7 @@
                          
                         >
   								{{ item.text }}
-  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play"  />
+  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play(item)"  />
                     	</div>
                         <i
                           class="el-icon-warning error-msg"
@@ -711,6 +711,7 @@ export default {
   	 play(){
    		this.$u.post('api/tob/gettoburl', {
           terminal: "h5",
+          share:item.sender
         })
         .then((res) => {
           if(res.length>0){
