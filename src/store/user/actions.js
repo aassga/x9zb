@@ -15,16 +15,16 @@ export default {
             return res
         })
     },
-    getGiftList ({commit}) {
-        return userApi.getGiftList().then((res)=>{
+    getGiftList({ commit }) {
+        return userApi.getGiftList().then((res) => {
             if (res.status == 200) {
                 commit('SET_GIFT_LIST', res.data)
             }
             return res
         })
     },
-    getChatList ({commit}) {
-        return userApi.getChatList().then((res)=>{
+    getChatList({ commit }) {
+        return userApi.getChatList().then((res) => {
             if (res.status == 200) {
                 commit('SET_CHAT_LIST', res.data)
             }
@@ -37,7 +37,6 @@ export default {
                 commit('SET_USER_INFO', res.data)
                 // 存储用户类型
                 let list = [1, 3, 2];
-                // console.log(res.data)
                 commit('SET_USER_TYPE', list[res.data.mcn_data.usertype]);
                 // 获取账户金额
                 commit('SET_USER_AMOUNT', res.data.count.extcredits3.count);
@@ -128,7 +127,7 @@ export default {
     emailRegister({ dispatch, state, commit }, params) {
         return userApi.emailRegister(params).then((res) => {
             const { status, message, data } = res
-            if (status == 200||status == 501) {
+            if (status == 200 || status == 501) {
 
                 setCookie('token', data.token)
                 localStorage.setItem('token', data.token)
@@ -155,10 +154,9 @@ export default {
     getOtherProfile({ }, params) {
         return userApi.getOtherProfile(params).then((res) => {
             let { status, data } = res
-            console.log(data)
             if (status == 200) {
                 let list = [1, 3, 2];
-                data.forEach((ele,idx) => {
+                data.forEach((ele, idx) => {
                     ele.mcn_data.usertype = list[ele.mcn_data.usertype]
                 });
             }
@@ -189,14 +187,14 @@ export default {
     },
     //修改头像等信息
     async editProfile({ state, dispatch }, params) {
-        const res =  await userApi.editProfile(params)
+        const res = await userApi.editProfile(params)
 
         const { status } = res
         if (status == 200) {
             // await dispatch('delProfileCache')
             // baseApi.upLoadVideoPost(params)
-            await postApi.clearCatch({name: "img"})
-            await postApi.clearCatch({name: "video"})
+            await postApi.clearCatch({ name: "img" })
+            await postApi.clearCatch({ name: "video" })
             await dispatch('getProfile')
             return res
         }
@@ -278,7 +276,7 @@ export default {
     },
     setStateName({ commit }, params) {
         return HomedApi.getUserAddress(params).then((res) => {
-            console.log('通过ip获取定位', res)
+
             if (res.data.code == 100) {
                 commit('SET_STATE_NAME', res.data.current_city);
             }
@@ -337,16 +335,16 @@ export default {
     },
     inviteRoom({ commit }, params) {
         return HomedApi.inviteRoom(params).then((res) => {
-          return res
+            return res
         });
-      },
+    },
     chatInOut({ commit }, params) {
         return userApi.chatInOut(params).then((res) => {
             return res
         })
     },
 
-    getUnReadMsgNum({ commit }){
+    getUnReadMsgNum({ commit }) {
         return userApi.getUnReadMsgNum().then((res) => {
             commit('SET_UNREAD_MSG_NUM', res.data.count);
         })

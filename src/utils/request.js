@@ -13,7 +13,6 @@ import {
 } from '@/utils/auth'
 
 let baseURL = process.env;
-console.log(apiUrl);
 
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);
@@ -42,7 +41,6 @@ service.interceptors.request.use(
 	},
 	error => {
 		// do something with request error
-		console.log(error) // for debug
 		return Promise.reject(error)
 	}
 )
@@ -86,7 +84,6 @@ service.interceptors.response.use(
 			// 	type: 'error',
 			// 	duration: 5 * 1000
 			// })
-			console.log(res.msg,"res.msg1======")
 			// 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
 			if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
 				// to re-login
@@ -107,7 +104,6 @@ service.interceptors.response.use(
 					duration: 5 * 1000
 				})
 			} else {
-				console.log(res.msg,"res.msg======")
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else if (res.code == 700) { //登录过期
@@ -156,7 +152,6 @@ service.interceptors.response.use(
 		// 	type: 'error',
 		// 	duration: 5 * 1000
 		// })
-		console.log(res.msg,"timeout======")
 		return Promise.reject(error)
 	}
 )

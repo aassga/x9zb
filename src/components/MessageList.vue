@@ -2,7 +2,7 @@
   <div class="HuyaXWebhMessagelist">
     <div
       @click="onHandleClickItem(item,index)"
-      :class="['HuyaXWebhMessagelist_i',activeIndex == index ? 'active' : '']"
+      :class="['HuyaXWebhMessagelist_i',activeIndex === index ? 'active' : '']"
       v-for="(item,index) in list"
       :key="index"
     >
@@ -34,21 +34,16 @@
 <script>
 export default {
   name: "HuyaXWebhMessagelist",
-  props: ["list","activeIndex"],
+  props:{
+    list:{
+      type:Array
+    },
+    activeIndex:{
+      type:null
+    }
+  },
   data() {
     return {
-      // activeIndex: 0
-      //   list: [
-      //     {
-      //       avater: require("@/assets/images/userLogo.png"),
-      //       name: "阿里里",
-      //       last_msg: {
-      //         text: "dsfsfsasdfsafsffdasgadga",
-      //         date: "10:00"
-      //       },
-      //       tips: 34
-      //     }
-      //   ]
     };
   },
 

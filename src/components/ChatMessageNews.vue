@@ -12,11 +12,8 @@
       <div
         v-for="(item, index) in msgList"
         :key="index"
-        :class="{ 'is-anchor': ctp === 2 }"
+        :class="{ 'is-anchor': tabNumber === 2 }"
       >
-        <!--   <div class="system-tips" v-if="item.action === 'system'">
-                {{item.text}}
-              </div>-->
         <template>
           <div
             v-if="
@@ -35,10 +32,10 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id) &&
-                      ctp === 2,
+                      tabNumber === 2,
                   }"
                 >
-                  <template v-if="ctp === 0">
+                  <template v-if="tabNumber === 0">
                     <img
                       :src="hiImg"
                       class="hi-tag"
@@ -64,11 +61,11 @@
                   </template>
 
                   <div
-                    v-if="ctp !== 2"
+                    v-if="tabNumber !== 2"
                     class="text-name"
                     :style="
                       item.text.includes('进入直播间')
-                        ? 'color: #665a64;'
+                        ? 'color: #575757;'
                         : ''
                     "
                   >
@@ -80,9 +77,7 @@
                     }}
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="ctp === 2 && !mySelf(item)" class="msg-avatar">
-                    <!-- <img class="avatar" :src="'http://huidu.x9zb.live' + item.avatar"> -->
-                    <!-- <img class="avatar" :src="'huyapretest.oxldkm.com' + item.avatar"> -->
+                  <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
                     <img class="avatar" :src="avatarImg(item)" />
                   </div>
                   <template v-if="item.pic && !item.text">
@@ -113,28 +108,41 @@
                     {{ item.text }}
                     <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play(item)"  />
                   </div>
-                    <vue-markdown
+                  <div 
+                    v-else
+                    class="text-info"
+                    :class="{ 'is-login': item.msg_type=='4' }"
+                    :style="
+                        item.text.includes('进入直播间')
+                          ? 'color: #575757;'
+                          : tabNumber !== 2
+                          ? 'width: 170px;'
+                          : ''
+                      ">{{getText(item.text)}}<i v-if="item.isError" class="el-icon-loading" @click="resend(item)"></i></div>
+                      
+                    <!-- <vue-markdown
                       class="text-info"
                      v-else
                        :class="{ 'is-login': item.msg_type=='4' }"
                       :style="
                         item.text.includes('进入直播间')
-                          ? 'color: #665a64;'
-                          : ctp !== 2
+                          ? 'color: #575757;'
+                          : tabNumber !== 2
                           ? 'width: 170px;'
                           : ''
                       "
                       :anchor-attributes="linkAttrs"
-                      >{{ item.text }}{{ item.length }}</vue-markdown
-                    >
+                      > 
+                      {{ item.text }} <span>123</span>
+                      </vue-markdown
+                    > -->
                    <!--  <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  v-if="item.msg_type=='4'" /> -->
                   </div>
-                  <i
+                  <!-- <i
                     class="el-icon-warning error-msg"
                     v-if="item.isError"
-                    @click="resend(item)"
-                    >重新发送</i
-                  >
+                    @click="resend(item)"></i
+                  > -->
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -171,7 +179,7 @@ export default {
     controlIndex: {
       type: Number,
     },
-    ctp: {
+    tabNumber: {
       type: Number,
     },
     pinInfo: {
@@ -182,7 +190,10 @@ export default {
     },
     channel:{
       type: null,
-    }
+    },
+  },
+  created() {
+    this.uid = this.$route.query.id;
   },
   computed: {
     reversedHeight: function () {
@@ -200,20 +211,16 @@ export default {
         class: "linkified",
       },
       uid: "",
+      showBottom:false,
       hiImg: require("./../assets/images/HiTag.png"),
     };
   },
-  created() {
-    this.uid = this.$route.query.id;
-  },
+
   filters: {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
         let split = window.location.origin + "/";
-        // let split = "http://huyapretest.oxldkm.com/"
-        // let split = "https://www.x9zb.live/"
-        // let split = "https://huidu.x9zb.live/"
         newUrl = newUrl.replace(split, "");
       } else {
         return newUrl;
@@ -279,9 +286,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      str = str.replace(/\r\n/g, "<br>");
-      str = str.replace(/\n/g, "<br>");
-      str = str.replace(/\r/g, "<br>");
+      // str = str.replace(/\r\n/g, "<br>");
+      // str = str.replace(/\n/g, "<br>");
+      // str = str.replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -302,6 +309,11 @@ export default {
         this.$alert("复制成功", "提示");
         this.tipsId = "";
       }
+    },
+    // 聊天框滚动到最底部
+    toBottom() {
+      let box = document.getElementsByClassName("chat-window")[0];
+      this.$nextTick(() => (box.scrollTop = box.scrollHeight));
     },
   },
 };
@@ -459,6 +471,14 @@ export default {
         color: #47a2ff;
       }
     }
+    .el-icon-loading{
+      display: flex !important;
+      justify-content: center;
+      position: relative;
+      top: -16px;
+      left: -53px;
+    }
+
     &.my-self {
       flex-direction: row-reverse;
       .text-info {
@@ -468,6 +488,11 @@ export default {
           margin-left: calc(100% - 3px);
           border-color: transparent transparent transparent #eee;
         }
+      }
+      .el-icon-loading{
+        display: flex !important;
+        align-items: center; 
+        margin: 0 3px;
       }
     }
   }

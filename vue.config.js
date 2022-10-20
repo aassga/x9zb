@@ -77,8 +77,6 @@ module.exports = {
         //     }
         //   }
         // })
-        // console.log("test==========================", test)
-        // console.log("args==========================", args[0])
         return args
       })
   },
