@@ -447,7 +447,6 @@ export default {
     //取得圖片
     changeFile(fileList) {
       this.msgType = 2;
-      // const fileUp = document.querySelector("#fileUp");
       const file = fileList.raw;
       this.formData.pic = file;
       var reader = new FileReader();
@@ -590,7 +589,6 @@ export default {
           type: "1,2",
         })
         .then((res) => {
-          // this.showSetDownBtn = false;
           if (res.code == 0) {
             res.data.forEach(data => data.unread_count = 0)
             if (this.unreadMsgList.length > 0) {
