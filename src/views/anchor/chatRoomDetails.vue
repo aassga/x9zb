@@ -496,7 +496,7 @@ export default {
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
-      if (type == 0) {
+      if (type === 0) {
         this.unreadMsgList = msgList;
       } else {
         let falg = true;
@@ -1030,8 +1030,7 @@ export default {
               this.toBottom();
               if (data.data.content.type == 1) {
                 this.msgText = "";
-                if (this.hasSendMsgCount > 0)
-                  this.hasSendMsgCount = this.hasSendMsgCount - 1;
+                if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
               }
               break;
             case "message":
