@@ -31,7 +31,8 @@
                   :class="{
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
-                        item.sender === parmUserInfo.user_id) &&
+                        item.sender === parmUserInfo.user_id || 
+                        item.sender === Number(parmUserInfo.user_id)) &&
                       tabNumber === 2,
                   }"
                 >
@@ -69,12 +70,26 @@
                         : ''
                     "
                   >
-                    {{
-                      !item.text.includes("进入直播间") &&
-                      item.sender_nickname.length > 5
-                        ? item.sender_nickname.substr(0, 6) + "..."
-                        : item.sender_nickname
-                    }}
+                    <template v-if="item.sender_nickname !==undefined">
+                      <span>
+                        {{
+                          !item.text.includes("进入直播间") &&
+                          item.sender_nickname.length > 5
+                            ? item.sender_nickname.substr(0, 6) + "..."
+                            : item.sender_nickname
+                        }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      <span>
+                        {{
+                          !item.text.includes("进入直播间") &&
+                          item.sender.length > 5
+                            ? "遊客" + item.sender.substr(0, 4) + "..."
+                            : "遊客" + item.sender
+                        }}
+                      </span>
+                    </template>
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
                   <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
@@ -84,7 +99,7 @@
                     <el-image
                       :preview-src-list="[item.pic]"
                       fit="cover"
-                      :src="item.pic | picFilter"
+                      :src="item.pic"
                       class="pic-info"
                     />
                   </template>
@@ -93,7 +108,7 @@
                       class="thumb-container"
                       @click.stop="openLink(item.link)"
                     >
-                      <img class="thumb-pic" :src="item.pic | picFilter" />
+                      <img class="thumb-pic" :src="item.pic" />
                       <div class="thumb-title">{{ item.title }}</div>
                       <br />
                       <div class="thumb-text">{{ item.text }}</div>
@@ -118,7 +133,9 @@
                           : tabNumber !== 2
                           ? 'width: 170px;'
                           : ''
-                      ">{{getText(item.text)}}<i v-if="item.isError" class="el-icon-loading" @click="resend(item)"></i></div>
+                      "
+                      v-html="getText(item.text)"
+                      ></div><i v-if="item.isError" class="el-icon-loading" @click="resend(item)"></i>
                       
                     <!-- <vue-markdown
                       class="text-info"
@@ -218,13 +235,14 @@ export default {
 
   filters: {
     picFilter(url) {
-      let newUrl = url;
-      if (url.includes("base64")) {
-        let split = window.location.origin + "/";
-        newUrl = newUrl.replace(split, "");
-      } else {
-        return newUrl;
-      }
+      console.log(url)
+      return url;
+      // if (url.includes("base64")) {
+      //   let split = window.location.origin + "/";
+      //   newUrl = newUrl.replace(split, "");
+      // } else {
+      //   return newUrl;
+      // }
     },
   },
   methods: {
@@ -246,13 +264,15 @@ export default {
       if (item.avatar === "") {
         return require("@/assets/images/userLogo.png");
       } else {
-        return window.location.origin + item.avatar;
+        // return window.location.origin + item.avatar;
+        return item.avatar;
       }
     },
     mySelf(item) {
       if (
         Number(item.sender) === this.parmUserInfo.user_id ||
-        item.sender === this.parmUserInfo.user_id
+        item.sender === this.parmUserInfo.user_id || 
+        item.sender === Number(this.parmUserInfo.user_id)
       ) {
         return true;
       } else {

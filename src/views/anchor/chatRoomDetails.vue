@@ -234,7 +234,6 @@ export default {
       chatList: [], // 获取聊天列表
       chatListActive: 0, // 聊天列表的选中索引
       roomInfo: {}, //聊天室的详情
-      isReadOnly: false,
       msgText: "",
       msgSquareList: [],
       msgAnchorList: [],
@@ -473,7 +472,7 @@ export default {
         );
         // 如果是重整之后的数组，则重新校对chatListActive的索引，使页面样式规范
         readData.forEach((res)=>{
-          if (res.vid === this.roomInfo.vid) this.chatListActive = item;
+          if (res.vid === this.roomInfo.vid) this.chatListActive = res;
         })
       }
       readData.forEach((res)=>{
@@ -494,6 +493,13 @@ export default {
       })
       this.unreadTotal = num;
     },
+    onAnchorCount(list){
+      let num = 0;
+      if(list.vid === JSON.parse(localStorage.getItem("anchor")).vid){
+        if (list.unread_count > 0) num += list.unread_count;
+      }
+      this.inviteCount = num;
+    },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
       if (type == 0) {
@@ -509,8 +515,9 @@ export default {
           }
         })
         if (falg) arr.push(msgList);
+        this.onAnchorCount(msgList)
         this.unreadMsgList = arr;
-        this.inviteCount += 1;
+        // this.inviteCount += 1;
         this.unreadTotal += 1;
       }
     },
@@ -518,8 +525,10 @@ export default {
     readEvent(item) {
       let newMessageData = this.unreadMsgList
       newMessageData.forEach((res)=>{
-        if(res.vid === item.vid) res.unread_count = 0 
+        if(res.vid === item.vid) res.unread_count = 0
+        if(res.vid === JSON.parse(localStorage.getItem("anchor")).vid) this.inviteCount = 0 
       })
+
       this.unreadMsgList = newMessageData;
     },
     getUserToken() {
@@ -709,6 +718,7 @@ export default {
         .then((res) => {
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
+          localStorage.setItem("anchor", JSON.stringify(res.data));
           this.anchorList = res.data
           if (this.initInvite) {
             this.initInvite = false;
@@ -879,11 +889,13 @@ export default {
           this.msgText = "";
           this.msgType = 1;
           this.formData.pic = "";
+          this.prevImg= null
           this.fileList = [];
           this.uploadImgShow = false;
           this.toBottom();
         })
-        .catch((err) => {
+        .catch(err => {
+          this.$message.error("上传文件大小不符！请重新上传")
           this.mergeDataList(this.tabNumber,'error',uiCode)
         });
     },
@@ -892,6 +904,16 @@ export default {
       var strRegex =
         /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
       var re = new RegExp(strRegex);
+      let currentDate = new Date().getTime();
+      let sendMessageList = {
+        avatar: this.info.avatar,
+        sender: this.parmUserInfo.user_id,
+        sender_nickname: this.info.user_nickname,
+        sender_exp: this.infos.exp,
+        text: this.msgText,
+        uiCode: currentDate,
+        isError: false,
+      };
       if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
         this.$message.error("无法发送超连结");
         this.msgText = "";
@@ -903,19 +925,9 @@ export default {
         if (this.msgType === 2) {
           this.msgText = "";
           this.sendMessage(null, this.msgText);
+          return
         }
-        return;
       }
-      let currentDate = new Date().getTime();
-      let sendMessageList = {
-        avatar: this.info.avatar,
-        sender: this.parmUserInfo.user_id,
-        sender_nickname: this.info.user_nickname,
-        sender_exp: this.infos.exp,
-        text: this.msgText,
-        uiCode: currentDate,
-        isError: false,
-      };
       if(this.tabNumber === 2){
         this.inviteCount = 0;
         this.readEvent(this.anchorList)
@@ -928,7 +940,6 @@ export default {
     // 客户端接收服务端数据时触发
     websocketonmessage(event) {
       let data = JSON.parse(event.data);
-     
       switch (data.action) {
         case "open":
           if (data.fd !== null) {
@@ -986,16 +997,18 @@ export default {
           }
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
-          
-          if (
+          if(data.pic !== undefined){
+            this.mergeDataList(this.tabNumber, "push", data);
+          }else if (
             data.sender === localStorage.getItem("userid") ||
             data.sender_nickname === this.info.user_nickname ||
-            (data.sender_nickname.includes("游客") && this.tabNumber === 0) ||
+            data.sender_nickname.includes("游客") ||
             (data.text.includes("进入直播间") && this.tabNumber !== 0)
           ) {
             return;
+          } else{
+            this.mergeDataList(this.tabNumber, "push", data);
           }
-          this.mergeDataList(this.tabNumber, "push", data);
           if(!this.showSetDownBtn) this.toBottom();
           break;
         case "pin":
@@ -1067,8 +1080,6 @@ export default {
           }
           break;
         case "push":
-          if (data.pic !== undefined)
-            data.pic = window.location.origin + data.pic;
           if (type === 0) {
             this.msgSquareList.push(data);
           } else if (type === 1) {
@@ -1109,7 +1120,7 @@ export default {
             }
           }, 1500);
           break;  
-      }
+        }
       this.toBottom()
     },
     
