@@ -1023,24 +1023,23 @@ export default {
               this.webSocketFd = data.data.targetUserInfo.fd;
               break;
             case "call":
+            case "message":
               this.mergeDataList(this.tabNumber).push({
                 ...data.data.content,
                 uid: this.userInfo.uid,
               });
               this.toBottom();
-              if (data.data.content.type == 1) {
-                this.msgText = "";
-                if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
+              if(data.data.type === "call"){
+                if (data.data.content.type == 1) {
+                  this.msgText = "";
+                  if (this.hasSendMsgCount > 0) {
+                    this.hasSendMsgCount = this.hasSendMsgCount - 1;
+                  }
+                }
+              }else if("message"){
+                this.$store.dispatch("getUnReadMsgNum");
+                if (data.data.content.type == 1) this.msgText = "";
               }
-              break;
-            case "message":
-              this.$store.dispatch("getUnReadMsgNum");
-              this.mergeDataList(this.tabNumber).push({
-                ...data.data.content,
-                uid: this.uid,
-              });
-              this.toBottom();
-              if (data.data.content.type == 1) this.msgText = "";
               break;
           }
         }
