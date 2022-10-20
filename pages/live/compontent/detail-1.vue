@@ -463,7 +463,6 @@
 <script>
 import SVGA from "@/common/svga.min.js";
 import { getQueryString } from "@/common/Qs";
-import { getUUID } from "@/common/uuid";
 export default {
   name: "information-detail",
   props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
@@ -488,7 +487,7 @@ export default {
       myUserinfo: {
         uid: "",
       },
-      fd: "",
+      webSocketFd: "",
       page: 1,
       isShowGiftBox: false,
       giftNum: 1,
@@ -567,7 +566,7 @@ export default {
         }
       }
     },
-    fd(newVal, oldVal) {
+    webSocketFd(newVal, oldVal) {
       if (newVal != oldVal) {
         if (this.current == 0) {
           this.inviteRoom();
@@ -577,9 +576,7 @@ export default {
     },
     showLoading(newV, oldV) {
       if (!newV && this.page == 1) {
-        setTimeout(() => {
-          this.toBottom();
-        }, 20);
+        setTimeout(() => this.toBottom(), 20);
       }
     },
     roomDetailData(newVal, oldVal) {
@@ -590,7 +587,7 @@ export default {
         // this.handleLocalMsgList(this.current,'empty')
         this.isScroller = false;
         this.parmUserInfo.vid = newVal.vid;
-        this.inRoomInfo(this.fd);
+        this.inRoomInfo(this.webSocketFd);
       }
     },
     current(newVal, oldVal) {
@@ -615,7 +612,7 @@ export default {
       if (newVal == 0) {
         const qVid = this.qsVid;
         this.parmUserInfo.vid = qVid;
-        this.inRoomInfo(this.fd);
+        this.inRoomInfo(this.webSocketFd);
       }
       if (newVal == 1) {
         const qVid = this.qsVid;
@@ -781,10 +778,7 @@ export default {
     resend(item) {
       // console.log(item);
       this.handleLocalMsgList(this.current).map((val, index) => {
-        if (val == item) {
-          this.handleLocalMsgList(this.current).splice(index, 1);
-          // console.log(this.msgList);
-        }
+        if (val == item) this.handleLocalMsgList(this.current).splice(index, 1)
       });
       this.msgText = item.text;
     },
@@ -802,12 +796,9 @@ export default {
     getReportList() {
       const _this = this;
       this.$u.get("api/report/classifyList").then((res) => {
-        // console.log("举报列表");
-        // console.log(res);
+
         _this.reportList = res;
-        if (res.length > 0) {
-          _this.reportValue = res[0].id;
-        }
+        if (res.length > 0) _this.reportValue = res[0].id;
       });
     },
     onHandleReportShow(item) {
@@ -845,7 +836,6 @@ export default {
       this.msgType = e;
       if (e == 2) {
         var dol = document.getElementById("add-img");
-        // console.log(dol, "dol--------");
         dol.innerHtml += "<div>666</div>";
       }
     },
@@ -853,15 +843,10 @@ export default {
       window.open(link);
     },
     initInfo(init = false) {
-      if (!this.reconnectStatus) {
-        this.handleLocalMsgList(this.current, "empty");
-      }
+      if (!this.reconnectStatus) this.handleLocalMsgList(this.current, "empty");
       if (getQueryString() || this.roomDetailData) {
         let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-        if (!this.roomDetailData && !roomInfo) {
-          // this.getImToken(true);
-          return;
-        }
+        if (!this.roomDetailData && !roomInfo) return
         if (this.current == 2) {
           this.parmUserInfo = {
             vid: roomInfo[this.qsVid],
@@ -1025,10 +1010,6 @@ export default {
     getImToken(initSec = false) {
       const _that = this;
       const data = this.parmUserInfo;
-      // console.log(window.ws,"=======,1234")
-      // if(window.ws){
-      // 	window.ws.close();
-      // }
       this.$u
         .get(
           `api/chat/getChatToken?user_id=${data.user_id}&type=${
@@ -1045,11 +1026,6 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      // console.log(
-      //   this.reconnectStatus,
-      //   this.isMore,
-      //   "this.reconnectStatus========"
-      // );
       if (
         this.parmUserInfo.vid == null ||
         this.parmUserInfo.vid == "" ||
@@ -1075,11 +1051,8 @@ export default {
       };
       this.lastpage = params.page;
       this.lastVid = params.vid;
-      if (!iniPage && this.page == 1) {
-        return;
-      }
+      if (!iniPage && this.page == 1) return
       this.showLoading = true;
-
       this.$u
         .get(
           `api/chat/getChatHistory?type=${params.type}&user_id=${
@@ -1099,25 +1072,19 @@ export default {
           }
           let dataList = res.reverse();
           this.lockPage = true;
-          if (dataList.length <= 10) {
-            this.isScroller = true;
-          }
+          this.isScroller = dataList.length <= 10
           this.showLoading = false;
           if (dataList.length === 0) {
             this.isMore = false;
             return;
           }
-          // console.log(params, "======params", dataList);
           this.handleLocalMsgList(
             params.type == 2 && this.current == 1 ? 1 : params.type,
             params.page != 1 ? "unshift" : "init",
             dataList
           );
-          // console.log("///////////////////");
-          // _that.msgList.unshift(...dataList);
         })
         .catch((res) => {
-          // console.log(123123123);
           this.isErrorMsg = false;
         })
         .finally((res) => {
@@ -1125,11 +1092,7 @@ export default {
         });
     },
     showControl(index,item) {
-    	if(item.msg_type=="4")
-    	{
-    		return;
-    	}
-      // console.log("我是点击消息事件");
+    	if(item.msg_type=="4") return
       this.controlIndex = index;
     },
     // mute(item) {
@@ -1139,7 +1102,7 @@ export default {
     // 		mute: 1,
     // 		token: this.imUserInfo.token,
     // 		vid: item.vid,
-    // 		fd: this.fd,
+    // 		fd: this.webSocketFd,
     // 		user_id: item.sender
     // 	};
     // 	this.$u.post('api/chat/mute', data).then(res => {
@@ -1154,7 +1117,7 @@ export default {
     // 		freeze: 1,
     // 		token: this.imUserInfo.token,
     // 		vid: item.vid,
-    // 		fd: this.fd,
+    // 		fd: this.webSocketFd,
     // 		user_id: item.sender
     // 	};
     // 	this.$u.post('api/chat/freeze', data).then(res => {
@@ -1168,7 +1131,7 @@ export default {
     // 		pin: 1,
     // 		token: this.imUserInfo.token,
     // 		vid: item.vid,
-    // 		fd: this.fd,
+    // 		fd: this.webSocketFd,
     // 		msg_id: item.msg_id
     // 	};
     // 	this.$u.post('api/chat/pin', data).then(res => {
@@ -1183,7 +1146,7 @@ export default {
     // 		token: this.imUserInfo.token,
     // 		both: 2,
     // 		vid: item.vid,
-    // 		fd: this.fd
+    // 		fd: this.webSocketFd
     // 	}
     // 	this.$u.post('api/chat/deleteMessage', data).then(res => {
     // 		this.controlIndex = "";
@@ -1192,48 +1155,39 @@ export default {
     // 	})
     // },
     inviteRoom(init = false) {
-      if (!this.fd) {
-        return;
-      }
+      if (!this.webSocketFd) return
       const _that = this;
       const roomId = this.qsVid;
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-          // type: this.initInvite ? 2 : this.current,
 					type: 2,
           is_new: 1,
           token: this.imUserInfo.token,
-          // vid:this.parmUserInfo.vid,
-          fd: this.fd,
+          fd: this.webSocketFd,
           name: this.parmUserInfo.username,
           user_id: getQueryString().id,
           channel: this.channel,
           channel_code: this.channel_code ? this.channel_code : "",
         })
         .then((res) => {
-          if (this.initInvite) {
-            this.initInvite = false;
-            roomInfo[roomId] = res.vid;
-            localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-            localStorage.setItem("anchorVid", res.vid);
-
-            return;
-          }
           roomInfo[roomId] = res.vid;
-          this.parmUserInfo.vid = res.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           localStorage.setItem("anchorVid", res.vid);
-
-          this.inRoomInfo(this.fd);
+          if (this.initInvite) {
+            this.initInvite = false;
+            return;
+          }
+          this.parmUserInfo.vid = res.vid;
+          this.inRoomInfo(this.webSocketFd);
           this.controlIndex = "";
         });
     },
-    inRoomInfo(fd) {
+    inRoomInfo(webSocketFd) {
       if (this.current == 0) {
         this.parmUserInfo.vid = this.qsVid;
       }
-      if (!this.parmUserInfo.vid || !fd) {
+      if (!this.parmUserInfo.vid || !webSocketFd) {
         return;
       }
 
@@ -1245,7 +1199,7 @@ export default {
       const inRoomData = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
-        fd: fd,
+        fd: webSocketFd,
         type: this.current || 0,
         channel: this.channel,
         channel_code: this.channel_code ? this.channel_code : "",
@@ -1267,13 +1221,13 @@ export default {
     },
     // 離開聊天室
     leaveRoom() {
-      if (!this.fd) {
+      if (!this.webSocketFd) {
         return;
       }
       const data = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
-        fd: this.fd,
+        fd: this.webSocketFd,
         type:
           this.roomInfo && this.roomInfo.room_type
             ? this.roomInfo.room_type
@@ -1391,7 +1345,7 @@ export default {
           : this.current || 0;
       let data = {
         vid: this.parmUserInfo.vid,
-        fd: this.fd,
+        fd: this.webSocketFd,
         type: type,
         text: this.msgText,
         method: "notice",
@@ -1406,7 +1360,7 @@ export default {
       if (this.msgType == 2) {
         var formData = new FormData();
         formData.append("vid", this.parmUserInfo.vid);
-        formData.append("fd", this.fd);
+        formData.append("fd", this.webSocketFd);
         formData.append("title", "");
         formData.append("link", "");
         formData.append("type", type);
@@ -1469,7 +1423,7 @@ export default {
     websocketonmessage(e) {
       let data = JSON.parse(e.data);
       if (data.fd !== null && data.action === "open") {
-        this.fd = data.fd;
+        this.webSocketFd = data.fd;
         // this.inRoomInfo(data.fd);
       }
       if (data.action === "delmsg") {
@@ -1552,7 +1506,7 @@ export default {
               data.data.historyMessageList
             );
             this.myUserinfo = data.data.targetUserInfo;
-            this.fd = data.data.targetUserInfo.fd;
+            this.webSocketFd = data.data.targetUserInfo.fd;
           }
 
           if (data.data.type == "call") {
