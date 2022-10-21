@@ -276,7 +276,6 @@ export default {
       page: 1,
       tabNumber: 0,
       inviteCount: 0,
-      anthorCount:0,
       prevImg: null,
       showChatList: false,
       isMore: true,
@@ -495,9 +494,10 @@ export default {
     },
     onAnchorCount(list){
       if(list.vid === this.anchorList.vid){
-        if (list.unread_count > 0) this.anthorCount += list.unread_count
+        if (list.unread_count > 0){
+          this.inviteCount += list.unread_count
+        } 
       }
-      this.inviteCount = this.anthorCount;
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
@@ -514,9 +514,9 @@ export default {
           }
         })
         if (falg) arr.push(msgList);
-        this.onAnchorCount(msgList)
         this.unreadMsgList = arr;
         this.unreadTotal += 1;
+        if(msgList.vid === this.anchorList.vid) this.onAnchorCount(msgList)
       }
     },
     // 已读事件
@@ -778,8 +778,8 @@ export default {
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
       // 连接建立时触发
@@ -805,7 +805,8 @@ export default {
       //关闭
       this.ws.close();
       //重连
-      this.reconnect();
+      // this.reconnect();
+      this.getUserToken()
     },
     reconnect() {
       //重新连接
@@ -891,6 +892,8 @@ export default {
           this.fileList = [];
           this.uploadImgShow = false;
           this.toBottom();
+          this.readEvent(data)
+
         })
         .catch(err => {
           this.$message.error("上传文件大小不符！请重新上传")
@@ -989,8 +992,11 @@ export default {
               unread_count: 1,
               text: data.text,
             };
-            this.refreshUnreadEvent(msgList, 1);
-            this.readEvent(msgList)
+            if(data.sender === Number(localStorage.getItem("userid")) || data.sender_nickname === this.info.user_nickname){
+              return
+            } else{
+              this.refreshUnreadEvent(msgList, 1);
+            }
           }
           if (data.action === "send" && data.msg_type === "0") {
             let sendMsgList = {
