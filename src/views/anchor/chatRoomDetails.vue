@@ -276,6 +276,7 @@ export default {
       page: 1,
       tabNumber: 0,
       inviteCount: 0,
+      anthorCount:0,
       prevImg: null,
       showChatList: false,
       isMore: true,
@@ -493,11 +494,10 @@ export default {
       this.unreadTotal = num;
     },
     onAnchorCount(list){
-      let num = 0;
-      if(list.vid === JSON.parse(localStorage.getItem("anchor")).vid){
-        if (list.unread_count > 0) num += list.unread_count;
+      if(list.vid === this.anchorList.vid){
+        if (list.unread_count > 0) this.anthorCount += list.unread_count
       }
-      this.inviteCount = num;
+      this.inviteCount = this.anthorCount;
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
@@ -516,7 +516,6 @@ export default {
         if (falg) arr.push(msgList);
         this.onAnchorCount(msgList)
         this.unreadMsgList = arr;
-        // this.inviteCount += 1;
         this.unreadTotal += 1;
       }
     },
@@ -525,9 +524,10 @@ export default {
       let newMessageData = this.unreadMsgList
       newMessageData.forEach((res)=>{
         if(res.vid === item.vid) res.unread_count = 0
-        if(res.vid === JSON.parse(localStorage.getItem("anchor")).vid) this.inviteCount = 0 
       })
-
+      if(item.vid === this.anchorList.vid) {
+        this.inviteCount = 0
+      } 
       this.unreadMsgList = newMessageData;
     },
     getUserToken() {
@@ -546,7 +546,7 @@ export default {
       this.showChatList = true;
       this.showSetDownBtn = false;
       this.showMsgInfo = false;
-      // this.getChatMessageList();
+      this.getChatMessageList();
       if (this.room_type == "2") this.leaveRoom(2);
     },
     delQuickReply(item) {
@@ -716,7 +716,7 @@ export default {
         .then((res) => {
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-          localStorage.setItem("anchor", JSON.stringify(res.data));
+
           this.anchorList = res.data
           if (this.initInvite) {
             this.initInvite = false;
@@ -926,10 +926,6 @@ export default {
           return
         }
       }
-      if(this.tabNumber === 2){
-        this.inviteCount = 0;
-        this.readEvent(this.anchorList)
-      }
       this.mergeDataList(this.tabNumber, "push", sendMessageList);
       this.sendMessage(currentDate, this.msgText);
       this.msgText = "";
@@ -986,6 +982,16 @@ export default {
           break;
         case "send":
         case "system":
+          if(data.type === 2){
+            let msgList = {
+              vid: data.vid,
+              room_type: data.type,
+              unread_count: 1,
+              text: data.text,
+            };
+            this.refreshUnreadEvent(msgList, 1);
+            this.readEvent(msgList)
+          }
           if (data.action === "send" && data.msg_type === "0") {
             let sendMsgList = {
               messageForShow: data.text,
