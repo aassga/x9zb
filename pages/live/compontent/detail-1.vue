@@ -7,15 +7,16 @@
       'app-version': hidevideo,
       'add-margin': current === 1,
       'is-ios': iosDevice,
-      'add-padding': showMsgInfo
+      'add-padding': showMsgInfo,
     }"
   >
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div class="announcement"
-			v-if="current !== 2 || $store.state.system.announcement === undefined"		
-		>
+    <div
+      class="announcement"
+      v-if="current !== 2 || $store.state.system.announcement === undefined"
+    >
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -151,7 +152,7 @@
             viewBox="0 0 40 40"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            @click="getshare"
+            @click="share = ture"
           >
             <path
               fill-rule="evenodd"
@@ -327,13 +328,13 @@
 <script>
 import SVGA from "@/common/svga.min.js";
 import { getQueryString } from "@/common/Qs";
-import chatNewMessage from "@/compontent/chat-msg-box/chatNewMessage.vue"
+import chatNewMessage from "@/compontent/chat-msg-box/chatNewMessage.vue";
 export default {
   name: "information-detail",
   props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
   components: {
-    chatNewMessage
-	},
+    chatNewMessage,
+  },
   data() {
     return {
       reportListShow: false,
@@ -343,14 +344,12 @@ export default {
       isErrorMsg: true,
       url: window.location.href,
       modalMsgList: [],
-      isReadOnly: false,
       uploadImg: false,
       msgText: "",
-			messageDataList: [],
+      messageDataList: [],
       msgSquareList: [],
       msgAnchorList: [],
       msgChatList: [],
-      msgList2: [],
       prevImg: "",
       myUserinfo: {
         uid: "",
@@ -358,16 +357,10 @@ export default {
       webSocketFd: "",
       page: 1,
       isShowGiftBox: false,
-      giftNum: 1,
-      currentGiftId: "",
       isShowEmoji: false,
       uid: "",
-      gift_jpg: "",
       targetUserInfo: {},
-      isAllowedSendMsg: true,
       hasSendMsgCount: 0,
-      needBuy: false,
-      that: this,
       hidevideo: getQueryString().hidevideo,
       iosDevice: getQueryString().device === "iphone" ? true : false,
       active: 0,
@@ -391,7 +384,6 @@ export default {
       pinInfo: "",
       channel: getQueryString().channel_code || localStorage.getItem("channel"),
       channel_code: getQueryString().channel_code,
-      url: window.location.href,
       showLoading: true,
       isScroller: false,
       lockPage: false,
@@ -402,8 +394,6 @@ export default {
       info: {},
       canGet: true,
       lastVid: "",
-      type0_local_msg_list: [],
-      type2_local_msg_list: [],
       isShowGiftBox: false,
       giftList: [], //礼物列表
       selectGiftIndex: null,
@@ -425,9 +415,10 @@ export default {
   watch: {
     page(newVal, oldVal) {
       if (newVal !== oldVal) {
-        if (newVal === 2 && this.reconnectStatus) {
-          return;
-        } else if (this.historyData.length < 50) {
+        if (
+          (newVal === 2 && this.reconnectStatus) ||
+          this.historyData.length < 50
+        ) {
           return;
         } else {
           this.getChatHistoryMsg();
@@ -436,9 +427,7 @@ export default {
     },
     webSocketFd(newVal, oldVal) {
       if (newVal !== oldVal) {
-        if (this.current === 0) {
-          this.inviteRoom();
-        }
+        if (this.current === 0) this.inviteRoom();
         this.inRoomInfo(newVal);
       }
     },
@@ -452,7 +441,6 @@ export default {
         this.page = 1;
         this.pinInfo = "";
         this.isMore = true;
-        // this.mergeDataList(this.current,'empty')
         this.isScroller = false;
         this.parmUserInfo.vid = newVal.vid;
         this.inRoomInfo(this.webSocketFd);
@@ -467,9 +455,7 @@ export default {
         this.reconnectStatus = false;
         this.isScroller = false;
         this.parmUserInfo.vid = "";
-        if (newVal !== 1) {
-          this.showLoading = true;
-        }
+        if (newVal !== 1) this.showLoading = true;
       }
       let qVid = this.qsVid;
       switch (newVal) {
@@ -479,32 +465,25 @@ export default {
           break;
         case 1:
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-          if (!vInfo.hasOwnProperty(qVid)) {
-            this.inviteRoom();
-            return;
-          }
-          this.parmUserInfo.vid = vInfo[qVid];
           this.inviteRoom();
-          break
+          if (!vInfo.hasOwnProperty(qVid)) return;
+          this.parmUserInfo.vid = vInfo[qVid];
+          break;
         case 2:
           this.leaveRoom();
-          break  
-        default:
           break;
       }
     },
     showMsgInfo(newVal, oldVal) {
-      if (this.roomDetailData.room_type === 2 && newVal === false) {
-        this.leaveRoom();
-      }
+      if (this.roomDetailData.room_type === 2 && !newVal) this.leaveRoom();
     },
   },
   filters: {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
-        let split = window.location.origin + "/"
-            (newUrl = newUrl.replace(split, ""));
+        let split =
+          window.location.origin + "/"((newUrl = newUrl.replace(split, "")));
       }
       return newUrl;
     },
@@ -513,27 +492,15 @@ export default {
     this.toBottom();
   },
   created() {
-    if (this.is_login()) {
-      this.$store.dispatch("getInfo", this.$u);
-    }
+    if (this.is_login()) this.$store.dispatch("getInfo", this.$u);
     this.uid = this.$route.query.id;
   },
   mounted() {
-    // this.addDom();
-    if (window.ws) {
-      window.ws.close();
-      // console.log("close init");
-    }
     this.getReportList();
     this.initInfo(true);
     this.getGiftList();
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      // console.log(
-      //   domScroll.scrollTop,
-      //   domScroll.scrollTop - domScroll.offsetHeight,
-      //   "domScroll.scrollTop-domScroll.offsetHeight==="
-      // );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
         if (!this.isErrorMsg) {
@@ -561,7 +528,6 @@ export default {
           break;
       }
     }
-    // this.shareUrl = window.location.origin + "/room/" + getQueryString().id;
     this.shareUrl = window.location.href;
     this.getUserToken();
   },
@@ -573,28 +539,27 @@ export default {
     });
   },
   methods: {
-  	 play(item){
-   		this.$u.post('api/tob/gettoburl', {
+    play(item) {
+      this.$u
+        .post("api/tob/gettoburl", {
           terminal: "h5",
-          share:item.sender
+          share: item.sender,
         })
         .then((res) => {
-          if(res.length>0){
+          if (res.length > 0) {
             const url = res[0];
-            let newTab = window.open('about:blank')
-            newTab.location.href=url
+            let newTab = window.open("about:blank");
+            newTab.location.href = url;
           }
         });
     },
-		clearStatus() {
+    clearStatus() {
       this.controlIndex = -1;
     },
     submit() {
       let files = [];
       // 通过filter，筛选出上传进度为100的文件(因为某些上传失败的文件，进度值不为100，这个是可选的操作)
-      files = this.$refs.uUpload.lists.filter((val) => {
-        return val.progress === 100;
-      });
+      files = this.$refs.uUpload.lists.filter((val) => val.progress === 100);
       // 如果您不需要进行太多的处理，直接如下即可
       files = this.$refs.uUpload.lists;
       const file = files[0].file;
@@ -611,7 +576,6 @@ export default {
       this.sendMessage(currentDate);
     },
     onHandleClickImg(url) {
-      // console.log("我是点击图片事件");
       uni.previewImage({
         urls: [url],
       });
@@ -624,21 +588,21 @@ export default {
     // 		// console.log(res);
     // 	})
     // },
-    // 关闭弹框事件
 
+    // 关闭弹框事件
     initBase() {
       this.page = 1;
       this.pinInfo = "";
       this.isMore = true;
       this.isScroller = false;
     },
-    controlEvent(index){
+    controlEvent(index) {
       this.controlIndex = index;
     },
     resend(item) {
       // console.log(item);
       this.mergeDataList(this.current).map((val, index) => {
-        if (val === item) this.mergeDataList(this.current).splice(index, 1)
+        if (val === item) this.mergeDataList(this.current).splice(index, 1);
       });
       this.msgText = item.text;
     },
@@ -656,7 +620,6 @@ export default {
     getReportList() {
       const _this = this;
       this.$u.get("api/report/classifyList").then((res) => {
-
         _this.reportList = res;
         if (res.length > 0) _this.reportValue = res[0].id;
       });
@@ -668,29 +631,18 @@ export default {
     // 举报事件
     report(item = false) {
       const _this = this;
-      if (this.reportItem) {
-        this.$u
-          .get("api/report_user/insert", {
-            relateId: this.reportItem.msg_id,
-            classifyId: this.reportValue || 0,
-            type: 3,
-          })
-          .then((res) => {
-            _this.coloseReport();
-            _this.$u.toast("举报成功");
-          });
-      } else {
-        this.$u
-          .get("api/report_user/insert", {
-            relateId: this.parmUserInfo.vid,
-            classifyId: this.reportValue || 0,
-            type: 4,
-          })
-          .then((res) => {
-            _this.coloseReport();
-            _this.$u.toast("举报成功");
-          });
-      }
+      this.$u
+        .get("api/report_user/insert", {
+          relateId: this.reportItem
+            ? this.reportItem.msg_id
+            : this.parmUserInfo.vid,
+          classifyId: this.reportValue || 0,
+          type: this.reportItem ? 3 : 4,
+        })
+        .then((res) => {
+          _this.coloseReport();
+          _this.$u.toast("举报成功");
+        });
     },
     sendImg(e) {
       this.msgType = e;
@@ -703,11 +655,9 @@ export default {
       if (!this.reconnectStatus) this.mergeDataList(this.current, "empty");
       if (getQueryString() || this.roomDetailData) {
         let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-        if (!this.roomDetailData && !roomInfo) return
+        if (!this.roomDetailData && !roomInfo) return;
         if (this.current === 2) {
-          this.parmUserInfo = {
-            vid: roomInfo[this.qsVid],
-          };
+          this.parmUserInfo = { vid: roomInfo[this.qsVid] };
         } else {
           this.parmUserInfo = {
             vid: this.roomDetailData ? this.roomDetailData.vid : this.qsVid,
@@ -735,8 +685,6 @@ export default {
           ? getQueryString().user_name
           : localStorage.getItem("userid");
       }
-      // this.getUserToken();
-      // this.quickReplyList();
     },
     delQuickReply(item) {
       const _that = this;
@@ -766,7 +714,6 @@ export default {
         })
         .then((res) => {
           this.modalMsgList = res;
-          // console.log(this.modalMsgList, "this.modalMsgList======");
           this.controlIndex = -1;
         });
     },
@@ -798,7 +745,7 @@ export default {
       this.isShowEmoji = false;
       this.msgText = result;
     },
-    
+
     getUserToken() {
       const _that = this;
       const data = this.parmUserInfo;
@@ -818,47 +765,42 @@ export default {
         });
     },
     getChatHistoryMsg(iniPage) {
-      if(this.current === 2) {
-        console.log(this.current)
-        // this.mergeDataList(this.current,"empty")
-      }
       if (
-        this.parmUserInfo.vid === null ||
-        this.parmUserInfo.vid === "" ||
+        [null, ""].includes(this.parmUserInfo.vid) ||
         this.reconnectStatus ||
         !this.isMore ||
         !this.canGet
-      ) {
+      )
         return;
-      }
       this.canGet = false;
       const _that = this;
+      if (this.current === 2) {
+        this.numType = this.roomDetailData.room_type;
+      } else if (this.current === 1) {
+        this.numType = 1;
+      } else {
+        this.numType = this.current || 0;
+      }
       const params = {
         page: iniPage || this.page,
         limit: 50,
-        type:
-          this.current === 2
-            ? this.roomDetailData.room_type
-            : this.current === 1
-            ? 2
-            : this.current || 0,
+        type: this.numType,
         vid: this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id,
       };
       this.lastpage = params.page;
       this.lastVid = params.vid;
-      if (!iniPage && this.page === 1) return
+      if (!iniPage && this.page === 1) return;
       this.showLoading = true;
+      let getHistoryApiUrl = `api/chat/getChatHistory?type=${params.type}&user_id=${
+        params.user_id
+      }&vid=${params.vid}&limit=${params.limit}&page=${
+        params.page
+      }&channel_code=${this.channel_code ? this.channel_code : ""}&channel=${
+        this.channel_code ? this.channel_code : ""
+      }`;
       this.$u
-        .get(
-          `api/chat/getChatHistory?type=${params.type}&user_id=${
-            params.user_id
-          }&vid=${params.vid}&limit=${params.limit}&page=${
-            params.page
-          }&channel_code=${
-            this.channel_code ? this.channel_code : ""
-          }&channel=${this.channel_code ? this.channel_code : ""}`
-        )
+        .get(getHistoryApiUrl)
         .then((res) => {
           if (
             this.roomDetailData.hasOwnProperty("vid") &&
@@ -868,7 +810,7 @@ export default {
           }
           let dataList = res.reverse();
           this.lockPage = true;
-          this.isScroller = dataList.length <= 10
+          this.isScroller = dataList.length <= 10;
           this.showLoading = false;
           if (dataList.length === 0) {
             this.isMore = false;
@@ -887,77 +829,18 @@ export default {
           this.canGet = true;
         });
     },
-    showControl(index,item) {
-    	if(item.msg_type==="4") return
+    showControl(index, item) {
+      if (item.msg_type === "4") return;
       this.controlIndex = index;
     },
-    // mute(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		mute: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.webSocketFd,
-    // 		user_id: item.sender
-    // 	};
-    // 	this.$u.post('api/chat/mute', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-
-    // },
-    // freeze(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		freeze: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.webSocketFd,
-    // 		user_id: item.sender
-    // 	};
-    // 	this.$u.post('api/chat/freeze', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-    // },
-    // pin(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		pin: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.webSocketFd,
-    // 		msg_id: item.msg_id
-    // 	};
-    // 	this.$u.post('api/chat/pin', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-    // },
-    // delMsg(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		msg_id: item.msg_id,
-    // 		token: this.imUserInfo.token,
-    // 		both: 2,
-    // 		vid: item.vid,
-    // 		fd: this.webSocketFd
-    // 	}
-    // 	this.$u.post('api/chat/deleteMessage', data).then(res => {
-    // 		this.controlIndex = "";
-    // 		this.getChatHistoryMsg();
-    // 		console.log('shanchu')
-    // 	})
-    // },
     inviteRoom(init = false) {
-      if (!this.webSocketFd) return
+      if (!this.webSocketFd) return;
       const _that = this;
       const roomId = this.qsVid;
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-					type: 2,
+          type: 2,
           is_new: 1,
           token: this.imUserInfo.token,
           fd: this.webSocketFd,
@@ -980,9 +863,11 @@ export default {
         });
     },
     inRoomInfo(webSocketFd) {
-      if (this.current === 0) this.parmUserInfo.vid = this.qsVid;
-      if (!this.parmUserInfo.vid || !webSocketFd) return
-      if (this.current === 2 && !this.parmUserInfo.vid) {
+      if (!this.parmUserInfo.vid || !webSocketFd){
+        return;
+      }else if (this.current === 0) {
+        this.parmUserInfo.vid = this.qsVid;
+      }else if (this.current === 2 && !this.parmUserInfo.vid) {
         this.getUserToken();
         return;
       }
@@ -1009,8 +894,8 @@ export default {
     },
     // 離開聊天室
     leaveRoom() {
-      this.msgChatList = []
-      if (!this.webSocketFd) return
+      this.msgChatList = [];
+      if (!this.webSocketFd) return;
       const data = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
@@ -1020,10 +905,8 @@ export default {
             ? this.roomInfo.room_type
             : this.current || 0,
       };
-
       this.$u.post("api/chat/leaveRoom", data).then((res) => {
         this.$emit("leaveRoom");
-        
       });
     },
     newSocket(data) {
@@ -1035,11 +918,10 @@ export default {
 
       this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`; 
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       // window.ws = this.ws;
       // this.$global.setWs(this.ws);
-      //
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 通信发生错误时触发
@@ -1060,12 +942,12 @@ export default {
     websocketclose(e) {
       //重连
       this.reconnect();
-      this.getUserToken()
+      this.getUserToken();
     },
     reconnect() {
       //重新连接
       this.reconnectStatus = true;
-      if (this.lockReconnect) return
+      if (this.lockReconnect) return;
       this.lockReconnect = true;
       //没连接上会一直重连，设置延迟避免请求过多
       this.timeoutnum && clearTimeout(this.timeoutnum);
@@ -1150,7 +1032,7 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         // xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        xhr.open("POST","http://huyapre.oxldkm.com/api/chat/sendMessage");
+        xhr.open("POST", "http://huyapre.oxldkm.com/api/chat/sendMessage");
         // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
         // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
@@ -1166,26 +1048,27 @@ export default {
         .then((res) => {
           this.msgText = "";
           if (res.msg === "connection error") {
-            this.getUserToken()
+            this.getUserToken();
           } else {
-            this.mergeDataList(this.current,'error',uiCode)
+            this.mergeDataList(this.current, "error", uiCode);
           }
           this.toBottom();
         })
         .catch((error) => {
-          this.mergeDataList(this.current,'error',uiCode)
+          this.mergeDataList(this.current, "error", uiCode);
         });
     },
     submitMessage() {
       this.isShowEmoji = false;
       let currentDate = new Date().getTime();
-      var strRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\/]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{15})?(\/.*)?$/;
-      var re = new RegExp(strRegex)
-      if(re.test(this.msgText.replace(/(\s*$)/g,""))){
+      var strRegex =
+        /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\/]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{15})?(\/.*)?$/;
+      var re = new RegExp(strRegex);
+      if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
         this.$u.toast("无法发送超链接");
         this.msgText = "";
         return;
-      }else	if (this.info.user_nickname === undefined && this.current === 0) {
+      } else if (this.info.user_nickname === undefined && this.current === 0) {
         this.$u.toast("游客不能在广场发言 请您先登录");
         this.msgText = "";
         return;
@@ -1197,13 +1080,13 @@ export default {
     // 客户端接收服务端数据时触发
     websocketonmessage(event) {
       let data = JSON.parse(event.data);
-      switch (data.action){
+      switch (data.action) {
         case "open":
-          if(data.fd !== null){
+          if (data.fd !== null) {
             this.webSocketFd = data.fd;
             this.inRoomInfo(data.fd);
           }
-          break
+          break;
         case "delmsg":
           let mergaArrData = this.mergeDataList(this.current);
           let delIndex = mergaArrData.findIndex(
@@ -1211,7 +1094,7 @@ export default {
           );
           mergaArrData.splice(delIndex, 1);
           this.mergeDataList(this.current, "init", mergaArrData);
-          break  
+          break;
         case "unread":
           let msgList = data.data || [];
           this.$store.dispatch("updateMsg", {
@@ -1219,8 +1102,8 @@ export default {
             type: 0,
           });
           this.$emit("getMessageList");
-          this.$emit('onHandleUnRead',msgList, 0);
-          break 
+          this.$emit("onHandleUnRead", msgList, 0);
+          break;
         case "newMsg":
           let newMsgList = {
             vid: data.newMsgRoomvid,
@@ -1234,26 +1117,30 @@ export default {
               type: 1,
             });
             // this.$emit('getMessageList')
-            this.$emit('onHandleUnRead',newMsgList, 1);
+            this.$emit("onHandleUnRead", newMsgList, 1);
           }
-          break      
+          break;
         case "pin":
           this.pinInfo = JSON.parse(data.data);
-          break      
+          break;
         case "send":
         case "system":
           //自己发送的消息不渲染到列表
-          if ((data.sender_nickname.includes("游客") && this.current === 0) || (data.text.includes("进入直播间") && this.current !== 0)) return  
-          this.mergeDataList(this.current, "push", data)
+          if (
+            (data.sender_nickname.includes("游客") && this.current === 0) ||
+            (data.text.includes("进入直播间") && this.current !== 0)
+          )
+            return;
+          this.mergeDataList(this.current, "push", data);
           this.toBottom();
-          break   
+          break;
         case "gift":
-          if (this.current !== 0) return
+          if (this.current !== 0) return;
           let gift = this.giftList.filter((it) => it.id === data.gift_id)[0];
           data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-          this.mergeDataList(this.current, "push", data)
+          this.mergeDataList(this.current, "push", data);
           this.onhandleSendGift(data);
-          break      
+          break;
       }
       if (data.status === 200) {
         if (data.data) {
@@ -1282,11 +1169,11 @@ export default {
                     this.hasSendMsgCount = this.hasSendMsgCount - 1;
                   }
                 }
-              }else if(data.data.type === "message"){
+              } else if (data.data.type === "message") {
                 this.$store.dispatch("getUnReadMsgNum");
-                if (data.data.content.type === 1) this.msgText = "";              
+                if (data.data.content.type === 1) this.msgText = "";
               }
-              break;          
+              break;
             default:
               break;
           }
@@ -1302,9 +1189,6 @@ export default {
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
     },
-    getshare() {
-      this.share = true;
-    },
     //解耦合
     mergeDataList(type, status, data) {
       if (type !== this.current) {
@@ -1316,31 +1200,30 @@ export default {
       }
       switch (status) {
         case "init":
-          if(this.current === 0){
+          if (this.current === 0) {
             this.msgSquareList = data;
-          }else if(this.current === 1){
-            console.log(data)
+          } else if (this.current === 1) {
             this.msgAnchorList = data;
-          }else{
+          } else {
             this.msgChatList = data;
           }
           break;
         case "push":
-          if(this.current === 0){
+          if (this.current === 0) {
             this.msgSquareList.push(data);
-          }else if(this.current === 1){
+          } else if (this.current === 1) {
             this.msgAnchorList.push(data);
-          }else{
-            this.msgChatList.push(data);           
+          } else {
+            this.msgChatList.push(data);
           }
           break;
         case "unshift":
           data.forEach((el) => {
-            if(this.current === 0){
+            if (this.current === 0) {
               this.msgSquareList.unshift(el);
-            }else if(this.current === 1){
+            } else if (this.current === 1) {
               this.msgAnchorList.unshift(el);
-            }else{
+            } else {
               this.msgChatList.unshift(el);
             }
           });
@@ -1350,23 +1233,21 @@ export default {
           break;
         case "error":
           setTimeout(() => {
-            if(this.current === 0){
-              this.msgSquareList.forEach(list=>{
-                if(list.uiCode === data) list.isError = true
-              })
-            }else if(this.current === 1){
-              this.msgAnchorList.forEach(list=>{
-                if(list.uiCode === data) list.isError = true
-              })
-            }else{
-              this.msgChatList.forEach(list=>{
-                if(list.uiCode === data) list.isError = true
-              })
-
+            if (this.current === 0) {
+              this.msgSquareList.forEach((list) => {
+                if (list.uiCode === data) list.isError = true;
+              });
+            } else if (this.current === 1) {
+              this.msgAnchorList.forEach((list) => {
+                if (list.uiCode === data) list.isError = true;
+              });
+            } else {
+              this.msgChatList.forEach((list) => {
+                if (list.uiCode === data) list.isError = true;
+              });
             }
           }, 1500);
       }
-      // this.toBottom()
     },
     // 判斷登入狀態
     is_login() {
@@ -1407,13 +1288,13 @@ export default {
       this.$u.get("api/Gift/getList").then((res) => {
         this.giftList = res;
         if (res.length > 0) {
-          res.forEach(el =>{
+          res.forEach((el) => {
             let link = document.createElement("link");
             link.rel = "prefetch";
             link.as = "fetch";
             link.href = el.swf;
             document.body.appendChild(link);
-          })
+          });
         }
       });
     },
@@ -1462,7 +1343,8 @@ export default {
         exp_icon: this.userInfo.exp_icon,
         is_guard: this.userInfo.is_guard,
         is_room: this.userInfo.id === this.uid ? 1 : 0,
-        guard_icon: this.userInfo.is_guard === 1 ? this.userInfo.guard.icon : "",
+        guard_icon:
+          this.userInfo.is_guard === 1 ? this.userInfo.guard.icon : "",
       };
       if (type === 1) {
         data.gift_id = item.gift_id;
@@ -1515,28 +1397,28 @@ export default {
 <style lang="scss" scoped>
 @-webkit-keyframes pulse {
   0% {
-    transform:scale(1);
+    transform: scale(1);
   }
-  14%{
-     transform:scale(1.2);
+  14% {
+    transform: scale(1.2);
   }
-  28%{
-     transform:scale(1);
+  28% {
+    transform: scale(1);
   }
-  42%{
-     transform:scale(1.2);
+  42% {
+    transform: scale(1.2);
   }
   0% {
-     transform:scale(1);
+    transform: scale(1);
   }
 }
 
-.b-play-btn{
+.b-play-btn {
   animation: pulse 2s ease infinite;
-  width:80px;
-  height:auto;
-  &:hover{
-    cursor:pointer;
+  width: 80px;
+  height: auto;
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -2319,7 +2201,7 @@ form {
         background: #bd20ff;
       }
     }
-    .anchor-msg{
+    .anchor-msg {
       .msg-content {
         display: flex;
 
@@ -2469,15 +2351,15 @@ form {
       .msg-content {
         display: flex;
         .msg-avatar {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					min-width: 40px;
-					max-width: 40px;
-					height: 40px;
-					margin-right: 5px;
-					border-radius: 5px;
-					overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          max-width: 40px;
+          height: 40px;
+          margin-right: 5px;
+          border-radius: 5px;
+          overflow: hidden;
           .avatar {
             width: 80rpx;
           }
