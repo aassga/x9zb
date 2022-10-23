@@ -1060,7 +1060,7 @@ export default {
                     this.hasSendMsgCount = this.hasSendMsgCount - 1;
                   }
                 }
-              }else if("message"){
+              }else if(data.data.type === "message"){
                 this.$store.dispatch("getUnReadMsgNum");
                 if (data.data.content.type == 1) this.msgText = "";
               }
@@ -1116,7 +1116,7 @@ export default {
         case "error":
           setTimeout(() => {
             if (type === 0) {
-              this.msgSquareList.forEach( list => {
+              this.msgSquareList.forEach(list => {
                 if(list.uiCode === data) list.isError = true
               })
             } else if (type === 1) {
