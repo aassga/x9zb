@@ -139,9 +139,10 @@
                           ? 'width: 170px;'
                           : ''
                       "
+                      
                     >
-                      {{ getText(item.text)
-                      }}<i
+                      <span v-html="getText(item.text)"></span>
+                      <i
                         v-if="item.isError && [0, 1].includes(tabNumber)"
                         class="el-icon-loading"
                         @click="resend(item)"
