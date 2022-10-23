@@ -420,7 +420,7 @@
         :multiple="false"
         :maxCount="1"
       ></u-upload>
-      <u-button @click="submit">上傳</u-button>
+      <u-button @click="submit">上传</u-button>
     </u-popup>
     <!-- 如何獲得鑽石 -->
     <view class="diamondDirections" v-if="showDiamondDirections">
@@ -705,7 +705,7 @@ export default {
     });
   },
   methods: {
-  	 play(){
+  	 play(item){
    		this.$u.post('api/tob/gettoburl', {
           terminal: "h5",
           share:item.sender
@@ -722,7 +722,7 @@ export default {
       if (item.avatar === "") {
         return require("./../../../static/images/home/userLogo.png");
       } else {
-        return window.location.origin + item.avatar;
+        return item.avatar;
       }
     },
 		clearStatus() {
@@ -749,12 +749,8 @@ export default {
       let currentDate = new Date().getTime();
       this.sendMsgByApi(currentDate);
     },
-    onHandleClickImg(img) {
+    onHandleClickImg(url) {
       // console.log("我是点击图片事件");
-      let url = img;
-      if (img.indexOf("/") == 0) {
-        url = window.location.origin + img;
-      }
       uni.previewImage({
         urls: [url],
       });
@@ -1594,9 +1590,6 @@ export default {
           this.messageDataList = data;
           break;
         case "push":
-          if(data.pic !== undefined) {
-            data.pic = window.location.origin + data.pic
-          }
           this.messageDataList.push(data);
           break;
         case "unshift":

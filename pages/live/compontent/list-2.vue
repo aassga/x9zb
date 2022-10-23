@@ -212,7 +212,7 @@
 				} else if (page == this.current_page) {
 					return;
 				}
-				this.getList(page, false);
+				this.getList(this.currentTabIndex, page, false);
 			},
 			start(e) {
 				this.clientX = e.changedTouches[0].clientX;
