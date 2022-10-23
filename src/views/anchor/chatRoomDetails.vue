@@ -178,8 +178,8 @@
         class="upload-demo"
         action="#"
         :on-change="changeFile"
-        :on-remove="handleRemove"
         :on-exceed="limitCheck"
+        :on-remove="handleRemove"
         :auto-upload="false"
         :file-list="fileList"
         list-type="picture"
@@ -447,6 +447,15 @@ export default {
     },
     //取得圖片
     changeFile(fileList) {
+      const isLt2M = (fileList.size / 1024 / 1024 < 2);
+      if (!isLt2M) {
+        this.$message({
+          message: "文件大小不可以超过2M",
+          type: 'warning'
+        });
+        this.fileList = []
+        return false;
+      }
       this.msgType = 2;
       const file = fileList.raw;
       this.formData.pic = file;
@@ -458,7 +467,6 @@ export default {
         _that.prevImg = newUrl;
       };
     },
-
     // 列表已读未读比对事件
     mapList(readData, unReadData) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
@@ -897,7 +905,7 @@ export default {
 
         })
         .catch(err => {
-          this.$message.error("上传文件大小不符！请重新上传")
+          setTimeout(() => this.$message.error("您的网路不太好哦!!"), 10000);
           this.mergeDataList(this.tabNumber,'error',uiCode)
         });
     },
@@ -1076,7 +1084,6 @@ export default {
     },
     //解耦合
     mergeDataList(type, status, data) {
-      console.log(type, status, data)
       if (type !== this.tabNumber) return;
       switch (status) {
         case "init":
@@ -1117,15 +1124,24 @@ export default {
           setTimeout(() => {
             if (type === 0) {
               this.msgSquareList.forEach(list => {
-                if(list.uiCode === data) list.isError = true
+                if(list.uiCode === data){
+                  list.isError = true
+                  setTimeout(() => list.isError = false, 11000);
+                } 
               })
             } else if (type === 1) {
               this.msgChatList.forEach(list => {
-                if(list.uiCode === data) list.isError = true
+                if(list.uiCode === data){
+                  list.isError = true
+                  setTimeout(() => list.isError = false, 11000);
+                } 
               })
             } else {
               this.msgAnchorList.forEach(list => {
-                if(list.uiCode === data) list.isError = true
+                if(list.uiCode === data){
+                  list.isError = true
+                  setTimeout(() => list.isError = false, 11000);
+                } 
               })
             }
           }, 1500);
