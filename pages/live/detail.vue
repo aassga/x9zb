@@ -295,7 +295,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$store.state.system, "system========");
+    // console.log(this.$store.state.system, "system========");
     if (this.timerLoad) {
       clearInterval(this.timerLoad);
       this.timerLoad = null;
@@ -777,7 +777,6 @@ export default {
         type: "1,2",
         channel_code: this.channel_code ? this.channel_code : "",
       });
-      console.log(this.msgList2)
       for (let index = 0; index < res.length; index++) {
         let element = res[index];
         this.msgList2.forEach((num)=>{
@@ -808,8 +807,7 @@ export default {
 
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, index, "item-info=======");
-
+      // console.log(item, index, "item-info=======");
       this.showMsgInfo = true;
       this.roomInfo = item;
       this.activeIndex2 = index;
@@ -898,13 +896,13 @@ export default {
     },
 
     change(e) {
-      console.log(e, "e==========");
+      // console.log(e, "e==========");
       this.current = e;
       this.showMsgInfo = false;
       if (e === 1){
         this.oneChat = 0;
         this.newArr = this.messageList.filter(list => list.vid === localStorage.getItem('anchorVid'))
-        console.log(this.newArr)
+        // console.log(this.newArr)
       }else if (e == 4) {
         setTimeout((res) => {
           this.$refs.detail3.getList({

@@ -6,7 +6,7 @@
 			:key="index">
 			<div class="HuyaXWebhMessagelist_i_avater_box">
 				<image class="HuyaXWebhMessagelist_i_avater"
-					:src="item.avater || '/static/images/home/userLogo.png'" alt srcset />
+					:src="item.pic || '/static/images/home/userLogo.png'" alt srcset />
 				<div class="HuyaXWebhMessagelist_i_avater_tips" v-if="item.unread_count && item.unread_count > 0">
 					{{item.unread_count > 99 ? '99+' : item.unread_count}}</div>
 			</div>
