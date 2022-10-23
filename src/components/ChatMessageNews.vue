@@ -139,7 +139,6 @@
                           ? 'width: 170px;'
                           : ''
                       "
-                      
                     >
                       <span v-html="getText(item.text)"></span>
                       <i
