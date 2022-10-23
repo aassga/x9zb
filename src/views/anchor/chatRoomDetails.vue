@@ -294,6 +294,7 @@ export default {
       uploadImgShow: false, // 上傳圖片
       fileList: [], //圖片清單
       anchor_id: "",
+      anchorVid:"",
     };
   },
   computed: {
@@ -722,7 +723,7 @@ export default {
             this.initInvite = false;
             return;
           }
-          this.parmUserInfo.vid = res.data.vid;
+          this.anchorVid  = res.data.vid;
           this.inRoomInfo(this.webSocketFd);
           this.controlIndex = -1;
         });
@@ -732,8 +733,8 @@ export default {
       let params = {
         page: iniPage || this.page,
         limit: 20,
-        type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
-        vid: this.parmUserInfo.vid,
+        type: this.tabNumber === 1 ? this.room_type : this.tabNumber || 0,
+        vid:  this.tabNumber === 2 ? this.anchorVid :this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id,
       };
       this.$store
@@ -746,8 +747,8 @@ export default {
             return;
           }
           this.mergeDataList(
-            params.type == 2 && this.tabNumber == 1 ? 1 : params.type,
-            params.page != 1 ? "unshift" : "init",
+            params.type === 2 && this.tabNumber === 1 ? 1 : params.type,
+            params.page !== 1 ? "unshift" : "init",
             dataList
           );
         })
@@ -776,10 +777,10 @@ export default {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
       // 连接建立时触发
@@ -1075,6 +1076,7 @@ export default {
     },
     //解耦合
     mergeDataList(type, status, data) {
+      console.log(type, status, data)
       if (type !== this.tabNumber) return;
       switch (status) {
         case "init":

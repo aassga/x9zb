@@ -31,7 +31,7 @@
                   :class="{
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
-                        item.sender === parmUserInfo.user_id || 
+                        item.sender === parmUserInfo.user_id ||
                         item.sender === Number(parmUserInfo.user_id)) &&
                       tabNumber === 2,
                   }"
@@ -65,12 +65,10 @@
                     v-if="tabNumber !== 2"
                     class="text-name"
                     :style="
-                      item.text.includes('进入直播间')
-                        ? 'color: #575757;'
-                        : ''
+                      item.text.includes('进入直播间') ? 'color: #575757;' : ''
                     "
                   >
-                    <template v-if="item.sender_nickname !==undefined">
+                    <template v-if="item.sender_nickname !== undefined">
                       <span>
                         {{
                           !item.text.includes("进入直播间") &&
@@ -92,7 +90,10 @@
                     </template>
                     <span v-if="!item.text.includes('进入直播间')">:</span>
                   </div>
-                  <div v-if="tabNumber === 2 && !mySelf(item)" class="msg-avatar">
+                  <div
+                    v-if="tabNumber === 2 && !mySelf(item)"
+                    class="msg-avatar"
+                  >
                     <img class="avatar" :src="avatarImg(item)" />
                   </div>
                   <template v-if="item.pic && !item.text">
@@ -116,31 +117,21 @@
                   </template>
                   <div
                     v-if="!item.pic && item.text"
-                    @click.stop="showControl(index,item)"
-                    style="display: contents"
+                    @click.stop="showControl(index, item)"
+                    :style="tabNumber === 2 ? 'display: contents' : ''"
                   >
-                  <div class="login-content"  v-if="item.msg_type=='4'">
-                    {{ item.text }}
-                    <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play(item)"  />
-                  </div>
-                  <div 
-                    v-else
-                    class="text-info"
-                    :class="{ 'is-login': item.msg_type=='4' }"
-                    :style="
-                        item.text.includes('进入直播间')
-                          ? 'color: #575757;'
-                          : tabNumber !== 2
-                          ? 'width: 170px;'
-                          : ''
-                      "
-                      v-html="getText(item.text)"
-                      ></div><i v-if="item.isError" class="el-icon-loading" @click="resend(item)"></i>
-                      
-                    <!-- <vue-markdown
+                    <div class="login-content" v-if="item.msg_type == '4'">
+                      {{ item.text }}
+                      <img
+                        class="b-play-btn"
+                        :src="require('../assets/images/play.png')"
+                        @click="play(item)"
+                      />
+                    </div>
+                    <div
+                      v-else
                       class="text-info"
-                     v-else
-                       :class="{ 'is-login': item.msg_type=='4' }"
+                      :class="{ 'is-login': item.msg_type == '4' }"
                       :style="
                         item.text.includes('进入直播间')
                           ? 'color: #575757;'
@@ -148,18 +139,20 @@
                           ? 'width: 170px;'
                           : ''
                       "
-                      :anchor-attributes="linkAttrs"
-                      > 
-                      {{ item.text }} <span>123</span>
-                      </vue-markdown
-                    > -->
-                   <!--  <img class="b-play-btn" :src="require('../assets/images/play.png')" @click="play"  v-if="item.msg_type=='4'" /> -->
+                    >
+                      {{ getText(item.text)
+                      }}<i
+                        v-if="item.isError && [0, 1].includes(tabNumber)"
+                        class="el-icon-loading"
+                        @click="resend(item)"
+                      ></i>
+                    </div>
+                    <i
+                      v-if="item.isError && tabNumber === 2"
+                      class="el-icon-loading"
+                      @click="resend(item)"
+                    ></i>
                   </div>
-                  <!-- <i
-                    class="el-icon-warning error-msg"
-                    v-if="item.isError"
-                    @click="resend(item)"></i
-                  > -->
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -205,7 +198,7 @@ export default {
     roomInfo: {
       type: null,
     },
-    channel:{
+    channel: {
       type: null,
     },
   },
@@ -228,14 +221,14 @@ export default {
         class: "linkified",
       },
       uid: "",
-      showBottom:false,
+      showBottom: false,
       hiImg: require("./../assets/images/HiTag.png"),
     };
   },
 
   filters: {
     picFilter(url) {
-      console.log(url)
+      console.log(url);
       return url;
       // if (url.includes("base64")) {
       //   let split = window.location.origin + "/";
@@ -246,17 +239,17 @@ export default {
     },
   },
   methods: {
-    play(item){
+    play(item) {
       this.$store
         .dispatch("gettoburl", {
           terminal: "pc",
-          share:item.sender
+          share: item.sender,
         })
         .then((res) => {
-          if(res.data.length>0){
+          if (res.data.length > 0) {
             const url = res.data[0];
-            let newTab = window.open('about:blank')
-            newTab.location.href=url
+            let newTab = window.open("about:blank");
+            newTab.location.href = url;
           }
         });
     },
@@ -271,7 +264,7 @@ export default {
     mySelf(item) {
       if (
         Number(item.sender) === this.parmUserInfo.user_id ||
-        item.sender === this.parmUserInfo.user_id || 
+        item.sender === this.parmUserInfo.user_id ||
         item.sender === Number(this.parmUserInfo.user_id)
       ) {
         return true;
@@ -286,8 +279,8 @@ export default {
     openLink(link) {
       window.open(link);
     },
-    showControl(index,item) {
-      if(item.msg_type=='4'){
+    showControl(index, item) {
+      if (item.msg_type == "4") {
         return;
       }
       if (this.controlIndex == index) {
@@ -342,30 +335,30 @@ export default {
 <style lang="scss" scoped>
 @-webkit-keyframes pulse {
   0% {
-    transform:scale(1);
+    transform: scale(1);
   }
-  14%{
-     transform:scale(1.2);
+  14% {
+    transform: scale(1.2);
   }
-  28%{
-     transform:scale(1);
+  28% {
+    transform: scale(1);
   }
-  42%{
-     transform:scale(1.2);
+  42% {
+    transform: scale(1.2);
   }
   0% {
-     transform:scale(1);
+    transform: scale(1);
   }
 }
-.login-content{
-  max-width:170px;
+.login-content {
+  max-width: 170px;
 }
-.b-play-btn{
+.b-play-btn {
   animation: pulse 2s ease infinite;
-  width:80px;
-  height:auto;
-  &:hover{
-    cursor:pointer;
+  width: 80px;
+  height: auto;
+  &:hover {
+    cursor: pointer;
   }
 }
 ::v-deep.chat-detail-main {
@@ -472,7 +465,7 @@ export default {
       }
     }
     .text-info {
-      display: initial;
+      display: flex;
       color: rgb(0 0 0 / 80%);
       .linkified {
         color: blue;
@@ -491,12 +484,10 @@ export default {
         color: #47a2ff;
       }
     }
-    .el-icon-loading{
+    .el-icon-loading {
       display: flex !important;
-      justify-content: center;
-      position: relative;
-      top: -16px;
-      left: -53px;
+      align-items: center;
+      margin: 0 3px;
     }
 
     &.my-self {
@@ -509,9 +500,9 @@ export default {
           border-color: transparent transparent transparent #eee;
         }
       }
-      .el-icon-loading{
+      .el-icon-loading {
         display: flex !important;
-        align-items: center; 
+        align-items: center;
         margin: 0 3px;
       }
     }
