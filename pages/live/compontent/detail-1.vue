@@ -1053,13 +1053,13 @@ export default {
 
       this.$u
         .post("api/chat/sendMessage", data)
-        .then((res) => {
-          this.msgText = "";
+        .then((res) => { 
           if (res.msg === "connection error") {
             this.getUserToken();
-          } else {
+          } else if(res.code !== 0) {
             this.mergeDataList(this.current, "error", uiCode);
           }
+          this.msgText = "";
           this.toBottom();
         })
         .catch((error) => {
@@ -1069,10 +1069,20 @@ export default {
     },
     submitMessage() {
       this.isShowEmoji = false;
-      let currentDate = new Date().getTime();
       var strRegex =
         /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\/]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{15})?(\/.*)?$/;
       var re = new RegExp(strRegex);
+      let currentDate = new Date().getTime();
+      let sendMessageList = {
+        avatar:this.info.avatar,
+        sender:this.parmUserInfo.user_id,
+        sender_nickname:this.info.user_nickname,
+        // sender_exp:this.infos.exp,
+        text:this.msgText,
+        uiCode:currentDate,
+        isError:false,
+      }
+      console.log('this.info',this.info)
       if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
         this.$u.toast("无法发送超链接");
         this.msgText = "";
@@ -1082,6 +1092,7 @@ export default {
         this.msgText = "";
         return;
       } else {
+        this.mergeDataList(this.current,"push",sendMessageList)
         this.sendMessage(currentDate);
       }
       return;
@@ -1120,7 +1131,6 @@ export default {
             unread_count: 1,
             text: data.text,
           };
-          console.log('newMsgList',newMsgList)
           if (this.roomInfo.vid !== data.newMsgRoomvid) {
             this.$store.dispatch("updateMsg", {
               newMsgList,
@@ -1208,6 +1218,7 @@ export default {
       }
       switch (status) {
         case "init":
+          data.forEach(res => res.isError = false)
           if (this.current === 0) {
             this.msgSquareList = data;
           } else if (this.current === 1) {
@@ -1227,6 +1238,7 @@ export default {
           break;
         case "unshift":
           data.forEach((el) => {
+            el.isError = false
             if (this.current === 0) {
               this.msgSquareList.unshift(el);
             } else if (this.current === 1) {
@@ -1324,9 +1336,7 @@ export default {
       let timer = null;
       let offsetWidth = this.$refs.giftList.offsetWidth;
       let speed = 7.5;
-      if (type === 0) {
-        speed *= -1;
-      }
+      if (type === 0) speed *= -1
       let scrollCount = 0;
       timer = setInterval(() => {
         if (Math.abs(scrollCount) < offsetWidth) {
