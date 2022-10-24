@@ -863,14 +863,17 @@ export default {
         });
     },
     inRoomInfo(webSocketFd) {
-      if (!this.parmUserInfo.vid || !webSocketFd){
-        return;
-      }else if (this.current === 0) {
+
+      if (this.current === 0) {
         this.parmUserInfo.vid = this.qsVid;
-      }else if (this.current === 2 && !this.parmUserInfo.vid) {
+      }
+      if (this.current === 2 && !this.parmUserInfo.vid) {
         this.getUserToken();
         return;
       }
+      if (!this.parmUserInfo.vid || !webSocketFd){
+        return;
+      }      
       const inRoomData = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
