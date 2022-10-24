@@ -450,11 +450,11 @@ export default {
       this.initBase();
       if (newVal !== oldVal) {
         this.msgType = 1;
-        this.formData = {};
         this.prevImg = "";
-        this.reconnectStatus = false;
-        this.isScroller = false;
         this.parmUserInfo.vid = "";
+        this.formData = {};
+        this.isScroller = false;
+        this.reconnectStatus = false;
         if (newVal !== 1) this.showLoading = true;
       }
       let qVid = this.qsVid;
@@ -497,8 +497,9 @@ export default {
   },
   mounted() {
     this.getReportList();
-    this.initInfo(true);
     this.getGiftList();
+    this.initInfo();
+    this.getUserToken();
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
       if (domScroll.scrollTop <= 2) {
@@ -529,7 +530,7 @@ export default {
       }
     }
     this.shareUrl = window.location.href;
-    this.getUserToken();
+
   },
   beforeDestroy() {
     this.$store.dispatch("chatInOut", {
@@ -572,6 +573,11 @@ export default {
         _that.prevImg = newUrl;
       };
       this.msgType = 2;
+      const isLt2M = (file.size /1024 /1024 < 2)
+      if(!isLt2M){
+        _this.$u.toast("图片大于2m，请换张图片试试");
+        return
+      }
       let currentDate = new Date().getTime();
       this.sendMessage(currentDate);
     },
@@ -651,13 +657,15 @@ export default {
         dol.innerHtml += "<div>666</div>";
       }
     },
-    initInfo(init = false) {
+    initInfo() {
       if (!this.reconnectStatus) this.mergeDataList(this.current, "empty");
       if (getQueryString() || this.roomDetailData) {
         let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
         if (!this.roomDetailData && !roomInfo) return;
         if (this.current === 2) {
-          this.parmUserInfo = { vid: roomInfo[this.qsVid] };
+          this.parmUserInfo = { 
+            vid: roomInfo[this.qsVid] 
+          };
         } else {
           this.parmUserInfo = {
             vid: this.roomDetailData ? this.roomDetailData.vid : this.qsVid,
@@ -759,9 +767,7 @@ export default {
           _that.imUserInfo = res;
           _that.$emit("onHandleGetImUserInfo", res);
           _that.newSocket(res);
-          if (initSec) {
-            _that.inviteRoom();
-          }
+          _that.inviteRoom();
         });
     },
     getChatHistoryMsg(iniPage) {
@@ -863,7 +869,6 @@ export default {
         });
     },
     inRoomInfo(webSocketFd) {
-
       if (this.current === 0) {
         this.parmUserInfo.vid = this.qsVid;
       }
@@ -884,7 +889,7 @@ export default {
       };
       this.$u.post("api/chat/inRoom", inRoomData).then((res) => {
         if (res === "connection token error") {
-          this.initInfo(true);
+          this.initInfo();
           return;
         }
         if (res.pinData && res.pinData !== "") {
@@ -919,8 +924,8 @@ export default {
       // const locationHost = "10.83.107.92:9021";
       // this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
-      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
       // window.ws = this.ws;
@@ -958,7 +963,7 @@ export default {
         //新连接
         // this.initBase();
         this.initInvite = true;
-        this.initInfo(true);
+        this.initInfo();
         this.lockReconnect = false;
       }, 5000);
     },
@@ -1058,6 +1063,7 @@ export default {
           this.toBottom();
         })
         .catch((error) => {
+          setTimeout(() => this.$u.toast("您的网路不太好哦!!"), 10000);
           this.mergeDataList(this.current, "error", uiCode);
         });
     },
@@ -1114,12 +1120,12 @@ export default {
             unread_count: 1,
             text: data.text,
           };
+          console.log('newMsgList',newMsgList)
           if (this.roomInfo.vid !== data.newMsgRoomvid) {
             this.$store.dispatch("updateMsg", {
               newMsgList,
               type: 1,
             });
-            // this.$emit('getMessageList')
             this.$emit("onHandleUnRead", newMsgList, 1);
           }
           break;
@@ -1130,7 +1136,9 @@ export default {
         case "system":
           //自己发送的消息不渲染到列表
           if (
-            (data.sender_nickname.includes("游客") && this.current === 0) ||
+            data.sender === localStorage.getItem("userid") ||
+            data.sender_nickname === this.info.user_nickname ||
+            data.sender_nickname.includes("游客") ||
             (data.text.includes("进入直播间") && this.current !== 0)
           )
             return;
@@ -1167,10 +1175,7 @@ export default {
               if (data.data.type === "call") {
                 if (data.data.content.type === 1) {
                   this.msgText = "";
-                  this.toBottom();
-                  if (this.hasSendMsgCount > 0) {
-                    this.hasSendMsgCount = this.hasSendMsgCount - 1;
-                  }
+                  if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
                 }
               } else if (data.data.type === "message") {
                 this.$store.dispatch("getUnReadMsgNum");
@@ -1238,15 +1243,24 @@ export default {
           setTimeout(() => {
             if (this.current === 0) {
               this.msgSquareList.forEach((list) => {
-                if (list.uiCode === data) list.isError = true;
+                if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
               });
             } else if (this.current === 1) {
               this.msgAnchorList.forEach((list) => {
-                if (list.uiCode === data) list.isError = true;
+               if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
               });
             } else {
               this.msgChatList.forEach((list) => {
-                if (list.uiCode === data) list.isError = true;
+               if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
               });
             }
           }, 1500);

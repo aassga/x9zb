@@ -152,21 +152,22 @@
         >
         </MessageInfo>
         <detail1
-          :headShow="show1 && !hidevideo"
-          :giftList="giftList"
-          :current="current"
-          :showMsgInfo="showMsgInfo"
-          @getShow="getShow"
-          @leaveRoom="leaveRoom"
-          :qsVid="qsVid"
           v-if="
             (qsVid && showTabs.includes(current)) ||
             (current == 1 && showMsgInfo)
           "
+          :headShow="show1 && !hidevideo"
+          :giftList="giftList"
+          :current="current"
+          :showMsgInfo="showMsgInfo"
+          :qsVid="qsVid"
           :roomInfo="roomInfo"
           :roomDetailData="roomInfo"
           :userInfo="userInfo"
+          @getShow="getShow"
+          @leaveRoom="leaveRoom"
           @getMessageList="getMessageList"
+          @onHandleUnRead="onHandleUnRead"
         ></detail1>
         <detail2
           v-if="current == 3"
@@ -635,10 +636,13 @@ export default {
       return menuList;
     },
     oneChatMsgChange(list){
-      if(localStorage.getItem('anchorVid') === list.vid){
-        this.oneChat += list.unread_count ;
-        console.log('oneChat',this.oneChat)
-      }
+      setTimeout(() => {
+        if(localStorage.getItem('anchorVid') === list.vid){
+          this.oneChat += list.unread_count ;
+          console.log('oneChat',this.oneChat)
+        }  
+      }, 1000);
+      
     },
     // 群组消息总数计算事件
     onHandleGroupMsgChange(list) {
@@ -662,6 +666,7 @@ export default {
         console.log(msgList);
         this.msgList2 = msgList;
       } else {
+        console.log('msgList',msgList)
         this.oneChatMsgChange(msgList)
         if (this.messageList.length <= 0) {
           this.msgList2 = [msgList];

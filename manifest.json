@@ -14,8 +14,8 @@
                     // "target" : "http://huyapreadmin.oxldkm.com", //实际请求服务器地址
                     // "target" : "http://huidu.x9zb.live", //灰度環境
 
-                    "target" : "http://huyapre.oxldkm.com", //pre環境
-                    // "target" : "https://www.x9zb.live", //实际请求服务器地址
+                    // "target" : "http://huyapre.oxldkm.com", //pre環境
+                    "target" : "https://www.x9zb.live", //实际请求服务器地址
                     // "target": "http://pc.huya.com/",
                     "changeOrigin" : true,
                     "secure" : false,
