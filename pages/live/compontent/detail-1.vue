@@ -136,7 +136,7 @@
                             class="pic-info"
                           />
                         </template>
-                        <template v-if="item.pic && item.text">
+                        <template v-if="item.pic && item.text&&item.msg_type!='4'&&item.msg_type!=4">
                           <div
                             class="thumb-container"
                             @click.stop="openAppUrl(item.link)"
@@ -155,7 +155,7 @@
                           </div>
                         </template>
                         <div
-                          v-if="!item.pic && item.text&&item.msg_type!='4'"
+                          v-if="!item.pic && item.text"
                           @click="openAppUrl(item.text)"
                           class="text-info"
                           v-html="getText(item.text)"
@@ -166,12 +166,12 @@
                           "
                         ></div>
                         <div
-                          v-if="!item.pic && item.text&&item.msg_type=='4'"
+                          v-if="(item.msg_type=='4'||item.msg_type==4)"
                           class="text-info"
                          
                         >
   								{{ item.text }}
-  								 <img class="b-play-btn" :src="require('../../../static/images/chat/play.png')" @click="play(item)"  />
+  								 <img class="b-play-btn" :src="item.pic" @click="play(item)"  />
                     	</div>
                         <i
                           class="el-icon-warning error-msg"
@@ -1282,9 +1282,9 @@ export default {
     },
     newSocket(data) {
       const wsprotocol = window.location.protocol == "http:" ? "ws" : "wss";
-      const locationHost = window.location.hostname;
+      // const locationHost = window.location.hostname;
       // 開發用
-      // const locationHost = "10.83.107.92:9021";
+      const locationHost = "10.83.107.92:9021";
       this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -1819,6 +1819,7 @@ export default {
   animation: pulse 2s ease infinite;
   width:80px;
   height:auto;
+  margin-left:20px;
   &:hover{
     cursor:pointer;
   }
