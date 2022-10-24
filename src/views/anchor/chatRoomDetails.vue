@@ -450,7 +450,7 @@ export default {
       const isLt2M = (fileList.size / 1024 / 1024 < 2);
       if (!isLt2M) {
         this.$message({
-          message: "文件大小不可以超过2M",
+          message: "图片大于2m，请换张图片试试",
           type: 'warning'
         });
         this.fileList = []
