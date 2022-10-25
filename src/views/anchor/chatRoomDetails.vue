@@ -889,6 +889,7 @@ export default {
       this.$store
         .dispatch("sendMessage", data)
         .then((res) => {
+          console.log('res',res)
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
@@ -902,10 +903,9 @@ export default {
           this.uploadImgShow = false;
           this.toBottom();
           this.readEvent(data)
-
         })
         .catch(err => {
-          setTimeout(() => this.$message.error("您的网路不太好哦!!"), 10000);
+          setTimeout(() => this.$message.error(err), 10000);
           this.mergeDataList(this.tabNumber,'error',uiCode)
         });
     },
