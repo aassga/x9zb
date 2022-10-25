@@ -367,9 +367,9 @@ export default {
     });
   },
   computed: {
-    unReadInfo() {
-      return this.$store.state.unRead;
-    },
+    // unReadInfo() {
+    //   return this.$store.state.unRead;
+    // },
     show1: {
       get() {
         return this.$store.state.show;
@@ -426,9 +426,9 @@ export default {
         ];
       }
     },
-    unReadInfo(newVal, oldVal) {
-      if (newVal != oldVal) this.onHandleUnRead(newVal.msgList, newVal.type);
-    },
+    // unReadInfo(newVal, oldVal) {
+    //   if (newVal != oldVal) this.onHandleUnRead(newVal.msgList, newVal.type);
+    // },
     qualityIndex(e) {
       //监听改变画质
       this.play(4);
@@ -572,40 +572,31 @@ export default {
   },
   methods: {
     // 列表已读未读比对事件
-    mapList(read, unRead) {
+    mapList(readData, unReadData) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
-      if (unRead.length > 0 && unRead[unRead.length - 1].text) {
-        read.sort((x, y) => {
-          return x.vid === unRead[unRead.length - 1].vid
+      if (unReadData.length > 0 && unReadData[unReadData.length - 1].text) {
+        readData.sort((x, y) => {
+          return x.vid === unReadData[unReadData.length - 1].vid
             ? -1
-            : y.vid === unRead[unRead.length - 1].vid
+            : y.vid === unReadData[unReadData.length - 1].vid
             ? 1
             : 0;
         });
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        read.forEach((readList)=>{
-          if (readList.vid === this.roomInfo.vid) this.activeIndex2 = index;
-          unRead.forEach((unReadList)=>{
-            if (readList.vid === unReadList.vid) {
-              unReadList.unread_count = readList.unread_count;
-              // 如果页面有text则替换最后的text
-              if (readList.text) {
-                unReadList.last_msg.text = readList.text;
-              }
+        readData.forEach((res)=>{
+          if (res.vid === this.roomInfo.vid) this.activeIndex2 = index;
+          unReadData.forEach((el)=>{
+            if (res.vid === el.vid) {
+              res.unread_count = el.unread_count
+              res.last_msg.text = el.text ? el.text : res.last_msg.text
             }
           })
         })
       }
-      return readList;
+      return readData;
     },
     oneChatMsgChange(list){
       if(localStorage.getItem('anchorVid') === list.vid) this.privateChatTotal += list.unread_count
-    },
-    oneChatMsgChange(list){
-      if(localStorage.getItem('anchorVid') === list.vid){
-        this.oneChat += list.unread_count ;
-        console.log('oneChat',this.oneChat)
-      }
     },
     // 群组消息总数计算事件
     onHandleGroupMsgChange(list) {
@@ -747,8 +738,6 @@ export default {
 
     // 点击聊天列表事件
     onHandleClickItem(item, index) {
-      console.log(item, index, "item-info=======");
-
       this.showMsgInfo = true;
       this.roomInfo = item;
       this.activeIndex2 = index;

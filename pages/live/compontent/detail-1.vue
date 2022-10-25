@@ -177,6 +177,7 @@
             id="msg"
             :style="current !== 0 ? 'width:65%' : 'width:70%'"
             type="text"
+            maxlength="255"
             @blur="toTop"
             placeholder="请输入内容"
             rows="1"
@@ -447,12 +448,7 @@ export default {
     },
     current(newVal, oldVal) {
       this.initBase();
-      if (oldVal == 2) {
-        this.leaveRoom();
-      }
-
-      if (newVal != oldVal) {
-        //this.addDom();
+      if (newVal !== oldVal) {
         this.msgType = 1;
         this.prevImg = "";
         this.parmUserInfo.vid = "";
@@ -486,8 +482,8 @@ export default {
     picFilter(url) {
       let newUrl = url;
       if (url.includes("base64")) {
-        let split = window.location.origin + "/"
-            (newUrl = newUrl.replace(split, ""));
+        let split =
+          window.location.origin + "/"((newUrl = newUrl.replace(split, "")));
       }
       return newUrl;
     },
@@ -500,11 +496,6 @@ export default {
     this.uid = this.$route.query.id;
   },
   mounted() {
-    // this.addDom();
-    if (window.ws) {
-      window.ws.close();
-      // console.log("close init");
-    }
     this.getReportList();
     this.getGiftList();
     this.initInfo();
@@ -538,9 +529,8 @@ export default {
           break;
       }
     }
-    // this.shareUrl = window.location.origin + "/room/" + getQueryString().id;
     this.shareUrl = window.location.href;
-    this.getImToken(true);
+
   },
   beforeDestroy() {
     this.$store.dispatch("chatInOut", {
@@ -550,16 +540,17 @@ export default {
     });
   },
   methods: {
-  	 play(item){
-   		this.$u.post('api/tob/gettoburl', {
+    play(item) {
+      this.$u
+        .post("api/tob/gettoburl", {
           terminal: "h5",
-          share:item.sender
+          share: item.sender,
         })
         .then((res) => {
-          if(res.length>0){
+          if (res.length > 0) {
             const url = res[0];
-            let newTab = window.open('about:blank')
-            newTab.location.href=url
+            let newTab = window.open("about:blank");
+            newTab.location.href = url;
           }
         });
     },
@@ -1102,7 +1093,7 @@ export default {
         data = formData;
         let xhr = new XMLHttpRequest();
         xhr.open("POST",window.location.origin+"/api/chat/sendMessage");
-        // xhr.open("POST","http://huyapre.oxldkm.com/api/chat/sendMessage");
+        // xhr.open("POST", "http://huyapre.oxldkm.com/api/chat/sendMessage");
         // xhr.open("POST", "http://huidu.x9zb.live/api/chat/sendMessage");
         // xhr.open("POST", "https://www.x9zb.live/api/chat/sendMessage");
         xhr.send(data);
