@@ -32,7 +32,8 @@
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
                         item.sender === parmUserInfo.user_id ||
-                        item.sender === Number(parmUserInfo.user_id)) &&
+                        item.sender === Number(parmUserInfo.user_id) ||
+                        item.sender_nickname === parmUserInfo.username) &&
                       tabNumber === 2,
                   }"
                 >
@@ -262,10 +263,12 @@ export default {
       }
     },
     mySelf(item) {
+        
       if (
         Number(item.sender) === this.parmUserInfo.user_id ||
         item.sender === this.parmUserInfo.user_id ||
-        item.sender === Number(this.parmUserInfo.user_id)
+        item.sender === Number(this.parmUserInfo.user_id) ||
+        item.sender_nickname === this.parmUserInfo.username 
       ) {
         return true;
       } else {

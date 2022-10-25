@@ -137,6 +137,7 @@
             ref="msg"
             type="text"
             rows="1"
+            maxlength="255"
             v-model="msgText"
             v-on:keyup.enter="submitMessage()"
             placeholder="请输入聊天内容"
@@ -317,6 +318,7 @@ export default {
       deep: true,
     },
     webSocketFd(newV, oldV) {
+      console.log('newV',newV)
       if (newV !== oldV) this.inviteRoom(true);
     },
     showSetDownBtn(newV, oldV) {
@@ -379,6 +381,7 @@ export default {
           type: userInfo.user_type,
         };
       }
+      console.log(this.parmUserInfo)
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
@@ -1016,6 +1019,7 @@ export default {
           }
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
+          console.log(data)
           if(data.pic !== undefined){
             this.mergeDataList(this.tabNumber, "push", data);
           }else if (
