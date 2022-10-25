@@ -1154,6 +1154,11 @@ export default {
         this.msgText = "";
         return;
       } else {
+      	 if(!sendMessageList.text||sendMessageList.text=="\n"){
+         this.$u.toast("请输入聊天内容!!");
+           this.msgText = "";
+          return;
+     	 }
         this.mergeDataList(this.current,"push",sendMessageList)
         this.sendMessage(currentDate);
       }
