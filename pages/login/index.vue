@@ -231,6 +231,7 @@
 					if(localStorage.getItem("userid")){
 						this.from.guest_id = localStorage.getItem("userid")
 					}else {
+						console.log("logtest===")
 						const userid =
 							10000000 +
 							Math.random()

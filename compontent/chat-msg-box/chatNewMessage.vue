@@ -39,12 +39,14 @@
                 class="msg-container"
                 :class="{ 'anchor-msg': current === 1 }"
               >
+
                 <div
                   class="msg-content"
                   :class="{
                     'my-self':
                       (Number(item.sender) === parmUserInfo.user_id ||
-                        item.sender === parmUserInfo.user_id) &&
+                        item.sender === parmUserInfo.user_id||item.sender_nickname === parmUserInfo.username||
+                        item.sender === localuserid) &&
                       current === 1,
                   }"
                   @click.stop="showControl(index, item)"
@@ -163,6 +165,11 @@
 <script>
 export default {
   name: "chatNewMessage",
+  data(){
+    return{
+      localuserid:localStorage.getItem("userid")
+    }
+  },
   props: {
     pinInfo: {
       type: null,

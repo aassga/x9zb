@@ -83,6 +83,9 @@
 					url:'../login/index'
 				})
 				localStorage.removeItem("userInfo");
+				if(localStorage.getItem("userid")){
+					return;
+				}
 				let userid = 10000000 + Math.random().toString().slice(-6);
 				localStorage.setItem("userid", userid);
 			}
