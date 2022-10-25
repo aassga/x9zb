@@ -553,6 +553,13 @@ export default {
           }
         });
     },
+		avararImg(item) {
+      if (item.avatar === "") {
+        return require("./../../../static/images/home/userLogo.png");
+      } else {
+        return item.avatar;
+      }
+    },
     clearStatus() {
       this.controlIndex = -1;
     },
@@ -752,7 +759,53 @@ export default {
       this.isShowEmoji = false;
       this.msgText = result;
     },
-
+    openAppUrl(str) {
+      var reg = /(https?:\/\/[^\s]+)/g;
+      str = str.match(reg)[0];
+      let data = {
+        action: "blank",
+        message: str,
+      };
+      if (this.hidevideo) {
+        // console.log("开始调用======");
+        // console.log("Android======", JSON.stringify(data), data);
+        if (getQueryString().device == "iphone") {
+          // console.log("开始调用IOS======", data);
+          window.webkit.messageHandlers.interOp.postMessage(data);
+          return;
+        }
+        if (typeof AndroidInterface !== undefined) {
+          // console.log("Android======", JSON.stringify(data), data);
+          AndroidInterface.postmaessage(JSON.stringify(data));
+        }
+      } else {
+        window.open(str);
+      }
+    },
+    getText(str) {
+      var reg = /(https?:\/\/[^\s]+)/g;
+      if (!str) {
+        return "";
+      }
+      if (this.hidevideo) {
+        str =
+          str &&
+          str.replace(
+            reg,
+            "<a  style='text-decoration:underline;color:blue' target='_blank' >$1</a>"
+          );
+      } else {
+        str =
+          str &&
+          str.replace(
+            reg,
+            "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
+          );
+      }
+      str = str.replace(/\r\n/g, "<br>");
+      str = str.replace(/\n/g, "<br>");
+      str = str.replace(/\r/g, "<br>");
+    },
     getUserToken() {
       const _that = this;
       const data = this.parmUserInfo;
