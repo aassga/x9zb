@@ -381,7 +381,6 @@ export default {
           type: userInfo.user_type,
         };
       }
-      console.log(this.parmUserInfo)
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
@@ -892,7 +891,6 @@ export default {
       this.$store
         .dispatch("sendMessage", data)
         .then((res) => {
-          console.log('res',res)
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
@@ -941,7 +939,7 @@ export default {
           return
         }
       }
-      if(!sendMessageList.text||sendMessageList.text == "\n"){
+      if(!sendMessageList.text.replace(/\s*/g,"") || sendMessageList.text === "\n"){
         this.$message.error("請輸入聊天內容");
         this.msgText = "";
         return 
@@ -1002,6 +1000,9 @@ export default {
           break;
         case "send":
         case "system":
+          if(data.pic !== undefined){
+            this.mergeDataList(this.tabNumber, "push", data);
+          }
           if(data.type === 2){
             let msgList = {
               vid: data.vid,
@@ -1024,10 +1025,8 @@ export default {
           }
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
-          console.log(data)
-          if(data.pic !== undefined){
-            this.mergeDataList(this.tabNumber, "push", data);
-          }else if (
+          
+          if (
             data.sender === localStorage.getItem("userid") ||
             data.sender_nickname === this.info.user_nickname ||
             data.sender_nickname.includes("游客") ||
