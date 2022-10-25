@@ -131,26 +131,25 @@
 			<image v-for="(item,index) in 4" :src="'/static/images/live/icon'+(index+1)+'.png'" mode="aspectFill" @click="getShow(index)"></image>
 		</view> -->
 
-    <template v-if="chat_msg_close === '0'">
+    <template v-if="chat_msg_close == '0'">
       <view
         :class="['tabs_context', show1 && !hidevideo ? '' : 'tabs_context_max']"
       >
         <newDetail1
-          v-if="current === 2 && showTabs.includes(current) && !showMsgInfo"
           :headShow="show1 && !hidevideo"
           :activeIndex="activeIndex2"
+          v-if="current === 2 && showTabs.includes(current) && !showMsgInfo"
           :current="current"
           :list="messageList"
           @onHandleClickItem="onHandleClickItem"
         ></newDetail1>
-        <MessageInfo
+        <message-info 
           v-if="showMsgInfo"
           :headShow="show1 && !hidevideo"
           :current="current"
           :roomInfo="roomInfo"
           @close="onHandleMsgInfoBack"
-        >
-        </MessageInfo>
+        />
         <detail1
           v-if="
             (qsVid && showTabs.includes(current)) ||
@@ -174,12 +173,12 @@
           :userInfo="userInfo"
           @getShow="getShow"
         ></detail2>
-        <detail3
+        <Leaderboard  
           v-if="current === 4"
-          ref="detail3"
+          ref="Leaderboard "
           :userInfo="userInfo"
-        ></detail3>
-        <detail4 v-if="current === 5"></detail4>
+        />
+        <more-video v-if="current === 5"/>
       </view>
     </template>
     <template v-else>
@@ -189,12 +188,11 @@
           :userInfo="userInfo"
           @getShow="getShow"
         ></detail2>
-        <detail3
+        <Leaderboard  
           v-if="current === 1"
-          ref="detail3"
+          ref="Leaderboard "
           :userInfo="userInfo"
-        ></detail3>
-        <detail4 v-if="current === 2"></detail4>
+        />
       </view>
     </template>
     <u-popup v-model="show" mode="center" border-radius="20" :closeable="true">
@@ -224,8 +222,8 @@ import detail1 from "./compontent/detail-1.vue";
 import newDetail1 from "./compontent/newDetail1.vue";
 import MessageInfo from "./compontent/MessageInfo.vue";
 import detail2 from "./compontent/detail-2.vue";
-import detail3 from "./compontent/detail-3.vue";
-import detail4 from "./compontent/detail-4.vue";
+import Leaderboard  from "./compontent/detail-3.vue";
+import MoreVideo from "./compontent/detail-4.vue";
 import downLoadModel from "./compontent/222.vue";
 import TcVideoPlayer from "./tencentPlayer.vue";
 import redEnvelopeDialog from "./redEnvelopeDialog.vue";
@@ -235,8 +233,8 @@ export default {
   components: {
     detail1,
     detail2,
-    detail4,
-    detail3,
+    MoreVideo,
+    Leaderboard ,
     newDetail1,
     MessageInfo,
     TcVideoPlayer,
@@ -327,13 +325,13 @@ export default {
       },
     ];
     if (
-      this.$store.state.system.chat_msg_close === "1" &&
+      this.$store.state.system.chat_msg_close == "1" &&
       getQueryString().hidevideo
     ) {
       this.chat_msg_close = "1";
       return;
     }
-    if (getQueryString().tabType === 1) {
+    if (getQueryString().tabType == 1) {
       this.tabList = [
         {
           name: "聊天",
@@ -435,8 +433,8 @@ export default {
       //监听改变画质
       this.play(4);
     },
-    current(e) {
-      if (e === 2) this.getMessageList() // 获取聊天列表
+    current(event) {
+      if (event === 2) this.getMessageList() // 获取聊天列表
     },
     msgList2(e) {},
     unreadTotal(e) {
@@ -817,7 +815,7 @@ export default {
           this.newArr = this.messageList.filter(list => list.vid === localStorage.getItem('anchorVid'))
           break;
         case 4:
-          setTimeout(() => this.$refs.detail3.getList({ uid: this.userInfo.uid, type: 0,}), 100);
+          setTimeout(() => this.$refs.Leaderboard.getList({ uid: this.userInfo.uid, type: 0,}), 100);
           break;
       }
     },

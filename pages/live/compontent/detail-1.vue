@@ -428,7 +428,6 @@ export default {
     webSocketFd(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (this.current === 0) this.inviteRoom();
-        this.inRoomInfo(newVal);
       }
     },
     showLoading(newV, oldV) {
