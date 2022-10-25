@@ -2,20 +2,21 @@
 <template>
   <div
     class="detail"
-    v-show="showMsgInfo || current != 2"
+    v-show="showMsgInfo || current !== 2"
     :class="{
       'app-version': hidevideo,
-      'add-margin': current == 1,
+      'add-margin': current === 1,
       'is-ios': iosDevice,
-      'add-padding': showMsgInfo
+      'add-padding': showMsgInfo,
     }"
   >
     <div v-if="false" class="animation-loading-container">
       <div class="animation-loading" v-for="i in 10" :key="i"></div>
     </div>
-    <div class="announcement"
-			v-if="current !== 2 || $store.state.system.announcement === undefined"		
-		>
+    <div
+      class="announcement"
+      v-if="current !== 2 || $store.state.system.announcement === undefined"
+    >
       <div class="announcement-icon">
         <img src="./../../../static/images/live/volume.png" />
       </div>
@@ -29,181 +30,45 @@
         <div v-if="pinInfo" class="pin-info">
           {{ pinInfo.text }}
         </div>
-        <div class="chat-window" :class="{ 'chat-pin': pinInfo }" @click="clearStatus()">
-          <div
-            class="chat-detail-main current0"
-            ref="content-list"
-          >
-            <div v-for="(item, index) in messageDataList" :key="index">
-              <div class="system-tips" v-if="item.action === 'system'">
-                <img
-                  src="../../../static/images/live/HiTag.png"
-                  class="hi-tag"
-                  v-if="
-                    item.text ? item.text.indexOf('进入直播间') !== -1 : false
-                  "
-                />
-                <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                <span
-                  class="level-tag"
-                  :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                  v-if="
-                    item.sender_exp &&
-                    item.action !== 'gift' &&
-                    item.sender != uid
-                  "
-                  >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                >
-                {{ item.text }}
-              </div>
-              <template v-else>
-                <div
-                  class="other-side"
-                  v-if="
-                    item.channel == 'null' ||
-                    !item.channel ||
-                    item.channel === channel ||
-                    (!channel && item.channel === '000')
-                  "
-                >
-                  <div class="msg-box">
-                    <div class="msg-container"
-										:class="{'anchor-msg': current === 1 }"
-										>
-                      <div
-                        class="msg-content"
-                        :class="{
-                          'my-self': (Number(item.sender) === parmUserInfo.user_id || item.sender === parmUserInfo.user_id) && current === 1,
-                        }"
-												@click.stop="showControl(index,item)"
-                      >
-												<template v-if="current === 0">												
-													<img
-														src="../../../static/images/live/HiTag.png"
-														class="hi-tag"
-														v-if="
-															item.text
-																? item.text.indexOf('进入直播间') !== -1
-																: false
-														"
-													/>
-													<span class="anchor-tag" v-if="item.sender == uid"
-														>主播</span
-													>
-													<span
-														class="level-tag"
-														:class="`level${
-															item.sender_exp ? item.sender_exp : 0
-														}`"
-														v-if="
-															item.sender_exp &&
-															item.action !== 'gift' &&
-															item.sender != uid
-														"
-														>Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-													>
-												</template>
-												<div
-                          class="msg-avatar"
-                          v-if="
-                            item.sender != parmUserInfo.user_id && current === 1
-                          "
-                        >
-                          <img class="avatar" :src="avararImg(item)" />
-                        </div>
-                        <div class="msg-footer" v-if="current !== 1">
-                          <span
-                            :style="
-                              item.text === '进入直播间' ||
-                              item.text.includes('进入直播间')
-                                ? 'color: #665a64;'
-                                : ''
-                            "
-                            >{{ item.sender_nickname || "我"
-                            }}<span
-                              v-if="
-                                item.text !== '进入直播间' &&
-                                !item.text.includes('进入直播间')
-                              "
-                              >:</span
-                            ></span
-                          >
-                        </div>
-                        <template v-if="item.pic && !item.text">
-                          <img
-                            @click.stop="onHandleClickImg(item.pic)"
-                            :src="item.pic | picFilter"
-                            class="pic-info"
-                          />
-                        </template>
-                        <template v-if="item.pic && item.text&&item.msg_type!='4'&&item.msg_type!=4">
-                          <div
-                            class="thumb-container"
-                            @click.stop="openAppUrl(item.link)"
-                          >
-                            <img
-                              class="thumb-pic"
-                              :src="item.pic | picFilter"
-                            />
-                            <div class="thumb-title">
-                              {{ item.title }}
-                            </div>
-                            <br />
-                            <div class="thumb-text">
-                              {{ item.text }}
-                            </div>
-                          </div>
-                        </template>
-                        <div
-                          v-if="!item.pic && item.text"
-                          @click="openAppUrl(item.text)"
-                          class="text-info"
-                          v-html="getText(item.text)"
-                          :style="
-                            item.text === '进入直播间'
-                              ? 'color: #665a64;'
-                              : ''
-                          "
-                        ></div>
-                        <div
-                          v-if="(item.msg_type=='4'||item.msg_type==4)"
-                          class="text-info"
-                         
-                        >
-  								{{ item.text }}
-  								 <img class="b-play-btn" :src="item.pic" @click="play(item)"  />
-                    	</div>
-                        <i
-                          class="el-icon-warning error-msg"
-                          v-if="item.isError"
-                          @click="resend(item)"
-                          >重新发送</i
-                        >
-                        <div
-                          v-if="controlIndex === index"
-                          class="msg-control other"
-                        >
-                          <!--  <div @click="mute(item)">禁言</div>
-														<div @click="freeze(item)">冻结</div> -->
-                          <div @click="copyText(item)">复制</div>
-                          <div
-                            v-if="system.report == 1"
-                            @click="onHandleReportShow(item)"
-                          >
-                            举报
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
+        <chat-new-message
+          v-if="current === 0"
+          :uid="uid"
+          :pinInfo="pinInfo"
+          :current="current"
+          :controlIndex="controlIndex"
+          :parmUserInfo="parmUserInfo"
+          :messageDataList="msgSquareList"
+          @reportEvent="onHandleReportShow"
+          @resendEvent="resend"
+          @controlEvent="controlEvent"
+        />
+        <chat-new-message
+          v-if="current === 1"
+          :uid="uid"
+          :pinInfo="pinInfo"
+          :current="current"
+          :controlIndex="controlIndex"
+          :parmUserInfo="parmUserInfo"
+          :messageDataList="msgAnchorList"
+          @reportEvent="onHandleReportShow"
+          @resendEvent="resend"
+          @controlEvent="controlEvent"
+        />
+        <chat-new-message
+          v-if="current === 2"
+          :uid="uid"
+          :pinInfo="pinInfo"
+          :current="current"
+          :controlIndex="controlIndex"
+          :parmUserInfo="parmUserInfo"
+          :messageDataList="msgChatList"
+          @reportEvent="onHandleReportShow"
+          @resendEvent="resend"
+          @controlEvent="controlEvent"
+        />
       </div>
     </div>
-    <div class="send-container" v-show="showMsgInfo || current != 2">
+    <div class="send-container" v-show="showMsgInfo || current !== 2">
       <div v-if="isShowEmoji" class="emoji-box">
         <VEmojiPicker
           :showSearch="false"
@@ -261,7 +126,7 @@
           </svg>
         </div>
 
-        <div v-if="current != 0" class="send-type-container">
+        <div v-if="current !== 0" class="send-type-container">
           <svg
             width="25"
             height="25"
@@ -287,7 +152,7 @@
             viewBox="0 0 40 40"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            @click="getshare"
+            @click="share = ture"
           >
             <path
               fill-rule="evenodd"
@@ -300,14 +165,14 @@
         </div>
 
         <div
-          v-if="current == 0 && system.report == 1"
+          v-if="current === 0 && system.report === 1"
           @click="onHandleReportShow(false)"
           class="quick-reply-list-btn"
         >
           举报
         </div>
         <div class="footer-box">
-          <!-- v-if="msgType != 2" -->
+          <!-- v-if="msgType !== 2" -->
           <textarea
             id="msg"
             :style="current !== 0 ? 'width:65%' : 'width:70%'"
@@ -317,10 +182,10 @@
             rows="1"
             v-model="msgText"
             ref="msg"
-            v-on:keyup.enter="sendMsg"
+            v-on:keyup.enter="submitMessage"
           >
           </textarea>
-          <span class="send" @click="sendMsg">发送</span>
+          <span class="send" @click="submitMessage">发送</span>
         </div>
       </div>
 
@@ -328,11 +193,11 @@
         id="add-img"
         :class="{
           'show-img-container': msgType == 2,
-          'add-img-container': current != 0,
+          'add-img-container': current !== 0,
         }"
       >
         <div id="inputContent" ref="inputContent"></div>
-        <span v-if="!prevImg && current != 0" class="add-img">添加图片</span>
+        <span v-if="!prevImg && current !== 0" class="add-img">添加图片</span>
         <img v-else :src="prevImg" />
       </div> -->
     </div>
@@ -375,7 +240,7 @@
         <div class="gift-send" @click="handselGift(0)">赠送</div>
       </div>
     </div>
-    <div id="demoCanvas" v-if="current == 0"></div>
+    <div id="demoCanvas" v-if="current === 0"></div>
 
     <u-popup border-radius="20" mode="bottom" v-model="reportListShow">
       <scroll-view class="reportList">
@@ -463,11 +328,13 @@
 <script>
 import SVGA from "@/common/svga.min.js";
 import { getQueryString } from "@/common/Qs";
-import { getUUID } from "@/common/uuid";
+import chatNewMessage from "@/compontent/chat-msg-box/chatNewMessage.vue";
 export default {
   name: "information-detail",
   props: ["roomDetailData", "current", "roomInfo", "showMsgInfo", "qsVid"],
-  components: {},
+  components: {
+    chatNewMessage,
+  },
   data() {
     return {
       reportListShow: false,
@@ -477,32 +344,25 @@ export default {
       isErrorMsg: true,
       url: window.location.href,
       modalMsgList: [],
-      isReadOnly: false,
       uploadImg: false,
       msgText: "",
-			messageDataList: [],
-      msgList0: [],
-      msgList1: [],
-      msgList2: [],
+      messageDataList: [],
+      msgSquareList: [],
+      msgAnchorList: [],
+      msgChatList: [],
       prevImg: "",
       myUserinfo: {
         uid: "",
       },
-      fd: "",
+      webSocketFd: "",
       page: 1,
       isShowGiftBox: false,
-      giftNum: 1,
-      currentGiftId: "",
       isShowEmoji: false,
       uid: "",
-      gift_jpg: "",
       targetUserInfo: {},
-      isAllowedSendMsg: true,
       hasSendMsgCount: 0,
-      needBuy: false,
-      that: this,
       hidevideo: getQueryString().hidevideo,
-      iosDevice: getQueryString().device == "iphone" ? true : false,
+      iosDevice: getQueryString().device === "iphone" ? true : false,
       active: 0,
       ws: "",
       WSURL: "",
@@ -524,7 +384,6 @@ export default {
       pinInfo: "",
       channel: getQueryString().channel_code || localStorage.getItem("channel"),
       channel_code: getQueryString().channel_code,
-      url: window.location.href,
       showLoading: true,
       isScroller: false,
       lockPage: false,
@@ -535,8 +394,6 @@ export default {
       info: {},
       canGet: true,
       lastVid: "",
-      type0_local_msg_list: [],
-      type2_local_msg_list: [],
       isShowGiftBox: false,
       giftList: [], //礼物列表
       selectGiftIndex: null,
@@ -557,44 +414,38 @@ export default {
   //给新的ws实例添加监听事件
   watch: {
     page(newVal, oldVal) {
-      if (newVal != oldVal) {
-        if (newVal == 2 && this.reconnectStatus) {
-          return;
-        } else if (this.historyData.length < 50) {
+      if (newVal !== oldVal) {
+        if (
+          (newVal === 2 && this.reconnectStatus) ||
+          this.historyData.length < 50
+        ) {
           return;
         } else {
           this.getChatHistoryMsg();
         }
       }
     },
-    fd(newVal, oldVal) {
-      if (newVal != oldVal) {
-        if (this.current == 0) {
-          this.inviteRoom();
-        }
-        this.inRoomInfo(newVal);
+    webSocketFd(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (this.current === 0) this.inviteRoom();
       }
     },
     showLoading(newV, oldV) {
-      if (!newV && this.page == 1) {
-        setTimeout(() => {
-          this.toBottom();
-        }, 20);
+      if (!newV && this.page === 1) {
+        setTimeout(() => this.toBottom(), 20);
       }
     },
     roomDetailData(newVal, oldVal) {
-      if (newVal.vid != this.parmUserInfo.vid) {
+      if (newVal.vid !== this.parmUserInfo.vid) {
         this.page = 1;
         this.pinInfo = "";
         this.isMore = true;
-        // this.handleLocalMsgList(this.current,'empty')
         this.isScroller = false;
         this.parmUserInfo.vid = newVal.vid;
-        this.inRoomInfo(this.fd);
+        this.inRoomInfo(this.webSocketFd);
       }
     },
     current(newVal, oldVal) {
-			this.messageDataList = [];
       this.initBase();
       if (oldVal == 2) {
         this.leaveRoom();
@@ -603,35 +454,32 @@ export default {
       if (newVal != oldVal) {
         //this.addDom();
         this.msgType = 1;
-        this.formData = {};
         this.prevImg = "";
-        this.reconnectStatus = false;
-        this.isScroller = false;
         this.parmUserInfo.vid = "";
-        if (newVal != 1) {
-          this.showLoading = true;
-        }
+        this.formData = {};
+        this.isScroller = false;
+        this.reconnectStatus = false;
+        if (newVal !== 1) this.showLoading = true;
       }
-      if (newVal == 0) {
-        const qVid = this.qsVid;
-        this.parmUserInfo.vid = qVid;
-        this.inRoomInfo(this.fd);
-      }
-      if (newVal == 1) {
-        const qVid = this.qsVid;
-        let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-        if (!vInfo.hasOwnProperty(qVid)) {
+      let qVid = this.qsVid;
+      switch (newVal) {
+        case 0:
+          this.parmUserInfo.vid = qVid;
+          this.inRoomInfo(this.webSocketFd);
+          break;
+        case 1:
+          let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
           this.inviteRoom();
-          return;
-        }
-        this.parmUserInfo.vid = vInfo[qVid];
-        this.inviteRoom();
+          if (!vInfo.hasOwnProperty(qVid)) return;
+          this.parmUserInfo.vid = vInfo[qVid];
+          break;
+        case 2:
+          this.leaveRoom();
+          break;
       }
     },
     showMsgInfo(newVal, oldVal) {
-      if (this.roomDetailData.room_type == 2 && newVal == false) {
-        this.leaveRoom();
-      }
+      if (this.roomDetailData.room_type === 2 && !newVal) this.leaveRoom();
     },
   },
   filters: {
@@ -648,9 +496,7 @@ export default {
     this.toBottom();
   },
   created() {
-    if (this.is_login()) {
-      this.$store.dispatch("getInfo", this.$u);
-    }
+    if (this.is_login()) this.$store.dispatch("getInfo", this.$u);
     this.uid = this.$route.query.id;
   },
   mounted() {
@@ -660,15 +506,11 @@ export default {
       // console.log("close init");
     }
     this.getReportList();
-    this.initInfo(true);
     this.getGiftList();
+    this.initInfo();
+    this.getUserToken();
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      // console.log(
-      //   domScroll.scrollTop,
-      //   domScroll.scrollTop - domScroll.offsetHeight,
-      //   "domScroll.scrollTop-domScroll.offsetHeight==="
-      // );
       if (domScroll.scrollTop <= 2) {
         this.reconnectStatus = false;
         if (!this.isErrorMsg) {
@@ -728,15 +570,13 @@ export default {
         return item.avatar;
       }
     },
-		clearStatus() {
+    clearStatus() {
       this.controlIndex = -1;
     },
     submit() {
       let files = [];
       // 通过filter，筛选出上传进度为100的文件(因为某些上传失败的文件，进度值不为100，这个是可选的操作)
-      files = this.$refs.uUpload.lists.filter((val) => {
-        return val.progress == 100;
-      });
+      files = this.$refs.uUpload.lists.filter((val) => val.progress === 100);
       // 如果您不需要进行太多的处理，直接如下即可
       files = this.$refs.uUpload.lists;
       const file = files[0].file;
@@ -749,11 +589,15 @@ export default {
         _that.prevImg = newUrl;
       };
       this.msgType = 2;
+      const isLt2M = (file.size /1024 /1024 < 2)
+      if(!isLt2M){
+        _this.$u.toast("图片大于2m，请换张图片试试");
+        return
+      }
       let currentDate = new Date().getTime();
-      this.sendMsgByApi(currentDate);
+      this.sendMessage(currentDate);
     },
     onHandleClickImg(url) {
-      // console.log("我是点击图片事件");
       uni.previewImage({
         urls: [url],
       });
@@ -766,21 +610,21 @@ export default {
     // 		// console.log(res);
     // 	})
     // },
-    // 关闭弹框事件
 
+    // 关闭弹框事件
     initBase() {
       this.page = 1;
       this.pinInfo = "";
       this.isMore = true;
       this.isScroller = false;
     },
+    controlEvent(index) {
+      this.controlIndex = index;
+    },
     resend(item) {
       // console.log(item);
-      this.handleLocalMsgList(this.current).map((val, index) => {
-        if (val == item) {
-          this.handleLocalMsgList(this.current).splice(index, 1);
-          // console.log(this.msgList);
-        }
+      this.mergeDataList(this.current).map((val, index) => {
+        if (val === item) this.mergeDataList(this.current).splice(index, 1);
       });
       this.msgText = item.text;
     },
@@ -798,12 +642,8 @@ export default {
     getReportList() {
       const _this = this;
       this.$u.get("api/report/classifyList").then((res) => {
-        // console.log("举报列表");
-        // console.log(res);
         _this.reportList = res;
-        if (res.length > 0) {
-          _this.reportValue = res[0].id;
-        }
+        if (res.length > 0) _this.reportValue = res[0].id;
       });
     },
     onHandleReportShow(item) {
@@ -813,54 +653,34 @@ export default {
     // 举报事件
     report(item = false) {
       const _this = this;
-      if (this.reportItem) {
-        this.$u
-          .get("api/report_user/insert", {
-            relateId: this.reportItem.msg_id,
-            classifyId: this.reportValue || 0,
-            type: 3,
-          })
-          .then((res) => {
-            _this.coloseReport();
-            _this.$u.toast("举报成功");
-          });
-      } else {
-        this.$u
-          .get("api/report_user/insert", {
-            relateId: this.parmUserInfo.vid,
-            classifyId: this.reportValue || 0,
-            type: 4,
-          })
-          .then((res) => {
-            _this.coloseReport();
-            _this.$u.toast("举报成功");
-          });
-      }
+      this.$u
+        .get("api/report_user/insert", {
+          relateId: this.reportItem
+            ? this.reportItem.msg_id
+            : this.parmUserInfo.vid,
+          classifyId: this.reportValue || 0,
+          type: this.reportItem ? 3 : 4,
+        })
+        .then((res) => {
+          _this.coloseReport();
+          _this.$u.toast("举报成功");
+        });
     },
     sendImg(e) {
       this.msgType = e;
-      if (e == 2) {
+      if (e === 2) {
         var dol = document.getElementById("add-img");
-        // console.log(dol, "dol--------");
         dol.innerHtml += "<div>666</div>";
       }
     },
-    openLink(link) {
-      window.open(link);
-    },
-    initInfo(init = false) {
-      if (!this.reconnectStatus) {
-        this.handleLocalMsgList(this.current, "empty");
-      }
+    initInfo() {
+      if (!this.reconnectStatus) this.mergeDataList(this.current, "empty");
       if (getQueryString() || this.roomDetailData) {
         let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-        if (!this.roomDetailData && !roomInfo) {
-          // this.getImToken(true);
-          return;
-        }
-        if (this.current == 2) {
-          this.parmUserInfo = {
-            vid: roomInfo[this.qsVid],
+        if (!this.roomDetailData && !roomInfo) return;
+        if (this.current === 2) {
+          this.parmUserInfo = { 
+            vid: roomInfo[this.qsVid] 
           };
         } else {
           this.parmUserInfo = {
@@ -889,8 +709,6 @@ export default {
           ? getQueryString().user_name
           : localStorage.getItem("userid");
       }
-      // this.getImToken();
-      // this.quickReplyList();
     },
     delQuickReply(item) {
       const _that = this;
@@ -900,7 +718,7 @@ export default {
           id: item.id,
         })
         .then((res) => {
-          if (res.msg == "成功") {
+          if (res.msg === "成功") {
             this.$message({
               type: "success",
               message: "删除成功",
@@ -920,11 +738,10 @@ export default {
         })
         .then((res) => {
           this.modalMsgList = res;
-          // console.log(this.modalMsgList, "this.modalMsgList======");
           this.controlIndex = -1;
         });
     },
-    saveMsg() {
+    saveMessage() {
       const _that = this;
       this.$u
         .post(`api/chat/addQuickReply`, {
@@ -932,7 +749,7 @@ export default {
           text: this.msgText,
         })
         .then((res) => {
-          if (res.msg == "成功") {
+          if (res.msg === "成功") {
             this.$message({
               type: "success",
               message: "保存成功",
@@ -998,33 +815,10 @@ export default {
       str = str.replace(/\r\n/g, "<br>");
       str = str.replace(/\n/g, "<br>");
       str = str.replace(/\r/g, "<br>");
-
-      return str;
     },
-    copyText(item) {
-      const str = item.text;
-      const qrUrlContent = document.querySelector("#cp-input input");
-      qrUrlContent.value = str;
-      qrUrlContent.select();
-      let range = document.createRange();
-      let selection = document.getSelection();
-      range.selectNode(qrUrlContent);
-      selection.addRange(range);
-      qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
-      let isSucess = document.execCommand("copy");
-      if (isSucess) {
-        this.$u.toast("复制成功");
-        this.tipsId = "";
-        this.controlIndex = -1;
-      }
-    },
-    getImToken(initSec = false) {
+    getUserToken() {
       const _that = this;
       const data = this.parmUserInfo;
-      // console.log(window.ws,"=======,1234")
-      // if(window.ws){
-      // 	window.ws.close();
-      // }
       this.$u
         .get(
           `api/chat/getChatToken?user_id=${data.user_id}&type=${
@@ -1035,312 +829,203 @@ export default {
           _that.imUserInfo = res;
           _that.$emit("onHandleGetImUserInfo", res);
           _that.newSocket(res);
-          if (initSec) {
-            _that.inviteRoom();
-          }
+          _that.inviteRoom();
         });
     },
     getChatHistoryMsg(iniPage) {
-      // console.log(
-      //   this.reconnectStatus,
-      //   this.isMore,
-      //   "this.reconnectStatus========"
-      // );
       if (
-        this.parmUserInfo.vid == null ||
-        this.parmUserInfo.vid == "" ||
+        [null, ""].includes(this.parmUserInfo.vid) ||
         this.reconnectStatus ||
         !this.isMore ||
         !this.canGet
-      ) {
+      )
         return;
-      }
       this.canGet = false;
       const _that = this;
+      if (this.current === 2) {
+        this.numType = this.roomDetailData.room_type;
+      } else if (this.current === 1) {
+        this.numType = 1;
+      } else {
+        this.numType = this.current || 0;
+      }
       const params = {
         page: iniPage || this.page,
         limit: 50,
-        type:
-          this.current == 2
-            ? this.roomDetailData.room_type
-            : this.current === 1
-            ? 2
-            : this.current || 0,
+        type: this.numType,
         vid: this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id,
       };
       this.lastpage = params.page;
       this.lastVid = params.vid;
-      if (!iniPage && this.page == 1) {
-        return;
-      }
+      if (!iniPage && this.page === 1) return;
       this.showLoading = true;
-
+      let getHistoryApiUrl = `api/chat/getChatHistory?type=${params.type}&user_id=${
+        params.user_id
+      }&vid=${params.vid}&limit=${params.limit}&page=${
+        params.page
+      }&channel_code=${this.channel_code ? this.channel_code : ""}&channel=${
+        this.channel_code ? this.channel_code : ""
+      }`;
       this.$u
-        .get(
-          `api/chat/getChatHistory?type=${params.type}&user_id=${
-            params.user_id
-          }&vid=${params.vid}&limit=${params.limit}&page=${
-            params.page
-          }&channel_code=${
-            this.channel_code ? this.channel_code : ""
-          }&channel=${this.channel_code ? this.channel_code : ""}`
-        )
+        .get(getHistoryApiUrl)
         .then((res) => {
           if (
             this.roomDetailData.hasOwnProperty("vid") &&
-            this.roomDetailData.vid != this.parmUserInfo.vid
+            this.roomDetailData.vid !== this.parmUserInfo.vid
           ) {
             return;
           }
           let dataList = res.reverse();
           this.lockPage = true;
-          if (dataList.length <= 10) {
-            this.isScroller = true;
-          }
+          this.isScroller = dataList.length <= 10;
           this.showLoading = false;
           if (dataList.length === 0) {
             this.isMore = false;
             return;
           }
-          // console.log(params, "======params", dataList);
-          this.handleLocalMsgList(
-            params.type == 2 && this.current == 1 ? 1 : params.type,
-            params.page != 1 ? "unshift" : "init",
+          this.mergeDataList(
+            params.type === 2 && this.current === 1 ? 1 : params.type,
+            params.page !== 1 ? "unshift" : "init",
             dataList
           );
-          // console.log("///////////////////");
-          // _that.msgList.unshift(...dataList);
         })
         .catch((res) => {
-          // console.log(123123123);
           this.isErrorMsg = false;
         })
         .finally((res) => {
           this.canGet = true;
         });
     },
-    showControl(index,item) {
-    	if(item.msg_type=="4")
-    	{
-    		return;
-    	}
-      // console.log("我是点击消息事件");
+    showControl(index, item) {
+      if (item.msg_type === "4") return;
       this.controlIndex = index;
     },
-    // mute(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		mute: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.fd,
-    // 		user_id: item.sender
-    // 	};
-    // 	this.$u.post('api/chat/mute', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-
-    // },
-    // freeze(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		freeze: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.fd,
-    // 		user_id: item.sender
-    // 	};
-    // 	this.$u.post('api/chat/freeze', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-    // },
-    // pin(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		pin: 1,
-    // 		token: this.imUserInfo.token,
-    // 		vid: item.vid,
-    // 		fd: this.fd,
-    // 		msg_id: item.msg_id
-    // 	};
-    // 	this.$u.post('api/chat/pin', data).then(res => {
-    // 		this.controlIndex = "";
-    // 	})
-    // },
-    // delMsg(item) {
-    // 	const _that = this;
-    // 	const data = {
-    // 		type: 0,
-    // 		msg_id: item.msg_id,
-    // 		token: this.imUserInfo.token,
-    // 		both: 2,
-    // 		vid: item.vid,
-    // 		fd: this.fd
-    // 	}
-    // 	this.$u.post('api/chat/deleteMessage', data).then(res => {
-    // 		this.controlIndex = "";
-    // 		this.getChatHistoryMsg();
-    // 		console.log('shanchu')
-    // 	})
-    // },
     inviteRoom(init = false) {
-      if (!this.fd) {
-        return;
-      }
+      if (!this.webSocketFd) return;
       const _that = this;
       const roomId = this.qsVid;
       let roomInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
       this.$u
         .post("api/chat/inviteRoom", {
-          // type: this.initInvite ? 2 : this.current,
-					type: 2,
+          type: 2,
           is_new: 1,
           token: this.imUserInfo.token,
-          // vid:this.parmUserInfo.vid,
-          fd: this.fd,
+          fd: this.webSocketFd,
           name: this.parmUserInfo.username,
           user_id: getQueryString().id,
           channel: this.channel,
           channel_code: this.channel_code ? this.channel_code : "",
         })
         .then((res) => {
-          if (this.initInvite) {
-            this.initInvite = false;
-            roomInfo[roomId] = res.vid;
-            localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-            localStorage.setItem("anchorVid", res.vid);
-
-            return;
-          }
           roomInfo[roomId] = res.vid;
-          this.parmUserInfo.vid = res.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
           localStorage.setItem("anchorVid", res.vid);
-
-          this.inRoomInfo(this.fd);
+          if (this.initInvite) {
+            this.initInvite = false;
+            return;
+          }
+          this.parmUserInfo.vid = res.vid;
+          this.inRoomInfo(this.webSocketFd);
           this.controlIndex = "";
         });
     },
-    inRoomInfo(fd) {
-      if (this.current == 0) {
+    inRoomInfo(webSocketFd) {
+      if (this.current === 0) {
         this.parmUserInfo.vid = this.qsVid;
       }
-      if (!this.parmUserInfo.vid || !fd) {
+      if (this.current === 2 && !this.parmUserInfo.vid) {
+        this.getUserToken();
         return;
       }
-
-      if (this.current == 2 && !this.parmUserInfo.vid) {
-        this.getImToken(true);
+      if (!this.parmUserInfo.vid || !webSocketFd){
         return;
-      }
-
+      }      
       const inRoomData = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
-        fd: fd,
+        fd: webSocketFd,
         type: this.current || 0,
         channel: this.channel,
         channel_code: this.channel_code ? this.channel_code : "",
       };
-      const _that = this;
       this.$u.post("api/chat/inRoom", inRoomData).then((res) => {
-        if (res == "connection token error") {
-          this.initInfo(true);
+        if (res === "connection token error") {
+          this.initInfo();
           return;
         }
-        if (res.pinData && res.pinData != "") {
-          _that.pinInfo = {
+        if (res.pinData && res.pinData !== "") {
+          this.pinInfo = {
             text: res.pinData,
           };
         }
-
-        _that.getChatHistoryMsg(1);
+        this.getChatHistoryMsg(1);
       });
     },
     // 離開聊天室
     leaveRoom() {
-      if (!this.fd) {
-        return;
-      }
+      this.msgChatList = [];
+      if (!this.webSocketFd) return;
       const data = {
         vid: this.parmUserInfo.vid,
         token: this.imUserInfo.token,
-        fd: this.fd,
+        fd: this.webSocketFd,
         type:
           this.roomInfo && this.roomInfo.room_type
             ? this.roomInfo.room_type
             : this.current || 0,
       };
-
       this.$u.post("api/chat/leaveRoom", data).then((res) => {
         this.$emit("leaveRoom");
       });
     },
     newSocket(data) {
-      const wsprotocol = window.location.protocol == "http:" ? "ws" : "wss";
-      // const locationHost = window.location.hostname;
+      const wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
+      const locationHost = window.location.hostname;
       // 開發用
-      const locationHost = "10.83.107.92:9021";
+      // const locationHost = "10.83.107.92:9021";
       this.WSURL = `${wsprotocol}://${locationHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       this.ws = new WebSocket(this.WSURL);
-      window.ws = this.ws;
+      // window.ws = this.ws;
       // this.$global.setWs(this.ws);
-      //
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 通信发生错误时触发
       this.ws.onerror = this.websocketonerror;
       // 连接关闭时触发
       this.ws.onclose = this.websocketclose;
-
       this.ws.onmessage = this.websocketonmessage;
-
-      // this.$store.commit('HANDLE_WSRECONNECT')
     },
     websocketonopen() {
       //开启心跳
       this.start();
-
-      // setTimeout(()=>{
-      //   this.ws.close()
-      // },10000)
     },
     // 通信发生错误时触发
     websocketonerror() {
-      // console.log("出现错误");
       this.reconnect();
     },
     // 连接关闭时触发
     websocketclose(e) {
-      //关闭
-      // console.log("断开连接", e);
-      // this.ws.close()
       //重连
       this.reconnect();
+      this.getUserToken();
     },
     reconnect() {
       //重新连接
       this.reconnectStatus = true;
-      if (this.lockReconnect) {
-        return;
-      }
+      if (this.lockReconnect) return;
       this.lockReconnect = true;
-
       //没连接上会一直重连，设置延迟避免请求过多
       this.timeoutnum && clearTimeout(this.timeoutnum);
       this.timeoutnum = setTimeout(() => {
         //新连接
         // this.initBase();
         this.initInvite = true;
-        this.initInfo(true);
+        this.initInfo();
         this.lockReconnect = false;
       }, 5000);
     },
@@ -1362,7 +1047,7 @@ export default {
     heart(i) {
       this.timeoutObj = setTimeout(() => {
         //这里发送一个心跳，后端收到后，返回一个心跳消息，
-        if (this.ws.readyState == 1) {
+        if (this.ws.readyState === 1) {
           //如果连接正常
           let actions = "heart";
           this.ws.send(JSON.stringify(actions)); //这里可以自己跟后端约定
@@ -1378,7 +1063,7 @@ export default {
         this.heart(i);
       }, this.timeout);
     },
-    sendMsgByApi(uiCode) {
+    sendMessage(uiCode) {
       let type =
         this.roomDetailData && this.roomDetailData.room_type
           ? this.roomDetailData.room_type
@@ -1387,7 +1072,7 @@ export default {
           : this.current || 0;
       let data = {
         vid: this.parmUserInfo.vid,
-        fd: this.fd,
+        fd: this.webSocketFd,
         type: type,
         text: this.msgText,
         method: "notice",
@@ -1399,10 +1084,10 @@ export default {
         channel_code: this.channel_code ? this.channel_code : "",
       };
       this.senderid = data.sender;
-      if (this.msgType == 2) {
+      if (this.msgType === 2) {
         var formData = new FormData();
         formData.append("vid", this.parmUserInfo.vid);
-        formData.append("fd", this.fd);
+        formData.append("fd", this.webSocketFd);
         formData.append("title", "");
         formData.append("link", "");
         formData.append("type", type);
@@ -1425,176 +1110,154 @@ export default {
         this.prevImg = "";
         this.uploadImg = false;
         this.msgType = 1;
-        // const fileUp = document.querySelector("#fileUp");
-        // const file = fileUp.files[0];
-        // file = "";
         return;
       }
 
       this.$u
         .post("api/chat/sendMessage", data)
-        .then((res) => {
-          this.msgText = "";
-          if (res.code == 0) {
-          } else {
-            this.handleLocalMsgList(this.current).find(function (item) {
-              return item.uiCode == uiCode;
-            }).isError = true;
+        .then((res) => { 
+          if (res.msg === "connection error") {
+            this.getUserToken();
+          } else if(res.code !== 0) {
+            this.mergeDataList(this.current, "error", uiCode);
           }
+          this.msgText = "";
           this.toBottom();
         })
         .catch((error) => {
-          this.handleLocalMsgList(this.current).find(function (item) {
-            return item.uiCode == uiCode;
-          }).isError = true;
+          setTimeout(() => this.$u.toast("您的网路不太好哦!!"), 10000);
+          this.mergeDataList(this.current, "error", uiCode);
         });
     },
-    sendMsg() {
+    submitMessage() {
       this.isShowEmoji = false;
+      var strRegex =
+        /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\/]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{15})?(\/.*)?$/;
+      var re = new RegExp(strRegex);
       let currentDate = new Date().getTime();
-			if (this.info.user_nickname === undefined && this.current === 0) {
+      let sendMessageList = {
+        avatar:this.info.avatar,
+        sender:this.parmUserInfo.user_id,
+        sender_nickname:this.info.user_nickname,
+        // sender_exp:this.infos.exp,
+        text:this.msgText,
+        uiCode:currentDate,
+        isError:false,
+      }
+      console.log('this.info',this.info)
+      if (re.test(this.msgText.replace(/(\s*$)/g, ""))) {
+        this.$u.toast("无法发送超链接");
+        this.msgText = "";
+        return;
+      } else if (this.info.user_nickname === undefined && this.current === 0) {
         this.$u.toast("游客不能在广场发言 请您先登录");
         this.msgText = "";
         return;
       } else {
-        this.sendMsgByApi(currentDate);
+        this.mergeDataList(this.current,"push",sendMessageList)
+        this.sendMessage(currentDate);
       }
       return;
     },
     // 客户端接收服务端数据时触发
-    websocketonmessage(e) {
-      let data = JSON.parse(e.data);
-      if (data.fd !== null && data.action === "open") {
-        this.fd = data.fd;
-        // this.inRoomInfo(data.fd);
-      }
-      if (data.action === "delmsg") {
-        let msgListArr = this.handleLocalMsgList(this.current);
-        let delIndex = msgListArr.findIndex(
-          (item) => item.msg_id * 1 === data.msg_id * 1
-        );
-        msgListArr.splice(delIndex, 1);
-        this.handleLocalMsgList(this.current, "init", msgListArr);
-      }
-
-      // 未读的消息列表
-      if (data.action === "unread") {
-        let msgList = data.data || [];
-        this.$store.dispatch("updateMsg", {
-          msgList,
-          type: 0,
-        });
-        this.$emit("getMessageList");
-        this.$emit('onHandleUnRead',msgList, 0);
-      }
-      // 新收到的未读消息
-      if (data.action === "newMsg") {
-        
-        let msgList = {
-          vid: data.newMsgRoomvid,
-          room_type: data.room_type,
-          unread_count: 1,
-          text: data.text,
-        };
-        if (this.roomInfo.vid !== data.newMsgRoomvid) {
+    websocketonmessage(event) {
+      let data = JSON.parse(event.data);
+      switch (data.action) {
+        case "open":
+          if (data.fd !== null) {
+            this.webSocketFd = data.fd;
+            this.inRoomInfo(data.fd);
+          }
+          break;
+        case "delmsg":
+          let mergaArrData = this.mergeDataList(this.current);
+          let delIndex = mergaArrData.findIndex(
+            (item) => item.msg_id * 1 === data.msg_id * 1
+          );
+          mergaArrData.splice(delIndex, 1);
+          this.mergeDataList(this.current, "init", mergaArrData);
+          break;
+        case "unread":
+          let msgList = data.data || [];
           this.$store.dispatch("updateMsg", {
             msgList,
-            type: 1,
+            type: 0,
           });
-          // this.$emit('getMessageList')
-          this.$emit('onHandleUnRead',msgList, 1);
-        }
+          this.$emit("getMessageList");
+          this.$emit("onHandleUnRead", msgList, 0);
+          break;
+        case "newMsg":
+          let newMsgList = {
+            vid: data.newMsgRoomvid,
+            room_type: data.room_type,
+            unread_count: 1,
+            text: data.text,
+          };
+          if (this.roomInfo.vid !== data.newMsgRoomvid) {
+            this.$store.dispatch("updateMsg", {
+              newMsgList,
+              type: 1,
+            });
+            this.$emit("onHandleUnRead", newMsgList, 1);
+          }
+          break;
+        case "pin":
+          this.pinInfo = JSON.parse(data.data);
+          break;
+        case "send":
+        case "system":
+          //自己发送的消息不渲染到列表
+          if (
+            data.sender === localStorage.getItem("userid") ||
+            data.sender_nickname === this.info.user_nickname ||
+            data.sender_nickname.includes("游客") ||
+            (data.text.includes("进入直播间") && this.current !== 0)
+          )
+            return;
+          this.mergeDataList(this.current, "push", data);
+          this.toBottom();
+          break;
+        case "gift":
+          if (this.current !== 0) return;
+          let gift = this.giftList.filter((it) => it.id === data.gift_id)[0];
+          data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
+          this.mergeDataList(this.current, "push", data);
+          this.onhandleSendGift(data);
+          break;
       }
-
-      if (data.action === "pin") {
-        this.pinInfo = JSON.parse(data.data);
-      }
-      if (data.action === "send") {
-        // let list = this.msgList;
-        // list.push(data);
-        // console.log(this.senderid, "123123", data, " this.info======");
-        //自己发送的消息不渲染到列表
-
-        if (data.sender_nickname.includes("游客") && this.current == 0) {
-          return;
-        }
-        this.handleLocalMsgList(this.current, "push", data);
-        this.toBottom();
-
-      }
-      if (data.action === "system") {
-        if (data.text.includes("进入直播间") && this.current != 0) {
-          return;
-        }
-        this.handleLocalMsgList(this.current, "push", data)
-        this.toBottom();
-      }
-      if (data.action === "gift") {
-        if (this.current != 0) {
-          return;
-        }
-        let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
-        data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
-        this.handleLocalMsgList(this.current, "push", data)
-        this.onhandleSendGift(data);
-      }
-      if (data.status == 200) {
+      if (data.status === 200) {
         if (data.data) {
-          // 晚点封装成switch case
-          if (data.data.type == "dialog") {
-            this.handleLocalMsgList(
-              this.current,
-              "init",
-              data.data.historyMessageList
-            );
-            this.myUserinfo = data.data.targetUserInfo;
-            this.fd = data.data.targetUserInfo.fd;
-          }
-
-          if (data.data.type == "call") {
-            if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.current).push({
+          switch (data.data.type) {
+            case "dialog":
+              this.mergeDataList(
+                this.current,
+                "init",
+                data.data.historyMessageList
+              );
+              this.myUserinfo = data.data.targetUserInfo;
+              this.webSocketFd = data.data.targetUserInfo.fd;
+              break;
+            case "call":
+            case "message":
+              this.mergeDataList(this.current).push({
                 ...data.data.content,
                 uid: this.userInfo.uid,
               });
-              this.msgText = "";
               this.toBottom();
-              if (this.hasSendMsgCount > 0) {
-                this.hasSendMsgCount = this.hasSendMsgCount - 1;
+              if (data.data.type === "call") {
+                if (data.data.content.type === 1) {
+                  this.msgText = "";
+                  if (this.hasSendMsgCount > 0) this.hasSendMsgCount = this.hasSendMsgCount - 1;
+                }
+              } else if (data.data.type === "message") {
+                this.$store.dispatch("getUnReadMsgNum");
+                if (data.data.content.type === 1) this.msgText = "";
               }
-            }
-            if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.current).push({
-                ...data.data.content,
-                uid: this.userInfo.uid,
-              });
-              this.toBottom();
-            }
-          }
-          // if (data.data.type == "userinfo") {
-          //   this.fd = data.data.userinfo.fd
-          // }
-          if (data.data.type == "message") {
-            this.$store.dispatch("getUnReadMsgNum");
-            if (data.data.content.type == 1) {
-              this.handleLocalMsgList(this.current).push({
-                ...data.data.content,
-                uid: this.uid,
-              });
-              this.msgText = "";
-              this.toBottom();
-            }
-            if (data.data.content.type == 2) {
-              this.handleLocalMsgList(this.current).push({
-                ...data.data.content,
-                uid: this.uid,
-              });
-              this.toBottom();
-            }
+              break;
+            default:
+              break;
           }
         }
-      } else {
-        // this.$message.warning(data.message);
       }
     },
     toTop() {
@@ -1606,51 +1269,76 @@ export default {
       let content = document.querySelector(".chat-detail-main");
       main.scrollTop = content.clientHeight - main.clientHeight + 500;
     },
-    getshare() {
-      this.share = true;
-    },
-    copyUrl() {
-      let textarea = document.createElement("textarea");
-      textarea.value = this.shareUrl;
-      textarea.readOnly = "readOnly";
-      document.body.appendChild(textarea);
-      textarea.select();
-      textarea.setSelectionRange(0, this.shareUrl.length);
-      let result = document.execCommand("copy");
-      if (result) {
-        this.share = false;
-        this.$u.toast("复制成功");
-      }
-    },
     //解耦合
-    handleLocalMsgList(type, m, data) {
-      if (type != this.current) {
-        if (type == 1 && this.current == 2) {
+    mergeDataList(type, status, data) {
+      if (type !== this.current) {
+        if (type === 1 && this.current === 2) {
           // 群組
         } else {
           return;
         }
       }
-      switch (m) {
+      switch (status) {
         case "init":
-          this.messageDataList = data;
+          data.forEach(res => res.isError = false)
+          if (this.current === 0) {
+            this.msgSquareList = data;
+          } else if (this.current === 1) {
+            this.msgAnchorList = data;
+          } else {
+            this.msgChatList = data;
+          }
           break;
         case "push":
-          this.messageDataList.push(data);
+          if (this.current === 0) {
+            this.msgSquareList.push(data);
+          } else if (this.current === 1) {
+            this.msgAnchorList.push(data);
+          } else {
+            this.msgChatList.push(data);
+          }
           break;
         case "unshift":
           data.forEach((el) => {
-            this.messageDataList.unshift(el);
+            el.isError = false
+            if (this.current === 0) {
+              this.msgSquareList.unshift(el);
+            } else if (this.current === 1) {
+              this.msgAnchorList.unshift(el);
+            } else {
+              this.msgChatList.unshift(el);
+            }
           });
           break;
         case "empty":
-          this.messageDataList = [];
+          this.msgChatList = [];
           break;
-
-        default:
-          break;
+        case "error":
+          setTimeout(() => {
+            if (this.current === 0) {
+              this.msgSquareList.forEach((list) => {
+                if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
+              });
+            } else if (this.current === 1) {
+              this.msgAnchorList.forEach((list) => {
+               if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
+              });
+            } else {
+              this.msgChatList.forEach((list) => {
+               if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => list.isError = true, 11000);
+                }
+              });
+            }
+          }, 1500);
       }
-      // this.toBottom()
     },
     // 判斷登入狀態
     is_login() {
@@ -1691,13 +1379,13 @@ export default {
       this.$u.get("api/Gift/getList").then((res) => {
         this.giftList = res;
         if (res.length > 0) {
-          for (let i = 0; i < res.length; i++) {
+          res.forEach((el) => {
             let link = document.createElement("link");
             link.rel = "prefetch";
             link.as = "fetch";
-            link.href = res[i].swf;
+            link.href = el.swf;
             document.body.appendChild(link);
-          }
+          });
         }
       });
     },
@@ -1710,9 +1398,7 @@ export default {
       let timer = null;
       let offsetWidth = this.$refs.giftList.offsetWidth;
       let speed = 7.5;
-      if (type === 0) {
-        speed *= -1;
-      }
+      if (type === 0) speed *= -1
       let scrollCount = 0;
       timer = setInterval(() => {
         if (Math.abs(scrollCount) < offsetWidth) {
@@ -1745,10 +1431,11 @@ export default {
         type: type, //是否是背包礼物 1是 0否 默认0
         exp_icon: this.userInfo.exp_icon,
         is_guard: this.userInfo.is_guard,
-        is_room: this.userInfo.id == this.uid ? 1 : 0,
-        guard_icon: this.userInfo.is_guard == 1 ? this.userInfo.guard.icon : "",
+        is_room: this.userInfo.id === this.uid ? 1 : 0,
+        guard_icon:
+          this.userInfo.is_guard === 1 ? this.userInfo.guard.icon : "",
       };
-      if (type == 1) {
+      if (type === 1) {
         data.gift_id = item.gift_id;
       }
       if (!this.is_login()) {
@@ -1757,7 +1444,7 @@ export default {
       if (parseFloat(this.userInfo.balances) < item.needcoin) {
         return this.$u.toast("钻石不足, 先做日常任务领取钻石后再来吧~");
       }
-      if (this.userInfo.id == this.uid) {
+      if (this.userInfo.id === this.uid) {
         return this.$u.toast("主播不允许给自己刷礼物");
       }
       this.$u
@@ -1790,7 +1477,7 @@ export default {
       });
     },
     onhandleSendGift(data) {
-      let gift = this.giftList.filter((it) => it.id == data.gift_id)[0];
+      let gift = this.giftList.filter((it) => it.id === data.gift_id)[0];
       this.initMachineSVGA(gift);
     },
   },
@@ -1799,29 +1486,28 @@ export default {
 <style lang="scss" scoped>
 @-webkit-keyframes pulse {
   0% {
-    transform:scale(1);
+    transform: scale(1);
   }
-  14%{
-     transform:scale(1.2);
+  14% {
+    transform: scale(1.2);
   }
-  28%{
-     transform:scale(1);
+  28% {
+    transform: scale(1);
   }
-  42%{
-     transform:scale(1.2);
+  42% {
+    transform: scale(1.2);
   }
   0% {
-     transform:scale(1);
+    transform: scale(1);
   }
 }
 
-.b-play-btn{
+.b-play-btn {
   animation: pulse 2s ease infinite;
-  width:80px;
-  height:auto;
-  margin-left:20px;
-  &:hover{
-    cursor:pointer;
+  width: 80px;
+  height: auto;
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -2604,7 +2290,7 @@ form {
         background: #bd20ff;
       }
     }
-    .anchor-msg{
+    .anchor-msg {
       .msg-content {
         display: flex;
 
@@ -2754,15 +2440,15 @@ form {
       .msg-content {
         display: flex;
         .msg-avatar {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					min-width: 40px;
-					max-width: 40px;
-					height: 40px;
-					margin-right: 5px;
-					border-radius: 5px;
-					overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          max-width: 40px;
+          height: 40px;
+          margin-right: 5px;
+          border-radius: 5px;
+          overflow: hidden;
           .avatar {
             width: 80rpx;
           }

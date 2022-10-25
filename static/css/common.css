@@ -18,7 +18,9 @@ body {
 body::after,page::after,uni-page-body::after,uni-page-wrapper::after{
 	height: 0 !important;
 }
-
+uni-modal{
+  z-index: 9999999;
+}
 .radio{
 	transform: scale(.75);
 }

@@ -116,7 +116,7 @@
       ></u-tabs>
       <view
         class="tabs-btn flex-center"
-        :class="{ active: userInfo.is_attention == 1 || alreadyAttention }"
+        :class="{ active: userInfo.is_attention === 1 || alreadyAttention }"
       >
         <view class="flex-center" @click="getShow()">
           <image src="/static/images/live/live-7.png" mode=""></image>
@@ -138,62 +138,61 @@
         <newDetail1
           :headShow="show1 && !hidevideo"
           :activeIndex="activeIndex2"
-          @onHandleClickItem="onHandleClickItem"
+          v-if="current === 2 && showTabs.includes(current) && !showMsgInfo"
           :current="current"
-          v-if="current == 2 && showTabs.includes(current) && !showMsgInfo"
           :list="messageList"
+          @onHandleClickItem="onHandleClickItem"
         ></newDetail1>
-        <MessageInfo
-          :headShow="show1 && !hidevideo"
-          @close="onHandleMsgInfoBack"
+        <message-info 
           v-if="showMsgInfo"
+          :headShow="show1 && !hidevideo"
           :current="current"
           :roomInfo="roomInfo"
-        >
-        </MessageInfo>
+          @close="onHandleMsgInfoBack"
+        />
         <detail1
+          v-if="
+            (qsVid && showTabs.includes(current)) ||
+            (current === 1 && showMsgInfo)
+          "
           :headShow="show1 && !hidevideo"
           :giftList="giftList"
           :current="current"
           :showMsgInfo="showMsgInfo"
-          @getShow="getShow"
-          @leaveRoom="leaveRoom"
           :qsVid="qsVid"
-          v-if="
-            (qsVid && showTabs.includes(current)) ||
-            (current == 1 && showMsgInfo)
-          "
           :roomInfo="roomInfo"
           :roomDetailData="roomInfo"
           :userInfo="userInfo"
+          @getShow="getShow"
+          @leaveRoom="leaveRoom"
           @getMessageList="getMessageList"
+          @onHandleUnRead="onHandleUnRead"
         ></detail1>
         <detail2
-          v-if="current == 3"
+          v-if="current === 3"
           :userInfo="userInfo"
           @getShow="getShow"
         ></detail2>
-        <detail3
-          v-if="current == 4"
-          ref="detail3"
+        <Leaderboard  
+          v-if="current === 4"
+          ref="Leaderboard "
           :userInfo="userInfo"
-        ></detail3>
-        <detail4 v-if="current == 5"></detail4>
+        />
+        <more-video v-if="current === 5"/>
       </view>
     </template>
     <template v-else>
       <view class="tabs_context" :class="{ hasHeader: show1 && !hidevideo }">
         <detail2
-          v-if="current == 0"
+          v-if="current === 0"
           :userInfo="userInfo"
           @getShow="getShow"
         ></detail2>
-        <detail3
-          v-if="current == 1"
-          ref="detail3"
+        <Leaderboard  
+          v-if="current === 1"
+          ref="Leaderboard "
           :userInfo="userInfo"
-        ></detail3>
-        <detail4 v-if="current == 2"></detail4>
+        />
       </view>
     </template>
     <u-popup v-model="show" mode="center" border-radius="20" :closeable="true">
@@ -223,21 +222,19 @@ import detail1 from "./compontent/detail-1.vue";
 import newDetail1 from "./compontent/newDetail1.vue";
 import MessageInfo from "./compontent/MessageInfo.vue";
 import detail2 from "./compontent/detail-2.vue";
-import detail3 from "./compontent/detail-3.vue";
-import detail4 from "./compontent/detail-4.vue";
+import Leaderboard  from "./compontent/detail-3.vue";
+import MoreVideo from "./compontent/detail-4.vue";
 import downLoadModel from "./compontent/222.vue";
 import TcVideoPlayer from "./tencentPlayer.vue";
 import redEnvelopeDialog from "./redEnvelopeDialog.vue";
-import tim from "@/store/index.js";
 import { getQueryString } from "@/common/Qs";
-import { getUUID } from "@/common/uuid";
 // let tim = TIM.create(options); // SDK 实例通常用 tim 表示
 export default {
   components: {
     detail1,
     detail2,
-    detail4,
-    detail3,
+    MoreVideo,
+    Leaderboard ,
     newDetail1,
     MessageInfo,
     TcVideoPlayer,
@@ -251,9 +248,8 @@ export default {
       timerLoad: null,
       showMsgInfo: false, // 房间是否显示的状态
       msgList2: [], // 红点的列表
-      oneChat: 0, // 主播私聊的未读总数
-      msgCount: 0, // 列表红点的总数
-      modalMsgList: [],
+      privateChatTotal: 0, // 主播私聊的未读总数
+      unreadTotal: 0, // 列表红点的总数
       messageList: [], // 获取聊天列表
       activeIndex2: 0, // 聊天列表的选中索引
       parmUserInfo: {},
@@ -295,7 +291,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$store.state.system, "system========");
     if (this.timerLoad) {
       clearInterval(this.timerLoad);
       this.timerLoad = null;
@@ -337,7 +332,6 @@ export default {
       return;
     }
     if (getQueryString().tabType == 1) {
-      console.log(3334);
       this.tabList = [
         {
           name: "聊天",
@@ -391,9 +385,7 @@ export default {
     this.getLiveDetail(option.id);
     this.$store.state.timMessage = [];
     this.recordUsageTime();
-    this.timeInterval = setInterval(() => {
-      this.recordUsageTime();
-    }, 60000);
+    this.timeInterval = setInterval(() => this.recordUsageTime(), 60000);
     this.Iime();
     // this.getMessageList(); // 获取聊天列表
   },
@@ -435,54 +427,41 @@ export default {
       }
     },
     unReadInfo(newVal, oldVal) {
-      if (newVal != oldVal) {
-        this.onHandleUnRead(newVal.msgList, newVal.type);
-      }
+      if (newVal != oldVal) this.onHandleUnRead(newVal.msgList, newVal.type);
     },
     qualityIndex(e) {
       //监听改变画质
       this.play(4);
     },
-    current(e) {
-      if (e == 2) {
-        this.getMessageList(); // 获取聊天列表
-      }
+    current(event) {
+      if (event === 2) this.getMessageList() // 获取聊天列表
     },
     msgList2(e) {},
-    msgCount(e) {
-      console.log("监听到了总数的变化");
-      console.log(e);
-      let tablist = JSON.parse(JSON.stringify(this.tabList));
-      for (let index = 0; index < tablist.length; index++) {
-        let element = tablist[index];
-        if (element.name == "聊天") {
+    unreadTotal(e) {
+      let tabList = JSON.parse(JSON.stringify(this.tabList));
+      tabList.forEach(el => {
+        if (el.name === "聊天") {
           if (e && e > 0) {
-            element.count = e;
-          } else if (element.hasOwnProperty("count")) {
-            delete element.count;
+            el.count = e;
+          } else if (el.hasOwnProperty("count")) {
+            delete el.count;
           }
         }
-      }
-      console.log("改变后的总数tablist");
-      console.log(tablist);
-      this.tabList = tablist;
+      });
+      this.tabList = tabList;
     },
-    oneChat(num){
-      console.log('num',num)
-      let tablist = JSON.parse(JSON.stringify(this.tabList));
-      for (let index = 0; index < tablist.length; index++) {
-        let element = tablist[index];
-        if (element.name == "主播私聊") {
+    privateChatTotal(num){
+      let tabList = JSON.parse(JSON.stringify(this.tabList));
+      tabList.forEach(el => {
+        if (el.name === "主播私聊") {
           if (num && num > 0) {
-            element.count = num;
-          } else if (element.hasOwnProperty("count")) {
-            delete element.count;
+            el.count = num;
+          } else if (el.hasOwnProperty("count")) {
+            delete el.count;
           }
         }
-      }
-      // console.log('改变后的总数tablist')
-      // console.log(tablist)
-      this.tabList = tablist;
+      });
+      this.tabList = tabList;
     }
   },
   onReady() {
@@ -593,46 +572,34 @@ export default {
   },
   methods: {
     // 列表已读未读比对事件
-    mapList(list1, list2) {
+    mapList(read, unRead) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
-      if (list2.length > 0 && list2[list2.length - 1].text) {
-        list1.sort((x, y) => {
-          return x.vid == list2[list2.length - 1].vid
+      if (unRead.length > 0 && unRead[unRead.length - 1].text) {
+        read.sort((x, y) => {
+          return x.vid === unRead[unRead.length - 1].vid
             ? -1
-            : y.vid == list2[list2.length - 1].vid
+            : y.vid === unRead[unRead.length - 1].vid
             ? 1
             : 0;
         });
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        for (let index = 0; index < list1.length; index++) {
-          let element = list1[index];
-          if (element.vid == this.roomInfo.vid) {
-            this.activeIndex2 = index;
-          }
-        }
-      }
-
-      let menuList = list1;
-      let changeList = list2;
-
-      for (let indexs = 0; indexs < menuList.length; indexs++) {
-        let elements = menuList[indexs];
-        for (let index = 0; index < changeList.length; index++) {
-          let element = changeList[index];
-          if (element.vid == elements.vid) {
-            elements.unread_count = element.unread_count;
-            // 如果页面有text则替换最后的text
-            if (element.text) {
-              elements.last_msg.text = element.text;
+        read.forEach((readList)=>{
+          if (readList.vid === this.roomInfo.vid) this.activeIndex2 = index;
+          unRead.forEach((unReadList)=>{
+            if (readList.vid === unReadList.vid) {
+              unReadList.unread_count = readList.unread_count;
+              // 如果页面有text则替换最后的text
+              if (readList.text) {
+                unReadList.last_msg.text = readList.text;
+              }
             }
-          }
-        }
+          })
+        })
       }
-
-      console.log("新消息变更之后的数组");
-      console.log(menuList);
-
-      return menuList;
+      return readList;
+    },
+    oneChatMsgChange(list){
+      if(localStorage.getItem('anchorVid') === list.vid) this.privateChatTotal += list.unread_count
     },
     oneChatMsgChange(list){
       if(localStorage.getItem('anchorVid') === list.vid){
@@ -643,23 +610,14 @@ export default {
     // 群组消息总数计算事件
     onHandleGroupMsgChange(list) {
       let num = 0;
-      for (let index = 0; index < list.length; index++) {
-        const element = list[index];
-        if (element.unread_count > 0) {
-          num += element.unread_count;
-        }
-      }
-
-      this.msgCount = num;
+      list.forEach((res)=>{
+        if (res.unread_count > 0) num += res.unread_count;
+      })
+      this.unreadTotal = num;
     },
     // 列表红点刷新事件
     onHandleUnRead(msgList, type) {
-      console.log("已读未读的ws消息接收");
-      console.log(msgList);
-      console.log(type);
-      if (type == 0) {
-        console.log("默认的未读消息数组");
-        console.log(msgList);
+      if (type === 0) {
         this.msgList2 = msgList;
       } else {
         this.oneChatMsgChange(msgList)
@@ -668,23 +626,18 @@ export default {
           this.getMessageList();
           return;
         }
-
         let falg = true;
         let arr = JSON.parse(JSON.stringify(this.msgList2));
-        for (let index = 0; index < arr.length; index++) {
-          let element = arr[index];
-          if (element.vid === msgList.vid) {
+        arr.forEach((res)=>{
+          if (res.vid === msgList.vid) {
             falg = false;
-            element.unread_count += 1;
-            element.text = msgList.text;
+            res.unread_count += 1;
+            res.text = msgList.text;
           }
-        }
-        if (falg) {
-          arr.push(msgList);
-        }
-
+        })
+        if (falg) arr.push(msgList);
         this.msgList2 = arr;
-        this.msgCount += 1;
+        this.unreadTotal += 1;
         this.messageList = this.mapList(this.messageList, this.msgList2);
         this.onHandleGroupMsgChange(this.messageList);
       }
@@ -692,55 +645,57 @@ export default {
     // 已读事件
     readItem(item) {
       let msgList2 = this.msgList2;
-      for (let index = 0; index < msgList2.length; index++) {
-        let element = msgList2[index];
-        if (element.vid == item.vid) {
-          element.unread_count = 0;
-        }
-      }
+      msgList2.forEach((res)=> {
+        if (res.vid === item.vid) res.unread_count = 0
+      })
       this.msgList2 = msgList2;
     },
     // 显示隐藏
     play(type) {
       //视频进度
-      if (type == 1) {
-        this.videoBar = !this.videoBar;
-        if (this.videoBar) {
-          //如果是开启 5s后自动关闭
-          this.i = 0;
-          this.setInter();
-        } else {
-          clearInterval(this.timer);
-        }
-      } else if (type == 2) {
-        //解除声音（100%
-        this.player.volume(1);
-        this.player.muted(false);
-        this.isVolume = false;
-      } else if (type == 3) {
-        //播放/暂停
-        if (this.isPlay) {
+      switch (type) {
+        case 1:
+          this.videoBar = !this.videoBar;
+          if (this.videoBar) {
+            //如果是开启 5s后自动关闭
+            this.i = 0;
+            this.setInter();
+          } else {
+            clearInterval(this.timer);
+          }
+          break;
+        case 2:
+          //解除声音（100%)
+          this.player.volume(1);
+          this.player.muted(false);
+          this.isVolume = false;
+          break;
+        case 3:
+          //播放/暂停
+          if (this.isPlay) {
+            this.player.pause();
+          } else {
+            this.player.play();
+          }
+          break;
+        case 4:
+          //刷新重置
           this.player.pause();
-        } else {
+          this.player.src({
+            src: this.qualityArr[this.qualityIndex],
+          });
+          this.player.load({
+            src: this.qualityArr[this.qualityIndex],
+          });
           this.player.play();
-        }
-      } else if (type == 4) {
-        //刷新重置
-        this.player.pause();
-        this.player.src({
-          src: this.qualityArr[this.qualityIndex],
-        });
-        this.player.load({
-          src: this.qualityArr[this.qualityIndex],
-        });
-        this.player.play();
+          break;          
       }
     },
     setInter() {
       //s后自动关闭 自定义进度条
       this.timer = setInterval((res) => {
         this.i++;
-        if (this.i == 5) {
+        if (this.i === 5) {
           this.videoBar = false;
           clearInterval(this.timer);
         }
@@ -766,38 +721,22 @@ export default {
           });
       }
     },
-    async getMessageList() {
-      // const userid = JSON.parse(localStorage.getItem("userid"))
-      // const _that = this;
-      if(this.parmUserInfo.user_id === undefined){
-        return
-      }      
-      let res = await this.$u.get("/api/chat/getChatRoomList", {
+    getMessageList() {
+      if(this.parmUserInfo.user_id === undefined) return
+      this.$u.get("/api/chat/getChatRoomList", {
         user_id: this.parmUserInfo.user_id,
         type: "1,2",
         channel_code: this.channel_code ? this.channel_code : "",
-      });
-      console.log(this.msgList2)
-      for (let index = 0; index < res.length; index++) {
-        let element = res[index];
-        this.msgList2.forEach((num)=>{
-          element.unread_count = num.unreead_count;
-        })
-      }
-      // console.log("请求拿到的数据");
-      // console.log(res);
-      if (this.msgList2.length > 0) {
-        res = this.mapList(res, this.msgList2);
-        // this.list2 = this.mapList(this.list2, newV);
-        // if (this.activeIndex == 1) {
-        //   this.$emit("onHandleGroupMsgChange", this.modalMsgList);
-        // } else if (this.activeIndex == 2) {
-        this.onHandleGroupMsgChange(res);
-      }
-      // this.onHandleMenuChange(this.messageList);
-      // console.log("列表的数据");
-      // console.log(res);
-      this.messageList = res;
+      })
+      .then((res)=>{
+        res.forEach((count) => count.unreead_count = 0)
+        if (this.msgList2.length > 0) {
+          res = this.mapList(res, this.msgList2);
+          this.onHandleGroupMsgChange(res);
+        }
+        this.messageList = res;
+      })
+      
     },
     // 获取礼物列表
     getUserGiftList() {
@@ -814,15 +753,11 @@ export default {
       this.roomInfo = item;
       this.activeIndex2 = index;
       let messageList = JSON.parse(JSON.stringify(this.messageList));
-      this.msgCount -= messageList[index].unread_count || 0;
+      this.unreadTotal -= messageList[index].unread_count || 0;
       messageList[index].unread_count = 0;
       this.messageList = messageList;
       this.readItem(item);
       this.parmUserInfo.vid = item.vid;
-      // this.showChatList = false;
-      // this.showMsgInfo = true;
-      // this.inRoomInfo(this.fd);
-      // this.getChatHistoryMsg();
     },
     // 私聊(type=2)離開聊天室
     leaveRoom() {
@@ -843,22 +778,14 @@ export default {
         .then((res) => {
           this.userInfo = res.userData;
           this.qsVid = res.vid;
-          // console.log("==============res.userData.vid", res.vid);
           this.chat_msg_close = res.chat_msg_close;
           // 编辑主播公告
           res.userData.announcement1 = [];
           res.userData.announcement1.push(res.userData.announcement);
           this.room = res;
-          // this.$store.dispatch('joinGroup', {
-          // 	id: id
-          // })
-          // console.log(res.info.starttime, res.info.servertime)
-          // if ((res.info.starttime) - (res.info.servertime) > 0 && (res.info.starttime) > 0) {
-          // 	this.counttDown = (res.info.starttime) - (res.info.servertime)
           this.$store.dispatch("joinGroup", {
             id: id,
           });
-          // console.log(res.info.starttime, res.info.servertime);
           if (
             res.info.starttime - res.info.servertime > 0 &&
             res.info.starttime > 0
@@ -866,52 +793,38 @@ export default {
             // console.log("qsqweqweqewqerwerqqwrqer");
             this.counttDown = res.info.starttime - res.info.servertime;
           }
-          if (JSON.stringify(res.info.clarity) == "{}") {
+          if (JSON.stringify(res.info.clarity) === "{}") {
             this.quality = ["原画"];
           } else {
             this.quality = ["流畅", "标清", "高清"];
             // 重组清晰画质连接
             let qualityArr = [];
             for (let var1 in res.info.clarity) {
-              // console.log(res.info.clarity[var1]);
               qualityArr.push(res.info.clarity[var1]);
             }
             qualityArr.unshift(res.info.pull);
             this.qualityArr = qualityArr;
-            // .forEach((item,index)=>{
-            // console.log(item[index]);
-            // })
           }
-
           // 播放
-          this.$nextTick(function () {
-            this.player.src({
-              src: res.info.pull,
-            });
-            this.player.load({
-              src: res.info.pull,
-            });
+          this.$nextTick(()=> {
+            this.player.src({ src: res.info.pull,});
+            this.player.load({ src: res.info.pull, });
             this.player.play();
           });
-          // console.log(resdata);
         });
     },
 
-    change(e) {
-      console.log(e, "e==========");
-      this.current = e;
+    change(event) {
+      this.current = event;
       this.showMsgInfo = false;
-      if (e === 1){
-        this.oneChat = 0;
-        this.newArr = this.messageList.filter(list => list.vid === localStorage.getItem('anchorVid'))
-        console.log(this.newArr)
-      }else if (e == 4) {
-        setTimeout((res) => {
-          this.$refs.detail3.getList({
-            uid: this.userInfo.uid,
-            type: 0,
-          });
-        }, 100);
+      switch (event) {
+        case 1:
+          this.privateChatTotal = 0;
+          this.newArr = this.messageList.filter(list => list.vid === localStorage.getItem('anchorVid'))
+          break;
+        case 4:
+          setTimeout(() => this.$refs.Leaderboard.getList({ uid: this.userInfo.uid, type: 0,}), 100);
+          break;
       }
     },
     counttDownF() {
@@ -943,9 +856,7 @@ export default {
       qrUrlContent.setSelectionRange(0, qrUrlContent.value.length);
       let isSucess = document.execCommand("copy");
       this.tipsId = -1;
-      if (isSucess) {
-        alert("复制成功");
-      }
+      if (isSucess) alert("复制成功")
     },
     Iime() {
       setInterval(() => {

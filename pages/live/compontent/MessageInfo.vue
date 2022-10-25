@@ -18,15 +18,8 @@
 		props: ["roomInfo", "modalMsgList", 'isShowEmoji', 'dialogVisible','current'],
 		data() {
 			return {
-				//   isShowEmoji: false,
-				//   dialogVisible: false
 			};
 		},
-
-		mounted() {
-			console.log(this.roomInfo,"=========roomInfo")
-		},
-
 		methods: {
 			// 已读未读数据刷新事件
 			// onHandleUnRead(msgList,type){
