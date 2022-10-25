@@ -104,7 +104,7 @@
                       class="pic-info"
                     />
                   </template>
-                  <template v-if="item.pic && item.text">
+                  <template v-if="item.pic && item.text&&(item.msg_type!=4||item.msg_type!='4')">
                     <div
                       class="thumb-container"
                       @click.stop="openAppUrl(item.link)"
@@ -120,14 +120,14 @@
                     </div>
                   </template>
                   <div
-                    v-if="!item.pic && item.text && item.msg_type != '4'"
+                    v-if="!item.pic && item.text "
                     @click="openAppUrl(item.text)"
                     class="text-info"
                     v-html="getText(item.text)"
                     :style="item.text === '进入直播间' ? 'color: #665a64;' : ''"
                   ></div>
                   <div
-                    v-if="!item.pic && item.text && item.msg_type == '4'"
+                    v-if="item.msg_type == '4'||item.msg_type ==4"
                     class="text-info"
                   >
                     {{ item.text }}
@@ -232,7 +232,7 @@ export default {
       }
     },
     showControl(index, item) {
-      if (item.msg_type === "4") return;
+      if (item.msg_type === "4"||item.msg_type === 4) return;
       this.$emit("controlEvent", index);
     },
     onHandleClickImg(url) {

@@ -6,10 +6,14 @@ const install = (Vue, vm) => {
 	// 此为自定义配置参数，具体参数见上方说明
 	Vue.prototype.$u.http.setConfig({
 		// baseUrl: '/opc',  //dev测试
+<<<<<<< HEAD
 		baseUrl: 'https://www.x9zb.live',  //dev测试
+=======
+		// baseUrl: 'https://www.x9zb.live',  //dev测试
+>>>>>>> d944ef44a17e072d18284f1a28392a984da79e4a
 		// baseUrl: 'http://huyapre.oxldkm.com', //pre環境
 		// baseUrl: 'http://huidu.x9zb.live', //灰度環境
-		// baseUrl: window.location.origin+"/",//master打包上线
+		baseUrl: window.location.origin+"/",//master打包上线
 		loadingText: '努力加载中~',
 		loadingTime: 1000,
 		// ......

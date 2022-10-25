@@ -367,9 +367,9 @@ export default {
     });
   },
   computed: {
-    unReadInfo() {
-      return this.$store.state.unRead;
-    },
+    // unReadInfo() {
+    //   return this.$store.state.unRead;
+    // },
     show1: {
       get() {
         return this.$store.state.show;
@@ -572,31 +572,31 @@ export default {
   },
   methods: {
     // 列表已读未读比对事件
-    mapList(read, unRead) {
+    mapList(readData, unReadData) {
       // 是否是新增的消息 是的话就讲房间移动到列表最前面
-      if (unRead.length > 0 && unRead[unRead.length - 1].text) {
-        read.sort((x, y) => {
-          return x.vid === unRead[unRead.length - 1].vid
+      if (unReadData.length > 0 && unReadData[unReadData.length - 1].text) {
+        readData.sort((a, b) => {
+          return a.vid === unReadData[unReadData.length - 1].vid
             ? -1
-            : y.vid === unRead[unRead.length - 1].vid
+            : b.vid === unReadData[unReadData.length - 1].vid
             ? 1
             : 0;
         });
         // 如果是重整之后的数组，则重新校对active的索引，使页面样式规范
-        read.forEach((readList)=>{
-          if (readList.vid === this.roomInfo.vid) this.activeIndex2 = index;
-          unRead.forEach((unReadList)=>{
-            if (readList.vid === unReadList.vid) {
-              unReadList.unread_count = readList.unread_count;
+        readData.forEach((res)=>{
+          if (res.vid === this.roomInfo.vid) this.activeIndex2 = index;
+          unReadData.forEach((res)=>{
+            if (res.vid === res.vid) {
+              res.unread_count = res.unread_count;
               // 如果页面有text则替换最后的text
-              if (readList.text) {
-                unReadList.last_msg.text = readList.text;
+              if (res.text) {
+                res.last_msg.text = res.text;
               }
             }
           })
         })
       }
-      return readList;
+      return readData;
     },
     oneChatMsgChange(list){
       if(localStorage.getItem('anchorVid') === list.vid) this.privateChatTotal += list.unread_count

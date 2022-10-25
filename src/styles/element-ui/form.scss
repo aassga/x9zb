@@ -1,0 +1,33 @@
+// 表单样式
+.el-form-item--small.el-form-item,
+.el-form-item {
+    margin-bottom: 20px;
+}
+
+.el-form-item--small {
+    .el-form-item__content,
+    .el-form-item__label {
+        line-height: 34px;
+    }
+    // form元素错误提示信息  默认样式2px
+    .el-form-item__error {
+        padding-top: 3px;
+    }
+} 
+
+@import '../color.scss';
+
+.form-content {
+    .title-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .title {
+        border-left: 3px solid $mainColor;
+        padding-left: 15px;
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: bold;
+    }
+}

@@ -1,9 +1,0 @@
-api请求接口：
-/common/http.interceptor.js
-
-腾讯云SDKAppID
-/store/index.js
-/main.js
-
-
-项目框架：uniapp + uview1.8
