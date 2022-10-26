@@ -619,7 +619,7 @@
 			onPlayerPlay(player) {
 				
 				this.play = true
-				this.value1 = 0
+				// this.value1 = 0
 				// let video = this.$refs.videoPlayer.player
 				// video.muted(false)
 				console.log('player play!-----------------------------------------', player.el_.innerText)
