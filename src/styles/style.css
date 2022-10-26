@@ -32194,7 +32194,7 @@ a {
 }
 
 .matchInfo .row .right .middle-box {
-	width: 240px;
+	width: 320px;
 	position: relative;
 	cursor: pointer;
 	display: flex;
@@ -32205,6 +32205,17 @@ a {
 .matchInfo .row .right .middle-box .share-hover-phone,
 .matchInfo .row .right .middle-box .share-hover-text {
 	color: #959db0
+}
+
+.matchInfo .row .right .middle-box .share-hover-text .danmus-icon {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	text-align: center;
+	border-radius: 50%;
+	border: 1px solid #959db0;
+	line-height: 18px;
+	box-sizing: border-box;
 }
 
 .matchInfo .row .right .middle-box .share-hover-phone .phone-icon,
@@ -32247,7 +32258,8 @@ a {
 .matchInfo .row .right .middle-box .share-hover-phone:hover .share-txt,
 .matchInfo .row .right .middle-box .share-hover-text:hover,
 .matchInfo .row .right .middle-box .share-hover-text:hover .share-txt {
-	color: #ba9250
+	color: #ba9250;
+	border-color: #ba9250;
 }
 
 .matchInfo .row .right .middle-box .share-hover-phone:hover .report-icon,

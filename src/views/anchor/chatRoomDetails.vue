@@ -381,6 +381,7 @@ export default {
           type: userInfo.user_type,
         };
       }
+      console.log(this.parmUserInfo)
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
@@ -786,8 +787,9 @@ export default {
     newSocket(data) {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
-      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // windowHost = "10.83.107.92:9021";
+      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -891,6 +893,7 @@ export default {
       this.$store
         .dispatch("sendMessage", data)
         .then((res) => {
+          console.log('res',res)
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
@@ -939,10 +942,10 @@ export default {
           return
         }
       }
-      if(!sendMessageList.text.replace(/\s*/g,"") || sendMessageList.text === "\n"){
-        this.$message.error("請輸入聊天內容");
+      if(!sendMessageList.text||sendMessageList.text=="\n"){
+        this.$message.error("请输入聊天内容!!");
         this.msgText = "";
-        return 
+        return;
       }
       this.mergeDataList(this.tabNumber, "push", sendMessageList);
       this.sendMessage(currentDate, this.msgText);
@@ -963,7 +966,12 @@ export default {
           this.mergeDataList(this.tabNumber, "empty");
           break;
         case "delmsg":
-          let mergeArrData = this.mergeDataList(this.tabNumber);
+          let msgType = {
+            0: "msgSquareList",
+            1: "msgChatList",
+            2: "msgAnchorList"
+          }[this.tabNumber];
+          let mergeArrData = JSON.parse(JSON.stringify(this[msgType]));
           let delIndex = mergeArrData.findIndex(
             (item) => item.msg_id * 1 === data.msg_id * 1
           );
@@ -1000,9 +1008,6 @@ export default {
           break;
         case "send":
         case "system":
-          if(data.pic !== undefined){
-            this.mergeDataList(this.tabNumber, "push", data);
-          }
           if(data.type === 2){
             let msgList = {
               vid: data.vid,
@@ -1016,7 +1021,7 @@ export default {
               this.refreshUnreadEvent(msgList, 1);
             }
           }
-          if (data.action === "send" && data.msg_type === "0") {
+          if (data.msg_type == 0) {
             let sendMsgList = {
               messageForShow: data.text,
               textContent: data.text,
@@ -1025,8 +1030,10 @@ export default {
           }
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
-          
-          if (
+          console.log(data)
+          if(data.pic !== undefined){
+            this.mergeDataList(this.tabNumber, "push", data);
+          }else if (
             data.sender === localStorage.getItem("userid") ||
             data.sender_nickname === this.info.user_nickname ||
             data.sender_nickname.includes("游客") ||

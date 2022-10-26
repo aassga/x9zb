@@ -54,6 +54,10 @@
 												class="num_text">{{userData.attention}}</span></span>
 									</div>
 									<div class="middle-box">
+										<div class="share-hover-text" @click="danmusClick()">
+											<span class="share-txt danmus-icon">弹</span>
+											<span class="share-txt">{{danmakuSystem.show ? '关闭' : '开启'}}弹幕</span>
+										</div>
 										<div class="share-hover-text">
 											<a class="share-txt" target="_blank" :href="system.CustomerService">
 												<span class="report-icon"></span><span class="share-txt">举报/投诉</span>
@@ -678,6 +682,10 @@
 			system(){
 				return this.$store.state.system
 			},
+			//弹幕配置
+			danmakuSystem() {
+				return this.$store.state.danmakuSystem;
+			}
 		},
 		watch:{
 			// 篮球比分数据
@@ -1265,6 +1273,10 @@
 				console.log(data);
 				let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
 				this.initMachineSVGA(gift);
+			},
+			danmusClick() {
+				localStorage.setItem("danmakuShow", localStorage.getItem("danmakuShow") === "1" ? "1" : "0");
+				this.$store.state.danmakuSystem.show = !this.$store.state.danmakuSystem.show;
 			}
 		},
 		// destroyed(){

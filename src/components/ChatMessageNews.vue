@@ -258,12 +258,10 @@ export default {
       if (item.avatar === "") {
         return require("@/assets/images/userLogo.png");
       } else {
-        // return window.location.origin + item.avatar;
         return item.avatar;
       }
     },
     mySelf(item) {
-        
       if (
         Number(item.sender) === this.parmUserInfo.user_id ||
         item.sender === this.parmUserInfo.user_id ||

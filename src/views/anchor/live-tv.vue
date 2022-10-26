@@ -145,12 +145,14 @@
 						<div class="dplayer-icons dplayer-icons-right">
 							<div class="dplayer-volume">
 								<button class="dplayer-icon dplayer-volume-icon">
-									<span class="dplayer-icon-content"><svg xmlns="http://www.w3.org/2000/svg"
-											version="1.1" viewBox="0 0 21 32">
+									<span class="dplayer-icon-content">
+										<svg xmlns="http://www.w3.org/2000/svg"
+											version="1.1" viewBox="0 0 21 32" @click="volumeClick()">
 											<path
 												d="M13.728 6.272v19.456q0 0.448-0.352 0.8t-0.8 0.32-0.8-0.32l-5.952-5.952h-4.672q-0.48 0-0.8-0.352t-0.352-0.8v-6.848q0-0.48 0.352-0.8t0.8-0.352h4.672l5.952-5.952q0.32-0.32 0.8-0.32t0.8 0.32 0.352 0.8z">
 											</path>
-										</svg></span>
+										</svg>
+									</span>
 								</button>
 								<div class="dplayer-volume-bar-wrap" data-balloon-pos="up">
 									<div class="dplayer-volume-bar">
@@ -401,6 +403,7 @@
 				msg: '',
 				size: '',
 				value1: 0,
+				value2: 100, // 暫存音量
 				qualityIndex: 3,
 				quality: [],
 				danActive: false, //弹幕切换状态
@@ -487,6 +490,9 @@
 				let video = this.$refs.videoPlayer.player
 				video.volume(e / 100)
 				video.muted(false)
+				if (e != 0) {
+					this.value2 = e
+				}
 			},
 			'$store.state.item'(e) {
 				let list = this.$store.state.item
@@ -709,6 +715,13 @@
 						break
 				}
 			},
+			volumeClick() {
+				if (this.value1 > 0) {
+					this.value1 = 0;
+				} else {
+					this.value1 = this.value2;
+				}
+			}
 		}
 	}
 </script>

@@ -1,19 +1,19 @@
 <template>
   <div class="tencent_player_container">
-    <div class="danmu-container">
+    <div class="danmu-container" :style="danmakuSystem.show ? 'opacity: 1' : 'opacity: 0'">
       <vue-danmaku
         ref="danmaku"
         class="demo"
         :danmus="danmus"
         v-bind="config"
-        :style="{fontSize:danmakuSystem.size == 1?'10px':danmakuSystem.size == 2?'20px':'30px'}"
+        style="height:100px;width:100%"
       >
         <!-- 容器slot :style="{height:danmakuSystem == 1?'20%':danmakuSystem == 2?'50%':'100%'}"-->
-        <div :style="{height:danmakuSystem.area == 3?'10vh':danmakuSystem.area == 2?'30vh':'60vh'}"></div>
+        <!-- <div :style="{height:danmakuSystem.area == 3?'10vh':danmakuSystem.area == 2?'30vh':'60vh'}"></div> -->
         <!-- 弹幕slot -->
         <template v-slot:dm="{ index, danmu }">
           <div class="danmu-item xuan-bg">
-            <span>{{danmu.messageForShow}}</span>
+            <span style="font-size: 20px;">{{danmu.messageForShow}}</span>
           </div>
         </template>
       </vue-danmaku>
@@ -78,11 +78,11 @@ export default {
       qsVid: "",
       danmus: [],
       config: {
-        channels: 3, // 轨道数量，为0则弹幕轨道数会撑满容器
+        channels: 2, // 轨道数量，为0则弹幕轨道数会撑满容器
         useSlot: true, // 是否开启slot
         loop: false, // 是否开启弹幕循环
         speeds: 50, // 弹幕速度，实际为每秒弹幕走过的像素距离
-        fontSize: 20, // 文本模式下的字号
+        fontSize: 20, // 文本模式下的字号 (slot開啟後無效)
         top: 10, // 弹幕轨道间的垂直间距
         right: 0, // 同一轨道弹幕的水平间距
         debounce: 100 // 弹幕刷新频率（多少毫秒插入一条弹幕，建议不小于50）
@@ -99,18 +99,21 @@ export default {
     this.query = query;
     this.getRoomInfo(getRoomInfo);
     this.eventAdd();
-    // this.Iime()
+    if (!localStorage.getItem("danmakuShow")) {
+      localStorage.setItem("danmakuShow", "1");
+    };
+    this.$store.state.danmakuSystem.show = localStorage.getItem("danmakuShow") === "1";
   },
   watch: {
     "$store.state.item"(e) {
       let list = this.$store.state.item;
       if (this.$refs.danmaku == null) return;
       this.$refs.danmaku.push(list);
-    }
+    } 
   },
   computed: {
+    //弹幕配置
     danmakuSystem() {
-      //弹幕配置
       let system = this.$store.state.danmakuSystem;
       this.config.channels = system == 3 ? 3 : system == 2 ? 6 : 10;
       return this.$store.state.danmakuSystem;
