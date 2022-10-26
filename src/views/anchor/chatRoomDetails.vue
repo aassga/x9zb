@@ -321,6 +321,7 @@ export default {
       deep: true,
     },
     webSocketFd(newV, oldV) {
+      console.log('newV',newV)
       if (newV !== oldV) this.inviteRoom(true);
     },
     showSetDownBtn(newV, oldV) {
@@ -383,6 +384,7 @@ export default {
           type: userInfo.user_type,
         };
       }
+      console.log(this.parmUserInfo)
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
@@ -514,6 +516,10 @@ export default {
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
+      // 如果在當前聊天室
+      if (this.roomInfo.vid === msgList.vid) {
+        return;
+      }
       if (type === 0) {
         this.unreadMsgList = msgList;
       } else {
@@ -894,6 +900,7 @@ export default {
       this.$store
         .dispatch("sendMessage", data)
         .then((res) => {
+          console.log('res',res)
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
@@ -1021,7 +1028,9 @@ export default {
             if(data.sender === Number(localStorage.getItem("userid")) || data.sender_nickname === this.info.user_nickname){
               return
             } else{
-              this.refreshUnreadEvent(msgList, 1);
+              if (data.action === "system") {
+                this.refreshUnreadEvent(msgList, 1);
+              }
             }
           }
           if (data.msg_type == 0) {

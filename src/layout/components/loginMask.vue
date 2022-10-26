@@ -80,8 +80,7 @@
 												<div class="login-passwd-icon"><img
 														src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAh1BMVEUAAAC8vLy7u7u8vLy7u7u8vLy8vLy8vLy8vLy8vLy8vLy8vLy9vb2+vr7BwcG8vLy8vLy9vb3Kysq7u7u8vLy8vLy8vLzAwMDDw8PKysq8vLy8vLy9vb3///+7u7u8vLy8vLy8vLy9vb3AwMC8vLy8vLy9vb28vLy+vr67u7u8vLy7u7u7u7tP74ylAAAALHRSTlMAtvHo3ver+2PitJxWMxWAaUsL6N2wchsQB+1eOQHXoZk/LiTJxZCJRLydfET/bPkAAAFzSURBVFjD7ZXrcoIwEIUFyy2gXCpXQUGt2jbv/3xttsCM1YTF4Iwz5vzMyXxJTrKbmZISX1Fo+3Xt22EkQ8lsYtBWhhZkd2LypKAXKpL8Hs75jV7JCcdzAoveUjISU9VdNCTxytJL4i6sbTUK5FPQPIj667MdCjqO4XgUdIouwm/pNp6zN+BU3v/xUIfxHRpksvnW+dooYQUNyykpU3DLWoPVIEEaLCvY7AeyMOAF7TjxgZmiQLD9mOdu4dj4qNc8N8THzWrMyrilbLCaQ4EGZm7YOhUm64F70bBp79ushWljHnfKJpp832X+AgFaDoC+pgK5rw5KSaFDM9K5gpakF1o6UGdoESFohQe9DxQsWnMFegBoTmJnApAeVOxD0KVB4Z/RyILMvsQkQXbneJKgpnMWz7Kjz86J5UD9ljz5B3la/nZNf4qX7cA3LQ2CDrZSIDHIOhyM52psCvQg0AYPcoSgIx7kCkH5N9FQIn40U1Lq9APFggVM0PoDhgAAAABJRU5ErkJggg=="
 														alt="icon"></div>
-												<div class="login-input">
-													<input :type="!isEyes ? 'password' : 'text'" v-model="base.password"
+												<div class="login-input"><input :type="!isEyes ? 'password' : 'text'" v-model="base.password"
 														placeholder="请输入密码">
 													<div class="icon-view">
 														<img @click="isEyes = !isEyes" class="img-icon"
