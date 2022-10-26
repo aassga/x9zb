@@ -9,7 +9,7 @@
       <div class="HuyaXWebhMessagelist_i_avater_box">
         <img
           class="HuyaXWebhMessagelist_i_avater"
-          :src="item.avater || require('@/assets/images/userLogo.png')"
+          :src="item.pic || require('@/assets/images/userLogo.png')"
           alt
           srcset
         />
