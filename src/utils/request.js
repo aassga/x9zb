@@ -114,6 +114,7 @@ service.interceptors.response.use(
 				}
 			}
 			localStorage.clear()
+			window.location.reload()
 			// 控制弹窗1s内出现一次
 			i++
 			if(i>1) return
@@ -129,13 +130,13 @@ service.interceptors.response.use(
 			store.state.user.islogin = false
 			localStorage.removeItem('userInfo')
 			// console.log(_this);
-			MessageBox.confirm(res.msg, '确认', {
-				confirmButtonText: '确认',
-				showCancelButton:false,
-				type: 'warning'
-			}).then(() => {
-				window.location.reload()
-			})
+			// MessageBox.confirm(res.msg, '确认', {
+			// 	confirmButtonText: '确认',
+			// 	showCancelButton:false,
+			// 	type: 'warning'
+			// }).then(() => {
+			// 	window.location.reload()
+			// })
 			// Vue.prototype.$message.error(res.msg)
 			// console.log('--------------------'+router);
 			//  setTimeout(res=>{

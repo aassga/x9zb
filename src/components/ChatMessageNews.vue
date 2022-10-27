@@ -76,7 +76,7 @@
                           item.sender_nickname.length > 5
                             ? item.sender_nickname.substr(0, 6) + "..."
                             : item.sender_nickname
-                        }}
+                        }} :
                       </span>
                     </template>
                     <template v-else>
@@ -86,10 +86,10 @@
                           item.sender.length > 5
                             ? "遊客" + item.sender.substr(0, 4) + "..."
                             : "遊客" + item.sender
-                        }}
+                        }} :
                       </span>
                     </template>
-                    <span v-if="!item.text.includes('进入直播间')">:</span>
+
                   </div>
                   <div
                     v-if="tabNumber === 2 && !mySelf(item)"
@@ -300,9 +300,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      // str = str.replace(/\r\n/g, "<br>");
-      // str = str.replace(/\n/g, "<br>");
-      // str = str.replace(/\r/g, "<br>");
+      str = str.replace(/\r\n/g, "<br>");
+      str = str.replace(/\n/g, "<br>");
+      str = str.replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {

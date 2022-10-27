@@ -202,6 +202,7 @@ import { getQueryString } from "@/utils/Qs";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
 import ChatMessageNew from "@/components/ChatMessageNews";
+import { info	} from '@/api/user.js'
 export default {
   name: "ChatDetails",
   props: {
@@ -308,9 +309,6 @@ export default {
   },
   //给新的ws实例添加监听事件
   watch: {
-    token(newV, oldV){
-      console.log(newV)
-    },
     unreadMsgList: {
       handler(newV, oldV) {
         this.chatList = this.mapList(this.chatList, newV);
@@ -321,7 +319,6 @@ export default {
       deep: true,
     },
     webSocketFd(newV, oldV) {
-      console.log('newV',newV)
       if (newV !== oldV) this.inviteRoom(true);
     },
     showSetDownBtn(newV, oldV) {
@@ -384,7 +381,6 @@ export default {
           type: userInfo.user_type,
         };
       }
-      console.log(this.parmUserInfo)
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
@@ -795,8 +791,8 @@ export default {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
-      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -900,7 +896,6 @@ export default {
       this.$store
         .dispatch("sendMessage", data)
         .then((res) => {
-          console.log('res',res)
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
@@ -920,7 +915,15 @@ export default {
           this.mergeDataList(this.tabNumber,'error',uiCode)
         });
     },
+    getInfo(){
+      info().then((res) => {
+        localStorage.setItem('userInfo',JSON.stringify(res.data))
+        this.info = res.data
+        this.infos.exp = res.data.exp
+      });
+    },
     submitMessage() {
+      if(localStorage.getItem('userInfo') == undefined) this.getInfo()
       this.isShowEmoji = false;
       var strRegex =
         /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
@@ -955,6 +958,7 @@ export default {
         return;
       }
       this.mergeDataList(this.tabNumber, "push", sendMessageList);
+      
       this.sendMessage(currentDate, this.msgText);
       this.msgText = "";
       return;
