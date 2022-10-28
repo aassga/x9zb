@@ -297,6 +297,7 @@ export default {
       fileList: [], //圖片清單
       anchor_id: "",
       anchorVid:"",
+      userInfo:{}
     };
   },
   computed: {
@@ -480,12 +481,10 @@ export default {
             ? 1
             : 0
         );
-        // 如果是重整之后的数组，则重新校对chatListActive的索引，使页面样式规范
-        readData.forEach((res)=>{
-          if (res.vid === this.roomInfo.vid) this.chatListActive = res;
-        })
       }
       readData.forEach((res)=>{
+        // 如果是重整之后的数组，则重新校对chatListActive的索引，使页面样式规范
+        if (res.vid === this.roomInfo.vid) this.chatListActive = res;
         unReadData.forEach((el)=>{
           if (res.vid === el.vid) {
             res.unread_count = el.unread_count;
@@ -792,9 +791,9 @@ export default {
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
@@ -918,12 +917,13 @@ export default {
     getInfo(){
       info().then((res) => {
         localStorage.setItem('userInfo',JSON.stringify(res.data))
+        localStorage.removeItem("userid")
         this.info = res.data
         this.infos.exp = res.data.exp
       });
     },
     submitMessage() {
-      if(localStorage.getItem('userInfo') == undefined) this.getInfo()
+      // if(this.tabNumber === 0 && localStorage.getItem('userInfo') === null) this.getInfo()
       this.isShowEmoji = false;
       var strRegex =
         /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
@@ -958,7 +958,6 @@ export default {
         return;
       }
       this.mergeDataList(this.tabNumber, "push", sendMessageList);
-      
       this.sendMessage(currentDate, this.msgText);
       this.msgText = "";
       return;
@@ -1019,9 +1018,7 @@ export default {
           break;
         case "send":
         case "system":
-          if(data.pic !== undefined){
-            this.mergeDataList(this.tabNumber, "push", data);
-          }
+          if(data.pic !== undefined && data.link === null) this.mergeDataList(this.tabNumber, "push", data)
           if(data.type === 2){
             let msgList = {
               vid: data.vid,
@@ -1048,7 +1045,7 @@ export default {
           //遊客判斷sender過濾相同訊息
           if (
             data.sender === localStorage.getItem("userid") ||
-            data.sender_nickname === this.info.user_nickname ||
+            data.sender === this.info.id ||
             data.sender_nickname.includes("游客") ||
             (data.text.includes("进入直播间") && this.tabNumber !== 0)
           ) {
@@ -1064,7 +1061,7 @@ export default {
           break;
         case "gift":
           if (this.tabNumber !== 0) return;
-          let gift = this.giftList.filter((item) => item.id == data.gift_id)[0];
+          let gift = this.giftList.filter(item => item.id == data.gift_id)[0];
           data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
           this.mergeDataList(this.tabNumber, "push", data);
           this.$emit("onhandleSendGift", data);
@@ -1112,10 +1109,15 @@ export default {
     },
     //解耦合
     mergeDataList(type, status, data) {
+      console.log(this.info)
       if (type !== this.tabNumber) return;
+      console.log('data',data)
       switch (status) {
         case "init":
-          data.forEach( res => res.isError = false )
+          data.forEach(res => {
+            res.isError = false
+            if(Number(res.sender) === this.info.id) this.info.user_nickname = res.sender_nickname
+          })
           if (type === 0) {
             this.msgSquareList = data;
           } else if (type === 1) {

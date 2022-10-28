@@ -217,7 +217,7 @@
 				if (_this.typeS == 'code') {
 
 					login(_this.database).then(res1 => {
-					    _this.$store.state.user.showLoginMask = false;
+					  _this.$store.state.user.showLoginMask = false;
 						_this.$store.state.user.islogin = true
 						setToken(res1.data.token) //缓存token
 						_this.$store.state.user.data = res1.data;

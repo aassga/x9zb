@@ -349,6 +349,11 @@
 			// 修改用户信息
 			updateInfo(data){
 				updateInfo(data).then(res=>{
+					console.log('data',data)
+					let userInfo = JSON.parse(localStorage.getItem("userInfo"))
+					userInfo.user_nickname = data.user_nickname
+					localStorage.setItem("userInfo",JSON.stringify(userInfo))
+					console.log(userInfo)
 					this.mobile = ''
 					this.code = ''
 					this.password = ''

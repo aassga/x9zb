@@ -114,7 +114,7 @@ service.interceptors.response.use(
 				}
 			}
 			localStorage.clear()
-			window.location.reload()
+			// window.location.reload()
 			// 控制弹窗1s内出现一次
 			i++
 			if(i>1) return
@@ -129,7 +129,6 @@ service.interceptors.response.use(
 			store.state.user.data = {}
 			store.state.user.islogin = false
 			localStorage.removeItem('userInfo')
-			// console.log(_this);
 			// MessageBox.confirm(res.msg, '确认', {
 			// 	confirmButtonText: '确认',
 			// 	showCancelButton:false,
@@ -149,9 +148,7 @@ service.interceptors.response.use(
 			// location.reload()
 			// this.$
 		} else if (res.code != 700 && res.code != 1 && res.code !== 0) { //其它状态
-			
 			return res
-			
 		} else {
 			return res
 		}
