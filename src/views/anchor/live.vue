@@ -958,7 +958,11 @@
 				// this.initMachineSVGA(e.swf)
 			},
 			// 
+			getLogin() {
+				this.$store.state.user.showLoginMask = true
+			},
 			setAttention() {
+				if(JSON.parse(localStorage.getItem("userInfo")) === null) this.getLogin()
 				let is_attention = this.userData.is_attention
 				let data = {
 					id: this.userData.uid
