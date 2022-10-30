@@ -58,16 +58,16 @@
 									<img src="../../assets/images/main-mask.png" alt="">
 									<div class="match-card">
 										<div>
-											<div class="match-card-header" style="padding-top: 24px;">
-												<div style="width: 130px">{{item.competition}}</div>
+											<div class="match-card-header" style="padding-top: 24px;" :style="item.anchor.length === 0 ? 'padding-right:10px':''">
+												<div style="width: 110px">{{item.competition}}</div>
 												<!-- 是否已预约 -->
 												<div class="match-card-header-icons">
 													<div class="match-card-reservation" v-if="item.status_id == 1 && item.reserve == 0"
-														@click="getReserveMatch(item)"></div>
+														@click="getReserveMatch(item)" :style="item.anchor.length !== 0 ? 'margin-right:5px':''"></div>
 													<div class="match-card-reservation-already"
 														 v-if="item.reserve != 0"></div>
 			
-													<div class="match-card-header-img flex-start" v-if="item.anchor.length != 0">
+													<div class="match-card-header-img flex-start" v-if="item.anchor.length !== 0">
 														<!-- <router-link v-for="(item1,index1) in item"  tag="a" target="_blank" class="grid-header-right-more" :to="'/score-live?type='+(item.type == 1?'basketball':'football')+'&id='+item1.id+ '&vid=' + item.vid ">
 															<img :src="item1.avatar">
 														</router-link> -->
