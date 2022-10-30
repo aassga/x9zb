@@ -27,7 +27,7 @@
 										</div>
 										<div class="match-card-content">
 											<div class="match-card-mask">
-												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="JSON.stringify(item.anchorList) === '{}'?'/score-live?type='+(item.type == 0?'football':item.type == 1?'basketball':item.type)+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchorList.uid + '&vid=' + item.vid ">
+												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="item.anchor.length === 0?'/score-live?type='+(item.type == 0?'football':item.type == 1?'basketball':item.type)+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchor[0].id + '&vid=' + item.vid ">
 													进入直播间
 												</router-link>
 											</div>
@@ -203,17 +203,18 @@
 			// 获取全部赛程
 			getAllMatch() {
 				getAllMatch().then(res => {
-					res.data.data.forEach(item=>{
-						item.anchorList = {}
-						if(item.anchor.length != 0) {
-							item.anchorList = item.anchor[0]
-						}
-					})
+					// res.data.data.forEach(item=>{
+					// 	item.anchorList = {}
+					// 	if(item.anchor.length != 0) {
+					// 		item.anchorList = item.anchor[0]
+					// 	}
+					// })
 					// res.data.data.forEach((item, index) => {
 					// 	if (index > 50) return
 						
 					// })
 					this.AllMatchlist = res.data.data
+					console.log(this.AllMatchlist)
 				}).catch(res => {
 			
 				})
