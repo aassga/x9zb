@@ -447,7 +447,6 @@
 			playerOptions() { // 使用计算属性
 				//如果info为空则已结束
 				if (JSON.stringify(this.info) == "{}") return
-				console.log(this.info)
 				const playerOptionsObj = {
 					live: false,
 					muted:true,
@@ -475,7 +474,6 @@
 						}
 					}
 				}
-				// console.log(this.info)
 				return playerOptionsObj
 			}
 
@@ -550,7 +548,6 @@
 					getInfo(data)
 						.then((res) => {
 							this.info = res.data.info;	
-							// console.log(this.info)
 						})
 						.catch((res) => {});
 				}

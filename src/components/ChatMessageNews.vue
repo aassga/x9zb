@@ -59,26 +59,23 @@
                         item.text.includes('进入直播间') ? 'color: #575757;' : ''
                       "
                     >
-                      <template v-if="item.sender_nickname !== undefined">
-                        <span>
-                          {{
-                            !item.text.includes("进入直播间") &&
-                            item.sender_nickname.length > 5
-                              ? item.sender_nickname.substr(0, 6) + "..."
-                              : item.sender_nickname
-                          }} :
-                        </span>
-                      </template>
-                      <template v-else>
-                        <span>
-                          {{
-                            !item.text.includes("进入直播间") &&
-                            item.sender.length > 5
-                              ? "遊客" + item.sender.substr(0, 4) + "..."
-                              : "遊客" + item.sender
-                          }} :
-                        </span>
-                      </template>
+                      <span v-if="item.sender_nickname !== undefined">
+                        {{
+                          !item.text.includes("进入直播间") &&
+                          item.sender_nickname.length > 5
+                            ? item.sender_nickname.substr(0, 6) + "..."
+                            : item.sender_nickname
+                        }}
+                      </span>
+                      <span v-else>
+                        {{
+                          !item.text.includes("进入直播间") &&
+                          item.sender.length > 5
+                            ? "遊客" + item.sender.substr(0, 4) + "..."
+                            : "遊客" + item.sender
+                        }}
+                      </span>
+                      <span v-if="!item.text.includes('进入直播间')"> : </span>
                     </div>
                   </template>
                   <template v-if="tabNumber === 2 && !mySelf(item)">
@@ -154,7 +151,11 @@
                     </div>
                   </div>
                 </div>
+                <div></div>
               </div>
+            </div>
+            <div>
+              
             </div>
           </div>
         </template>

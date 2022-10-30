@@ -1109,7 +1109,6 @@ export default {
     },
     //解耦合
     mergeDataList(type, status, data) {
-      console.log(this.info)
       if (type !== this.tabNumber) return;
       console.log('data',data)
       switch (status) {

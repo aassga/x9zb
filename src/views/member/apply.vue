@@ -283,7 +283,6 @@
 			this.info = JSON.parse(localStorage.getItem('userInfo'))
 			this.info.code = this.info.mobile.slice(0,2)
 			this.info.phone = this.info.mobile.slice(3)
-			console.log(this.info)
 			// 获取主播认证信息
 			this.getVerifiedInfo1()
 			// 获取主播经验列表选中
