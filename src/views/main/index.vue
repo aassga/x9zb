@@ -71,7 +71,7 @@
 														<!-- <router-link v-for="(item1,index1) in item"  tag="a" target="_blank" class="grid-header-right-more" :to="'/score-live?type='+(item.type == 1?'basketball':'football')+'&id='+item1.id+ '&vid=' + item.vid ">
 															<img :src="item1.avatar">
 														</router-link> -->
-														<img :src="list[0].anchor[0].avatar"/>
+														<img :src="item.anchor[0].avatar"/>
 													</div>
 												</div>								
 											</div>

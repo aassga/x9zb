@@ -20,7 +20,7 @@
 													<div class="match-card-reservation-already"
 														@click="getReserveMatch(item)" v-if="item.reserve != 0"></div>
 													<div class="match-card-header-img flex-start" v-if="item.anchor.length != 0 && AllMatchlist[0].anchor[0].avatar !== undefined ">
-														<img :src="AllMatchlist[0].anchor[0].avatar"/>
+														<img :src="item.anchor[0].avatar"/>
 													</div>
 												</div>
 											</div>
