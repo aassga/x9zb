@@ -12,7 +12,7 @@
 									<div class="match-card" style="width: 100%;">
 										<div>
 											<div class="match-card-header" style="">
-												<div style="width: 110px;">{{item.competition}}</div>
+												<div style="width: 130px;">{{item.competition}}</div>
 												<div class="match-card-header-icons">
 													<!-- 是否已预约 -->
 													<div class="match-card-reservation" v-if="item.status_id == 1&& item.reserve == 0"
