@@ -1110,7 +1110,6 @@ export default {
     //解耦合
     mergeDataList(type, status, data) {
       if (type !== this.tabNumber) return;
-      console.log('data',data)
       switch (status) {
         case "init":
           data.forEach(res => {

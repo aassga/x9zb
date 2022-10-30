@@ -706,7 +706,6 @@
 		},
 		methods: {
 			newItem(item){
-				console.log(item.slice(0,1))
 				return item.slice(0,1)
 			},
 			/* 开启折叠面板 */
@@ -1022,7 +1021,6 @@
 					// })
 					
 					this.list = res.data.data
-					console.log(this.list)
 				}).catch(res => {})
 			},
 

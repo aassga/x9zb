@@ -217,7 +217,6 @@
 						
 					// })
 					this.AllMatchlist = res.data.data
-					console.log(this.AllMatchlist)
 				}).catch(res => {
 			
 				})
