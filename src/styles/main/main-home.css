@@ -325,6 +325,11 @@
   vertical-align: baseline;
   vertical-align: initial;
 }
+.live-match-grid .match-card-header-img img {
+	height: 20px;
+	margin-right: 10px;
+	border-radius: 50%;
+}
 .live-match-grid .match-card-header-text {
   color: #f0c682;
   display: flex;
