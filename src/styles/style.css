@@ -37318,6 +37318,7 @@ a {
 }
 
 .live-match-grid .match-card-header {
+	width:auto;
 	font-weight: 700;
 	font-size: 14px;
 	color: #fff;
@@ -37415,8 +37416,7 @@ a {
 }
 
 .live-match-grid .match-card-header-icons img {
-	height: 100%;
-	width: 100%;
+	height: 20px;
 	vertical-align: initial
 }
 

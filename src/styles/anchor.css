@@ -793,10 +793,8 @@
 .live-match-grid .match-card-header-icons .match-card-reservation-already:hover:after {
 	content: "\53D6\6D88\9884\7EA6"
 }
-
 .live-match-grid .match-card-header-icons img {
-	height: 100%;
-	width: 100%;
+	height: 20px;
 	vertical-align: initial
 }
 

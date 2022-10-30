@@ -3,9 +3,6 @@
 		<input id="cp-input" />
 		<!-- <div class="bell-2"><span class="bell"></span></div> -->
 		<div class="help-nav-box-wrap">
-			
-			 
-			  
 			<div class="nav-item-box">
 				<a href="/about-user">
 					<div class="icon"></div>
@@ -62,21 +59,21 @@
 									<div class="match-card">
 										<div>
 											<div class="match-card-header" style="padding-top: 24px;">
-												<div style="width: 150px;">{{item.competition}}</div>
+												<div style="width: 150px">{{item.competition}}</div>
+												<!-- 是否已预约 -->
 												<div class="match-card-header-icons">
-													<!-- 是否已预约 -->
 													<div class="match-card-reservation" v-if="item.status_id == 1 && item.reserve == 0"
 														@click="getReserveMatch(item)"></div>
 													<div class="match-card-reservation-already"
 														 v-if="item.reserve != 0"></div>
-														 
+			
 													<div class="match-card-header-img flex-start" v-if="item.anchor.length != 0">
-														<router-link v-for="(item1,index1) in item"  tag="a" target="_blank" class="grid-header-right-more" :to="'/score-live?type='+(item.type == 1?'basketball':'football')+'&id='+item1.id+ '&vid=' + item.vid ">
+														<!-- <router-link v-for="(item1,index1) in item"  tag="a" target="_blank" class="grid-header-right-more" :to="'/score-live?type='+(item.type == 1?'basketball':'football')+'&id='+item1.id+ '&vid=' + item.vid ">
 															<img :src="item1.avatar">
-														</router-link>
-														
+														</router-link> -->
+														<img :src="list[0].anchor[0].avatar"/>
 													</div>
-												</div>
+												</div>								
 											</div>
 											<div class="match-card-header-text">
 												<div class="text1">{{item.status_type == 1?'进行中':item.status_type == 2?'已结束':item.match_time}}</div>
@@ -85,7 +82,7 @@
 										<div class="match-card-content">
 											<!-- 鼠标移入显示 先隐藏 -->
 											<div class="match-card-mask" v-if="item.status_type == 1">
-												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="JSON.stringify(item.anchorList) === '{}'?'/score-live?type='+(item.type == 1?'basketball':'football')+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchorList.uid+'&vid=' + item.vid">
+												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="item.anchor.length === 0 ? '/score-live?type='+(item.type == 1? 'basketball':'football')+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchor[0].id+'&vid=' + item.vid">
 													进入直播间
 												</router-link>
 											</div>
@@ -708,6 +705,10 @@
 			}
 		},
 		methods: {
+			newItem(item){
+				console.log(item.slice(0,1))
+				return item.slice(0,1)
+			},
 			/* 开启折叠面板 */
 			change(e,type){
 				
@@ -1013,14 +1014,15 @@
 			// 首页全部赛程
 			getList() {
 				getAllMatch().then(res => {
-					res.data.data.forEach(item=>{
-						item.anchorList = {}
-						if(item.anchor.length != 0) {
-							item.anchorList = item.anchor[0]
-						}
-					})
+					// res.data.data.forEach(item=>{
+					// 	item.anchorList = {}
+					// 	if(item.anchor.length != 0) {
+					// 		item.anchorList = item.anchor[0]
+					// 	}
+					// })
 					
 					this.list = res.data.data
+					console.log(this.list)
 				}).catch(res => {})
 			},
 
@@ -1481,9 +1483,9 @@
 	// 	flex: 1;
 	// 	width: auto;
 	// }
+
 	.match-card-header-img img {
-		width: 30px;
-		height: 30px;
+		height: 20px;
 		margin-right: 10px;
 		border-radius: 50%;
 	}
