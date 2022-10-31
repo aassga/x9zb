@@ -226,6 +226,7 @@
 						localStorage.removeItem("userid");
 						localStorage.removeItem("vidInfo");
 						localStorage.userInfo = JSON.stringify(res1.data)
+						localStorage.information = JSON.stringify(res1)
 						getQiniuToken().then(res1 => {
 							// let QiniuToken = 
 							// _this.$store.state.user.islogin=false;

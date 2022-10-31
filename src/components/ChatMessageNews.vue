@@ -92,7 +92,16 @@
                     />
                   </template>
                   <template v-if="item.pic && item.text">
+                    <div class="login-content" v-if="item.msg_type == '4'">
+                      <img
+                        class="b-play-btn"
+                        :src="item.pic"
+                        @click="play(item)"
+                      />
+                      {{ item.text }}
+                    </div>
                     <div
+                      v-else
                       class="thumb-container"
                       @click.stop="openLink(item.link)"
                     >
