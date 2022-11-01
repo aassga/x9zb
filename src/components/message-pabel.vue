@@ -175,7 +175,7 @@
 
 <script>
 export default {
-  name: "ChatMessageNews",
+  name: "MessagePabel",
   props: {
     msgList: {
       type: Array,
@@ -224,19 +224,6 @@ export default {
       showBottom: false,
       hiImg: require("./../assets/images/HiTag.png"),
     };
-  },
-
-  filters: {
-    picFilter(url) {
-      console.log(url);
-      return url;
-      // if (url.includes("base64")) {
-      //   let split = window.location.origin + "/";
-      //   newUrl = newUrl.replace(split, "");
-      // } else {
-      //   return newUrl;
-      // }
-    },
   },
   methods: {
     play(item) {

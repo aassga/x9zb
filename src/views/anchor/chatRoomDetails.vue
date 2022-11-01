@@ -46,7 +46,7 @@
         :roomInfo="roomInfo"
         @close="backBefore"
       />
-      <chat-message-new
+      <message-pabel
         v-if="tabNumber === 0"
         :msgList="msgSquareList"
         :controlIndex="controlIndex"
@@ -59,7 +59,7 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <chat-message-new
+      <message-pabel
         v-if="tabNumber === 2"
         :msgList="msgAnchorList"
         :controlIndex="controlIndex"
@@ -72,7 +72,7 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <chat-message-new
+      <message-pabel
         v-if="tabNumber === 1"
         :msgList="msgChatList"
         :controlIndex="controlIndex"
@@ -201,7 +201,7 @@
 import { getQueryString } from "@/utils/Qs";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
-import ChatMessageNew from "@/components/ChatMessageNews";
+import MessagePabel from "@/components/message-pabel";
 import { info	} from '@/api/user.js'
 export default {
   name: "ChatDetails",
@@ -219,7 +219,7 @@ export default {
   components: {
     MessageList,
     MessageInfo,
-    ChatMessageNew,
+    MessagePabel,
   },
   data() {
     return {
@@ -790,10 +790,10 @@ export default {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
-      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
