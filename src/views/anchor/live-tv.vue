@@ -613,17 +613,11 @@
 				}
 			},
 			// listen event
-			onPlayerPlay(player) {
-				
+			onPlayerPlay(player) {			
 				this.play = true
-				// this.value1 = 0
-				// let video = this.$refs.videoPlayer.player
-				// video.muted(false)
-				console.log('player play!-----------------------------------------', player.el_.innerText)
 			},
 			onPlayerPause(player) {
 				this.play = false
-				console.log('player pause!', player)
 			},
 			// 全屏按钮
 			fullScreenHandle() {

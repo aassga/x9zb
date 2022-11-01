@@ -137,7 +137,7 @@
 					<div class="anchor-grid-body">
 						<!-- live?router=live&type=football&id=3637322&uid=9 -->
 						<router-link tag="a" target="_blank" class="anchor-card" :to="'/live?type='+(item.type == 1?'basketball':'football')+'&id='+item.match_id + '&uid=' + item.uid+ '&vid=' + item.vid"
-							v-for="(item,index) in mainList" :key="index" v-if="index<4">
+							v-for="(item,index) in mainList" :key="index" v-show="index<4">
 							<div class="anchor-content"
 								:style="{background:' url('+item.thumb+')center top / cover no-repeat'}">
 								<!-- <div class="anchor-content-title-wrap">
@@ -188,31 +188,20 @@
 						<div class="home-news-body">
 							<div class="news-carousel">
 								<el-carousel :interval="5000" trigger="click" width="494px" height="324px">
-								      <el-carousel-item v-for="(item,index) in Headlinesbanner" :key="index">
-										   <router-link style="height: 324px;width: 100%;" class="headlines-item" tag="a" target="_blank" :to="'/detail?id=' + item.id">
-											   <el-image
-													style="height: 324px;width: 100%;"
-													:src="item.img"
-													fit="cover">
-												</el-image>
-											</router-link>
-								        <!-- <img style="height: auto;" src="" > -->
-								      </el-carousel-item>
+								  <el-carousel-item v-for="(item,index) in Headlinesbanner" :key="index">
+										<router-link style="height: 324px;width: 100%;" class="headlines-item" tag="a" target="_blank" :to="'/detail?id=' + item.id">
+											<el-image
+												style="height: 324px;width: 100%;"
+												:src="item.img"
+												fit="cover">
+											</el-image>
+										</router-link>
+								  </el-carousel-item>
 								</el-carousel>
 							</div>
 							<div class="headlines-group">
-								<!-- <div class="headlines" v-if="classificationIndex == 0">
-									<a v-for="(item,index) in HeadlinesList" :key="index" class="headlines-item headlines-hot" target="_blank" href="/news/detail?id=cda36458156046a6ab115c11f3c6b13d&amp;type=0">
-										<div class="headlines-img">
-											<img src="data:image/png;base64,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"
-												alt="">
-										</div>
-										<div class="headlines-title">{{item.title}}</div>
-									</a>
-									
-								</div> -->
 								<div class="headlines">
-									<router-link v-if="index < 11" :class="classificationIndex == 0?'headlines-hot':''" v-for="(item,index) in HeadlinesList.data" :key="index" class="headlines-item" tag="a" target="_blank" :to="'/detail?id=' + item.id">
+									<router-link v-show="index < 11" :class="classificationIndex == 0?'headlines-hot':''" v-for="(item,index) in HeadlinesList.data" :key="index" class="headlines-item" tag="a" target="_blank" :to="'/detail?id=' + item.id">
 										<div class="headlines-img"><img
 												src="data:image/png;base64,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"
 												alt="">
@@ -261,7 +250,7 @@
 										<div class="right">
 											<div class="blank"></div>
 											<div class="status-btn add-btn" @click="attention(item)" v-if="item.is_watchlist == 0"><span class="img"></span>关注</div>
-											<div class="status-btn no-add-btn"v-if="item.is_watchlist == 1">已关注</div>
+											<div class="status-btn no-add-btn" v-if="item.is_watchlist == 1">已关注</div>
 										</div>
 									</div>
 								</div>
@@ -279,10 +268,18 @@
 									src="../../assets/images/main-recommend-title.png" alt="">
 								<div class="grid-header-left-text">赛事推荐</div>
 								<div class="grid-header-left-nav">
-									<div :class="{active2:type===0}" @click="type = 0">全部</div>
+									<div
+										v-for="(item, index) in tabList"
+										:key="index"
+										:class="{ 'active2': type === index }"
+										@click="type = index"
+									>
+										{{ item.name }}
+									</div>
+									<!-- <div :class="{active2:type===0}" @click="type = 0">全部</div>
 									<div :class="{active2:type===1}" @click="type = 1">足球</div>
 									<div :class="{active2:type===2}" @click="type = 2">篮球</div>
-									<div :class="{active2:type===3}" @click="type = 3">电竞</div>
+									<div :class="{active2:type===3}" @click="type = 3">电竞</div> -->
 								</div>
 							</div>
 							<div class="grid-header-right">
@@ -292,7 +289,14 @@
 						<!-- 进行中的比赛 -->
 						
 						<div class="rmt" v-for="(item,key) in recommendList" :key="key">
-							<div class="rmt-header" v-if="key=='type1'">
+							<div class="rmt-header" v-if="key !=='count'">
+								<div class="rmt-title flex-start">
+									<img :src="getRecommendImages(key)" alt="" height="20px" width="20px">
+									<div>{{key === 'type1' ? '进行中的比赛':key === 'type2'?'未开始的比赛':key === 'type3'?'已结束的比赛':false}}</div>
+								</div>
+								<a class="rmt-more" @click="navigate('football',1)">查看全部</a>
+							</div>
+							<!-- <div class="rmt-header" v-if="key=='type1'">
 								<div class="rmt-title flex-start"><img src="../../assets/images/main-beigin.png" alt=""
 										height="20px" width="20px">
 									<div>进行中的比赛</div>
@@ -310,9 +314,9 @@
 										height="20px" width="20px">
 									<div>已结束的比赛</div>
 								</div><a class="rmt-more" @click="navigate('football',1)">查看全部</a>
-							</div>
+							</div> -->
 							<!-- <el-collapse accordion @change="change($event,key)"> @mouseover="movein(JSON.stringify(obj))" @mouseleave="moveout(JSON.stringify(obj))" -->
-							<div class="el-collapse-item" v-for="(obj,index1) in item"  :key="index1" v-if="isNaN(item)" @mouseover="movein(JSON.stringify(obj),key)" @mouseleave="moveout(JSON.stringify(obj))"  >
+							<div class="el-collapse-item" v-for="(obj,index1) in item"  :key="index1" v-show="isNaN(item)" @mouseover="movein(JSON.stringify(obj),key)" @mouseleave="moveout(JSON.stringify(obj))"  >
 							  <!-- <el-collapse-item :ref="JSON.stringify(obj)" :name="JSON.stringify(obj)"> -->
 									<div class="el-collapse-item__header">
 									  <div class="rmt-row" style="box-shadow:none;width: 100%">
@@ -362,8 +366,7 @@
 														<div class="lazyload-placeholder"></div>
 													</div>
 												</a></div>
-											<div style="display: flex; align-items: center;">
-												
+											<div style="display: flex; align-items: center;">					
 												<el-popover
 													v-if="obj.anchor_total != 0"
 													placement="bottom"
@@ -374,7 +377,7 @@
 															{{obj.anchor_total}}位主播在播
 														</div>
 														<div class="anchor-list">
-															<router-link tag="a" v-for="(item5,index5) in obj.anchor_list" target="_blank" class="anchor-li flex" :to="'/live?router=live&type='+obj.type+'&id='+obj.sourceid + '&uid=' + item5.id+ '&vid=' + obj.vid">
+															<router-link tag="a" v-for="(item5,index5) in obj.anchor_list" :key="index5" target="_blank" class="anchor-li flex" :to="'/live?router=live&type='+obj.type+'&id='+obj.sourceid + '&uid=' + item5.id+ '&vid=' + obj.vid">
 																<img :src="item5.avatar || require('../../assets/images/userLogo.png')" >
 																<span style="width: 50px;" class="text-clamp">{{item5.user_nickname}}</span>
 																
@@ -386,29 +389,18 @@
 																	</div>直播中
 																</div>
 															</router-link>
-															<!-- <div class=""  >
-															</div> -->
 														</div>
 													</div>
 													<div slot="reference" class="icon-avatar-name flex-start">
-														<img :src="obj.anchor_list[0].avatar || require('../../assets/images/userLogo.png')" >
+														<img :src="getObjImages(obj)" >
 														<span>主播 {{obj.anchor_total}}</span>
 													</div>
-													<!-- <el-button>hover 激活</el-button> -->
-												  </el-popover>
-												<!-- <router-link tag="a" target="_blank"
-													:to="'/score-live?type='+(obj.type == 1?'basketball':'football')+'&id='+obj.sourceid+ '&vid=' + obj.vid "> -->
+												</el-popover>
 												<div class="icon-voa"
 													@click="navigate('score-live?type='+(obj.type == 1?'basketball':'football')+'&id='+obj.sourceid+'&vid='+obj.vid,null)">
 													<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAbFBMVEUAAADvdWnvd2rweGnwdWnvdmnvdmn/uLjvdmnvdWnvdWnudmrxd2v0eWzxfG7/g3bvdmnudmjwdmnwd2rxd2rudWjvdmnvdmjvdmnvdWjuemnudmnudmjudmjvdWjudWnvdmnud2nweGjudWjGukM4AAAAI3RSTlMAkp0zVfDZAsPg+HskHRIJz5iFZjblj3NpTi64tamiel9cQu0bnQoAAACkSURBVDjLrdFJDsIwEETRgmBsx1MmkhBm+v53RFkayQUSvPXfdDV+p52VIus0nFAOlgcW8kEWGMWDDvFKgx2A44EGW4/YsmBf3zSelgQiTYU0skDqLmFQxWDVJIwsMB6xKQdq1uutxeAUEC/lK8wdeCiyQ0I4kyVn6F6xX6jOFL7JoBaqhuGBWWcn1ACEaVM0BXzNt9tM65Hr5U2PnF6qzKLxLy/o81yLYbzXUQAAAABJRU5ErkJggg=="
 														alt="视频图标" v-if="obj.mlive == 1">
 												</div>
-												<!-- </router-link> -->
-												<!-- <div class="icon-arrow">
-													<div><img
-															src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAqBAMAAABb64ZtAAAAKlBMVEUAAACampqZmZmZmZmampqZmZmcnJyfn5+ZmZmampqampqZmZmZmZmZmZnx66X3AAAADXRSTlMAR/HhrmcsGAqMystQGmyG0wAAAE5JREFUKM9jYLx7lQEBfO8KIDhdd9UQHHbbywUIXtLdHXA20IgrSEbE3p2A4HAOStNX4Db9ACYHoQxhAHajuxGWIpyDcCjCC4PdXOREAQCV1kT8JfwXfAAAAABJRU5ErkJggg=="
-															alt=""></div>
-												</div> -->
 											</div>
 										</div>
 									  </div>
@@ -426,18 +418,18 @@
 														<p>排行</p>
 													</div>
 													<div class="center">
-														<p v-if="battle.vs_recent.total == 0">暂无交锋</p>
+														<p v-if="battle.vs_recent.total === 0">暂无交锋</p>
 														<p v-else>
 															两队交锋{{battle.vs_recent.total}}次，主队<span style="color:#7ac23c">{{battle.vs_recent.win}}</span>胜<span style="color:#a1a1ab">{{battle.vs_recent.drawn}}</span>平<span style="color:#f5222d">{{battle.vs_recent.lost}}</span>负
 														</p>
 														<div class="center-main flex">
 															<div class="center-main-left">
-																<img v-for="(item4,index4) in battle.home_recent" :src="item4 == '胜'?require('../../assets/images/succe.png'):item4 == '平'?require('../../assets/images/ping.png'):item4 == '负'?require('../../assets/images/wrong.png'):''" >
+																<img v-for="(item4,index4) in battle.home_recent" :key="index4" :src="item4 == '胜'?require('../../assets/images/succe.png'):item4 == '平'?require('../../assets/images/ping.png'):item4 == '负'?require('../../assets/images/wrong.png'):''" >
 																<!-- <span v-for="(item4,index4) in battle.home_recent" :style="{backgroundColor:getColor(item4)}"></span> -->
 															</div>
 															<p>近6场走势</p>
 															<div class="center-main-left">
-																<img v-for="(item4,index4) in battle.away_recent" :src="item4 == '胜'?require('../../assets/images/succe.png'):item4 == '平'?require('../../assets/images/ping.png'):item4 == '负'?require('../../assets/images/wrong.png'):''" >
+																<img v-for="(item4,index4) in battle.away_recent" :key="index4" :src="item4 == '胜'?require('../../assets/images/succe.png'):item4 == '平'?require('../../assets/images/ping.png'):item4 == '负'?require('../../assets/images/wrong.png'):''" >
 																<!-- <img v-for="(item4,index4) in battle.away_recent" :src="getColor(item4)" > -->
 																<!-- <span v-for="(item4,index4) in battle.away_recent" :style="{backgroundColor:getColor(item4)}"></span> -->
 															</div>
@@ -544,6 +536,12 @@
 		},
 		data() {
 			return {
+				tabList:[
+					{name:"全部"},
+					{name:"足球"},
+					{name:"篮球"},
+					{name:"电竞"},
+				],
 				mySwiper: null,
 				nameActive:[],
 				nameActiveIndex:[],
@@ -705,14 +703,28 @@
 			}
 		},
 		methods: {
+			getRecommendImages(key){
+				if(key === "type1"){
+					return require('../../assets/images/main-beigin.png')	
+				}else if(key === "type2"){
+					return require('../../assets/images/main-end.png')
+				}else{
+					return require('../../assets/images/main-ends.png')
+				}
+			},	
+			getObjImages(data){
+				if(typeof data !== 'number'){
+					return data.anchor_list[0].avatar || require('../../assets/images/userLogo.png')
+				}
+			},
 			newItem(item){
 				return item.slice(0,1)
 			},
 			/* 开启折叠面板 */
-			change(e,type){
+			change(event,type){
 				
-				if(!e) return
-				let obj = JSON.parse(e)
+				if(!event) return
+				let obj = JSON.parse(event)
 				/* obj.type == 1?'basketball':'football' */
 				let data = {
 					type:obj.type,
@@ -756,16 +768,6 @@
 			getColor(all,i){
 				if(all == 0) return 0
 				return (i / all)  * 100 + '%'
-				
-				return
-				 // (battle.vs_recent.win / (battle.vs_recent.win + battle.vs_recent.drawn + battle.vs_recent.lost)) * 100 + '%' -->
-				if(type == '胜'){
-					return '../../assets/images/succe.png' 
-				}else if(type == '平'){
-					return '../../assets/images/ping.png'
-				}else if(type == '负'){
-					return '../../assets/images/wrong.png'
-				}
 			},
 			
 			// 获取活动

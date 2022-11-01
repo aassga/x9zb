@@ -950,11 +950,7 @@
 				this.gifMask = true
 				if (this.offsetLeft == this.$refs.gifli[index].offsetLeft) return
 				this.gifItem = e
-				// console.log(this.num * 450);
 				this.offsetLeft = this.$refs.gifli[index].offsetLeft+this.num * 450
-				// console.log(this.$refs.gifli[index].offsetLeft);
-				// console.log(e);
-				console.log("============================", e);
 				// this.initMachineSVGA(e.swf)
 			},
 			// 
