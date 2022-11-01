@@ -504,30 +504,26 @@ export default {
     },
     onAnchorCount(list){
       if(list.vid === this.anchorList.vid){
-        if (list.unread_count > 0){
-          this.inviteCount += list.unread_count
-        } 
+        if (list.unread_count > 0) this.inviteCount += list.unread_count
       }
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
       // 如果在當前聊天室
-      if (this.roomInfo.vid === msgList.vid) {
-        return;
-      }
+      if (this.roomInfo.vid === msgList.vid) return
       if (type === 0) {
         this.unreadMsgList = msgList;
       } else {
-        let falg = true;
+        let flag  = true;
         let arr = JSON.parse(JSON.stringify(this.unreadMsgList));
         arr.forEach((res)=>{
           if (res.vid === msgList.vid) {
-            falg = false;
+            flag  = false;
             res.unread_count += 1;
             res.text = msgList.text;
           }
         })
-        if (falg) arr.push(msgList);
+        if (flag) arr.push(msgList);
         this.unreadMsgList = arr;
         this.unreadTotal += 1;
         if(msgList.vid === this.anchorList.vid) this.onAnchorCount(msgList)
@@ -535,14 +531,11 @@ export default {
     },
     // 已读事件
     readEvent(item) {
-      let newMessageData = this.unreadMsgList
-      newMessageData.forEach((res)=>{
+      this.unreadMsgList.forEach((res)=>{
         if(res.vid === item.vid) res.unread_count = 0
       })
-      if(item.vid === this.anchorList.vid) {
-        this.inviteCount = 0
-      } 
-      this.unreadMsgList = newMessageData;
+      if(item.vid === this.anchorList.vid) this.inviteCount = 0
+      console.log('this.unreadMsgList',this.unreadMsgList)
     },
     getUserToken() {
       const _that = this;
@@ -790,10 +783,10 @@ export default {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
-      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);

@@ -413,6 +413,13 @@
 
 				this.index = 0
 				logout().then(res => {
+					var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+					if(keys){
+						for(var i = keys.length; i--;){
+							document.cookie = keys[i] + "=0;expires=" + new Date(0).toUTCString() + ";max-age=0";
+						}
+					}
+					localStorage.clear()
 					removeToken()
 				}).catch(res => {})
 				localStorage.removeItem("userInfo");
