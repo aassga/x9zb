@@ -199,6 +199,7 @@
 
 <script>
 import { getQueryString } from "@/utils/Qs";
+import { getUserId,setUserId } from '../../utils/auth.js'
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
 import MessagePabel from "@/components/message-pabel";
@@ -355,11 +356,13 @@ export default {
     this.info = userInfo || {
       token: "",
     };
+    console.log(!getUserId())
     if (getQueryString()) {
       if (!userInfo) {
         if (!localStorage.getItem("userid")) {
           userid = 10000000 + Math.random().toString().slice(-6);
           localStorage.setItem("userid", userid);
+          // setUserId(10000000 + Math.random().toString().slice(-6))
           this.parmUserInfo = {
             user_id: userid,
             username: userid,
@@ -367,6 +370,8 @@ export default {
             type: 0,
           };
         } else {
+          setUserId(10000000 + Math.random().toString().slice(-6))
+
           this.parmUserInfo = {
             user_id: localStorage.getItem("userid"),
             username: localStorage.getItem("userid"),
@@ -375,6 +380,7 @@ export default {
           };
         }
       } else {
+        // setUserId(10000000 + Math.random().toString().slice(-6))
         this.parmUserInfo = {
           user_id: userInfo.id,
           username: userInfo.user_nickname,
@@ -535,7 +541,6 @@ export default {
         if(res.vid === item.vid) res.unread_count = 0
       })
       if(item.vid === this.anchorList.vid) this.inviteCount = 0
-      console.log('this.unreadMsgList',this.unreadMsgList)
     },
     getUserToken() {
       const _that = this;
