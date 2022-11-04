@@ -381,7 +381,7 @@ export default {
     display: flex;
     .thumb-container{
       display: flex;
-      width: 205px;
+      width: 185px;
       padding:3px;
       border: 1px solid #b3b3b3;
       background-color: #dddddd;
@@ -389,7 +389,7 @@ export default {
       margin-left: 3px;
       cursor: pointer;
       .thumb-pic{
-        height: 6em;
+        height: 32px;
         border-radius: 6px;
       }
       .thumb-msg-box{

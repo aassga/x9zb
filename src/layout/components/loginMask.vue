@@ -7,7 +7,7 @@
 				</div>
 				<div class="ant-modal-content">
 					<button type="button" aria-label="Close" class="ant-modal-close"
-						@click="$store.state.user.showLoginMask=false">
+						@click="closeLoginMask()">
 						<span class="ant-modal-close-x">
 							<span role="img" aria-label="close" class="anticon anticon-close ant-modal-close-icon">
 								<svg viewBox="64 64 896 896" focusable="false" data-icon="close" width="1em"
@@ -172,6 +172,7 @@
 				count: null,
 				timer: null,
 				show: true,
+				showRegister:false,
 				code: '86',
 				isEyes:false,
 				dialogTableVisible: true,
@@ -189,8 +190,9 @@
 		},
 		computed: {
 			loginStatus() {
+				if(this.$store.state.user.showRegister) this.type = "regiter"
 				return this.$store.state.user.showLoginMask
-			},
+			},		
 			// options(){
 			// 	return this.$store.state.user.system
 			// }
@@ -198,7 +200,7 @@
 		watch: {
 			type() {
 				this.rect()
-			}
+			},
 
 		},
 		mounted() {
@@ -212,6 +214,11 @@
 		},
 		inject: ['reload'],
 		methods: {
+			closeLoginMask(){
+				console.log(123)
+				this.$store.state.user.showLoginMask=false
+				this.$store.state.user.showRegister = false
+			},
 			verificationCode(data) {
 				let _this = this
 				if (_this.typeS == 'code') {

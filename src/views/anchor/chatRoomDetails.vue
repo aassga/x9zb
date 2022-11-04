@@ -27,7 +27,10 @@
           >
         </span>
       </div>
-      <div v-if="pinInfo.text !== '' && tabNumber === 0" class="pin-info">
+      <div v-if="pinInfo.text !== '' && tabNumber === 0"
+       class="pin-info"
+       :style="pinInfo.pinType === 1 ? 'cursor: pointer':''" 
+       @click="pinInfo.pinType === 1 ? pinDialogShow = true :false">
         <i class="el-icon-message-solid"></i>
         {{ pinInfo.text }}
       </div>
@@ -194,6 +197,22 @@
         <el-button @click="submitMessage()">发送</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="pinDialogShow"
+      show-close
+      class="pin-dialog-style"
+      width="700px"
+      >
+      <div class="pin-box-img text-white">
+        <ul>
+          <li v-for="(item,index) in pinLink" :key="index" @click="openLink(item)">
+            <span>{{item.text_link }} {{item.text_link_url}}</span>
+          </li>
+        </ul>
+        <div style="margin-left: 10px;">{{pinInfo.text}}</div>
+        <div class="pin-btn" @click="goPinLink()">{{pinLinkText}}</div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -230,6 +249,7 @@ export default {
         { name: "聊天", id: 1 },
       ],
       unreadMsgList: [], // 红点的列表
+      pinLink:[],
       privateChatTotal: 0, // 主播私聊的未读总数
       unreadTotal: 0, // 列表红点的总数
       modalMsgList: [],
@@ -244,7 +264,9 @@ export default {
       anchorList:{},
       myUserinfo: { uid: "" },
       webSocketFd: "",
+      pinLinkText:"",
       isShowEmoji: false,
+      pinDialogShow:false,
       uid: "",
       info: {
         token: "",
@@ -356,7 +378,6 @@ export default {
     this.info = userInfo || {
       token: "",
     };
-    console.log(!getUserId())
     if (getQueryString()) {
       if (!userInfo) {
         if (!localStorage.getItem("userid")) {
@@ -370,7 +391,7 @@ export default {
             type: 0,
           };
         } else {
-          setUserId(10000000 + Math.random().toString().slice(-6))
+          // setUserId(10000000 + Math.random().toString().slice(-6))
 
           this.parmUserInfo = {
             user_id: localStorage.getItem("userid"),
@@ -404,6 +425,7 @@ export default {
     });
   },
   methods: {
+ 
     goBottom(boolean){
       this.showSetDownBtn = boolean
     },
@@ -776,22 +798,75 @@ export default {
       if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid;
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
         if (res.data.pinData && res.data.pinData !== "") {
-          _that.pinInfo = {
+          this.pinInfo = {
             text: res.data.pinData,
+            pinType:res.data.pinType,
+            extra:res.data.extra
           };
+          this.pinLink = res.data.extra.list
+          if(res.data.pinType === 1) this.pinDialogShow = true
+          if(localStorage.getItem("userid")){
+            this.pinLinkText = res.data.extra.guest_register === "1" ? "点击注册" : "点击咨询"
+          }else{
+            this.pinLinkText = res.data.extra.user_betsite === "1" ? "点击投注" : "点击咨询"
+          }
         }
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
       });
     },
+    getLogin() {
+      this.$store.state.user.showLoginMask = true
+      this.$store.state.user.showRegister = true
+    },
+    openLink(item){
+      const url = item.text_link_url;
+      let newTab = window.open("about:blank");
+      newTab.location.href = url;
+    },
+    goPinLink(){
+      if(localStorage.getItem("userid")){
+        if(this.pinInfo.extra.guest_register === "1"){
+          this.getLogin()
+        }else{
+          this.tabNumber = 1
+          this.pinDialogShow = false
+          this.newMsg.groupChat = false;
+          this.showChatList = true;
+        }
+      }else{
+        if(this.pinInfo.extra.user_betsite === "1"){
+          this.play()
+        }else{
+          this.tabNumber = 1
+          this.pinDialogShow = false
+          this.newMsg.groupChat = false;
+          this.showChatList = true;
+        }
+      }
+    },
+    play() {
+      this.$store
+        .dispatch("gettoburl", {
+          terminal: "pc",
+          share: 0,
+        })
+        .then((res) => {
+          if (res.data.length > 0) {
+            const url = res.data[0];
+            let newTab = window.open("about:blank");
+            newTab.location.href = url;
+          }
+        });
+    },
     newSocket(data) {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
-      // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
@@ -1778,5 +1853,54 @@ form {
   bottom: 128px;
   right: 18px;
   cursor: pointer;
+}
+::v-deep.pin-dialog-style{
+
+  .el-dialog{
+    background: #ffffff00;
+    margin-top: 30vh !important;
+    .el-dialog__header{
+      padding: 0;
+      border:0;
+      .el-dialog__headerbtn{
+        top: 8px;
+        right: 10px;
+        font-size: 20px;
+        opacity: 0;
+      }
+    }
+    .el-dialog__body{
+      padding: 0;
+      .pin-box-img{
+        height: 20em;
+        background: url('./../../assets/images/Group37.png');
+        background-size:contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        .pin-btn{
+          position: absolute;
+          right: 70px;
+          bottom: 37px;
+          font-size: 20px;
+          cursor: pointer;
+        }
+      }
+      .text-white{
+        color: #fff;
+        padding: 70px 40px 40px 30px;
+        font-size: 18px;
+        ul{
+          li{
+            padding: 10px;
+          }
+          li:hover{
+            background-color: #AA2249;
+            border-radius: 10px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

@@ -886,7 +886,7 @@
               target="_blank"
               v-for="(item, index) in activityList"
               :key="index"
-              v-if="index < 4"
+              v-show="index < 4"
             >
               <img class="act-item" :src="item.img" alt="img" />
             </a>

@@ -27,6 +27,22 @@ module.exports = {
   //生产环境sourceMap / 是否在构建生产包时生成sourceMap文件，false将提高构建速度 （用来显示报错信息的，生产环境中一般不需要）（常用）
   productionSourceMap: false,
   // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
+  pwa: {
+    name: 'easy-front-vue-cli3',
+    themeColor: '#4DBA87',
+    msTileColor: '#000000',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    // configure the workbox plugin (GenerateSW or InjectManifest)
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      // swSrc is required in InjectManifest mode.
+      swSrc: 'src/service-worker.js',
+      importWorkboxFrom: 'disabled',
+      importScripts: 'https://cdn.your.info/workbox-v4.3.1/workbox-sw.js'
+      // ...other Workbox options...
+    }
+  },
   devServer: {
     before: require('./mock/index.js'),
     port: port,
