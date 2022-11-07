@@ -66,27 +66,38 @@
 							src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAiJJREFUaAXt2M8rhEEYB/Dned9dpEg5qD0JS5F/ACclyoEcODi5bOTg6iJ7UJsbF8X/sCsHV0ellAvaFU4ixz2QrN3xjtp6ZVdjdn48b2Zq2vedZp53Pt/3svMCuOYScAm4BFwCLgGXgEvgvyXwkFvt5F2329P9AJH6hVxq/YWVnnnPH6ZWRNbIzrEOLmSX04xBhgH4vEMFtmQxIuusgr+wUNn8tlHEx2/3im9iiusJl6uFRYBizIcl4SISE6284XpY9GGyd2b/XMIhvCQI1Wz7Dds/e3CmezdGwbaxPExjYApYY2AqWCNgSljtYGpYrWCKWG1gqlgtYMpY5WDqWKXgKGCVgaOCVQKOErZhcD6bOgyKzPJC1Rb8Vy3yU4+Jg0D1mX/5lT4e3h0tLwYPihSWByMNLn+w4R/JIrtMJhMXP8YJDUiD/faOjIfwGrYwhqM3hcccu0o3hccpXUuDeye2i02trX0I3m0YFHyQm6aMlgZzZPfUzlM81jyGiNdRQSv5AHB/tNZVKr+dMMYGw3BEOO4fSMzhUPo9PG7zWgmYA6KCVgaOClopOApo5WDqaC1gymhtYKporWCKaO1gamgjYEpoY2AqaKNgCmjjYNvohk5LfPMyrWdm9znut4zXPGXln/ZkaoqusQLmm6uLBlgQ3bzMPGvgumhkpzIQ0TVWwVV0rI2NeB5u8B5vg3nRzbt5LgGXgEvAJeAScAm4BEgn8AnkBXkOOoQHeQAAAABJRU5ErkJggg=="></span>
 				</div>
 				<div class="content" id="content" style="" v-if="tabIndex == 0">
-					<div class="content-item-box" @click="dateIndex = index"
-						:class="dateIndex == index?'content-item-active':''" v-for="(item,index) in dateTime"
-						v-if="index < 7">
+					<div class="content-item-box" 
+						v-for="(item,index) in dateTime"
+						:key="index"
+						v-show="index < 7"
+						:class="dateIndex == index?'content-item-active':''"
+						@click="dateIndex = index">
 						<p class="weekdate">{{item.time}}</p>
 						<!-- <p class="date">(512场比赛)</p> -->
 						<p class="date">{{dateIndex == index ?`(${total}场比赛)`:item.day}}</p>
 					</div>
 				</div>
 				<div class="content" id="content" style="" v-if="tabIndex == 1">
-					<div class="content-item-box" @click="dateIndex = index"
-						:class="dateIndex == index?'content-item-active':''" v-for="(item,index) in dateTime"
-						v-if="index > 6 && index < 14">
+					<div class="content-item-box" 
+						v-for="(item,index) in dateTime"
+						:key="index"
+						v-show="index > 6 && index < 14"
+						:class="dateIndex == index?'content-item-active':''" 
+						@click="dateIndex = index"
+						>
 						<p class="weekdate">{{item.time}}</p>
 						<!-- <p class="date">(512场比赛)</p> -->
 						<p class="date">{{dateIndex == index ?`(${total}场比赛)`:item.day}}</p>
 					</div>
 				</div>
 				<div class="content" id="content" style="" v-if="tabIndex == 2">
-					<div class="content-item-box " @click="dateIndex = index"
-						:class="dateIndex == index?'content-item-active':''" v-for="(item,index) in dateTime"
-						v-if="index > 13">
+					<div class="content-item-box " 
+						v-for="(item,index) in dateTime"
+						:key="index"
+						v-show="index > 13"
+						:class="dateIndex == index?'content-item-active':''" 
+						@click="dateIndex = index">
+					
 						<p class="weekdate">{{item.time}}</p>
 						<!-- <p class="date">(512场比赛)</p> -->
 						<p class="date">{{dateIndex == index ?`(${total}场比赛)`:item.day}}</p>
@@ -270,7 +281,7 @@
 			
 			// 预约赛事
 			getReserveMatch(item) {
-				if(JSON.stringify(this.infos) === '{}'){
+				if(JSON.stringify(this.infos) === '{}' || JSON.stringify(this.infos) === undefined){
 					return this.$store.state.user.showLoginMask = true
 				}
 				reserveMatch2({
@@ -482,7 +493,7 @@
 					});
 				}
 				this.dateTime = arr;
-				console.log(this.dateTime);
+				console.log('dateTime',this.dateTime)
 				this.getScheduleMatch()
 			},
 		}

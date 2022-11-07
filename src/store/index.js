@@ -213,7 +213,9 @@ const store = new Vuex.Store({
 		  info().then(res=>{
 			  state.state.infos = res.data
 			  // this.updateMyProfile(res.data)
-		  }).catch(res=>{})
+		  }).catch(err=>{
+
+			})
 	  },
 	  
 	  // 登录腾讯im 

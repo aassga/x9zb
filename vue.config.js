@@ -7,7 +7,9 @@
 // 您可以通过以下方法更改端口：
 // 端口 = 9528 npm run serve 或 npm run serve --port = 9528
 const port = 8080 // 端口号
-
+const CompressionPlugin = require("compression-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const productionGzipExtensions = ['js', 'css']
 // 所有配置项说明可在 https://cli.vuejs.org/zh/guide/ 中找到
 module.exports = {
   /**
@@ -27,11 +29,6 @@ module.exports = {
   //生产环境sourceMap / 是否在构建生产包时生成sourceMap文件，false将提高构建速度 （用来显示报错信息的，生产环境中一般不需要）（常用）
   productionSourceMap: false,
   // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
-  pwa: {
-    workboxOptions: {
-      navigateFallback: 'index.html'
-    }
-  },
   devServer: {
     before: require('./mock/index.js'),
     port: port,
@@ -55,7 +52,35 @@ module.exports = {
       errors: true
     },
   },
-  chainWebpack: config => {
+  configureWebpack: (config) =>{
+    if(process.env.NODE_ENV === 'production'){
+      config.plugins.push(
+        //建構時開啟gzip,降低服務器壓縮對CPU資源占用,服務器也相應開啟gzip
+        new CompressionPlugin({
+          filename: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+          threshold: 10240,
+          minRatio: 0.8,
+          deleteOriginalAssets:false
+        }),
+        new UglifyJsPlugin({
+          uglifyOptions:{
+            output:{
+              comments:false,
+            },
+            compress:{
+              drop_console:true,
+              drop_debugger:false,
+              pure_funcs:['console.log']
+            }
+          },
+          parallel: true, //使用多进程并行运行来提高构建速度。默认并发运行数：os.cpus().length - 1。
+        })
+      )
+    }
+  },
+  chainWebpack: (config) => {
     // const TerserPlugin = require('terser-webpack-plugin');
 
     config
@@ -67,6 +92,17 @@ module.exports = {
       })
     
     let drop_debugger_statue = process.env.NODE_ENV !== 'production';
+    config.module
+      .rule('images')
+      .use('image-webpack-loader')
+      .loader('image-webpack-loader')
+      .options({
+        mozjpeg: { progressive:true, quality:65 },
+        optipng: { enabled:false },
+        pngquant:{ quality:[0.9,0.98],speed:4 },
+        gifsicle:{ interlaced:false },
+        webp:{ quality:75 },
+      })
     config.optimization
       .minimize(true)
       .minimizer('terser')

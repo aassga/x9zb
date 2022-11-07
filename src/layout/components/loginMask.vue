@@ -226,10 +226,10 @@
 					login(_this.database).then(res1 => {
 					  _this.$store.state.user.showLoginMask = false;
 						_this.$store.state.user.islogin = true
-						setToken(res1.data.token) //缓存token
+						_this.$store.state.infos = res1.data;
 						_this.$store.state.user.data = res1.data;
 						_this.$store.state.user.token = res1.data.token;
-						_this.$store.state.infos = res1.data;
+						setToken(res1.data.token) //缓存token
 						localStorage.removeItem("userid");
 						localStorage.removeItem("vidInfo");
 						localStorage.userInfo = JSON.stringify(res1.data)
@@ -245,6 +245,7 @@
 							}
 						}).catch(res1 => {})
 					}).catch(res1 => {
+
 					})
 				} else {
 					register(_this.database).then(res => {
@@ -332,12 +333,6 @@
 
 						})
 					}
-					
-
-
-
-
-
 					// this.$message.error('错了哦，这是一条错误消息');
 				}
 
