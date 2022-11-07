@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="buildDate" content="<%= new Date() %>">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link rel="manifest" href="manifest.json">
 
   <link rel="stylesheet" href="<%= BASE_URL %>css/iconfont/iconfont.css">
   <title>
@@ -63,7 +64,6 @@
           "&channel_code=" + code) : ""))
       }
     }
-
     function getQueryString() {
       const result = {};
       const param = window.location.href.split("?")[1];
