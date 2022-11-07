@@ -197,7 +197,7 @@
         <el-button @click="submitMessage()">发送</el-button>
       </span>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       :visible.sync="pinDialogShow"
       show-close
       class="pin-dialog-style"
@@ -212,7 +212,7 @@
         <div style="margin-left: 10px;">{{pinInfo.text}}</div>
         <div class="pin-btn" @click="goPinLink()">{{pinLinkText}}</div>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
