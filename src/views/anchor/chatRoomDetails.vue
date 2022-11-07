@@ -418,11 +418,7 @@ export default {
     this.uid = this.$route.query.id;
   },
   beforeDestroy() {
-    this.$store.dispatch("chatInOut", {
-      touid: this.uid,
-      dateline: new Date().getTime(),
-      status: 2,
-    });
+    this.ws.close();
   },
   methods: {
  
@@ -1091,7 +1087,9 @@ export default {
           break;
         case "send":
         case "system":
-          if(data.pic !== undefined && data.link === null) this.mergeDataList(this.tabNumber, "push", data)
+          if(data.pic !== undefined && data.link === undefined) {
+            this.mergeDataList(this.tabNumber, "push", data)
+          }
           if(data.type === 2){
             let msgList = {
               vid: data.vid,
@@ -1672,7 +1670,7 @@ form {
   }
   .chat-detail-main {
     background: #fff;
-    padding: 0 10px 30px 10px;
+    padding: 0 10px 10px 10px;
     .system-tips {
       margin-top: -26px;
       font-size: 12px;

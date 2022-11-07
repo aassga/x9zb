@@ -78,6 +78,13 @@ service.interceptors.response.use(
 		// 	// })
 		// 	console.log(res.msg,"res.msg======")
 		// }
+		if (res.code === 700){
+			Message({
+				message: res.msg || 'Error',
+				type: 'error',
+				duration: 5 * 1000
+			})
+		}
 		if (res.code == 1&&res.msg!="connection error") {
 			// Message({
 			// 	message: res.msg || 'Error',

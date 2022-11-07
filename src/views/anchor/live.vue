@@ -1270,7 +1270,6 @@
 				this.showDiamondDirections = false;
 			},
 			onhandleSendGift(data) {
-				console.log(data);
 				let gift = this.giftList.filter(it => it.id == data.gift_id)[0];
 				this.initMachineSVGA(gift);
 			},
