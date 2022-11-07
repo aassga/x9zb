@@ -28,7 +28,12 @@ module.exports = {
   lintOnSave: false, // process.env.NODE_ENV === 'development',
   //生产环境sourceMap / 是否在构建生产包时生成sourceMap文件，false将提高构建速度 （用来显示报错信息的，生产环境中一般不需要）（常用）
   productionSourceMap: false,
-  // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
+ // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
+  pwa: {
+    workboxOptions: {
+      navigateFallback: 'index.html'
+    }
+  },
   devServer: {
     before: require('./mock/index.js'),
     port: port,
@@ -52,6 +57,7 @@ module.exports = {
       errors: true
     },
   },
+  
   configureWebpack: (config) =>{
     if(process.env.NODE_ENV === 'production'){
       config.plugins.push(

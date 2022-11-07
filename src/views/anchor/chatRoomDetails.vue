@@ -135,16 +135,16 @@
           </div>
         </div>
         <div class="control-footer">
-          <textarea
+          <el-input
             id="msg"
             ref="msg"
-            type="text"
+            type="textarea"
             rows="1"
             maxlength="255"
             v-model="msgText"
-            v-on:keyup.enter="submitMessage()"
+            @keyup.native="keyUp"
             placeholder="请输入聊天内容"
-          ></textarea>
+          ></el-input>
           <div>
             <div
               :class="[tabNumber === 0 && !token ? 'no_send' : 'send']"
@@ -860,9 +860,9 @@ export default {
       let windowHost = window.location.hostname;
       // windowHost = "10.83.107.92:9021";
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
@@ -927,12 +927,14 @@ export default {
         this.heart(i);
       }, this.timeout);
     },
+
     sendMessage(uiCode, text) {
       let data = {
         vid: this.parmUserInfo.vid,
         fd: this.webSocketFd,
         type: this.tabNumber === 1 ? this.room_type : this.tabNumber || 0,
-        text: text,
+        text: text.replace(/(\s*$)/g, ""),
+        // text: text,
         method: "notice",
         msg_type: this.tabNumber === 0 ? 0 : 1, //0为弹幕,1文字
         color: "#000",
@@ -991,8 +993,14 @@ export default {
         this.infos.exp = res.data.exp
       });
     },
+    keyUp(event){
+      if (event.shiftKey && event.keyCode === 13) {
+        return this.msgText;
+      } else if (event.key === "Enter") {
+        this.submitMessage()
+      }
+    },
     submitMessage() {
-      // if(this.tabNumber === 0 && localStorage.getItem('userInfo') === null) this.getInfo()
       this.isShowEmoji = false;
       var strRegex =
         /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
@@ -1532,13 +1540,18 @@ form {
     }
   }
 }
-#msg {
-  border: 1px solid #c41d48;
-  border-radius: 4px;
-  padding: 6px;
+::v-deep.el-textarea{
   width: 75%;
-  line-height: 20px;
+  #msg {
+    border: 1px solid #c41d48;
+    border-radius: 4px;
+    padding: 6px;
+    width: 100%;
+    line-height: 20px;
+    resize: none;
+  }
 }
+
 
 ::v-deep.el-drawer__header {
   margin-bottom: 0;
