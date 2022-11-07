@@ -1,0 +1,16 @@
+{
+  "name": "小九直播2022高清小九直播，足球即时比分直播，NBA篮球直播在线免费观看",
+  "short_name": "小九直播2022高清小九直播，足球即时比分直播，NBA篮球直播在线免费观看",
+  "icons": [
+    {
+      "src": "/img/icons/icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#4DBA87"
+}
