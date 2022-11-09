@@ -20,9 +20,9 @@ const dev = {
     // VUE_APP_API_WS: 'http://pc.huya.com',
     // VUE_APP_API_WS: 'http://huyapre.oxldkm.com/',
     // VUE_APP_API_WS: 'http://huyapretest.oxldkm.com/',
-    VUE_APP_API_WS: 'https://www.x9zb.live/',
+    // VUE_APP_API_WS: 'https://www.x9zb.live/',
     // VUE_APP_API_WS: 'https://huidu.x9zb.live/',
-    // VUE_APP_API_WS: '/',
+    VUE_APP_API_WS: '/',
 };
 
 /**

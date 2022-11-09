@@ -321,4 +321,7 @@ export default {
     }
   }
 }
+::v-deep.vjs-playback-rate{
+  display: none;
+}
 </style>

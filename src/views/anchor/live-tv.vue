@@ -718,6 +718,9 @@
 </script>
 
 <style>
+.vjs-playback-rate{
+	display: none;
+}
 	.video-js .vjs-icon-placeholder {
 
 		width: 100%;

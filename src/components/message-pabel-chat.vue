@@ -139,13 +139,13 @@
                             : ''
                         "
                       >
-                        <vue-markdown
+                        <!-- <vue-markdown
                           :anchor-attributes="linkAttrs"
                           >{{ item.text }}</vue-markdown
-                        >
-                        <!-- <span v-html="getText(item.text)"></span> -->
+                        > -->
+                        <span v-html="getText(item.text)"></span>
+                        <!-- v-if="item.isError && [0, 1].includes(tabNumber)" -->
                         <i
-                          v-if="item.isError && [0, 1].includes(tabNumber)"
                           class="el-icon-loading"
                           @click="resend(item)"
                         ></i>
