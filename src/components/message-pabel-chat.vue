@@ -10,168 +10,157 @@
         :key="index"
         :class="{ 'is-anchor': tabNumber === 2 }"
       >
-        <template>
-          <div
-            v-if="
-              !item.channel ||
-              item.channel === channel ||
-              (!channel && item.channel === '000') ||
-              item.channel === 'null'
-            "
-            class="other-side"
-          >
-            <div class="msg-box">
-              <div class="msg-container">
-                <div
-                  class="msg-content"
-                  :class="{
-                    'my-self': tabNumber === 2 && mySelf(item),
-                  }"
-                >
-                  <template v-if="tabNumber === 0">
+        <div
+          v-if="
+            !item.channel ||
+            item.channel === channel ||
+            (!channel && item.channel === '000') ||
+            item.channel === 'null'
+          "
+          class="other-side"
+        >
+          <div class="msg-box">
+            <div class="msg-container">
+              <div
+                class="msg-content"
+                :class="{
+                  'my-self': tabNumber === 2 && mySelf(item),
+                }"
+              >
+                <template v-if="tabNumber === 0">
+                  <img
+                    :src="hiImg"
+                    class="hi-tag"
+                    v-if="
+                      item.text ? item.text.indexOf('进入直播间') !== -1 : false
+                    "
+                  />
+                  <span class="anchor-tag" v-if="item.sender == uid">主播</span>
+                  <span
+                    class="level-tag"
+                    :class="`level${item.sender_exp ? item.sender_exp : 0}`"
+                    v-if="
+                      item.sender_exp &&
+                      item.action !== 'gift' &&
+                      item.sender != uid
+                    "
+                    >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                  >
+                </template>
+                <template v-if="tabNumber !== 2">
+                  <div
+                    class="text-name"
+                    :style="
+                      item.text.includes('进入直播间') ? 'color: #575757;' : ''
+                    "
+                  >
+                    <span v-if="item.sender_nickname !== undefined">
+                      {{
+                        !item.text.includes("进入直播间") &&
+                        item.sender_nickname.length > 5
+                          ? item.sender_nickname.substr(0, 6) + "..."
+                          : item.sender_nickname
+                      }}
+                    </span>
+                    <span v-else-if="item.sender !== undefined">
+                      {{
+                        !item.text.includes("进入直播间") &&
+                        item.sender.length > 5
+                          ? "遊客" + item.sender.substr(0, 4) + "..."
+                          : "遊客" + item.sender
+                      }}
+                    </span>
+                    <span v-else>{{ item.text }}</span>
+                    <span v-if="!item.text.includes('进入直播间')"> : </span>
+                  </div>
+                </template>
+                <template v-if="tabNumber === 2 && !mySelf(item)">
+                  <div class="msg-avatar">
+                    <img class="avatar" :src="avatarImg(item)" />
+                  </div>
+                </template>
+                <template v-if="item.pic && !item.text">
+                  <el-image
+                    fit="cover"
+                    class="pic-info"
+                    :preview-src-list="[item.pic]"
+                    :src="item.pic"
+                  />
+                </template>
+                <template v-if="item.pic && item.text">
+                  <div class="login-content" v-if="item.msg_type == '4'">
                     <img
-                      :src="hiImg"
-                      class="hi-tag"
-                      v-if="
-                        item.text
-                          ? item.text.indexOf('进入直播间') !== -1
-                          : false
-                      "
-                    />
-                    <span class="anchor-tag" v-if="item.sender == uid"
-                      >主播</span
-                    >
-                    <span
-                      class="level-tag"
-                      :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                      v-if="
-                        item.sender_exp &&
-                        item.action !== 'gift' &&
-                        item.sender != uid
-                      "
-                      >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                    >
-                  </template>
-                  <template v-if="tabNumber !== 2">
-                    <div
-                      class="text-name"
-                      :style="
-                        item.text.includes('进入直播间') ? 'color: #575757;' : ''
-                      "
-                    >
-                      <span v-if="item.sender_nickname !== undefined">
-                        {{
-                          !item.text.includes("进入直播间") &&
-                          item.sender_nickname.length > 5
-                            ? item.sender_nickname.substr(0, 6) + "..."
-                            : item.sender_nickname
-                        }}
-                      </span>
-                      <span v-else>
-                        {{
-                          !item.text.includes("进入直播间") &&
-                          item.sender.length > 5
-                            ? "遊客" + item.sender.substr(0, 4) + "..."
-                            : "遊客" + item.sender
-                        }}
-                      </span>
-                      <span v-if="!item.text.includes('进入直播间')"> : </span>
-                    </div>
-                  </template>
-                  <template v-if="tabNumber === 2 && !mySelf(item)">
-                    <div class="msg-avatar">
-                      <img class="avatar" :src="avatarImg(item)" />
-                    </div>
-                  </template>
-                  <template v-if="item.pic && !item.text">
-                    <el-image
-                      fit="cover"
-                      class="pic-info"
-                      :preview-src-list="[item.pic]"
+                      class="b-play-btn"
                       :src="item.pic"
+                      @click="play(item)"
                     />
-                  </template>
-                  <template v-if="item.pic && item.text">
+                    {{ item.text }}
+                  </div>
+                  <div
+                    v-else
+                    class="thumb-container"
+                    @click.stop="openLink(item.link)"
+                  >
+                    <img class="thumb-pic" :src="item.pic" />
+                    <div class="thumb-msg-box">
+                      <div class="thumb-title">{{ item.title }}</div>
+                      <br />
+                      <div class="thumb-text">{{ item.text }}</div>
+                    </div>
+                  </div>
+                </template>
+                <template v-if="!item.pic && item.text">
+                  <div
+                    @click.stop="showControl(index, item)"
+                    :style="tabNumber === 2 ? 'display: contents' : ''"
+                  >
                     <div class="login-content" v-if="item.msg_type == '4'">
+                      {{ item.text }}
                       <img
                         class="b-play-btn"
-                        :src="item.pic"
+                        :src="require('../assets/images/play.png')"
                         @click="play(item)"
                       />
-                      {{ item.text }}
                     </div>
                     <div
                       v-else
-                      class="thumb-container"
-                      @click.stop="openLink(item.link)"
+                      class="text-info"
+                      :class="{ 'is-login': item.msg_type == '4' }"
+                      :style="
+                        item.text.includes('进入直播间')
+                          ? 'color: #575757;'
+                          : tabNumber !== 2
+                          ? 'width: 170px;'
+                          : ''
+                      "
                     >
-                      <img class="thumb-pic" :src="item.pic" />
-                      <div class="thumb-msg-box">
-                        <div class="thumb-title">{{ item.title }}</div>
-                        <br />
-                        <div class="thumb-text">{{ item.text }}</div>
-                      </div>
-
-                    </div>
-                  </template>
-                  <template v-if="!item.pic && item.text">
-                    <div 
-                      @click.stop="showControl(index, item)"
-                      :style="tabNumber === 2 ? 'display: contents' : ''"
-                    >
-                      <div class="login-content" v-if="item.msg_type == '4'">
-                        {{ item.text }}
-                        <img
-                          class="b-play-btn"
-                          :src="require('../assets/images/play.png')"
-                          @click="play(item)"
-                        />
-                      </div>
-                      <div
-                        v-else
-                        class="text-info"
-                        :class="{ 'is-login': item.msg_type == '4' }"
-                        :style="
-                          item.text.includes('进入直播间')
-                            ? 'color: #575757;'
-                            : tabNumber !== 2
-                            ? 'width: 170px;'
-                            : ''
-                        "
-                      >
-                        <!-- <vue-markdown
-                          :anchor-attributes="linkAttrs"
-                          >{{ item.text }}</vue-markdown
-                        > -->
-                        <span v-html="getText(item.text)"></span>
-                        <!-- v-if="item.isError && [0, 1].includes(tabNumber)" -->
-                        <i
-                          class="el-icon-loading"
-                          @click="resend(item)"
-                        ></i>
-                      </div>
+                      <vue-markdown :anchor-attributes="linkAttrs">{{
+                        item.text
+                      }}</vue-markdown>
+                      <!-- <span v-html="getText(item.text)"></span> -->
                       <i
-                        v-if="item.isError && tabNumber === 2"
+                        v-if="item.isError && [0, 1].includes(tabNumber)"
                         class="el-icon-loading"
                         @click="resend(item)"
                       ></i>
                     </div>
-                  </template>
-                  <div v-if="controlIndex === index" class="msg-control other">
-                    <div @click="copyText(item)">
-                      复制
-                      <i />
-                    </div>
+                    <i
+                      v-if="item.isError && tabNumber === 2"
+                      class="el-icon-loading"
+                      @click="resend(item)"
+                    ></i>
+                  </div>
+                </template>
+                <div v-if="controlIndex === index" class="msg-control other">
+                  <div @click="copyText(item)">
+                    复制
+                    <i />
                   </div>
                 </div>
-                <div></div>
               </div>
             </div>
-            <div>
-              
-            </div>
           </div>
-        </template>
+        </div>
       </div>
     </div>
   </div>
@@ -261,7 +250,7 @@ export default {
         Number(item.sender) === this.parmUserInfo.user_id ||
         item.sender === this.parmUserInfo.user_id ||
         item.sender === Number(this.parmUserInfo.user_id) ||
-        item.sender_nickname === this.parmUserInfo.username 
+        item.sender_nickname === this.parmUserInfo.username
       ) {
         return true;
       } else {
@@ -295,9 +284,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\r\n/g, "<br>");
-      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\n/g, "<br>");
-      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\r/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -388,23 +377,23 @@ export default {
     word-break: break-all;
     color: #343a40;
     display: flex;
-    .thumb-container{
+    .thumb-container {
       display: flex;
       width: 185px;
-      padding:3px;
+      padding: 3px;
       border: 1px solid #b3b3b3;
       background-color: #dddddd;
       border-radius: 6px;
       margin-left: 3px;
       cursor: pointer;
-      .thumb-pic{
+      .thumb-pic {
         height: 32px;
         border-radius: 6px;
       }
-      .thumb-msg-box{
+      .thumb-msg-box {
         margin-left: 5px;
         width: 135px;
-        .thumb-title{
+        .thumb-title {
           font-weight: bold;
         }
       }
@@ -628,5 +617,9 @@ export default {
 }
 .el-image {
   height: 8em;
+}
+::v-deep sub {
+  bottom: 0em;
+  vertical-align: initial;
 }
 </style>

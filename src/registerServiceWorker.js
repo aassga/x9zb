@@ -18,6 +18,7 @@ if ('serviceWorker' in window.navigator && process.env.NODE_ENV === 'production'
       console.log('New content is downloading.');
     },
     updated() {
+      document.getElementById('refresh').innerHTML = 'New content is available; please <a onclick="document.location.reload(true)">refresh to update</a>'
       console.log('New content is available; please refresh.');
     },
     offline() {

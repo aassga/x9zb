@@ -50,7 +50,7 @@
                 <span><span class="pin-right-text">{{ item.text_link }}</span> <span class="pin-right-link" @click="openLink(item)">{{ linkText(item.text_link_url) }}</span></span>
               </li>
             </ul>
-            <div class="pin-text">{{ pinInfo.text }}</div>
+            <div class="pin-text" v-html="pinInfo.text"></div>
           </div>
         </template>
         
@@ -83,7 +83,7 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <message-pabel
+      <message-pabel-anchor
         v-if="tabNumber === 2"
         :msgList="msgAnchorList"
         :controlIndex="controlIndex"
@@ -276,6 +276,7 @@ import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
 import MessagePabel from "@/components/message-pabel";
 import MessagePabelChat from "@/components/message-pabel-chat";
+import MessagePabelAnchor from "@/components/message-pabel-anchor";
 import { info } from "@/api/user.js";
 export default {
   name: "ChatDetails",
@@ -295,6 +296,7 @@ export default {
     MessageInfo,
     MessagePabel,
     MessagePabelChat,
+    MessagePabelAnchor,
     VueMarkdown,
   },
   data() {
@@ -417,6 +419,14 @@ export default {
     },
   },
   mounted() {
+    this.$nextTick(()=>{
+      setTimeout(()=>{
+        document.querySelector(".chatlist").addEventListener("click", (e) => {
+          this.tabNumber = 1;
+          this.showChatList = true;
+        })
+      },1000)
+    })
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
@@ -584,6 +594,7 @@ export default {
     },
     // 群组消息总数计算事件
     onGroupNewsTotal(list) {
+      console.log(list)
       let num = 0;
       list.forEach((list) => {
         if (list.unread_count > 0) num += list.unread_count;
@@ -771,6 +782,14 @@ export default {
       this.page = 1;
       this.tabNumber = num;
       this.controlIndex = -1;
+      this.$nextTick(()=>{
+        setTimeout(()=>{
+          document.querySelector(".chatlist").addEventListener("click", (e) => {
+            this.tabNumber = 1;
+            this.showChatList = true;
+          })
+        },1000)
+      })
       switch (num) {
         case 0:
           this.parmUserInfo.vid = qVid;
@@ -861,21 +880,19 @@ export default {
       if (this.tabNumber == 1 || this.tabNumber == 2)
         this.leaveVid = this.parmUserInfo.vid;
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
-        if (res.data.pinData && res.data.pinData !== "") {
-          this.pinInfo = {
-            text: res.data.pinData,
-            pinType: res.data.pinType,
-            extra: res.data.extra,
-          };
-          this.pinLink = res.data.extra.list;
-          if (res.data.pinType === 1) this.pinDialogShow = true;
-          if (localStorage.getItem("userid")) {
-            this.pinLinkText =
-              res.data.extra.guest_register === "1" ? "点击注册" : "点击咨询";
-          } else {
-            this.pinLinkText =
-              res.data.extra.user_betsite === "1" ? "点击咨询" : "点击咨询";
-          }
+        this.pinInfo = {
+          text: res.data.pinData,
+          pinType: res.data.pinType,
+          extra: res.data.extra,
+        };
+        this.pinLink = res.data.extra.list;
+        if (res.data.pinType === 1) this.pinDialogShow = true;
+        if (localStorage.getItem("userid")) {
+          this.pinLinkText =
+            res.data.extra.guest_register === "1" ? "点击注册" : "点击咨询";
+        } else {
+          this.pinLinkText =
+            res.data.extra.user_betsite === "1" ? "点击咨询" : "点击咨询";
         }
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
@@ -932,7 +949,6 @@ export default {
     newSocket(data) {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
-      // windowHost = "10.83.107.92:9021";
       this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
@@ -1142,8 +1158,13 @@ export default {
           this.mergeDataList(this.tabNumber, "init", mergeArrData);
           break;
         case "newRoom":
-          if (this.tabNumber !== 2 && data.room_type === "2")
+          data.data.unread_count = 1
+          this.chatList.push(data.data)
+          this.chatList = this.mapList(this.chatList, this.unreadMsgList);
+          this.onGroupNewsTotal(this.chatList);
+          if (this.tabNumber !== 2 && data.room_type === "2"){
             this.inviteCount = this.inviteCount + 1;
+          }
           if (data.fd !== this.webSocketFd) {
             switch (data.room_type) {
               case "1":
@@ -1169,8 +1190,13 @@ export default {
           };
           this.refreshUnreadEvent(newMsgList, 1);
           break;
-        case "send":
         case "system":
+          if(data.userid === Number(localStorage.getItem("userid")) || data.userid === JSON.parse(localStorage.getItem("userInfo")).id){
+            return
+          }
+          this.mergeDataList(this.tabNumber, "push", data)
+          break
+        case "send":
           if (
             data.pic !== undefined &&
             data.link === undefined &&
@@ -1219,9 +1245,15 @@ export default {
           if (!this.showSetDownBtn) this.toBottom();
           break;
         case "pin":
-          // this.pinInfo = data.pin === 1 ? JSON.parse(data.data) : "";
-          // this.pinInfo.msg_id = data.msg_id;
-          this.inRoomInfo(this.webSocketFd);
+          if(data.pin === 1){
+            this.inRoomInfo(this.webSocketFd);
+          }else if(data.pin === 2){
+            this.pinInfo = {
+              text: "",
+              pinType: data.pinType,
+              extra: [],
+            };
+          }
           this.chatAreaHeight()
           break;
         case "gift":
@@ -1274,6 +1306,7 @@ export default {
     },
     //解耦合
     mergeDataList(type, status, data) {
+
       if (type !== this.tabNumber) return;
       switch (status) {
         case "init":
@@ -1295,12 +1328,8 @@ export default {
             this.msgSquareList.push(data);
           } else if (type === 1) {
             this.msgChatList.push(data);
-            // let filterChatListArr = this.msgChatList.some(item => item.msg_id === data.msg_id)
-            // if(!filterChatListArr) ;
           } else {
             this.msgAnchorList.push(data);
-            // let filterAnchorListArr = this.msgAnchorList.some(item => item.msg_id === data.msg_id)
-            // if(!filterAnchorListArr)
           }
           break;
         case "unshift":
@@ -1938,7 +1967,7 @@ form {
   background: #d5d9f4; 
   color: #000000;
 }
-.pin-info {
+::v-deep.pin-info {
   text-align: left;
   border-radius: 4px;
   width: 100%;
@@ -2000,6 +2029,11 @@ form {
     white-space: nowrap;
     overflow: hidden;
     width: 260px;
+    display: inline-flex;
+    .chatlist{
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 }
 .el-button--danger {

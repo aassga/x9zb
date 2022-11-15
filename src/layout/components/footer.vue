@@ -106,7 +106,7 @@
 	.main-page-footer {
 	  width: 100%;
 	  background-color: #2a2b33;
-	  background-image: url(/assets/image/foot-bg@2x.baaac31635516554dd6057462bfd7fca.png);
+	  // background-image: url(/assets/image/foot-bg@2x.baaac31635516554dd6057462bfd7fca.png);
 	  background-size: contain;
 	  background-position: center;
 	  position: relative;

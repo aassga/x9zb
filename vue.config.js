@@ -30,8 +30,24 @@ module.exports = {
   productionSourceMap: false,
  // 本地服务器，所有 webpack-dev-server 的选项都支持（常用）
   pwa: {
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    workboxPluginMode: 'GenerateSW',
     workboxOptions: {
-      navigateFallback: 'index.html'
+      // clientsClaim: true, //service worker是否应该在任何现有客户端激活后立即开始控制它
+      skipWaiting: true,//service worker是否应该跳过等待生命周期阶段，用于清除缓存，强制等待中的service-worker被激活
+      // navigateFallback: 'index.html',
+      // globPatterns: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
+      // globIgnores: ['service-wroker.js'], // 忽略的文件
+      // runtimeCaching: [{
+      //   urlPattern: new RegExp('/api'),//相关接口正则配置，跨域接口必须以 ‘^’开头，配置完整域名
+      //   handler: 'NetworkFirst',//缓存策略，网络请求优先。
+      //   options: {
+      //     cacheableResponse: {
+      //       statuses: [0, 200]
+      //     }
+      //   }
+      // }]
     }
   },
   devServer: {
@@ -82,7 +98,7 @@ module.exports = {
             }
           },
           parallel: true, //使用多进程并行运行来提高构建速度。默认并发运行数：os.cpus().length - 1。
-        })
+        }),
       )
     }
   },

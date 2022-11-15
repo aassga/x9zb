@@ -73,6 +73,11 @@
                     <span v-if="!item.text.includes('进入直播间')"> : </span>
                   </div>
                 </template>
+                <template v-if="tabNumber === 2 && !mySelf(item)">
+                  <div class="msg-avatar">
+                    <img class="avatar" :src="avatarImg(item)" />
+                  </div>
+                </template>
                 <template v-if="item.pic && !item.text">
                   <el-image
                     fit="cover"
@@ -103,7 +108,6 @@
                     </div>
                   </div>
                 </template>
- 
                 <template v-if="!item.pic && item.text">
                   <div
                     @click.stop="showControl(index, item)"
