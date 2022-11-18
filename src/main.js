@@ -3,7 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import * as  common from './utils/common.js'
+
+//service workers 
 import './registerServiceWorker';
+
 // 引入echarts
 import echarts from 'echarts'
 import '@/styles/index.scss' // global css

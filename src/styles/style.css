@@ -211,7 +211,7 @@ body {
 .main-page-footer {
 	width: 100%;
 	background-color: #2a2b33;
-	background-image: url(/_next/static/images/foot-bg@2x-baaac31635516554dd6057462bfd7fca.png);
+	/* background-image: url(/_next/static/images/foot-bg@2x-baaac31635516554dd6057462bfd7fca.png); */
 	background-size: contain;
 	background-position: 50%;
 	position: relative;
@@ -32825,7 +32825,7 @@ a {
 	position: relative;
 	padding-bottom: 40px !important;
 	border-top: 1px solid #e5e1e1;
-	background: url(/_next/static/images/livebg-e500a332c99cfa4153f98f60f37931de.png) no-repeat fixed;
+	/* background: url(/_next/static/images/livebg-e500a332c99cfa4153f98f60f37931de.png) no-repeat fixed; */
 	background-size: 100% 100%
 }
 

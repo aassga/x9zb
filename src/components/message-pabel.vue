@@ -6,17 +6,17 @@
   >
     <div class="chat-detail-main" ref="content-list">
       <div
-        v-for="(item, index) in msgList"
+        v-for="(item, index) in newArr"
         :key="index"
         :class="{ 'is-anchor': tabNumber === 2 }"
       >
-        <div
-          v-if="
+          <!-- v-if="
             !item.channel ||
             item.channel === channel ||
             (!channel && item.channel === '000') ||
             item.channel === 'null'
-          "
+          " -->
+        <div
           class="other-side"
         >
           <div class="msg-box">
@@ -27,52 +27,48 @@
                   'my-self': tabNumber === 2 && mySelf(item),
                 }"
               >
-                <template v-if="tabNumber === 0">
-                  <img
-                    :src="hiImg"
-                    class="hi-tag"
-                    v-if="
-                      item.text ? item.text.indexOf('进入直播间') !== -1 : false
-                    "
-                  />
-                  <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                  <span
-                    class="level-tag"
-                    :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                    v-if="
-                      item.sender_exp &&
-                      item.action !== 'gift' &&
-                      item.sender != uid
-                    "
-                    >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                  >
-                </template>
-                <template v-if="tabNumber !== 2">
-                  <div
-                    class="text-name"
-                    :style="
-                      item.text.includes('进入直播间') ? 'color: #575757;' : ''
-                    "
-                  >
-                    <span v-if="item.sender_nickname !== undefined">
-                      {{
-                        !item.text.includes("进入直播间") &&
-                        item.sender_nickname.length > 5
-                          ? item.sender_nickname.substr(0, 6) + "..."
-                          : item.sender_nickname
-                      }}
-                    </span>
-                    <span v-else-if="item.sender !== undefined">
-                      {{
-                        !item.text.includes("进入直播间") &&
-                        item.sender.length > 5
-                          ? "遊客" + item.sender.substr(0, 4) + "..."
-                          : "遊客" + item.sender
-                      }}
-                    </span>
-                    <span v-if="!item.text.includes('进入直播间')"> : </span>
-                  </div>
-                </template>
+                <img
+                  :src="hiImg"
+                  class="hi-tag"
+                  v-if="
+                    item.text ? item.text.indexOf('进入直播间') !== -1 : false
+                  "
+                />
+                <span class="anchor-tag" v-if="item.sender == uid">主播</span>
+                <span
+                  class="level-tag"
+                  :class="`level${item.sender_exp ? item.sender_exp : 0}`"
+                  v-if="
+                    item.sender_exp &&
+                    item.action !== 'gift' &&
+                    item.sender != uid
+                  "
+                  >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
+                >
+                <div
+                  class="text-name"
+                  :style="
+                    item.text.includes('进入直播间') ? 'color: #575757;' : ''
+                  "
+                >
+                  <span v-if="item.sender_nickname !== undefined">
+                    {{
+                      !item.text.includes("进入直播间") &&
+                      item.sender_nickname.length > 5
+                        ? item.sender_nickname.substr(0, 6) + "..."
+                        : item.sender_nickname
+                    }}
+                  </span>
+                  <span v-else-if="item.sender !== undefined">
+                    {{
+                      !item.text.includes("进入直播间") &&
+                      item.sender.length > 5
+                        ? "遊客" + item.sender.substr(0, 4) + "..."
+                        : "遊客" + item.sender
+                    }}
+                  </span>
+                  <span v-if="!item.text.includes('进入直播间')"> : </span>
+                </div>
                 <template v-if="item.pic && !item.text">
                   <el-image
                     fit="cover"
@@ -90,7 +86,7 @@
                     />
                     {{ item.text }}
                   </div>
-                  <div
+                  <!-- <div
                     v-else
                     class="thumb-container"
                     @click.stop="openLink(item.link)"
@@ -101,7 +97,7 @@
                       <br />
                       <div class="thumb-text">{{ item.text }}</div>
                     </div>
-                  </div>
+                  </div> -->
                 </template>
  
                 <template v-if="!item.pic && item.text">
@@ -129,9 +125,7 @@
                           : ''
                       "
                     >
-                      <vue-markdown :anchor-attributes="linkAttrs">{{
-                        item.text
-                      }}</vue-markdown>
+                      <vue-markdown :anchor-attributes="linkAttrs" :source="item.text"></vue-markdown>
                       <!-- <span v-html="getText(item.text)"></span> -->
                       <i
                         v-if="item.isError && [0, 1].includes(tabNumber)"
@@ -152,6 +146,17 @@
                     <i />
                   </div>
                 </div>
+              </div>
+            </div>
+            <div
+              v-if="item.pic && item.text"
+              class="thumb-container"
+              @click.stop="openLink(item.link)"
+            >
+              <img class="thumb-pic" :src="item.pic" />
+              <div class="thumb-msg-box">
+                <div class="thumb-title">{{ item.title }}</div>
+                <div class="thumb-text">{{ item.text }}</div>
               </div>
             </div>
           </div>
@@ -195,6 +200,16 @@ export default {
       type: null,
     },
   },
+  watch:{
+    msgList(val){
+      if(val.length > 100){
+        this.newArr = val.slice(val.length - 100,val.length)
+        this.newArr = this.newArr 
+      }else{
+        this.newArr = val
+      }
+    }
+  },
   created() {
     this.uid = this.$route.query.id;
   },
@@ -216,6 +231,7 @@ export default {
       uid: "",
       showBottom: false,
       hiImg: require("./../assets/images/HiTag.png"),
+      newArr:[],
     };
   },
   methods: {
@@ -279,9 +295,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r\n/g, "<br>");
-      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\n/g, "<br>");
-      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r/g, "<br>");
+      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r\n/g, "<br>");
+      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\n/g, "<br>");
+      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -372,27 +388,7 @@ export default {
     word-break: break-all;
     color: #343a40;
     display: flex;
-    .thumb-container {
-      display: flex;
-      width: 185px;
-      padding: 3px;
-      border: 1px solid #b3b3b3;
-      background-color: #dddddd;
-      border-radius: 6px;
-      margin-left: 3px;
-      cursor: pointer;
-      .thumb-pic {
-        height: 32px;
-        border-radius: 6px;
-      }
-      .thumb-msg-box {
-        margin-left: 5px;
-        width: 135px;
-        .thumb-title {
-          font-weight: bold;
-        }
-      }
-    }
+
     .hi-tag {
       display: inline-block;
       height: 18px;
@@ -508,7 +504,29 @@ export default {
       }
     }
   }
-
+  .thumb-container {
+    display: flex;
+    width: 100%;
+    padding: 3px;
+    border: 1px solid #b3b3b3;
+    background-color: #dddddd;
+    border-radius: 6px;
+    margin-left: 3px;
+    font-size:12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;      
+    .thumb-pic {
+      height: 32px;
+      border-radius: 6px;
+    }
+    .thumb-msg-box {
+      margin-left: 5px;
+      .thumb-title {
+        font-weight: bold;
+      }
+    }
+  }
   .other-side {
     position: relative;
     text-align: left;

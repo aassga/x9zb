@@ -18677,11 +18677,12 @@ var ControlBar = function (_Component) {
 
 
 ControlBar.prototype.options_ = {
-  children: ['playToggle', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton',
-  // 'subsCapsButton',
-  // 'audioTrackButton',
+  children: ['playToggle', 'progressControl','volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay',  'liveDisplay', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton',
+  'subsCapsButton',
+  'audioTrackButton',
   'fullscreenToggle']
 };
+
 
 if (Hls$1 && Hls$1.isSupported() && !IS_SAFARI) {
   var controlChildren = ControlBar.prototype.options_.children;
@@ -46070,7 +46071,7 @@ var CN = {
 	"Remaining Time": "剩余时间",
 	"Stream Type": "媒体流类型",
 	"Non-Fullscreen": "退出全屏",
-	"Playback Rate": "播放速度",
+	// "Playback Rate": "播放速度",
 	"subtitles off": "关闭字幕",
 	"captions off": "关闭内嵌字幕",
 	"Close Modal Dialog": "关闭弹窗",

@@ -79,6 +79,17 @@ export function getActivityUrl(data) {
 	params:data
   })
 }
+
+// 獲取廣告
+export function getAdList(data) {
+  return request({
+    url: 'api/advertising_list/getAdList',
+    method: 'post',
+    params:data
+  })
+}
+
+
 // 获取银行卡信息
 export function getInfoBank(data) {
   return request({

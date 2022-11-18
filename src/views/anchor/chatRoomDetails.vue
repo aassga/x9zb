@@ -383,6 +383,7 @@ export default {
       anchor_id: "",
       anchorVid: "",
       userInfo: {},
+      
     };
   },
   computed: {
@@ -421,10 +422,12 @@ export default {
   mounted() {
     this.$nextTick(()=>{
       setTimeout(()=>{
-        document.querySelector(".chatlist").addEventListener("click", (e) => {
-          this.tabNumber = 1;
-          this.showChatList = true;
-        })
+        if(document.querySelector(".chatlist") !== null){
+            document.querySelector(".chatlist").addEventListener("click", (e) => {
+            this.tabNumber = 1;
+            this.showChatList = true;
+          })
+        }
       },1000)
     })
     this.anchor_id = getQueryString().uid;
@@ -771,6 +774,7 @@ export default {
               ? document.querySelector(".pin-info").clientHeight
               : 0;
           this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
+          console.log(this.pinInfo.text !== "")
         }, 1000);
       } else {
         this.chatMsgHight = chatBox - headerBox - senBox;
@@ -784,10 +788,12 @@ export default {
       this.controlIndex = -1;
       this.$nextTick(()=>{
         setTimeout(()=>{
-          document.querySelector(".chatlist").addEventListener("click", (e) => {
+          if(document.querySelector(".chatlist") !== null){
+            document.querySelector(".chatlist").addEventListener("click", (e) => {
             this.tabNumber = 1;
             this.showChatList = true;
           })
+        }
         },1000)
       })
       switch (num) {
@@ -951,8 +957,10 @@ export default {
       let windowHost = window.location.hostname;
       this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `ws://beta.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://web4.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
@@ -1191,10 +1199,10 @@ export default {
           this.refreshUnreadEvent(newMsgList, 1);
           break;
         case "system":
-          if(data.userid === Number(localStorage.getItem("userid")) || data.userid === JSON.parse(localStorage.getItem("userInfo")).id){
+          if((data.userid === Number(localStorage.getItem("userid")) && Number(localStorage.getItem("userid")) !== null) || (data.userid === JSON.parse(localStorage.getItem("userInfo")).id && JSON.parse(localStorage.getItem("userInfo")) !== null)){
             return
           }
-          this.mergeDataList(this.tabNumber, "push", data)
+          this.mergeDataList(data.type, "push", data)
           break
         case "send":
           if (
@@ -1203,7 +1211,7 @@ export default {
             (data.sender === Number(localStorage.getItem("userid")) ||
               data.sender_nickname === this.info.user_nickname)
           ) {
-            this.mergeDataList(this.tabNumber, "push", data);
+            this.mergeDataList(data.type, "push", data);
           }
           if (data.type === 2) {
             let msgList = {
@@ -1240,7 +1248,7 @@ export default {
           ) {
             return;
           } else {
-            this.mergeDataList(this.tabNumber, "push", data);
+            this.mergeDataList(data.type, "push", data);
           }
           if (!this.showSetDownBtn) this.toBottom();
           break;
@@ -1958,6 +1966,10 @@ form {
       color: blue;
       text-decoration: underline;
       cursor: pointer;
+    }
+    sub{
+      bottom: 0em;
+      vertical-align: initial;
     }
   }
   

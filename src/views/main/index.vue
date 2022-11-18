@@ -1,7 +1,6 @@
 <template>
   <div class="app-main">
     <input id="cp-input" />
-    <!-- <div class="bell-2"><span class="bell"></span></div> -->
     <div class="help-nav-box-wrap">
       <div class="nav-item-box">
         <a href="/about-user">
@@ -234,9 +233,11 @@
           </div>
         </div>
         <!-- <div class="home-anchor-ad" @click="applyFor()"> -->
-        <div class="home-anchor-ad" @click="$router.push('/downLoad')">
-          <img src="../../assets/images/main-banner.jpg" alt="anchor-ad" />
+        <div class="home-anchor-ad" @click="$router.push('/downLoad')" v-if="JSON.stringify(advertisingImgOne) !== '{}'">
+          <!-- <img src="../../assets/images/main-banner.jpg" alt="anchor-ad" /> -->
+          <img :src="advertisingImgOne.img_address" alt="anchor-ad" />
         </div>
+
         <div class="anchor-grid" v-if="mainList.length != 0">
           <div class="grid-header">
             <div class="grid-header-left">
@@ -329,7 +330,7 @@
                     </div>
                     <div class="anchor-info-heat">
                       <img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEXElEQVRYCa1XX2xTVRj/zr3tKCCsg21hcU50hoR/D84yjSaEgTywCCaGYELiBsnUwIMaEhMfFBPjg+/qQ+l07UYIWYwBEnwgaytiNDFL8GH+CTEGqRu4sSmdlNL2ns/vdLunp/fc9t4Nb9Kc7/t9f87v/PvOKcAyvuiZdHNsKP3MMkK1EENDPIChoXQICtaFBoNnPFx9mZdEABFZAaw4ILT39++Z9NWDh9OSCJyKp96nfC8zxq565PVt9k0glhg7yBicLGdm8IfvHjwcfREYHE5vQ4S4WAKRDwH/8cjr2+xJgDZd2OL8HBFYLbMia5PyAwqeBIqMJwCxU+2HIT6i6g8i1yVwKpE6QdN+QOuAQYeGLROoSSA6kuxCjh+55aWt8ER0dLzRzaZisUTqxXLdUEGH7EpABDELT9N2Czr8F1UMstz8C+62Cso5niwY1gcVRJdcCRQY/5A23WbdvYIgWG9VNF36bDgdoQF0MYQTg4lkt+6xgGgEoqcvbyfTm7UCJI4QiSbS/VJXhNFRNEsWjwqIBmJyhM+j4+Ous6kRYMXSpxQVUPLVFpF/MhhP7lQdREd/51IxMXobp428FSayx2xdbcuFxQZiI2N7eQku2bq/lhUZYAwMNsY4PEpF6jAC7NBiGUzDtnD765FIUbVVjRQtNkDMVbsPGYMUcRw4Hq8bidBq/JzdTwm/VJPKJaBpMijBXtX4f8t0KvY5c0oC8TPfdNLaNzkdlqt3tK+HA71PVYcjPl0NAMglKPHiBqexnk43I4RCDZDPF4l3ZfIDAQO2b+mAyJOPA13bEFoRhPz9hWWnkIedOSUB4MY6AO60a7pIuKOrEx7b2FpOzjmH27PzMD2ThUDQhI0dLWXcDmxevwb+nJorqwhsjY3brSRAO2DGq//Gtatg/74uWLVyhR0PhmFAa0tj+SfBGgKdlhmnSe6BYMmYchpVXUz57p1bqzpX7bXke/mCNNFrQutDEjhyZNcNBuwv6e0QWprXgvgt5ROdz879K0OoLP8glUVBEqANw8GAC04HW1/X9JAt+m5/+bX63coCcM4ZLAkIAzNwxOlg63fu5GzRVzs/fw9+nLiu+mb45vDXKiDkKgKvvvL8FWBw0ekk9OnbWbh7N+9m0rBc7j5cvHQVSiXlVBnme84yLAKrCJQBI/g2tdpwLYtD8vJPII5dvW/y5hyc/2ocsjQD8mPw/Wt9u1xnl/a2/sWGUy/Ra+gLKjCavSm8Gp7t3gRtG5roCC6YBbnM5Cxc++0mXL+hnbRMA5jdR4/23NJ7omV3AwUWjSeP0bn9WNznbj6maYCoC4Viqbw0SjFU3TOmafYO9PVMqKAq1yQgnAbjqT0W4Fmqtc1qkB+ZjvSVkBk62Nf33HQ9/7oERKD4X1AE/g4txhtEZGW9ZIu23w3G3h3o332WjnblkqgR6EnAjhNECib2Mo7iTt9Cz4Y2enyIykQjZFNUKb+jR8n5cKjn20OHmGXHebX/ATCvePe0TxYAAAAAAElFTkSuQmCC"
+                        src="./../../assets/images/fire.png"
                         alt=""
                         width="10px"
                         height="12px"
@@ -341,7 +342,7 @@
             </router-link>
           </div>
         </div>
-        <div class="home-page-row" style="display: none">
+        <!-- <div class="home-page-row" style="display: none">
           <div>
             <div class="grid-header">
               <div class="grid-header-left">
@@ -421,7 +422,6 @@
               </div>
             </div>
           </div>
-          <!-- --------------------------------------------------------来 -->
           <div style="height: 100%; overflow: hidden">
             <div class="grid-header">
               <div class="grid-header-left">
@@ -456,8 +456,6 @@
                     <div class="left">
                       <div class="img" style="position: relative">
                         <div class="lazyload-wrapper">
-                          <!-- 判断是否进行中 -->
-
                           <router-link
                             tag="a"
                             target="_blank"
@@ -493,8 +491,7 @@
                       <div class="name">{{ item.user_nickname }}</div>
                     </div>
                     <div class="middle">
-                      人气
-                      <!-- -->{{ item.amount }}
+                      人气{{ item.amount }}
                     </div>
                     <div class="right">
                       <div class="blank"></div>
@@ -517,6 +514,10 @@
               </div>
             </div>
           </div>
+        </div> -->
+
+        <div class="home-anchor-ad" @click="openLink(advertisingImgTwo.advertising_url)"  v-if="JSON.stringify(advertisingImgTwo) !== '{}'">
+          <img :src="advertisingImgTwo.img_address" alt="anchor-ad" />
         </div>
 
         <div class="home-page-row">
@@ -841,11 +842,14 @@
               <!-- </el-collapse> -->
             </div>
           </div>
+
           <div class="countdown-container" v-if="showCountDown">
-            <img
+
+            <img 
               class="countdown-bg"
               :src="require('../../assets/images/countdown.jpg')"
             />
+
             <div class="countdown-content">
               <div class="countdown-time">
                 <div class="countdown-box">{{ countDownD.split("")[0] }}</div>
@@ -867,6 +871,15 @@
                 <div class="countdown-text">秒</div>
               </div>
             </div>
+
+            <img 
+              v-if="JSON.stringify(advertisingImgThree) !== '{}'"
+              @click="openLink(advertisingImgThree.advertising_url)"
+              class="countdown-bg"
+              style="cursor:pointer"
+              :src="advertisingImgThree.img_address"
+            />
+            
           </div>
         </div>
         <div class="official-activity">
@@ -906,6 +919,7 @@ import {
   getLiveList,
   reserveMatch2,
   getActivityUrl,
+  getAdList,
 } from "../../api/user.js";
 import liveTv from "../anchor/live-tv.vue";
 import "swiper/dist/css/swiper.css";
@@ -973,6 +987,9 @@ export default {
       ],
       type: 0,
       group: 0,
+      advertisingImgOne:{},
+      advertisingImgTwo:{},
+      advertisingImgThree:{},
       Headlines: [],
       mainList: [],
       titleIndex: 0,
@@ -986,7 +1003,7 @@ export default {
       Headlinesbanner: [], //头条轮播列表
       classificationList: 0,
       classificationIndex: 0,
-      LeaderboardList: [],
+      // LeaderboardList: [],
       count: null, //推荐总数
       battle: {
         vs_recent: {},
@@ -1034,19 +1051,14 @@ export default {
     },
     mainTabIndex(e) {
       this.title_name = this.mainList[e].title;
-      // console.log(this.mainList[e])
-      // console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
-      // console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
       if (
         this.mainList[e].starttime - this.servertime > 0 &&
         this.mainList[e].starttime > 0
       ) {
         this.counttDown = this.mainList[e].starttime - this.servertime;
         // 先卸载定时器从新加载定时器
-        // console.log(this.counttDown)
         clearInterval(this.timeInterval);
         this.Iime();
-        // this.counttDown=10
         this.urlPlayer = this.mainList[e];
       } else {
         this.counttDown = false;
@@ -1071,8 +1083,9 @@ export default {
     this.getLiveList();
     this.recommend();
     this.classification();
-    this.LeaderboardAnchor();
+    // this.LeaderboardAnchor();
     this.getActivityUrl();
+    this.getAdList()
 
     let query = this.$route.query;
     for (const i in query) {
@@ -1094,6 +1107,30 @@ export default {
     },
   },
   methods: {
+    openLink(link) {
+      link !=="" ? window.open(link) :false
+    },
+    getAdList(){
+      let params = {
+        channel_code: getQueryString().channel_code || localStorage.getItem("channel") || "",
+        user_id: localStorage.getItem("userid")|| JSON.parse(localStorage.getItem("userInfo")).id
+      }
+      getAdList(params).then((res)=>{
+        res.data.forEach(el => {
+          switch (el.ad_id) {
+            case "001":
+              this.advertisingImgOne = el
+              break;
+            case "002":
+              this.advertisingImgTwo = el
+              break;
+            case "003":
+              this.advertisingImgThree = el
+              break;  
+          }
+        });
+      })
+    },
     getRecommendImages(key) {
       if (key === "type1") {
         return require("../../assets/images/main-beigin.png");
@@ -1175,7 +1212,7 @@ export default {
         })
         .catch((res) => {});
     },
-
+ 
     // 申请主播
     applyFor() {
       if (JSON.stringify(this.infos) === "{}")
@@ -1224,14 +1261,14 @@ export default {
         })
         .catch((res) => {});
     },
-    // 获取人气主播榜
-    LeaderboardAnchor() {
-      LeaderboardAnchor({ type: 2 })
-        .then((res) => {
-          this.LeaderboardList = res.data;
-        })
-        .catch((res) => {});
-    },
+    // // 获取人气主播榜
+    // LeaderboardAnchor() {
+    //   LeaderboardAnchor({ type: 2 })
+    //     .then((res) => {
+    //       this.LeaderboardList = res.data;
+    //     })
+    //     .catch((res) => {});
+    // },
 
     // 预约赛事
     getReserveMatch(item) {
@@ -1428,13 +1465,6 @@ export default {
     getList() {
       getAllMatch()
         .then((res) => {
-          // res.data.data.forEach(item=>{
-          // 	item.anchorList = {}
-          // 	if(item.anchor.length != 0) {
-          // 		item.anchorList = item.anchor[0]
-          // 	}
-          // })
-
           this.list = res.data.data;
         })
         .catch((res) => {});
@@ -1975,6 +2005,7 @@ export default {
   padding-top: 50px;
   .countdown-bg {
     width: 100%;
+    margin-bottom: 10px;
   }
   .countdown-content {
     position: absolute;

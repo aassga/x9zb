@@ -83,8 +83,8 @@
 					rel="nofollow">桂网文（2019）5333-055号</a><b>|</b><a href="/help/contact-us/tab2" target="_blank"
 					rel="nofollow">增值电信业务经营许可证:桂B2-20200107</a></p>
 			<ul class="imgs">
-				<li><a target="cyxyv" href="https://v.yunaq.com/certificate?domain=www.longya.tv&from=label&code=90020"> <img src="https://aqyzmedia.yunaq.com/labels/label_sm_90020.png"></a></li>
-				<li><a id="_pingansec_bottomimagesmall_shiming" target="_blank" href="//si.trustutn.org/info?sn=113210607040628205301&certType=1"><img src="//v.trustutn.org/images/cert/bottom_small_img.png"/></a></li>
+				<li><a target="cyxyv" href="https://v.yunaq.com/certificate?domain=www.longya.tv&from=label&code=90020"> <img src="./../../../assets/images/label_sm_90020.png"></a></li>
+				<li><a id="_pingansec_bottomimagesmall_shiming" target="_blank" href="//si.trustutn.org/info?sn=113210607040628205301&certType=1"><img src="./../../../assets/images/bottom_small_img.png" /></a></li>
 			</ul>
 			<p class="right">Copyright @ 2019-2021 体育. ALL Rights Reserved</p>
 		</div>
