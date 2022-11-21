@@ -27,27 +27,7 @@
                   'my-self': tabNumber === 2 && mySelf(item),
                 }"
               >
-                <template v-if="tabNumber === 0">
-                  <img
-                    :src="hiImg"
-                    class="hi-tag"
-                    v-if="
-                      item.text ? item.text.indexOf('进入直播间') !== -1 : false
-                    "
-                  />
-                  <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                  <span
-                    class="level-tag"
-                    :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                    v-if="
-                      item.sender_exp &&
-                      item.action !== 'gift' &&
-                      item.sender != uid
-                    "
-                    >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                  >
-                </template>
-                <template v-if="tabNumber !== 2">
+                <template v-if="tabNumber !== 2 && item.type !==0">
                   <div
                     class="text-name"
                     :style="
@@ -79,7 +59,7 @@
                     <img class="avatar" :src="avatarImg(item)" />
                   </div>
                 </template>
-                <template v-if="item.pic && !item.text">
+                <template v-if="item.pic && !item.text ">
                   <el-image
                     fit="cover"
                     class="pic-info"
@@ -87,7 +67,7 @@
                     :src="item.pic"
                   />
                 </template>
-                <template v-if="item.pic && item.text">
+                <template v-if="item.pic && item.text && item.type !==0">
                   <div class="login-content" v-if="item.msg_type == '4'">
                     <img
                       class="b-play-btn"
@@ -95,18 +75,6 @@
                       @click="play(item)"
                     />
                     {{ item.text }}
-                  </div>
-                  <div
-                    v-else
-                    class="thumb-container"
-                    @click.stop="openLink(item.link)"
-                  >
-                    <img class="thumb-pic" :src="item.pic" />
-                    <div class="thumb-msg-box">
-                      <div class="thumb-title">{{ item.title }}</div>
-                      <br />
-                      <div class="thumb-text">{{ item.text }}</div>
-                    </div>
                   </div>
                 </template>
                 <template v-if="!item.pic && item.text">
@@ -157,6 +125,17 @@
                     <i />
                   </div>
                 </div>
+              </div>
+            </div>
+            <div
+              v-if="item.pic && item.text && item.type !== 0"
+              class="thumb-container"
+              @click.stop="openLink(item.link)"
+            >
+              <img class="thumb-pic" :src="item.pic" />
+              <div class="thumb-msg-box">
+                <div class="thumb-title">{{ item.title }}</div>
+                <div class="thumb-text">{{ item.text }}</div>
               </div>
             </div>
           </div>
@@ -377,27 +356,7 @@ export default {
     word-break: break-all;
     color: #343a40;
     display: flex;
-    .thumb-container {
-      display: flex;
-      width: 185px;
-      padding: 3px;
-      border: 1px solid #b3b3b3;
-      background-color: #dddddd;
-      border-radius: 6px;
-      margin-left: 3px;
-      cursor: pointer;
-      .thumb-pic {
-        height: 32px;
-        border-radius: 6px;
-      }
-      .thumb-msg-box {
-        margin-left: 5px;
-        width: 135px;
-        .thumb-title {
-          font-weight: bold;
-        }
-      }
-    }
+
     .hi-tag {
       display: inline-block;
       height: 18px;
@@ -513,7 +472,33 @@ export default {
       }
     }
   }
-
+  .thumb-container {
+    display: flex;
+    width: 100%;
+    padding: 3px;
+    border: 1px solid #b3b3b3;
+    background-color: #dddddd;
+    border-radius: 6px;
+    margin-left: 3px;
+    font-size:12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;      
+    .thumb-pic {
+      height: 32px;
+      border-radius: 6px;
+    }
+    .thumb-msg-box {
+      margin-left: 5px;
+      .thumb-title {
+        font-weight: bold;
+      }
+      .thumb-text{
+        max-width: 250px;
+        word-wrap: break-word;
+      }
+    }
+  }
   .other-side {
     position: relative;
     text-align: left;

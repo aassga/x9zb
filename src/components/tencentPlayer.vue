@@ -33,6 +33,7 @@
       <div class="mute_btn_icon"></div>
       <div class="mute_btn_text">点击取消静音</div>
     </div>
+    
     <div class="layout-anchor-nostart-content" v-if="UpSowing">
       <div>
         <img
@@ -44,6 +45,7 @@
         >主播暂未开播</div>
       </div>
     </div>
+
     <div class="layout-anchor-nostart-content" v-if="TcPlayerUrlLoding">
       <div>
         <img
@@ -264,6 +266,7 @@ export default {
         }
       });
     },
+
     initTcSdPlayer(url) {
       if (url == "") return;
       // sdk引入有顺序
@@ -339,7 +342,8 @@ export default {
           };
         }
       });
-    },    
+    }, 
+
     // 解除靜音
     unmute() {
       tcPlayer.muted(false);
