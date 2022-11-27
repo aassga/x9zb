@@ -23,11 +23,19 @@
       </vue-danmaku>
     </div>
 
+<<<<<<< HEAD
     <div id="videoContain" v-show="hdShow"></div>
     <!-- <div id="videoContainSd" v-show="sdShow"></div> -->
     
     <!-- <VTcPlayer ref="tcPlayer" :options="options"  /> -->
     <!-- <video id="player-container-id" width="414" height="270" preload="auto" playsinline webkit-playsinline></video> -->
+=======
+    <div id="videoContain" v-show="hdShow">
+      <!-- <video id="player-container-id" preload="auto" playsinline webkit-playsinline></video> -->
+    </div>
+    
+    <div id="videoContainSd" v-show="sdShow"></div>
+>>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
 
     <div class="mute_btn" @click="unmute()" v-if="showUnmute">
       <div class="mute_btn_icon"></div>
@@ -179,9 +187,14 @@ export default {
           } else {
             this.TcPlayerUrlLoding = false;
             this.counttDown = false;
+<<<<<<< HEAD
             // this.playVideo(info)
             this.initTcPlayer(info); //已开播
             // this.initTcSdPlayer(info.pull); //已开播
+=======
+            this.initTcPlayer(info.pull_tc); //已开播
+            this.initTcSdPlayer(info.pull); //已开播
+>>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
             return;
           }
         })
@@ -238,6 +251,7 @@ export default {
           video.style.minHeight = "500px";
           // video.setAttribute('autoplay',true)
           document.getElementById("videoContain").appendChild(video);
+<<<<<<< HEAD
           // 引入成功
           let _this = this;
           _this.options = {}   
@@ -354,6 +368,8 @@ export default {
           video.style.minHeight = "500px";
           // video.setAttribute('autoplay',true)
           document.getElementById("videoContainSd").appendChild(video);
+=======
+>>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
           // 引入成功
           let _this = this;
           script.onload = function() {
@@ -386,6 +402,86 @@ export default {
           };
         }
       });
+<<<<<<< HEAD
+=======
+    },
+
+    initTcSdPlayer(url) {
+      if (url == "") return;
+      // sdk引入有顺序
+      new Promise((resolve, reject) => {
+        let link = document.createElement("link");
+        link.href = "/sdk/player/tcplayer.min.css";
+        link.rel = "stylesheet";
+        document.getElementsByTagName("head")[0].appendChild(link);
+
+        // 创建script标签，引入外部文件
+        let script2 = document.createElement("script");
+        script2.type = "text/javascript";
+        script2.src = "/sdk/player/TXLivePlayer-1.2.0.min.js";
+        document.getElementsByTagName("head")[0].appendChild(script2);
+
+        let script1 = document.createElement("script");
+        script1.type = "text/javascript";
+        script1.src = "/sdk/player/hls.min.0.13.2m.js";
+        document.getElementsByTagName("head")[0].appendChild(script1);
+
+        let script3 = document.createElement("script");
+        script3.type = "text/javascript";
+        script3.src = "/sdk/player/flv.min.1.6.2.js";
+        document.getElementsByTagName("head")[0].appendChild(script3);
+        script2.onload = function() {
+          resolve(1);
+        };
+      }).then(data => {
+        if (data == 1) {
+          let script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "/sdk/player/tcplayer.v4.5.3.js";
+          document.getElementsByTagName("head")[0].appendChild(script);
+          const video = document.createElement("video");
+          video.setAttribute("id", "sd-player-container-id");
+          video.setAttribute("muted", true);
+          video.setAttribute("playsinline", true);
+          video.setAttribute("controls", true);
+          video.setAttribute("webkit-playsinline", true);
+          video.style.width = "100%";
+          video.style.minHeight = "500px";
+          // video.setAttribute('autoplay',true)
+          document.getElementById("videoContainSd").appendChild(video);
+          // 引入成功
+          let _this = this;
+          script.onload = function() {
+            tcPlayer = TCPlayer("sd-player-container-id", {
+              autoplay: true,
+              width: "1098", //播放器宽度
+            });
+            tcPlayer.src(url);
+            // 音量改變時
+            tcPlayer.on("volumechange", function() {
+              let muted = tcPlayer.muted();
+              let valume = tcPlayer.volume();
+              if (muted || valume == 0) _this.showUnmute = true;
+              else {
+                _this.showUnmute = false;
+              }
+            });
+            tcPlayer.on("webrtcevent", event => {
+              if (event.data.code == 1010) {
+                tcPlayer.play();
+              }
+            });
+            tcPlayer.on("canplay", canplay => {
+              tcPlayer.play();
+            });
+          };
+
+          // 引入失败
+          script.onerror = function() {
+          };
+        }
+      });
+>>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
     }, 
 
     // 解除靜音
