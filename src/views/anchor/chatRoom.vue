@@ -623,7 +623,6 @@
 				let gitfItem = e
 				this.gitfItem = gitfItem
 				if (!gitfItem.data && JSON.stringify(this.infos) == '{}') return
-				console.log(gitfItem.data);
 				if(gitfItem.data == undefined) return
 				if (gitfItem.type == 'TIMCustomElem' && gitfItem.data.type == 102) { //普通用户进入直播间获取在线人数 ，登录情况下可见
 					this.$store.dispatch('getGroupOnlineMemberCount', {

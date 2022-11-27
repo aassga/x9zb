@@ -349,6 +349,11 @@
 			// 修改用户信息
 			updateInfo(data){
 				updateInfo(data).then(res=>{
+					console.log('data',data)
+					let userInfo = JSON.parse(localStorage.getItem("userInfo"))
+					userInfo.user_nickname = data.user_nickname
+					localStorage.setItem("userInfo",JSON.stringify(userInfo))
+					console.log(userInfo)
 					this.mobile = ''
 					this.code = ''
 					this.password = ''
@@ -370,6 +375,11 @@
 				let QiniuToken = this.$store.state.user.QiniuToken
 				if(JSON.stringify(QiniuToken) === '{}'){
 					const { code, data } = await this.$store.dispatch('user/SET_QINIU_TOKEN')
+					.then((res)=>{
+					})
+					.catch((err)=>{
+						this.$store.state.user.showLoginMask = true
+					})
 					if(code === 0){
 						this.QiniuToken = data
 					}

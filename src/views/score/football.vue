@@ -161,7 +161,7 @@
 											
 										</div> -->
 
-										<el-popover placement="bottom" width="100" trigger="click"
+										<!-- <el-popover placement="bottom" width="100" trigger="click"
 											popper-class="popover" ref="popover">
 											<ul class="" role="menu" tabindex="0" data-menu-list="true">
 												<li class="ant-dropdown-menu-item ant-dropdown-menu-item-only-child"
@@ -180,7 +180,7 @@
 												<div class="i">{{boxLi}}</div>
 												<i class="arrow-down"></i>
 											</button>
-										</el-popover>
+										</el-popover> -->
 
 
 										<!-- 赛事下拉 -->

@@ -21,6 +21,7 @@
 			}
 		},
 		mounted() {
+
 			document.oncontextmenu = function () {
 				return false
 			}

@@ -13,7 +13,8 @@
 							<div class="qr">
 								<div class="qr-info">
 									<!-- <img  id="DownloadPageQRCode" style="width: 120px;height: 120px;" :src="system.android_qr_code" > -->
-									<div id="qrcode" ref="qrcode"></div>
+									<!-- <div id="qrcode" ref="qrcode"></div> -->
+									<q-rcode-page/>
 								</div>
 							</div>
 							<p class="qr-text">扫描二维码下载APP</p>
@@ -100,13 +101,13 @@
 </template>
 
 <script>
-import QRCode from 'qrcodejs2';
+import QRcodePage from "./../../components/qrCode.vue";
 	export default {
-		components:{QRCode},
+		components:{
+			QRcodePage
+		},
 		data() {
 			return {
-				appUrl: location.protocol + "//" + window.location.host + "/m/#/pages/download",
-				channel: localStorage.getItem("channel")
 			}
 		},
 		computed:{
@@ -116,24 +117,8 @@ import QRCode from 'qrcodejs2';
 		},
 		mounted() {
 			window.scrollTo(0,0);
-			this.showQRcode()
 		},
 		methods: {
-			qrcode(qWidth,qHeight,qText,qRender) {
-				let qrcode = new QRCode("qrcode",{
-					width: qWidth,
-					height: qHeight,
-					text: qText,
-					render: qRender
-				})
-			},
-			showQRcode() {
-				const appUrl = this.channel ? this.appUrl + '?channel_code=' + this.channel : this.appUrl 
-				this.$refs.qrcode.innerHTML = "";
-				this.$nextTick(()=>{
-					this.qrcode(124,124,appUrl,"canvas")
-				})
-			}
 		}
 	}
 </script>

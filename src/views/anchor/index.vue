@@ -12,13 +12,16 @@
 									<div class="match-card" style="width: 100%;">
 										<div>
 											<div class="match-card-header" style="">
-												<div style="width: 150px;">{{item.competition}}</div>
+												<div style="width: 130px;">{{item.competition}}</div>
 												<div class="match-card-header-icons">
 													<!-- 是否已预约 -->
 													<div class="match-card-reservation" v-if="item.status_id == 1&& item.reserve == 0"
 														@click="getReserveMatch(item)"></div>
 													<div class="match-card-reservation-already"
 														@click="getReserveMatch(item)" v-if="item.reserve != 0"></div>
+													<div class="match-card-header-img flex-start" v-if="item.anchor.length != 0">
+														<img :src="item.anchor[0].avatar"/>
+													</div>
 												</div>
 											</div>
 											<div class="match-card-header-text">
@@ -27,7 +30,7 @@
 										</div>
 										<div class="match-card-content">
 											<div class="match-card-mask">
-												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="JSON.stringify(item.anchorList) === '{}'?'/score-live?type='+(item.type == 0?'football':item.type == 1?'basketball':item.type)+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchorList.uid + '&vid=' + item.vid ">
+												<router-link tag="a" target="_blank" class="grid-header-right-more" :to="item.anchor.length === 0?'/score-live?type='+(item.type == 0?'football':item.type == 1?'basketball':item.type)+'&id='+item.sourceid+ '&vid=' + item.vid :'/live?router=live&type='+item.type+'&id='+item.sourceid + '&uid=' + item.anchor[0].id + '&vid=' + item.vid ">
 													进入直播间
 												</router-link>
 											</div>
@@ -203,12 +206,12 @@
 			// 获取全部赛程
 			getAllMatch() {
 				getAllMatch().then(res => {
-					res.data.data.forEach(item=>{
-						item.anchorList = {}
-						if(item.anchor.length != 0) {
-							item.anchorList = item.anchor[0]
-						}
-					})
+					// res.data.data.forEach(item=>{
+					// 	item.anchorList = {}
+					// 	if(item.anchor.length != 0) {
+					// 		item.anchorList = item.anchor[0]
+					// 	}
+					// })
 					// res.data.data.forEach((item, index) => {
 					// 	if (index > 50) return
 						

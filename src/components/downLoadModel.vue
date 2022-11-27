@@ -1,7 +1,7 @@
 <template>
 	<div @click.stop="onHandleClose" class="donwnload-modal" >
 			<div @click.stop="()=>{}" class="dialog-context">
-				<img @click.stop="onHandleGoDownLoadPage" class="dialog-context-img" src="@/assets/images/download/download-card-PC.png" />
+				<img @click.stop="onHandleGoDownLoadPage" class="dialog-context-img" src="@/assets/images/download/download-card-PC.gif" />
 				<img @click.stop="onHandleClose" class="dialog-context-icon" src="@/assets/images/daily/close.png" />
 			</div>
 	</div>

@@ -3,8 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import * as  common from './utils/common.js'
+
+//service workers 
+import './registerServiceWorker';
+
 // 引入echarts
-import echarts from 'echarts'
+// import echarts from 'echarts'
 import '@/styles/index.scss' // global css
 import '@/styles/fonts.css' // ledD css
 import "@/styles/element-ui/index.scss";
@@ -28,7 +32,7 @@ import websocket from './utils/websocket.js'
 import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
 const Base64 = require('js-base64').Base64
-import COS from "cos-js-sdk-v5";
+// import COS from "cos-js-sdk-v5";
 import VEmojiPicker from 'v-emoji-picker'
 
 // let options = {
@@ -57,7 +61,7 @@ Vue.use(VEmojiPicker)
 
 Vue.config.productionTip = false
 Vue.prototype.$common = common;
-Vue.prototype.$echarts = echarts;
+// Vue.prototype.$echarts = echarts;
 Vue.prototype.$WebSocket = websocket
 new Vue({
   router,

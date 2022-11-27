@@ -6,13 +6,13 @@ import {
 	Message
 } from 'element-ui'
 import store from '@/store'
-import router from '../router'
+// import router from '../router'
 import {
 	getToken,
 	removeToken
 } from '@/utils/auth'
 
-let baseURL = process.env;
+// let baseURL = process.env;
 
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);
@@ -78,6 +78,13 @@ service.interceptors.response.use(
 		// 	// })
 		// 	console.log(res.msg,"res.msg======")
 		// }
+		if (res.code === 700){
+			Message({
+				message: res.msg || 'Error',
+				type: 'error',
+				duration: 5 * 1000
+			})
+		}
 		if (res.code == 1&&res.msg!="connection error") {
 			// Message({
 			// 	message: res.msg || 'Error',
@@ -107,24 +114,36 @@ service.interceptors.response.use(
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else if (res.code == 700) { //登录过期
-			
+			var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+			if(keys){
+				for(var i = keys.length; i--;){
+					document.cookie = keys[i] + "=0;expires=" + new Date(0).toUTCString() + ";max-age=0";
+				}
+			}
+			localStorage.clear()
+			// window.location.reload()
 			// 控制弹窗1s内出现一次
 			i++
 			if(i>1) return
 			if(i==1){
-				setTimeout(res=>{
+				setTimeout( res =>{
 					i = 0
 				},2000)
 			}
-			
 			// router.app.fullPath = '/main'
 			localStorage.setItem('index', 0)
 			// store.dispatch('delToken','')
 			store.state.user.data = {}
 			store.state.user.islogin = false
 			localStorage.removeItem('userInfo')
-			// console.log(_this);
-			Vue.prototype.$message.error('请登录后操作')
+			// MessageBox.confirm(res.msg, '确认', {
+			// 	confirmButtonText: '确认',
+			// 	showCancelButton:false,
+			// 	type: 'warning'
+			// }).then(() => {
+			// 	window.location.reload()
+			// })
+			// Vue.prototype.$message.error(res.msg)
 			// console.log('--------------------'+router);
 			//  setTimeout(res=>{
 			return Promise.reject(new Error('Error'))
@@ -136,9 +155,7 @@ service.interceptors.response.use(
 			// location.reload()
 			// this.$
 		} else if (res.code != 700 && res.code != 1 && res.code !== 0) { //其它状态
-			
 			return res
-			
 		} else {
 			return res
 		}

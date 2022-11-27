@@ -7,7 +7,7 @@
 				</div>
 				<div class="ant-modal-content">
 					<button type="button" aria-label="Close" class="ant-modal-close"
-						@click="$store.state.user.showLoginMask=false">
+						@click="closeLoginMask()">
 						<span class="ant-modal-close-x">
 							<span role="img" aria-label="close" class="anticon anticon-close ant-modal-close-icon">
 								<svg viewBox="64 64 896 896" focusable="false" data-icon="close" width="1em"
@@ -15,7 +15,9 @@
 									<path
 										d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
 									</path>
-								</svg></span></span>
+								</svg>
+							</span>
+						</span>
 					</button>
 					<div
 						style="position: absolute;top: 30px;left: 0;right: 0;text-align: center;color: #ba9250;font-size: 20px;font-weight: bold;">
@@ -80,10 +82,11 @@
 														alt="icon"></div>
 												<div class="login-input"><input :type="!isEyes ? 'password' : 'text'" v-model="base.password"
 														placeholder="请输入密码">
-													<div class="icon-view"><img @click="isEyes = !isEyes" class="img-icon"
-															src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAeFBMVEUAAACwsLDAwMCnp6enp6enp6enp6enp6eoqKimpqanp6enp6enp6e1tbWnp6enp6enp6eoqKiurq6np6enp6enp6empqapqamqqqqmpqanp6eoqKinp6enp6epqamnp6enp6eoqKipqamrq6uqqqqnp6enp6empqY2tiXnAAAAJ3RSTlMADAXz1c2yojXs4JaJCMW6XCwT+OVqVTwmqZB7UEMavZxJPyIfdGLZjtuCAAABQklEQVRYw+2UW26DMBBFAYMBg3mFZyAkTdLO/ndYGKBKWmODVKlq5PMFulfHZmxhaDQajUbzkvDQZ8WO/v1MIk8UuDBQbvZYzlD3TUFCYEyyraIWRipBYmPSbPSkB6z3gigBJNnkMR0sB8LwjNnhumVAFLs2F6Y1wdRP1aJgWnOtWcJkqlT7cQFZvywhIIdSPp8YECrfMnIx1zsnBkhkGhKOMMHeVgrZspYj9eDXTUQiVRaSOY7Ro9wTYre35xl3DVky11LetAgesN2iqjPLvKddGJOHwMkUHh6Bgn0jIhLFnAVykYMlyksHxNgJd6cHuQhLdJykd8x/WPyg+rrYVC7qGUBjzafkvVMGC3ncektwGV5vqlNLum/vqPl4nu216I29eCg6CZK/EtUo8oy9iP/ljP+CqKZ5nBoajUaj0fwHPgH1/TzDinf0agAAAABJRU5ErkJggg=="
+													<div class="icon-view">
+														<img @click="isEyes = !isEyes" class="img-icon"
+															:src="!isEyes ? require('./../../assets/images/icon_eye_closed.png'):require('./../../assets/images/icon_eye.png')"
 															alt="eye"></div>
-												</div>
+														</div>
 											</label></div>
 									</div>
 								</div>
@@ -169,6 +172,7 @@
 				count: null,
 				timer: null,
 				show: true,
+				showRegister:false,
 				code: '86',
 				isEyes:false,
 				dialogTableVisible: true,
@@ -186,8 +190,9 @@
 		},
 		computed: {
 			loginStatus() {
+				if(this.$store.state.user.showRegister) this.type = "regiter"
 				return this.$store.state.user.showLoginMask
-			},
+			},		
 			// options(){
 			// 	return this.$store.state.user.system
 			// }
@@ -195,7 +200,7 @@
 		watch: {
 			type() {
 				this.rect()
-			}
+			},
 
 		},
 		mounted() {
@@ -209,20 +214,26 @@
 		},
 		inject: ['reload'],
 		methods: {
+			closeLoginMask(){
+				console.log(123)
+				this.$store.state.user.showLoginMask=false
+				this.$store.state.user.showRegister = false
+			},
 			verificationCode(data) {
 				let _this = this
 				if (_this.typeS == 'code') {
 
 					login(_this.database).then(res1 => {
-					    _this.$store.state.user.showLoginMask = false;
+					  _this.$store.state.user.showLoginMask = false;
 						_this.$store.state.user.islogin = true
-						setToken(res1.data.token) //缓存token
+						_this.$store.state.infos = res1.data;
 						_this.$store.state.user.data = res1.data;
 						_this.$store.state.user.token = res1.data.token;
-						_this.$store.state.infos = res1.data;
+						setToken(res1.data.token) //缓存token
 						localStorage.removeItem("userid");
 						localStorage.removeItem("vidInfo");
 						localStorage.userInfo = JSON.stringify(res1.data)
+						localStorage.information = JSON.stringify(res1)
 						getQiniuToken().then(res1 => {
 							// let QiniuToken = 
 							// _this.$store.state.user.islogin=false;
@@ -234,6 +245,7 @@
 							}
 						}).catch(res1 => {})
 					}).catch(res1 => {
+
 					})
 				} else {
 					register(_this.database).then(res => {
@@ -321,12 +333,6 @@
 
 						})
 					}
-					
-
-
-
-
-
 					// this.$message.error('错了哦，这是一条错误消息');
 				}
 

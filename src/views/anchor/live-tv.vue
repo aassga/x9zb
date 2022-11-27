@@ -447,7 +447,6 @@
 			playerOptions() { // 使用计算属性
 				//如果info为空则已结束
 				if (JSON.stringify(this.info) == "{}") return
-				console.log(this.info)
 				const playerOptionsObj = {
 					live: false,
 					muted:true,
@@ -475,7 +474,6 @@
 						}
 					}
 				}
-				// console.log(this.info)
 				return playerOptionsObj
 			}
 
@@ -550,7 +548,6 @@
 					getInfo(data)
 						.then((res) => {
 							this.info = res.data.info;	
-							// console.log(this.info)
 						})
 						.catch((res) => {});
 				}
@@ -616,17 +613,11 @@
 				}
 			},
 			// listen event
-			onPlayerPlay(player) {
-				
+			onPlayerPlay(player) {			
 				this.play = true
-				this.value1 = 0
-				// let video = this.$refs.videoPlayer.player
-				// video.muted(false)
-				console.log('player play!-----------------------------------------', player.el_.innerText)
 			},
 			onPlayerPause(player) {
 				this.play = false
-				console.log('player pause!', player)
 			},
 			// 全屏按钮
 			fullScreenHandle() {
@@ -727,6 +718,9 @@
 </script>
 
 <style>
+.vjs-playback-rate{
+	display: none;
+}
 	.video-js .vjs-icon-placeholder {
 
 		width: 100%;
@@ -757,10 +751,10 @@
 
 	#dplayer .video_bottom_logo{
 		z-index: 99;
-		  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  width: 120px;
+		position: absolute;
+		left: 20px;
+		bottom: 20px;
+		width: 120px;
 	}
 
 	.slider {

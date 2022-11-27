@@ -4,10 +4,6 @@
     :style="{ height: reversedHeight + 'px' }"
     @click="clearStatus()"
   >
-    <div v-if="false" class="animation-loading-container">
-      <div class="animation-loading" v-for="i in 4" :key="i" />
-    </div>
-
     <div class="chat-detail-main" ref="content-list">
       <div
         v-for="(item, index) in msgList"
@@ -29,12 +25,7 @@
                 <div
                   class="msg-content"
                   :class="{
-                    'my-self':
-                      (Number(item.sender) === parmUserInfo.user_id ||
-                        item.sender === parmUserInfo.user_id ||
-                        item.sender === Number(parmUserInfo.user_id) ||
-                        item.sender_nickname === parmUserInfo.username) &&
-                      tabNumber === 2,
+                    'my-self': tabNumber === 2 && mySelf(item),
                   }"
                 >
                   <template v-if="tabNumber === 0">
@@ -61,16 +52,14 @@
                       >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
                     >
                   </template>
-
-                  <div
-                    v-if="tabNumber !== 2"
-                    class="text-name"
-                    :style="
-                      item.text.includes('进入直播间') ? 'color: #575757;' : ''
-                    "
-                  >
-                    <template v-if="item.sender_nickname !== undefined">
-                      <span>
+                  <template v-if="tabNumber !== 2">
+                    <div
+                      class="text-name"
+                      :style="
+                        item.text.includes('进入直播间') ? 'color: #575757;' : ''
+                      "
+                    >
+                      <span v-if="item.sender_nickname !== undefined">
                         {{
                           !item.text.includes("进入直播间") &&
                           item.sender_nickname.length > 5
@@ -78,9 +67,7 @@
                             : item.sender_nickname
                         }}
                       </span>
-                    </template>
-                    <template v-else>
-                      <span>
+                      <span v-else>
                         {{
                           !item.text.includes("进入直播间") &&
                           item.sender.length > 5
@@ -88,72 +75,84 @@
                             : "遊客" + item.sender
                         }}
                       </span>
-                    </template>
-                    <span v-if="!item.text.includes('进入直播间')">:</span>
-                  </div>
-                  <div
-                    v-if="tabNumber === 2 && !mySelf(item)"
-                    class="msg-avatar"
-                  >
-                    <img class="avatar" :src="avatarImg(item)" />
-                  </div>
+                      <span v-if="!item.text.includes('进入直播间')"> : </span>
+                    </div>
+                  </template>
+                  <template v-if="tabNumber === 2 && !mySelf(item)">
+                    <div class="msg-avatar">
+                      <img class="avatar" :src="avatarImg(item)" />
+                    </div>
+                  </template>
                   <template v-if="item.pic && !item.text">
                     <el-image
-                      :preview-src-list="[item.pic]"
                       fit="cover"
-                      :src="item.pic"
                       class="pic-info"
+                      :preview-src-list="[item.pic]"
+                      :src="item.pic"
                     />
                   </template>
                   <template v-if="item.pic && item.text">
+                    <div class="login-content" v-if="item.msg_type == '4'">
+                      <img
+                        class="b-play-btn"
+                        :src="item.pic"
+                        @click="play(item)"
+                      />
+                      {{ item.text }}
+                    </div>
                     <div
+                      v-else
                       class="thumb-container"
                       @click.stop="openLink(item.link)"
                     >
                       <img class="thumb-pic" :src="item.pic" />
-                      <div class="thumb-title">{{ item.title }}</div>
-                      <br />
-                      <div class="thumb-text">{{ item.text }}</div>
+                      <div class="thumb-msg-box">
+                        <div class="thumb-title">{{ item.title }}</div>
+                        <br />
+                        <div class="thumb-text">{{ item.text }}</div>
+                      </div>
+
                     </div>
                   </template>
-                  <div
-                    v-if="!item.pic && item.text"
-                    @click.stop="showControl(index, item)"
-                    :style="tabNumber === 2 ? 'display: contents' : ''"
-                  >
-                    <div class="login-content" v-if="item.msg_type == '4'">
-                      {{ item.text }}
-                      <img
-                        class="b-play-btn"
-                        :src="require('../assets/images/play.png')"
-                        @click="play(item)"
-                      />
-                    </div>
-                    <div
-                      v-else
-                      class="text-info"
-                      :class="{ 'is-login': item.msg_type == '4' }"
-                      :style="
-                        item.text.includes('进入直播间')
-                          ? 'color: #575757;'
-                          : tabNumber !== 2
-                          ? 'width: 170px;'
-                          : ''
-                      "
+                  <template v-if="!item.pic && item.text">
+                    <div 
+                      @click.stop="showControl(index, item)"
+                      :style="tabNumber === 2 ? 'display: contents' : ''"
                     >
-                      <span v-html="getText(item.text)"></span>
+                      <div class="login-content" v-if="item.msg_type == '4'">
+                        {{ item.text }}
+                        <img
+                          class="b-play-btn"
+                          :src="require('../assets/images/play.png')"
+                          @click="play(item)"
+                        />
+                      </div>
+                      <div
+                        v-else
+                        class="text-info"
+                        :class="{ 'is-login': item.msg_type == '4' }"
+                        :style="
+                          item.text.includes('进入直播间')
+                            ? 'color: #575757;'
+                            : tabNumber !== 2
+                            ? 'width: 170px;'
+                            : ''
+                        "
+                      >
+                        <span v-html="getText(item.text)"></span>
+                        <i
+                          v-if="item.isError && [0, 1].includes(tabNumber)"
+                          class="el-icon-loading"
+                          @click="resend(item)"
+                        ></i>
+                      </div>
                       <i
-                        v-if="item.isError && [0, 1].includes(tabNumber)"
+                        v-if="item.isError && tabNumber === 2"
                         class="el-icon-loading"
                         @click="resend(item)"
                       ></i>
                     </div>
-                    <i
-                      v-if="item.isError && tabNumber === 2"
-                      class="el-icon-loading"
-                      @click="resend(item)"
-                    ></i>
-                  </div>
+                  </template>
                   <div v-if="controlIndex === index" class="msg-control other">
                     <div @click="copyText(item)">
                       复制
@@ -161,7 +160,11 @@
                     </div>
                   </div>
                 </div>
+                <div></div>
               </div>
+            </div>
+            <div>
+              
             </div>
           </div>
         </template>
@@ -171,12 +174,8 @@
 </template>
 
 <script>
-import VueMarkdown from "vue-markdown";
 export default {
   name: "ChatMessageNews",
-  components: {
-    VueMarkdown,
-  },
   props: {
     msgList: {
       type: Array,
@@ -300,9 +299,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      // str = str.replace(/\r\n/g, "<br>");
-      // str = str.replace(/\n/g, "<br>");
-      // str = str.replace(/\r/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\r\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g,"").replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -393,6 +392,27 @@ export default {
     word-break: break-all;
     color: #343a40;
     display: flex;
+    .thumb-container{
+      display: flex;
+      width: 205px;
+      padding:3px;
+      border: 1px solid #b3b3b3;
+      background-color: #dddddd;
+      border-radius: 6px;
+      margin-left: 3px;
+      cursor: pointer;
+      .thumb-pic{
+        height: 6em;
+        border-radius: 6px;
+      }
+      .thumb-msg-box{
+        margin-left: 5px;
+        width: 135px;
+        .thumb-title{
+          font-weight: bold;
+        }
+      }
+    }
     .hi-tag {
       display: inline-block;
       height: 18px;
