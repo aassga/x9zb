@@ -501,34 +501,6 @@ export default {
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
-    // this.scrollMove();
-  },
-  created() {
-    this.uid = this.$route.query.id;
-  },
-  beforeDestroy() {
-    this.ws.close();
-    clearTimeout(this.timer);
-  },
-  methods: {
-    //滚动函数
-    scrollMove() {
-      this.timer = setTimeout(() => {
-        if (this.noticeArr.length > 1) this.noticeList = this.noticeArr.shift()
-        this.scrollMove()
-      }, 1000);
-    },
-    goBottom(boolean) {
-      this.showSetDownBtn = boolean;
-    },
-    controlNumber(num) {
-      this.controlIndex = num;
-    },
-    msgAction(item) {
-      this.mergeDataList(this.tabNumber).map((val, index) => {
-        if (val == item) this.mergeDataList(this.tabNumber).splice(index, 1);
-      });
-      this.msgText = item.text;
     },
     relationsFilter(data) {
       if (this.hideChat) {
@@ -1282,10 +1254,7 @@ export default {
             return;
           } else {
             if (data.type === 2 && data.action === "system") this.refreshUnreadEvent(msgList, 1);
-            this.mergeDataList(this.pageNum, "push", data);
           }
-          if (!this.showSetDownBtn) this.toBottom();
-          break;
         case "pin":
           if (data.pin === 1) {
             this.inRoomInfo(this.webSocketFd);
