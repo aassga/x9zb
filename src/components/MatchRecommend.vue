@@ -313,7 +313,6 @@ export default {
           width: 20px;
           margin-right: 15px;
           .anchor-icon {
-<<<<<<< HEAD
             animation: shining 2s ease infinite alternate;
             cursor: pointer;
             img {
@@ -342,30 +341,12 @@ export default {
               65% {
                 transform: rotate(0);
               }
-=======
-            animation: shining 3s ease infinite alternate;
-            cursor: pointer;
-            img {
-              width: 18px;
-              height: 18px;
-            }
-            @keyframes shining {
-              10% {opacity: 1;}
-              30% {opacity: 0.5;}
-              60% {opacity: 1;}
-              80% {opacity: 0.6;}
-              100% {opacity: 1;}
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
             }
           }
           .hover-anchor-pannel {
             display: none;
             min-width: 180px;
-<<<<<<< HEAD
             width: max-content;
-=======
-            width: fit-content;
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
             height: auto;
             position: absolute;
             bottom: 0;
@@ -383,12 +364,8 @@ export default {
               border-bottom: 1px solid #ead8bd;
             }
             .anchor-list {
-<<<<<<< HEAD
               min-width: 100%;
               max-width: max-content;
-=======
-              width: max-content;
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
               padding: 4px 4px;
               margin: 4px 0;
               cursor: pointer;
@@ -435,12 +412,9 @@ export default {
             }
           }
           &.show-panel:hover {
-<<<<<<< HEAD
             .anchor-icon {
               animation-play-state: paused;
             }
-=======
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
             .hover-anchor-pannel {display: block;}
           }
         }
@@ -450,16 +424,11 @@ export default {
             width: 18px;
             height: 18px;
             cursor: pointer;
-<<<<<<< HEAD
             &:hover {
               filter: contrast(1.2) hue-rotate(10deg);
             }
             &.gray-effect {
               filter: grayscale(1) brightness(1.15);
-=======
-            &.gray-effect {
-              filter: grayscale(1) brightness(2.5);
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
               cursor: default;
             }
           }

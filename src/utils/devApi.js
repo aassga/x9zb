@@ -17,11 +17,7 @@ const dev = {
     // VUE_APP_API_WS: '/opc',
     // VUE_APP_API_WS: 'http://huyapreadmin.oxldkm.com',
     // VUE_APP_API_WS: 'http://huyapre.oxldkm.com/',
-<<<<<<< HEAD
     VUE_APP_API_WS: 'https://beta.x9zb.live/',
-=======
-    // VUE_APP_API_WS: 'https://beta.x9zb.live/',
->>>>>>> 5c0088453bc1d6c59250f5b325388e69de023840
     // VUE_APP_API_WS: 'http://huyapretest.oxldkm.com/',
     // VUE_APP_API_WS: 'https://www.x9zb.live/',
     // VUE_APP_API_WS: 'https://huidu.x9zb.live/',
