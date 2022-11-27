@@ -60,51 +60,57 @@ const store = new Vuex.Store({
   },
   mutations:{
 	  getSystemNotice(store,event){
-		// 深度拷贝维问题
-		let obj = JSON.parse(JSON.stringify(event))
-		obj.forEach(item=>{
-			item.data = JSON.parse(item.payload.data)
-		})
-		if(store.messageList.length > 0) {
-			// store.messageList.push(obj[0])
-		}else {
-			store.messageList = obj
-		}
-		// console.log(store.messageList);
-		// 判断自定义消息和非自定义消息
-		// obj.avatar = event[0].groupProfile.avatar
-		// if(obj.type == 'TIMCustomElem'){//自定义消息
-		// 	obj.data = JSON.parse(obj.payload.data)
-		// }
-		// store.item = obj  
+			// 深度拷贝维问题
+			let obj = JSON.parse(JSON.stringify(event))
+			obj.forEach(item=>{
+				item.data = JSON.parse(item.payload.data)
+			})
+			if(store.messageList.length > 0) {
+				// store.messageList.push(obj[0])
+			}else {
+				store.messageList = obj
+			}
+			// console.log(store.messageList);
+			// 判断自定义消息和非自定义消息
+			// obj.avatar = event[0].groupProfile.avatar
+			// if(obj.type == 'TIMCustomElem'){//自定义消息
+			// 	obj.data = JSON.parse(obj.payload.data)
+			// }
+			// store.item = obj  
 	  },
 	  
-	updateConversationList(store,event){
-		// 深度拷贝维问题
-		let obj = JSON.parse(JSON.stringify(event[0].lastMessage))
-		let groupProfile = JSON.parse(JSON.stringify(event[0].groupProfile))
-		// return
-		// 判断自定义消息和非自定义消息
-		obj.groupProfile = groupProfile
-		obj.avatar = event[0].groupProfile.avatar
-		if(obj.type == 'TIMCustomElem'){//自定义消息
-			obj.data = JSON.parse(obj.payload.data)
-		}
-		store.item = ob
-		store.messageList = [...store.messageList,...[obj]]
-	},
-	setdanmakuShow(store,obj){
-		store.item = obj
-	},
-	kaifazhong(state){
-		MessageBox.confirm('开发中...', '提示', {
-		  confirmButtonText: '取消',
-		  cancelButtonText: '确定',
-		  type: 'warning'
-		}).then(() => {
-			// router.push({path:'/'})
-		})
-	},
+		updateConversationList(store,event){
+			// 深度拷贝维问题
+			let obj = JSON.parse(JSON.stringify(event[0].lastMessage))
+			let groupProfile = JSON.parse(JSON.stringify(event[0].groupProfile))
+			// return
+			// 判断自定义消息和非自定义消息
+			obj.groupProfile = groupProfile
+			obj.avatar = event[0].groupProfile.avatar
+			if(obj.type == 'TIMCustomElem'){//自定义消息
+				obj.data = JSON.parse(obj.payload.data)
+			}
+			store.item = obj
+			store.messageList = [...store.messageList, ...[obj]]
+		},
+		setdanmakuShow(store,obj){
+			store.item = obj
+		},
+		setBasketballData (store, data) {
+			store.basketball_exponent = data
+		},
+		setFootballData (store, data) {
+			store.football_exponent = data
+		},
+		kaifazhong(state){
+			MessageBox.confirm('开发中...', '提示', {
+				confirmButtonText: '取消',
+				cancelButtonText: '确定',
+				type: 'warning'
+			}).then(() => {
+				// router.push({path:'/'})
+			})
+		},
   },
   getters,
   actions:{
@@ -186,22 +192,24 @@ const store = new Vuex.Store({
 			return res
 		});
 	},
-	  conditionsActions(){
-	  },
-	  // 接收
-	  WS_DATA_ACTIONS(store,res){
-		  // 100 == 成功 返回赛事数据 ,101 == 成功 用户连接-登记成功
-		  if(res.code == 100 && (res.data.type == 'basketball_exponent' || res.data.type == 'basketball_match')){
-			  store.state.basketball_exponent = res.data
-		  }
-		  if(res.code == 100 && (res.data.type == 'football_exponent' || res.data.type == 'football_match')){
-			  store.state.football_exponent = res.data
-		  }
-	  },
-	  succeed(){
-	  },
-	  unsuccessful(){
-	  },
+	conditionsActions(){
+	},
+	// 接收
+	WS_DATA_ACTIONS(store,res){
+		// 100 == 成功 返回赛事数据 ,101 == 成功 用户连接-登记成功
+		if(res.code == 100 && (res.data.type == 'basketball_exponent' || res.data.type == 'basketball_match')){
+			store.commit('setBasketballData', res.data)
+			// store.state.basketball_exponent = res.data
+		}
+		if(res.code == 100 && (res.data.type == 'football_exponent' || res.data.type == 'football_match')){
+			store.commit('setFootballData', res.data)
+			// store.state.football_exponent = res.data
+		}
+	},
+	succeed(){
+	},
+	unsuccessful(){
+	},
 	  
 	  getimTouristAccount(){
 		  imTouristAccount().then(res=>{

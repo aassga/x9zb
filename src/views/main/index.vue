@@ -1,7 +1,6 @@
 <template>
   <div class="app-main">
     <input id="cp-input" />
-    <!-- <div class="bell-2"><span class="bell"></span></div> -->
     <div class="help-nav-box-wrap">
       <div class="nav-item-box">
         <a href="/about-user">
@@ -81,7 +80,7 @@
       </div>
 
       <div class="home-page-main">
-        <div class="live-match-grid" style="width: auto">
+        <div v-if="false" class="live-match-grid" style="width: auto">
           <div class="swiper swiper-container" style="">
             <swiper
               ref="mySwiper"
@@ -234,10 +233,13 @@
           </div>
         </div>
         <!-- <div class="home-anchor-ad" @click="applyFor()"> -->
-        <div class="home-anchor-ad" @click="$router.push('/downLoad')">
-          <img src="../../assets/images/main-banner.jpg" alt="anchor-ad" />
+        <div class="home-anchor-ad" @click="$router.push('/downLoad')" v-if="JSON.stringify(advertisingImgOne) !== '{}'">
+          <!-- <img src="../../assets/images/main-banner.jpg" alt="anchor-ad" /> -->
+          <img :src="advertisingImgOne.img_address" alt="anchor-ad" />
         </div>
-        <div class="anchor-grid" v-if="mainList.length != 0">
+
+        <div class="anchor-grid" 
+          style="margin-top: 40px;">
           <div class="grid-header">
             <div class="grid-header-left">
               <img
@@ -259,7 +261,9 @@
               </router-link>
             </div>
           </div>
-          <div class="anchor-grid-body">
+          <div 
+            class="anchor-grid-body"
+            v-if="mainList.length != 0">
             <!-- live?router=live&type=football&id=3637322&uid=9 -->
             <router-link
               tag="a"
@@ -329,7 +333,7 @@
                     </div>
                     <div class="anchor-info-heat">
                       <img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEXElEQVRYCa1XX2xTVRj/zr3tKCCsg21hcU50hoR/D84yjSaEgTywCCaGYELiBsnUwIMaEhMfFBPjg+/qQ+l07UYIWYwBEnwgaytiNDFL8GH+CTEGqRu4sSmdlNL2ns/vdLunp/fc9t4Nb9Kc7/t9f87v/PvOKcAyvuiZdHNsKP3MMkK1EENDPIChoXQICtaFBoNnPFx9mZdEABFZAaw4ILT39++Z9NWDh9OSCJyKp96nfC8zxq565PVt9k0glhg7yBicLGdm8IfvHjwcfREYHE5vQ4S4WAKRDwH/8cjr2+xJgDZd2OL8HBFYLbMia5PyAwqeBIqMJwCxU+2HIT6i6g8i1yVwKpE6QdN+QOuAQYeGLROoSSA6kuxCjh+55aWt8ER0dLzRzaZisUTqxXLdUEGH7EpABDELT9N2Czr8F1UMstz8C+62Cso5niwY1gcVRJdcCRQY/5A23WbdvYIgWG9VNF36bDgdoQF0MYQTg4lkt+6xgGgEoqcvbyfTm7UCJI4QiSbS/VJXhNFRNEsWjwqIBmJyhM+j4+Ous6kRYMXSpxQVUPLVFpF/MhhP7lQdREd/51IxMXobp428FSayx2xdbcuFxQZiI2N7eQku2bq/lhUZYAwMNsY4PEpF6jAC7NBiGUzDtnD765FIUbVVjRQtNkDMVbsPGYMUcRw4Hq8bidBq/JzdTwm/VJPKJaBpMijBXtX4f8t0KvY5c0oC8TPfdNLaNzkdlqt3tK+HA71PVYcjPl0NAMglKPHiBqexnk43I4RCDZDPF4l3ZfIDAQO2b+mAyJOPA13bEFoRhPz9hWWnkIedOSUB4MY6AO60a7pIuKOrEx7b2FpOzjmH27PzMD2ThUDQhI0dLWXcDmxevwb+nJorqwhsjY3brSRAO2DGq//Gtatg/74uWLVyhR0PhmFAa0tj+SfBGgKdlhmnSe6BYMmYchpVXUz57p1bqzpX7bXke/mCNNFrQutDEjhyZNcNBuwv6e0QWprXgvgt5ROdz879K0OoLP8glUVBEqANw8GAC04HW1/X9JAt+m5/+bX63coCcM4ZLAkIAzNwxOlg63fu5GzRVzs/fw9+nLiu+mb45vDXKiDkKgKvvvL8FWBw0ekk9OnbWbh7N+9m0rBc7j5cvHQVSiXlVBnme84yLAKrCJQBI/g2tdpwLYtD8vJPII5dvW/y5hyc/2ocsjQD8mPw/Wt9u1xnl/a2/sWGUy/Ra+gLKjCavSm8Gp7t3gRtG5roCC6YBbnM5Cxc++0mXL+hnbRMA5jdR4/23NJ7omV3AwUWjSeP0bn9WNznbj6maYCoC4Viqbw0SjFU3TOmafYO9PVMqKAq1yQgnAbjqT0W4Fmqtc1qkB+ZjvSVkBk62Nf33HQ9/7oERKD4X1AE/g4txhtEZGW9ZIu23w3G3h3o332WjnblkqgR6EnAjhNECib2Mo7iTt9Cz4Y2enyIykQjZFNUKb+jR8n5cKjn20OHmGXHebX/ATCvePe0TxYAAAAAAElFTkSuQmCC"
+                        src="./../../assets/images/fire.png"
                         alt=""
                         width="10px"
                         height="12px"
@@ -341,7 +345,7 @@
             </router-link>
           </div>
         </div>
-        <div class="home-page-row" style="display: none">
+        <!-- <div class="home-page-row" style="display: none">
           <div>
             <div class="grid-header">
               <div class="grid-header-left">
@@ -421,7 +425,6 @@
               </div>
             </div>
           </div>
-          <!-- --------------------------------------------------------来 -->
           <div style="height: 100%; overflow: hidden">
             <div class="grid-header">
               <div class="grid-header-left">
@@ -456,8 +459,6 @@
                     <div class="left">
                       <div class="img" style="position: relative">
                         <div class="lazyload-wrapper">
-                          <!-- 判断是否进行中 -->
-
                           <router-link
                             tag="a"
                             target="_blank"
@@ -493,8 +494,7 @@
                       <div class="name">{{ item.user_nickname }}</div>
                     </div>
                     <div class="middle">
-                      人气
-                      <!-- -->{{ item.amount }}
+                      人气{{ item.amount }}
                     </div>
                     <div class="right">
                       <div class="blank"></div>
@@ -517,336 +517,33 @@
               </div>
             </div>
           </div>
+        </div> -->
+
+        <div class="home-anchor-ad" @click="openLink(advertisingImgTwo.advertising_url)"  v-if="JSON.stringify(advertisingImgTwo) !== '{}'">
+          <img :src="advertisingImgTwo.img_address" alt="anchor-ad" />
         </div>
 
         <div class="home-page-row">
-          <div>
-            <div class="grid-header">
-              <div class="grid-header-left">
-                <img
-                  class="grid-header-left-icon"
-                  src="../../assets/images/main-recommend-title.png"
-                  alt=""
-                />
-                <div class="grid-header-left-text">赛事推荐</div>
-                <div class="grid-header-left-nav">
-                  <div
-                    v-for="(item, index) in tabList"
-                    :key="index"
-                    :class="{ active2: type === index }"
-                    @click="type = index"
-                  >
-                    {{ item.name }}
-                  </div>
-                </div>
-              </div>
-              <div class="grid-header-right">
-                <div class="grid-header-right-text">
-                  <span>今日({{ count || 0 }})</span>
-                </div>
-              </div>
-            </div>
-            <!-- 进行中的比赛 -->
+          <match-recommend
+            :type="type"
+            :count="count"
+            :recommendList="recommendList"
+            @onHandleType="onHandleType"
+            @onHandleNavigate="navigate">
+          </match-recommend>
 
-            <div class="rmt" v-for="(item, key) in recommendList" :key="key">
-              <div class="rmt-header" v-if="key !== 'count'">
-                <div class="rmt-title flex-start">
-                  <img
-                    :src="getRecommendImages(key)"
-                    alt=""
-                    height="20px"
-                    width="20px"
-                  />
-                  <div>
-                    {{
-                      key === "type1"
-                        ? "进行中的比赛"
-                        : key === "type2"
-                        ? "未开始的比赛"
-                        : key === "type3"
-                        ? "已结束的比赛"
-                        : false
-                    }}
-                  </div>
-                </div>
-                <a class="rmt-more" @click="navigate('football', 1)"
-                  >查看全部</a
-                >
-              </div>
-              <div
-                class="el-collapse-item"
-                v-for="(obj, index1) in item"
-                :key="index1"
-                @mouseover="movein(JSON.stringify(obj), key)"
-                v-show="isNaN(item)"
-                @mouseleave="moveout(JSON.stringify(obj))"
-								>
-                <div class="el-collapse-item__header">
-                  <div class="rmt-row" style="box-shadow: none; width: 100%">
-                    <div class="rmt-row-left">
-                      <div class="rmt-row-left-time">
-                        <div class="exact-time" v-if="obj.match_time">
-                          {{ obj.match_time.slice(6, 11) }}
-                        </div>
-                        <div class="exact-date" v-if="obj.match_time">
-                          {{ obj.match_time.slice(0, 5) }}
-                        </div>
-                      </div>
-                      <div class="rmt-row-left-text">{{ obj.competition }}</div>
-                      <div class="rmt-row-left-duration">
-                        {{ setType(obj, key) }}
-                      </div>
-                    </div>
-                    <div class="rmt-row-middle">
-                      <div class="team-1">
-                        <div class="team-logo-wrapper">
-                          <!-- <img src="../../assets/images/team.png" > -->
-                          <!-- <div class="team-logo-placeholder"></div> -->
-                          <img
-                            :src="
-                              obj.home_team_logo ||
-                              require('../../assets/images/team.png')
-                            "
-                          />
-                        </div>
-                        <div class="rmt-row-middle-name ellipsis">
-                          {{ obj.home_team_name }}
-                        </div>
-                      </div>
-                      <div class="team-score" style="width: 100px">
-                        <div style="width: auto">
-                          {{ key !== "type2" ? obj.home_scores : "" }}
-                        </div>
-                        <div>-</div>
-                        <div style="width: auto">
-                          {{ key !== "type2" ? obj.away_scores : "" }}
-                        </div>
-                      </div>
-                      <div class="team-2">
-                        <div class="team-logo-wrapper">
-                          <!-- <div class="team-logo-placeholder"></div> -->
-                          <img
-                            :src="
-                              obj.away_team_logo ||
-                              require('../../assets/images/team.png')
-                            "
-                          />
-                        </div>
-                        <div class="rmt-row-middle-name ellipsis">
-                          {{ obj.away_team_name }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="rmt-row-right">
-                      <div class="icon-avatar">
-                        <a href="/anchor/live?anchorId=100429">
-                          <div class="lazyload-wrapper">
-                            <div class="lazyload-placeholder"></div>
-                          </div> </a
-                        ><a href="/anchor/live?anchorId=100453">
-                          <div class="lazyload-wrapper">
-                            <div class="lazyload-placeholder"></div>
-                          </div> </a
-                        ><a href="/anchor/live?anchorId=100058">
-                          <div class="lazyload-wrapper">
-                            <div class="lazyload-placeholder"></div>
-                          </div>
-                        </a>
-                      </div>
-                      <div style="display: flex; align-items: center">
-                        <el-popover
-                          v-if="obj.anchor_total != 0"
-                          placement="bottom"
-                          width="200"
-                          trigger="hover"
-                        >
-                          <div class="anchor">
-                            <div class="anchor-title">
-                              {{ obj.anchor_total }}位主播在播
-                            </div>
-                            <div class="anchor-list">
-                              <router-link
-                                tag="a"
-                                v-for="(item5, index5) in obj.anchor_list"
-                                :key="index5"
-                                target="_blank"
-                                class="anchor-li flex"
-                                :to="
-                                  '/live?router=live&type=' +
-                                  obj.type +
-                                  '&id=' +
-                                  obj.sourceid +
-                                  '&uid=' +
-                                  item5.id +
-                                  '&vid=' +
-                                  obj.vid
-                                "
-                              >
-                                <img
-                                  :src="
-                                    item5.avatar ||
-                                    require('../../assets/images/userLogo.png')
-                                  "
-                                />
-                                <span style="width: 50px" class="text-clamp">{{
-                                  item5.user_nickname
-                                }}</span>
+          <!-- <div class="fifa-schedule-container">
+            <img class="fifa-schedule-image" :src="require(`@/assets/images/FIFA-Final-groups.png`)" />
+          </div> -->
 
-                                <div class="status-btn live-btn flex-start">
-                                  <div class="living_box">
-                                    <div class="strip"></div>
-                                    <div class="strip"></div>
-                                    <div class="strip"></div>
-                                  </div>
-                                  直播中
-                                </div>
-                              </router-link>
-                            </div>
-                          </div>
-                          <div
-                            slot="reference"
-                            class="icon-avatar-name flex-start"
-                          >
-                            <img :src="getObjImages(obj)" />
-                            <span>主播 {{ obj.anchor_total }}</span>
-                          </div>
-                        </el-popover>
-                        <div
-                          class="icon-voa"
-                          @click="
-                            navigate(
-                              'score-live?type=' +
-                                (obj.type == 1 ? 'basketball' : 'football') +
-                                '&id=' +
-                                obj.sourceid +
-                                '&vid=' +
-                                obj.vid,
-                              null
-                            )
-                          "
-                        >
-                          <img
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAbFBMVEUAAADvdWnvd2rweGnwdWnvdmnvdmn/uLjvdmnvdWnvdWnudmrxd2v0eWzxfG7/g3bvdmnudmjwdmnwd2rxd2rudWjvdmnvdmjvdmnvdWjuemnudmnudmjudmjvdWjudWnvdmnud2nweGjudWjGukM4AAAAI3RSTlMAkp0zVfDZAsPg+HskHRIJz5iFZjblj3NpTi64tamiel9cQu0bnQoAAACkSURBVDjLrdFJDsIwEETRgmBsx1MmkhBm+v53RFkayQUSvPXfdDV+p52VIus0nFAOlgcW8kEWGMWDDvFKgx2A44EGW4/YsmBf3zSelgQiTYU0skDqLmFQxWDVJIwsMB6xKQdq1uutxeAUEC/lK8wdeCiyQ0I4kyVn6F6xX6jOFL7JoBaqhuGBWWcn1ACEaVM0BXzNt9tM65Hr5U2PnF6qzKLxLy/o81yLYbzXUQAAAABJRU5ErkJggg=="
-                            alt="视频图标"
-                            v-if="obj.mlive == 1"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="showMask el-collapse-item__wrap">
-                    <div class="contens-shoMask">
-                      <div class="schedule flex">
-                        <!-- (battle.vs_recent.win / (battle.vs_recent.win + battle.vs_recent.drawn + battle.vs_recent.lost)) * 100 + '%' -->
-                        <span
-                          style="background-color: #7ac23c"
-                          :style="{
-                            width: getColor(
-                              battle.vs_recent.win +
-                                battle.vs_recent.drawn +
-                                battle.vs_recent.lost,
-                              battle.vs_recent.win
-                            ),
-                          }"
-                        ></span>
-                        <span
-                          style="background-color: #a1a1ab"
-                          :style="{
-                            width: getColor(
-                              battle.vs_recent.win +
-                                battle.vs_recent.drawn +
-                                battle.vs_recent.lost,
-                              battle.vs_recent.drawn
-                            ),
-                          }"
-                        ></span>
-                        <span
-                          style="background-color: #f5222d"
-                          :style="{
-                            width: getColor(
-                              battle.vs_recent.win +
-                                battle.vs_recent.drawn +
-                                battle.vs_recent.lost,
-                              battle.vs_recent.lost
-                            ),
-                          }"
-                        ></span>
-                      </div>
-                      <div class="ranking">
-                        <div class="left">
-                          <p>{{ battle.home_ranking || "--" }}</p>
-                          <p>排行</p>
-                        </div>
-                        <div class="center">
-                          <p v-if="battle.vs_recent.total === 0">暂无交锋</p>
-                          <p v-else>
-                            两队交锋{{ battle.vs_recent.total }}次，主队<span
-                              style="color: #7ac23c"
-                              >{{ battle.vs_recent.win }}</span
-                            >胜<span style="color: #a1a1ab">{{
-                              battle.vs_recent.drawn
-                            }}</span
-                            >平<span style="color: #f5222d">{{
-                              battle.vs_recent.lost
-                            }}</span
-                            >负
-                          </p>
-                          <div class="center-main flex">
-                            <div class="center-main-left">
-                              <img
-                                v-for="(item4, index4) in battle.home_recent"
-                                :key="index4"
-                                :src="
-                                  item4 == '胜'
-                                    ? require('../../assets/images/succe.png')
-                                    : item4 == '平'
-                                    ? require('../../assets/images/ping.png')
-                                    : item4 == '负'
-                                    ? require('../../assets/images/wrong.png')
-                                    : ''
-                                "
-                              />
-                              <!-- <span v-for="(item4,index4) in battle.home_recent" :style="{backgroundColor:getColor(item4)}"></span> -->
-                            </div>
-                            <p>近6场走势</p>
-                            <div class="center-main-left">
-                              <img
-                                v-for="(item4, index4) in battle.away_recent"
-                                :key="index4"
-                                :src="
-                                  item4 == '胜'
-                                    ? require('../../assets/images/succe.png')
-                                    : item4 == '平'
-                                    ? require('../../assets/images/ping.png')
-                                    : item4 == '负'
-                                    ? require('../../assets/images/wrong.png')
-                                    : ''
-                                "
-                              />
-                              <!-- <img v-for="(item4,index4) in battle.away_recent" :src="getColor(item4)" > -->
-                              <!-- <span v-for="(item4,index4) in battle.away_recent" :style="{backgroundColor:getColor(item4)}"></span> -->
-                            </div>
-                          </div>
-                        </div>
-                        <div class="left">
-                          <p>{{ battle.away_ranking || "--" }}</p>
-                          <p>排行</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- </el-collapse-item> -->
-              </div>
-              <!-- </el-collapse> -->
-            </div>
-          </div>
-          <div class="countdown-container" v-if="showCountDown">
-            <img
+          <div class="countdown-container">
+
+            <img 
               class="countdown-bg"
-              :src="require('../../assets/images/countdown.jpg')"
+              :src="showCountImg"
             />
-            <div class="countdown-content">
+
+            <div class="countdown-content" v-if="showCountDown">
               <div class="countdown-time">
                 <div class="countdown-box">{{ countDownD.split("")[0] }}</div>
                 <div class="countdown-box">{{ countDownD.split("")[1] }}</div>
@@ -867,6 +564,15 @@
                 <div class="countdown-text">秒</div>
               </div>
             </div>
+
+            <img 
+              v-if="JSON.stringify(advertisingImgThree) !== '{}'"
+              @click="openLink(advertisingImgThree.advertising_url)"
+              class="countdown-bg"
+              style="cursor:pointer"
+              :src="advertisingImgThree.img_address"
+            />
+            
           </div>
         </div>
         <div class="official-activity">
@@ -906,6 +612,7 @@ import {
   getLiveList,
   reserveMatch2,
   getActivityUrl,
+  getAdList,
 } from "../../api/user.js";
 import liveTv from "../anchor/live-tv.vue";
 import "swiper/dist/css/swiper.css";
@@ -913,11 +620,13 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 import { getList, classification } from "@/api/headline.js";
 import { attention } from "@/api/user.js";
 import { LeaderboardAnchor, match_battle } from "@/api/competition.js";
+import matchRecommend from "@/components/MatchRecommend";
 export default {
   components: {
     liveTv,
     swiper,
     swiperSlide,
+    matchRecommend,
   },
 
   computed: {
@@ -925,12 +634,13 @@ export default {
   },
   data() {
     return {
-      tabList: [
-        { name: "全部" },
-        { name: "足球" },
-        { name: "篮球" },
-        { name: "电竞" },
-      ],
+      // tabList: [
+      //   { name: "全部" },
+      //   { name: "世界杯" },
+      //   { name: "足球" },
+      //   { name: "篮球" },
+      //   // { name: "电竞" },
+      // ],
       mySwiper: null,
       nameActive: [],
       nameActiveIndex: [],
@@ -973,6 +683,9 @@ export default {
       ],
       type: 0,
       group: 0,
+      advertisingImgOne:{},
+      advertisingImgTwo:{},
+      advertisingImgThree:{},
       Headlines: [],
       mainList: [],
       titleIndex: 0,
@@ -986,7 +699,7 @@ export default {
       Headlinesbanner: [], //头条轮播列表
       classificationList: 0,
       classificationIndex: 0,
-      LeaderboardList: [],
+      // LeaderboardList: [],
       count: null, //推荐总数
       battle: {
         vs_recent: {},
@@ -1026,6 +739,7 @@ export default {
       countDownH: "",
       countDownM: "",
       countDownS: "",
+      showCountImg:"",
     };
   },
   watch: {
@@ -1034,19 +748,14 @@ export default {
     },
     mainTabIndex(e) {
       this.title_name = this.mainList[e].title;
-      // console.log(this.mainList[e])
-      // console.log(this.mainList[e].starttime+"比赛",this.servertime+"服务")
-      // console.log(this.mainList[e].starttime-this.servertime+"倒计时"+e)
       if (
         this.mainList[e].starttime - this.servertime > 0 &&
         this.mainList[e].starttime > 0
       ) {
         this.counttDown = this.mainList[e].starttime - this.servertime;
         // 先卸载定时器从新加载定时器
-        // console.log(this.counttDown)
         clearInterval(this.timeInterval);
         this.Iime();
-        // this.counttDown=10
         this.urlPlayer = this.mainList[e];
       } else {
         this.counttDown = false;
@@ -1063,16 +772,17 @@ export default {
     }, 500);
   },
   mounted() {
-    this.getList();
+    // this.getList();
     let data = {
       id: this.titleTab[0].id,
     };
     this.getRanking(data);
     this.getLiveList();
     this.recommend();
-    this.classification();
-    this.LeaderboardAnchor();
+    // this.classification();
+    // this.LeaderboardAnchor();
     this.getActivityUrl();
+    this.getAdList()
 
     let query = this.$route.query;
     for (const i in query) {
@@ -1094,14 +804,29 @@ export default {
     },
   },
   methods: {
-    getRecommendImages(key) {
-      if (key === "type1") {
-        return require("../../assets/images/main-beigin.png");
-      } else if (key === "type2") {
-        return require("../../assets/images/main-end.png");
-      } else {
-        return require("../../assets/images/main-ends.png");
+    openLink(link) {
+      link !=="" ? window.open(link) :false
+    },
+    getAdList(){
+      let params = {
+        channel_code: getQueryString().channel_code || localStorage.getItem("channel") || "",
+        user_id: localStorage.getItem("userid")|| JSON.parse(localStorage.getItem("userInfo")).id
       }
+      getAdList(params).then((res)=>{
+        res.data.forEach(el => {
+          switch (el.ad_id) {
+            case "001":
+              this.advertisingImgOne = el
+              break;
+            case "002":
+              this.advertisingImgTwo = el
+              break;
+            case "003":
+              this.advertisingImgThree = el
+              break;  
+          }
+        });
+      })
     },
     getObjImages(data) {
       if (typeof data !== "number") {
@@ -1175,7 +900,7 @@ export default {
         })
         .catch((res) => {});
     },
-
+ 
     // 申请主播
     applyFor() {
       if (JSON.stringify(this.infos) === "{}")
@@ -1224,14 +949,14 @@ export default {
         })
         .catch((res) => {});
     },
-    // 获取人气主播榜
-    LeaderboardAnchor() {
-      LeaderboardAnchor({ type: 2 })
-        .then((res) => {
-          this.LeaderboardList = res.data;
-        })
-        .catch((res) => {});
-    },
+    // // 获取人气主播榜
+    // LeaderboardAnchor() {
+    //   LeaderboardAnchor({ type: 2 })
+    //     .then((res) => {
+    //       this.LeaderboardList = res.data;
+    //     })
+    //     .catch((res) => {});
+    // },
 
     // 预约赛事
     getReserveMatch(item) {
@@ -1263,34 +988,43 @@ export default {
       window.open(routeData.href, "_blank");
     },
 
-    setType(row, key) {
-      // if(row.type === 0){
-      // 	switch(key){
-
-      // 	}
-      // }else{
-      switch (key) {
-        case "type1":
-          return "进行中";
-          break;
-        case "type2":
-          return "未开始";
-          break;
-        case "type3":
-          return "完场";
-          break;
-      }
-      // }
+    onHandleType (index) {
+      this.type = index
     },
+
+    // setType(row, key) {
+    //   // if(row.type === 0){
+    //   // 	switch(key){
+
+    //   // 	}
+    //   // }else{
+    //   switch (key) {
+    //     case "type1":
+    //       return "进行中";
+    //       break;
+    //     case "type2":
+    //       return "未开始";
+    //       break;
+    //     case "type3":
+    //       return "完场";
+    //       break;
+    //   }
+    //   // }
+    // },
     // 获取首页赛事推荐
     recommend() {
+      let recommend_type = [0, 99, 1, 2] 
+      // 0:全部, 99:世界杯, 1:足球, 2:籃球
+
       recommend({
-        type: this.type,
+        type: recommend_type[this.type],
       }).then((res) => {
         if (res.code === 0) {
-          this.count = res.data.count;
+          let data = res.data
+          this.count = data.count;
+          delete data.count
           this.recommendList = {
-            ...res.data,
+            ...data,
           };
         }
       });
@@ -1428,13 +1162,6 @@ export default {
     getList() {
       getAllMatch()
         .then((res) => {
-          // res.data.data.forEach(item=>{
-          // 	item.anchorList = {}
-          // 	if(item.anchor.length != 0) {
-          // 		item.anchorList = item.anchor[0]
-          // 	}
-          // })
-
           this.list = res.data.data;
         })
         .catch((res) => {});
@@ -1448,9 +1175,13 @@ export default {
 
       if (interval < 0) {
         this.showCountDown = false;
+        this.showCountImg = require('../../assets/images/transformed.png')
         clearInterval(this.countDownIntervals);
         return;
+      }else{
+        this.showCountImg = require('../../assets/images/countdown.jpg')
       }
+
 
       let d = Math.floor(interval / (1000 * 60 * 60 * 24));
       let h = parseInt((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -1970,11 +1701,17 @@ export default {
   background-size: 24px 24px;
   background-position: center center;
 }
+.fifa-schedule-container {
+  .fifa-schedule-image {
+    width: 100%;
+  }
+}
 .countdown-container {
   position: relative;
   padding-top: 50px;
   .countdown-bg {
     width: 100%;
+    margin-bottom: 10px;
   }
   .countdown-content {
     position: absolute;

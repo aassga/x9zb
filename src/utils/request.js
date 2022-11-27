@@ -6,13 +6,13 @@ import {
 	Message
 } from 'element-ui'
 import store from '@/store'
-import router from '../router'
+// import router from '../router'
 import {
 	getToken,
 	removeToken
 } from '@/utils/auth'
 
-let baseURL = process.env;
+// let baseURL = process.env;
 
 // if (process.env.NODE_ENV == "development") {
 // 	baseURL = Object.assign({}, process.env, apiUrl);

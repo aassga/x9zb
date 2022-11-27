@@ -20,19 +20,59 @@
             class="new-msg-icon"
             >{{ inviteCount > 99 ? "99+" : inviteCount }}</i
           >
-          <i
-            v-show="unreadTotal > 0 && item.id === 1"
-            class="new-msg-icon"
-            >{{ unreadTotal > 99 ? "99+" : unreadTotal }}</i
-          >
+          <i v-show="unreadTotal > 0 && item.id === 1" class="new-msg-icon">{{
+            unreadTotal > 99 ? "99+" : unreadTotal
+          }}</i>
         </span>
       </div>
-      <div v-if="pinInfo.text !== '' && tabNumber === 0"
-       class="pin-info"
-       :style="pinInfo.pinType === 1 ? 'cursor: pointer':''" 
-       @click="pinInfo.pinType === 1 ? pinDialogShow = true :false">
-        <i class="el-icon-message-solid"></i>
-        {{ pinInfo.text }}
+      <div
+        v-if="pinInfo.text !== '' && tabNumber === 0"
+        class="pin-info"
+        :class="pinInfo.pinType === 0 ? 'pin-generally' : 'pin-special'"
+      >
+        <template v-if="pinInfo.pinType === 0">
+          <div>
+            <i class="el-icon-message-solid"></i>
+            <vue-markdown :anchor-attributes="linkAttrs">{{
+              pinInfo.text
+            }}</vue-markdown>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pin-left">主播公告</div>
+          <div class="pin-right">
+            <ul>
+              <li v-for="(item, index) in pinLink" :key="index">
+                <span
+                  ><span class="pin-right-text">{{ item.text_link }}</span>
+                  <span class="pin-right-link" @click="openLink(item)">{{
+                    linkText(item.text_link_url)
+                  }}</span></span
+                >
+              </li>
+            </ul>
+            <div class="pin-text" v-html="pinInfo.text"></div>
+          </div>
+        </template>
+      </div>
+      <div class="notice-box" v-if="tabNumber === 0 && chatInroomMode === '2'">
+        <transition name="notice-slide">
+          <div class="notice-item" :key="noticeList.id">
+            <div
+            class="join-text"
+            :class="[
+              {'join-active' : noticeList.text !== ''},
+              `level${noticeList.exp ? noticeList.exp : '0'}`
+            ]"
+            >欢迎<span
+              v-if="noticeList.exp !== '0'"
+              class="level-tag"
+              :class="`level${noticeList.exp ? noticeList.exp : '0'}`"
+              >Lv.{{ noticeList.exp ? noticeList.exp : '0' }}</span
+            >{{noticeList.text}}
+            </div>
+          </div>
+        </transition>
       </div>
       <!-- 聊天列表页面 -->
       <message-list
@@ -62,7 +102,7 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <message-pabel
+      <message-pabel-anchor
         v-if="tabNumber === 2"
         :msgList="msgAnchorList"
         :controlIndex="controlIndex"
@@ -75,7 +115,7 @@
         @controlNumber="controlNumber"
         @msgAction="msgAction"
       />
-      <message-pabel
+      <message-pabel-chat
         v-if="tabNumber === 1"
         :msgList="msgChatList"
         :controlIndex="controlIndex"
@@ -89,11 +129,38 @@
         @msgAction="msgAction"
       />
       <div v-show="showSetDownBtn" class="go-btn-style" @click="toBottom()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 45 45">
-          <g id="Group_36" data-name="Group 36" transform="translate(-364 -774)">
-            <circle id="Ellipse_1" data-name="Ellipse 1" cx="22.5" cy="22.5" r="22.5" transform="translate(364 774)" fill="#bbc0cc"/>
-            <g id="Group_1" data-name="Group 1" transform="translate(645.803 539.06) rotate(90)">
-              <path id="Path_1" data-name="Path 1" d="M249.073,267.244a1.475,1.475,0,0,1-1.043-2.518l8.981-8.981-8.936-8.938a1.475,1.475,0,0,1,2.086-2.086l9.979,9.981a1.476,1.476,0,0,1,0,2.086l-10.024,10.024A1.476,1.476,0,0,1,249.073,267.244Z" transform="translate(6.016 3.558)" fill="#fff"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          viewBox="0 0 45 45"
+        >
+          <g
+            id="Group_36"
+            data-name="Group 36"
+            transform="translate(-364 -774)"
+          >
+            <circle
+              id="Ellipse_1"
+              data-name="Ellipse 1"
+              cx="22.5"
+              cy="22.5"
+              r="22.5"
+              transform="translate(364 774)"
+              fill="#bbc0cc"
+            />
+            <g
+              id="Group_1"
+              data-name="Group 1"
+              transform="translate(645.803 539.06) rotate(90)"
+            >
+              <path
+                id="Path_1"
+                data-name="Path 1"
+                d="M249.073,267.244a1.475,1.475,0,0,1-1.043-2.518l8.981-8.981-8.936-8.938a1.475,1.475,0,0,1,2.086-2.086l9.979,9.981a1.476,1.476,0,0,1,0,2.086l-10.024,10.024A1.476,1.476,0,0,1,249.073,267.244Z"
+                transform="translate(6.016 3.558)"
+                fill="#fff"
+              />
             </g>
           </g>
         </svg>
@@ -197,32 +264,19 @@
         <el-button @click="submitMessage()">发送</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog
-      :visible.sync="pinDialogShow"
-      show-close
-      class="pin-dialog-style"
-      width="700px"
-      >
-      <div class="pin-box-img text-white">
-        <ul>
-          <li v-for="(item,index) in pinLink" :key="index" @click="openLink(item)">
-            <span>{{item.text_link }} {{item.text_link_url}}</span>
-          </li>
-        </ul>
-        <div style="margin-left: 10px;">{{pinInfo.text}}</div>
-        <div class="pin-btn" @click="goPinLink()">{{pinLinkText}}</div>
-      </div>
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
+import VueMarkdown from "vue-markdown";
 import { getQueryString } from "@/utils/Qs";
-import { getUserId,setUserId } from '../../utils/auth.js'
+import { getToken } from "../../utils/auth.js";
 import MessageList from "@/components/MessageList";
 import MessageInfo from "@/components/MessageInfo";
 import MessagePabel from "@/components/message-pabel";
-import { info	} from '@/api/user.js'
+import MessagePabelChat from "@/components/message-pabel-chat";
+import MessagePabelAnchor from "@/components/message-pabel-anchor";
+import { info } from "@/api/user.js";
 export default {
   name: "ChatDetails",
   props: {
@@ -240,16 +294,32 @@ export default {
     MessageList,
     MessageInfo,
     MessagePabel,
+    MessagePabelChat,
+    MessagePabelAnchor,
+    VueMarkdown,
+
   },
   data() {
     return {
+      noticeArr: [],
+      number: 0,
+      noticeList: {
+        exp: "0",
+        text: '您的访问，共享赛事精彩' 
+      },
+      timer: null,
       relations: [
         { name: "广场", id: 0 },
         { name: "主播私聊", id: 2 },
         { name: "聊天", id: 1 },
       ],
+      linkAttrs: {
+        target: "_blank",
+        class: "linkified",
+      },
       unreadMsgList: [], // 红点的列表
-      pinLink:[],
+      pinLink: [],
+      chatInroomMode:"0",// 飄頻模式切換
       privateChatTotal: 0, // 主播私聊的未读总数
       unreadTotal: 0, // 列表红点的总数
       modalMsgList: [],
@@ -261,12 +331,12 @@ export default {
       msgSquareList: [],
       msgAnchorList: [],
       msgChatList: [],
-      anchorList:{},
+      anchorList: {},
       myUserinfo: { uid: "" },
       webSocketFd: "",
-      pinLinkText:"",
+      // pinLinkText: "",
       isShowEmoji: false,
-      pinDialogShow:false,
+      pinDialogShow: false,
       uid: "",
       info: {
         token: "",
@@ -296,7 +366,7 @@ export default {
       formData: {},
       controlIndex: -1,
       pinInfo: {
-        text:"",
+        text: "",
       },
       page: 1,
       tabNumber: 0,
@@ -318,9 +388,10 @@ export default {
       fullscreenLoading: false, // 全螢幕Loading
       uploadImgShow: false, // 上傳圖片
       fileList: [], //圖片清單
+      // newJoinArr:[],
       anchor_id: "",
-      anchorVid:"",
-      userInfo:{}
+      anchorVid: "",
+      userInfo: {},
     };
   },
   computed: {
@@ -330,6 +401,9 @@ export default {
     infos() {
       return this.$store.state.infos;
     },
+    // noticeList() {
+    //   return this.showNotice[0]
+    // },
   },
   //给新的ws实例添加监听事件
   watch: {
@@ -357,20 +431,35 @@ export default {
     },
   },
   mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        if (document.querySelector(".chatlist") !== null) {
+          document.querySelector(".chatlist").addEventListener("click", (e) => {
+            this.tabNumber = 1;
+            this.showChatList = true;
+          });
+        }
+      }, 2000);
+    });
     this.anchor_id = getQueryString().uid;
     const domScroll = document.querySelector(".chat-window");
     domScroll.addEventListener("scroll", (e) => {
-      if (domScroll.scrollTop === 0 && this.isMore && this.tabNumber !==2) {
+      if (domScroll.scrollTop === 0 && this.isMore && this.tabNumber !== 2) {
         this.page++;
         if (this.tabNumber === 1 && this.initChatTab) {
           this.initChatTab = false;
           return;
         }
-        if(this.tabNumber !==2 || (this.tabNumber === 2 && this.msgAnchorList.length !== 0) ){
+        if (
+          this.tabNumber !== 2 ||
+          (this.tabNumber === 2 && this.msgAnchorList.length !== 0)
+        ) {
           this.getChatHistoryMsg(this.initTab ? 1 : "");
         }
       }
-      this.showSetDownBtn = domScroll.scrollHeight - domScroll.scrollTop - domScroll.clientHeight > 1
+      this.showSetDownBtn =
+        domScroll.scrollHeight - domScroll.scrollTop - domScroll.clientHeight >
+        1;
     });
     this.vid = this.qsVid || "";
     let userid = "";
@@ -412,18 +501,25 @@ export default {
     }
     this.getChatMessageList(); // 获取聊天列表
     this.getUserToken();
-    this.chatAreaHeight()
+    // this.scrollMove();
   },
   created() {
     this.uid = this.$route.query.id;
   },
   beforeDestroy() {
     this.ws.close();
+    clearTimeout(this.timer);
   },
   methods: {
- 
-    goBottom(boolean){
-      this.showSetDownBtn = boolean
+    //滚动函数
+    scrollMove() {
+      this.timer = setTimeout(() => {
+        if (this.noticeArr.length > 1) this.noticeList = this.noticeArr.shift()
+        this.scrollMove()
+      }, 1000);
+    },
+    goBottom(boolean) {
+      this.showSetDownBtn = boolean;
     },
     controlNumber(num) {
       this.controlIndex = num;
@@ -435,10 +531,10 @@ export default {
       this.msgText = item.text;
     },
     relationsFilter(data) {
-      if(this.hideChat){
-        return data.filter((el) => el.id !== 2)
-      }else{
-        return data
+      if (this.hideChat) {
+        return data.filter((el) => el.id !== 2);
+      } else {
+        return data;
       }
     },
     closeModel() {
@@ -474,13 +570,13 @@ export default {
     },
     //取得圖片
     changeFile(fileList) {
-      const isLt2M = (fileList.size / 1024 / 1024 < 2);
+      const isLt2M = fileList.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         this.$message({
           message: "图片大于2m，请换张图片试试",
-          type: 'warning'
+          type: "warning",
         });
-        this.fileList = []
+        this.fileList = [];
         return false;
       }
       this.msgType = 2;
@@ -506,59 +602,59 @@ export default {
             : 0
         );
       }
-      readData.forEach((res)=>{
+      readData.forEach((res) => {
         // 如果是重整之后的数组，则重新校对chatListActive的索引，使页面样式规范
         if (res.vid === this.roomInfo.vid) this.chatListActive = res;
-        unReadData.forEach((el)=>{
+        unReadData.forEach((el) => {
           if (res.vid === el.vid) {
             res.unread_count = el.unread_count;
-            res.last_msg.text = el.text ? el.text : res.last_msg.text
+            res.last_msg.text = el.text ? el.text : res.last_msg.text;
           }
-        })
-      })
+        });
+      });
       return readData;
     },
     // 群组消息总数计算事件
     onGroupNewsTotal(list) {
       let num = 0;
-      list.forEach((list)=>{
+      list.forEach((list) => {
         if (list.unread_count > 0) num += list.unread_count;
-      })
+      });
       this.unreadTotal = num;
     },
-    onAnchorCount(list){
-      if(list.vid === this.anchorList.vid){
-        if (list.unread_count > 0) this.inviteCount += list.unread_count
+    onAnchorCount(list) {
+      if (list.vid === this.anchorList.vid) {
+        if (list.unread_count > 0) this.inviteCount += list.unread_count;
       }
     },
     // 列表红点刷新事件
     refreshUnreadEvent(msgList, type) {
       // 如果在當前聊天室
-      if (this.roomInfo.vid === msgList.vid) return
+      if (this.roomInfo.vid === msgList.vid) return;
       if (type === 0) {
         this.unreadMsgList = msgList;
       } else {
-        let flag  = true;
+        let flag = true;
         let arr = JSON.parse(JSON.stringify(this.unreadMsgList));
-        arr.forEach((res)=>{
+        arr.forEach((res) => {
           if (res.vid === msgList.vid) {
-            flag  = false;
+            flag = false;
             res.unread_count += 1;
             res.text = msgList.text;
           }
-        })
+        });
         if (flag) arr.push(msgList);
         this.unreadMsgList = arr;
         this.unreadTotal += 1;
-        if(msgList.vid === this.anchorList.vid) this.onAnchorCount(msgList)
+        if (msgList.vid === this.anchorList.vid) this.onAnchorCount(msgList);
       }
     },
     // 已读事件
     readEvent(item) {
-      this.unreadMsgList.forEach((res)=>{
-        if(res.vid === item.vid) res.unread_count = 0
-      })
-      if(item.vid === this.anchorList.vid) this.inviteCount = 0
+      this.unreadMsgList.forEach((res) => {
+        if (res.vid === item.vid) res.unread_count = 0;
+      });
+      if (item.vid === this.anchorList.vid) this.inviteCount = 0;
     },
     getUserToken() {
       const _that = this;
@@ -620,7 +716,7 @@ export default {
         })
         .then((res) => {
           if (res.code == 0) {
-            res.data.forEach(data => data.unread_count = 0)
+            res.data.forEach((data) => (data.unread_count = 0));
             if (this.unreadMsgList.length > 0) {
               res.data = this.mapList(res.data, this.unreadMsgList);
               this.onGroupNewsTotal(res.data);
@@ -684,17 +780,17 @@ export default {
       this.$store.dispatch("leaveRoom", data).then((res) => {});
     },
     chatAreaHeight() {
-      let chatBox = document.querySelector(".ChatDetails_container").clientHeight;
-      let headerBox = document.querySelector(".header-list").clientHeight;
-      let senBox = document.querySelector(".send-container").clientHeight;
-      if(this.tabNumber === 0){
-        setTimeout(() => {
-          let pinBox = this.pinInfo.text !== "" ? document.querySelector(".pin-info").clientHeight: 0
-          this.chatMsgHight = chatBox - headerBox - pinBox - senBox;
-        }, 1000);
-      }else {
-        this.chatMsgHight = chatBox - headerBox - senBox;
-      }
+      this.chatBox = document.querySelector(
+        ".ChatDetails_container"
+      ).clientHeight;
+      this.headerBox = document.querySelector(".header-list").clientHeight;
+      this.senBox = document.querySelector(".send-container").clientHeight;
+      setTimeout(() => {
+        this.noticeBox = this.chatInroomMode !== "1" ? document.querySelector(".notice-box").clientHeight + 10 : 0;
+        this.pinBox = this.pinInfo.text !== "" ? document.querySelector(".pin-info").clientHeight : 0;
+        this.chatMsgHight = this.chatBox - this.headerBox - this.senBox - this.noticeBox - this.pinBox;
+      }, 1000);
+      
     },
     changeType(num) {
       if (this.tabNumber === num) return;
@@ -702,12 +798,24 @@ export default {
       this.page = 1;
       this.tabNumber = num;
       this.controlIndex = -1;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          if (document.querySelector(".chatlist") !== null) {
+            document
+              .querySelector(".chatlist")
+              .addEventListener("click", (e) => {
+                this.tabNumber = 1;
+                this.showChatList = true;
+              });
+          }
+        }, 1000);
+      });
       switch (num) {
         case 0:
           this.parmUserInfo.vid = qVid;
           this.inRoomInfo(this.webSocketFd);
           this.backBefore();
-          this.toBottom()
+          this.toBottom();
           break;
         case 1:
           this.newMsg.groupChat = false;
@@ -716,16 +824,16 @@ export default {
           break;
         case 2:
           this.inviteCount = 0;
-          this.inviteRoom()
-          this.chatAreaHeight()
-          this.readEvent(this.anchorList)
+          this.inviteRoom();
+          this.chatAreaHeight();
+          this.readEvent(this.anchorList);
           this.newMsg.privateChatTotal = false;
           let vInfo = JSON.parse(localStorage.getItem("vidInfo")) || {};
-          if(!vInfo.hasOwnProperty(qVid)) return
+          if (!vInfo.hasOwnProperty(qVid)) return;
           this.parmUserInfo.vid = vInfo[qVid];
           this.backBefore();
-          this.toBottom()
-          break;  
+          this.toBottom();
+          break;
       }
     },
     inviteRoom(init = false) {
@@ -746,13 +854,12 @@ export default {
         .then((res) => {
           roomInfo[roomId] = res.data.vid;
           localStorage.setItem("vidInfo", JSON.stringify(roomInfo));
-
-          this.anchorList = res.data
+          this.anchorList = res.data;
           if (this.initInvite) {
             this.initInvite = false;
             return;
           }
-          this.anchorVid  = res.data.vid;
+          this.anchorVid = res.data.vid;
           this.inRoomInfo(this.webSocketFd);
           this.controlIndex = -1;
         });
@@ -763,24 +870,26 @@ export default {
         page: iniPage || this.page,
         limit: 20,
         type: this.tabNumber === 1 ? this.room_type : this.tabNumber || 0,
-        vid:  this.tabNumber === 2 ? this.anchorVid :this.parmUserInfo.vid,
+        vid: this.tabNumber === 2 ? this.anchorVid : this.parmUserInfo.vid,
         user_id: this.parmUserInfo.user_id,
       };
-      this.$store
-        .dispatch("getChatHistory", params)
-        .then((res) => {
-          let dataList = res.data.reverse();
-          this.initTab = false;
-          if (dataList.length === 0) {
-            this.isMore = false;
-            return;
-          }
-          this.mergeDataList(
-            params.type === 2 && this.tabNumber === 1 ? 1 : params.type,
-            params.page !== 1 ? "unshift" : "init",
-            dataList
-          );
-        })
+      this.$store.dispatch("getChatHistory", params).then((res) => {
+        
+        let dataList = res.data.reverse();
+        this.initTab = false;
+        if (dataList.length === 0) {
+          this.isMore = false;
+          return;
+        }
+        
+        this.mergeDataList(
+          params.type === 2 && this.tabNumber === 1 ? 1 : params.type,
+          params.page !== 1 ? "unshift" : "init",
+          dataList
+        );
+        this.chatAreaHeight();
+        
+      });
     },
     inRoomInfo(webSocketFd) {
       const _that = this;
@@ -791,56 +900,63 @@ export default {
         type: this.tabNumber == 1 ? this.room_type : this.tabNumber || 0,
         channel: this.channel,
       };
-      if (this.tabNumber == 1 || this.tabNumber == 2) this.leaveVid = this.parmUserInfo.vid;
+      if (this.tabNumber == 1 || this.tabNumber == 2){
+        this.leaveVid = this.parmUserInfo.vid;
+      }
       this.$store.dispatch("inRoom", inRoomData).then((res) => {
-        if (res.data.pinData && res.data.pinData !== "") {
-          this.pinInfo = {
-            text: res.data.pinData,
-            pinType:res.data.pinType,
-            extra:res.data.extra
-          };
-          this.pinLink = res.data.extra.list
-          if(res.data.pinType === 1) this.pinDialogShow = true
-          if(localStorage.getItem("userid")){
-            this.pinLinkText = res.data.extra.guest_register === "1" ? "点击注册" : "点击咨询"
-          }else{
-            this.pinLinkText = res.data.extra.user_betsite === "1" ? "点击投注" : "点击咨询"
-          }
-        }
+        this.pinInfo = {
+          text: res.data.pinData,
+          pinType: res.data.pinType,
+          extra: res.data.extra,
+        };
+        this.pinLink = res.data.extra.list;
+        this.chatInroomMode = res.data.chat_inroom_mode;
+        if (res.data.pinType === 1) this.pinDialogShow = true;
+        // if (localStorage.getItem("userid")) {
+        //   this.pinLinkText =
+        //     res.data.extra.guest_register === "1" ? "点击注册" : "点击咨询";
+        // } else {
+        //   this.pinLinkText =
+        //     res.data.extra.user_betsite === "1" ? "点击咨询" : "点击咨询";
+        // }
         _that.inRoom = true;
         _that.getChatHistoryMsg(1);
       });
     },
     getLogin() {
-      this.$store.state.user.showLoginMask = true
-      this.$store.state.user.showRegister = true
+      this.$store.state.user.showLoginMask = true;
+      this.$store.state.user.showRegister = true;
     },
-    openLink(item){
+    openLink(item) {
       const url = item.text_link_url;
       let newTab = window.open("about:blank");
       newTab.location.href = url;
     },
-    goPinLink(){
-      if(localStorage.getItem("userid")){
-        if(this.pinInfo.extra.guest_register === "1"){
-          this.getLogin()
-        }else{
-          this.tabNumber = 1
-          this.pinDialogShow = false
-          this.newMsg.groupChat = false;
-          this.showChatList = true;
-        }
-      }else{
-        if(this.pinInfo.extra.user_betsite === "1"){
-          this.play()
-        }else{
-          this.tabNumber = 1
-          this.pinDialogShow = false
-          this.newMsg.groupChat = false;
-          this.showChatList = true;
-        }
-      }
+    linkText(url) {
+      let domain = url.split("/"); //以“/”进行分割
+      return domain[0] + "//" + domain[2];
     },
+    // goPinLink() {
+    //   if (localStorage.getItem("userid")) {
+    //     if (this.pinInfo.extra.guest_register === "1") {
+    //       this.getLogin();
+    //     } else {
+    //       this.tabNumber = 1;
+    //       this.pinDialogShow = false;
+    //       this.newMsg.groupChat = false;
+    //       this.showChatList = true;
+    //     }
+    //   } else {
+    //     if (this.pinInfo.extra.user_betsite === "1") {
+    //       this.play();
+    //     } else {
+    //       this.tabNumber = 1;
+    //       this.pinDialogShow = false;
+    //       this.newMsg.groupChat = false;
+    //       this.showChatList = true;
+    //     }
+    //   }
+    // },
     play() {
       this.$store
         .dispatch("gettoburl", {
@@ -858,23 +974,23 @@ export default {
     newSocket(data) {
       let wsprotocol = window.location.protocol === "http:" ? "ws" : "wss";
       let windowHost = window.location.hostname;
-      // windowHost = "10.83.107.92:9021";
       // this.WSURL = `${wsprotocol}://${windowHost}/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapre.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      this.WSURL = `wss://beta.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huyapretest.oxldkm.com/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
-      this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://www.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
+      // this.WSURL = `wss://web4.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
       // this.WSURL = `ws://huidu.x9zb.live/wss/?token=${data.token}&tokenid=${data.id}&vid=${this.qsVid}`;
 
       this.ws = new WebSocket(this.WSURL);
       // 连接建立时触发
       this.ws.onopen = this.websocketonopen;
       // 传送消息时触发
-      this.ws.onmessage = this.websocketonmessage;      
+      this.ws.onmessage = this.websocketonmessage;
       // 通信发生错误时触发
       this.ws.onerror = this.websocketonerror;
       // 连接关闭时触发
       this.ws.onclose = this.websocketclose;
-
     },
     websocketonopen() {
       //开启心跳
@@ -890,7 +1006,7 @@ export default {
       this.ws.close();
       //重连
       // this.reconnect();
-      this.getUserToken()
+      this.getUserToken();
     },
     reconnect() {
       //重新连接
@@ -969,35 +1085,35 @@ export default {
           if (res.msg == "connection error") {
             this.getUserToken();
           } else if (res.code !== 0) {
-            this.mergeDataList(this.tabNumber,'error',uiCode)
+            this.mergeDataList(this.tabNumber, "error", uiCode);
           }
           this.msgText = "";
           this.msgType = 1;
           this.formData.pic = "";
-          this.prevImg= null
+          this.prevImg = null;
           this.fileList = [];
           this.uploadImgShow = false;
           this.toBottom();
-          this.readEvent(data)
+          this.readEvent(data);
         })
-        .catch(err => {
+        .catch((err) => {
           setTimeout(() => this.$message.error(err), 10000);
-          this.mergeDataList(this.tabNumber,'error',uiCode)
+          this.mergeDataList(this.tabNumber, "error", uiCode);
         });
     },
-    getInfo(){
+    getInfo() {
       info().then((res) => {
-        localStorage.setItem('userInfo',JSON.stringify(res.data))
-        localStorage.removeItem("userid")
-        this.info = res.data
-        this.infos.exp = res.data.exp
+        localStorage.setItem("userInfo", JSON.stringify(res.data));
+        localStorage.removeItem("userid");
+        this.info = res.data;
+        this.infos.exp = res.data.exp;
       });
     },
-    keyUp(event){
+    keyUp(event) {
       if (event.shiftKey && event.keyCode === 13) {
         return this.msgText;
       } else if (event.key === "Enter") {
-        this.submitMessage()
+        this.submitMessage();
       }
     },
     submitMessage() {
@@ -1022,14 +1138,35 @@ export default {
       } else if (this.tabNumber === 0 && !this.token) {
         this.$message.error("未登录不能在直播间发言~");
         return;
+      } else if(localStorage.getItem("userid") && getToken("token")){
+        this.$message.error("未登录不能在直播间发言~");
+        var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+        if(keys){
+          for(var i = keys.length; i--;){
+            document.cookie = keys[i] + "=0;expires=" + new Date(0).toUTCString() + ";max-age=0";
+          }
+        }
+        this.$store.state.user.islogin = false
+        this.msgText = "";
+        return;
+      } else if(!localStorage.getItem("userid") && !getToken("token")){
+        this.$message.error("你已被登出，请尝试重新登入~");
+        this.msgText = "";
+        setTimeout(() => {
+          this.$store.state.user.showLoginMask = true
+        }, 1000);
+        return
       } else if (!this.isAllowedSendMsg || this.msgText == "") {
         if (this.msgType === 2) {
           this.msgText = "";
           this.sendMessage(null, this.msgText);
-          return
+          return;
         }
       }
-      if(!sendMessageList.text.replace(/^\s*|\s*$/g,"")||sendMessageList.text=="\n"){
+      if (
+        !sendMessageList.text.replace(/^\s*|\s*$/g, "") ||
+        sendMessageList.text == "\n"
+      ) {
         this.$message.error("请输入聊天内容!!");
         this.msgText = "";
         return;
@@ -1050,13 +1187,13 @@ export default {
           }
           break;
         case "clearHistory":
-          this.mergeDataList(this.tabNumber, "empty");
+          this.mergeDataList(this.tabNumber, "delete");
           break;
         case "delmsg":
           let msgType = {
             0: "msgSquareList",
             1: "msgChatList",
-            2: "msgAnchorList"
+            2: "msgAnchorList",
           }[this.tabNumber];
           let mergeArrData = JSON.parse(JSON.stringify(this[msgType]));
           let delIndex = mergeArrData.findIndex(
@@ -1066,8 +1203,13 @@ export default {
           this.mergeDataList(this.tabNumber, "init", mergeArrData);
           break;
         case "newRoom":
-          if (this.tabNumber !== 2 && data.room_type === "2")
+          data.data.unread_count = 1;
+          this.chatList.push(data.data);
+          this.chatList = this.mapList(this.chatList, this.unreadMsgList);
+          this.onGroupNewsTotal(this.chatList);
+          if (this.tabNumber !== 2 && data.room_type === "2") {
             this.inviteCount = this.inviteCount + 1;
+          }
           if (data.fd !== this.webSocketFd) {
             switch (data.room_type) {
               case "1":
@@ -1084,6 +1226,9 @@ export default {
           let unreadMsgList = data.data || [];
           this.refreshUnreadEvent(unreadMsgList, 0);
           break;
+        case "clearHistory":
+          this.mergeDataList(this.tabNumber, "delete");
+          break;
         case "newMsg":
           let newMsgList = {
             vid: data.newMsgRoomvid,
@@ -1093,26 +1238,27 @@ export default {
           };
           this.refreshUnreadEvent(newMsgList, 1);
           break;
-        case "send":
         case "system":
-          if(data.pic !== undefined && data.link === undefined) {
-            this.mergeDataList(this.tabNumber, "push", data)
-          }
-          if(data.type === 2){
-            let msgList = {
-              vid: data.vid,
-              room_type: data.type,
-              unread_count: 1,
-              text: data.text,
-            };
-            if(data.sender === Number(localStorage.getItem("userid")) || data.sender_nickname === this.info.user_nickname){
-              return
-            } else{
-              if (data.action === "system") {
-                this.refreshUnreadEvent(msgList, 1);
-              }
+          if(this.chatInroomMode ==='2'){
+            let dataMsg = {
+              id: this.number++,
+              exp:data.sender_exp,
+              text:data.text
             }
+            this.noticeArr.push(dataMsg)
+            if (this.noticeArr.length === 1) this.scrollMove();
+          }else{
+            this.mergeDataList(this.tabNumber, "push", data);
           }
+          break;
+        case "send":
+          if(this.tabNumber === 0 && this.parmUserInfo.vid === data.vid){
+            this.pageNum = 0
+          } else if(this.tabNumber === 1 &&  this.anchorVid === data.vid){
+            this.pageNum = 1
+          } else{
+            this.pageNum = 2
+          }         
           if (data.msg_type == 0) {
             let sendMsgList = {
               messageForShow: data.text,
@@ -1120,66 +1266,80 @@ export default {
             };
             this.$store.commit("setdanmakuShow", sendMsgList);
           }
+          let msgList = {
+            vid: data.vid,
+            room_type: data.type,
+            unread_count: 1,
+            text: data.text,
+          };   
           //自己发送的消息不渲染到列表
           //遊客判斷sender過濾相同訊息
           if (
-            data.sender === localStorage.getItem("userid") ||
-            data.sender === this.info.id ||
-            data.sender_nickname.includes("游客") ||
-            (data.text.includes("进入直播间") && this.tabNumber !== 0)
+            data.sender === Number(localStorage.getItem("userid")) ||
+            data.sender === this.info.id
           ) {
+            if (data.pic !== undefined && data.link === undefined) this.mergeDataList(this.pageNum, "push", data);
             return;
-          } else{
-            this.mergeDataList(this.tabNumber, "push", data);
+          } else {
+            if (data.type === 2 && data.action === "system") this.refreshUnreadEvent(msgList, 1);
+            this.mergeDataList(this.pageNum, "push", data);
           }
-          if(!this.showSetDownBtn) this.toBottom();
+          if (!this.showSetDownBtn) this.toBottom();
           break;
         case "pin":
-          this.pinInfo = data.pin === 1 ? JSON.parse(data.data) : "";
-          this.pinInfo.msg_id = data.msg_id;
+          if (data.pin === 1) {
+            this.inRoomInfo(this.webSocketFd);
+          } else if (data.pin === 2) {
+            this.pinInfo = {
+              text: "",
+              pinType: data.pinType,
+              extra: [],
+            };
+          }
+          this.chatAreaHeight();
           break;
         case "gift":
           if (this.tabNumber !== 0) return;
-          let gift = this.giftList.filter(item => item.id == data.gift_id)[0];
+          let gift = this.giftList.filter((item) => item.id == data.gift_id)[0];
           data.text = `感谢${data.sender_nickname}送了${gift.giftname}`;
           this.mergeDataList(this.tabNumber, "push", data);
           this.$emit("onhandleSendGift", data);
           break;
       }
-      if (data.status == 200) {
-        if (data.data) {
-          switch (data.data.type) {
-            case "dialog":
-              this.mergeDataList(
-                this.tabNumber,
-                "init",
-                data.data.historyMessageList
-              );
-              this.myUserinfo = data.data.targetUserInfo;
-              this.webSocketFd = data.data.targetUserInfo.fd;
-              break;
-            case "call":
-            case "message":
-              this.mergeDataList(this.tabNumber).push({
-                ...data.data.content,
-                uid: this.userInfo.uid,
-              });
-              this.toBottom();
-              if(data.data.type === "call"){
-                if (data.data.content.type == 1) {
-                  this.msgText = "";
-                  if (this.hasSendMsgCount > 0) {
-                    this.hasSendMsgCount = this.hasSendMsgCount - 1;
-                  }
-                }
-              }else if(data.data.type === "message"){
-                this.$store.dispatch("getUnReadMsgNum");
-                if (data.data.content.type == 1) this.msgText = "";
-              }
-              break;
-          }
-        }
-      }
+      // if (data.status == 200) {
+      //   if (data.data) {
+      //     switch (data.data.type) {
+      //       case "dialog":
+      //         this.mergeDataList(
+      //           this.tabNumber,
+      //           "init",
+      //           data.data.historyMessageList
+      //         );
+      //         this.myUserinfo = data.data.targetUserInfo;
+      //         this.webSocketFd = data.data.targetUserInfo.fd;
+      //         break;
+      //       case "call":
+      //       case "message":
+      //         this.mergeDataList(this.tabNumber).push({
+      //           ...data.data.content,
+      //           uid: this.userInfo.uid,
+      //         });
+      //         this.toBottom();
+      //         if (data.data.type === "call") {
+      //           if (data.data.content.type == 1) {
+      //             this.msgText = "";
+      //             if (this.hasSendMsgCount > 0) {
+      //               this.hasSendMsgCount = this.hasSendMsgCount - 1;
+      //             }
+      //           }
+      //         } else if (data.data.type === "message") {
+      //           this.$store.dispatch("getUnReadMsgNum");
+      //           if (data.data.content.type == 1) this.msgText = "";
+      //         }
+      //         break;
+      //     }
+      //   }
+      // }
     },
     // 聊天框滚动到最底部
     toBottom() {
@@ -1191,10 +1351,11 @@ export default {
       if (type !== this.tabNumber) return;
       switch (status) {
         case "init":
-          data.forEach(res => {
-            res.isError = false
-            if(Number(res.sender) === this.info.id) this.info.user_nickname = res.sender_nickname
-          })
+          data.forEach((res) => {
+            res.isError = false;
+            if (Number(res.sender) === this.info.id)
+              this.info.user_nickname = res.sender_nickname;
+          });
           if (type === 0) {
             this.msgSquareList = data;
           } else if (type === 1) {
@@ -1214,7 +1375,7 @@ export default {
           break;
         case "unshift":
           data.forEach((el) => {
-            el.isError = false
+            el.isError = false;
             if (type === 0) {
               this.msgSquareList.unshift(el);
             } else if (type === 1) {
@@ -1227,36 +1388,44 @@ export default {
         case "empty":
           this.msgChatList = [];
           break;
+        case "delete":
+          if (type === 0) {
+            this.msgSquareList = [];
+          } else if (type === 1) {
+            this.msgChatList = [];
+          } else {
+            this.msgAnchorList = [];
+          }
+          break;
         case "error":
           setTimeout(() => {
             if (type === 0) {
-              this.msgSquareList.forEach(list => {
-                if(list.uiCode === data){
-                  list.isError = true
-                  setTimeout(() => list.isError = false, 11000);
-                } 
-              })
+              this.msgSquareList.forEach((list) => {
+                if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => (list.isError = false), 11000);
+                }
+              });
             } else if (type === 1) {
-              this.msgChatList.forEach(list => {
-                if(list.uiCode === data){
-                  list.isError = true
-                  setTimeout(() => list.isError = false, 11000);
-                } 
-              })
+              this.msgChatList.forEach((list) => {
+                if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => (list.isError = false), 11000);
+                }
+              });
             } else {
-              this.msgAnchorList.forEach(list => {
-                if(list.uiCode === data){
-                  list.isError = true
-                  setTimeout(() => list.isError = false, 11000);
-                } 
-              })
+              this.msgAnchorList.forEach((list) => {
+                if (list.uiCode === data) {
+                  list.isError = true;
+                  setTimeout(() => (list.isError = false), 11000);
+                }
+              });
             }
           }, 1500);
-          break;  
-        }
-      this.toBottom()
+          break;
+      }
+      this.toBottom();
     },
-    
   },
 };
 </script>
@@ -1540,7 +1709,7 @@ form {
     }
   }
 }
-::v-deep.el-textarea{
+::v-deep.el-textarea {
   width: 75%;
   #msg {
     border: 1px solid #c41d48;
@@ -1551,7 +1720,6 @@ form {
     resize: none;
   }
 }
-
 
 ::v-deep.el-drawer__header {
   margin-bottom: 0;
@@ -1665,6 +1833,7 @@ form {
         position: relative;
         right: -12px;
         border-radius: 4px;
+        font-size: 16px;
         background-color: rgba(149, 152, 230, 0.1);
         color: #959db0;
         height: 34px;
@@ -1708,7 +1877,7 @@ form {
     .msg-content {
       border-radius: 4px;
       font-size: 16px;
-      padding: 4px 0;
+      padding: 3px 0;
       word-break: break-all;
       color: #343a40;
       &.anchor-msg {
@@ -1828,19 +1997,95 @@ form {
     bottom: -40px;
   }
 }
-.pin-info {
+::v-deep.pin-generally {
   background: #f7e7ce;
   padding: 10px;
-  text-align: left;
-  border-radius: 4px;
   position: relative;
   color: #7d4628;
-  width: 100%;
   left: 0;
-  font-size: 12px;
   padding-left: 30px;
+  p {
+    .linkified {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    sub {
+      bottom: 0em;
+      vertical-align: initial;
+    }
+  }
+}
+.pin-special {
+  display: flex;
+  background: #d5d9f4;
+  color: #000000;
+}
+::v-deep.pin-info {
+  text-align: left;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 12px;
   z-index: 1;
   word-break: break-all;
+  .pin-left {
+    width: 40px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px 0 0 4px;
+    background-color: #1d2dc6;
+  }
+  .pin-right {
+    padding: 15px;
+    font-weight: bold;
+    ul {
+      li {
+        &:nth-child(1) {
+          padding: 10px;
+          background-color: #1d2dc6;
+          color: #fff;
+          border-radius: 5px;
+        }
+        &:nth-child(2) {
+          padding: 5px 0;
+          .pin-right-text {
+            color: #b73e69;
+          }
+          .pin-right-link {
+            color: #000;
+            text-decoration: underline;
+          }
+        }
+        &:nth-child(3) {
+          padding: 5px 0;
+          .pin-right-text {
+            color: #b73e69;
+          }
+          .pin-right-link {
+            color: #000;
+            text-decoration: underline;
+          }
+        }
+        .pin-right-link {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .pin-text {
+    white-space: nowrap;
+    overflow: hidden;
+    width: 260px;
+    display: inline-flex;
+    .chatlist {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
 }
 .el-button--danger {
   background-color: #c41d48;
@@ -1859,59 +2104,117 @@ form {
     }
   }
 }
-.go-btn-style{
+.go-btn-style {
   position: absolute;
   bottom: 128px;
   right: 18px;
   cursor: pointer;
 }
-::v-deep.pin-dialog-style{
 
-  .el-dialog{
-    background: #ffffff00;
-    margin-top: 30vh !important;
-    .el-dialog__header{
-      padding: 0;
-      border:0;
-      .el-dialog__headerbtn{
-        top: 8px;
-        right: 10px;
-        font-size: 20px;
-        opacity: 0;
-      }
-    }
-    .el-dialog__body{
-      padding: 0;
-      .pin-box-img{
-        height: 20em;
-        background: url('./../../assets/images/Group37.png');
-        background-size:contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        .pin-btn{
-          position: absolute;
-          right: 70px;
-          bottom: 37px;
-          font-size: 20px;
-          cursor: pointer;
-        }
-      }
-      .text-white{
-        color: #fff;
-        padding: 70px 40px 40px 30px;
-        font-size: 18px;
-        ul{
-          li{
-            padding: 10px;
-          }
-          li:hover{
-            background-color: #AA2249;
-            border-radius: 10px;
-            cursor: pointer;
-          }
-        }
-      }
-    }
+
+.level-tag {
+  color: #fff;
+  display: inline-block;
+  padding: 0 4px;
+  height: 17px;
+  margin: 0 4px;
+  font-size: 12px;
+  line-height: 17px;
+  border-radius: 2px;
+  &.level0 {
+    background: #d1d1d1;
   }
+  &.level1 {
+    background: #8bf093;
+  }
+  &.level2 {
+    background: #63d671;
+  }
+  &.level3 {
+    background: #5ac8b5;
+  }
+  &.level4 {
+    background: #3b8ea9;
+  }
+  &.level5 {
+    background: #235b8a;
+  }
+  &.level6 {
+    background: #3244b4;
+  }
+  &.level7 {
+    background: #602ad0;
+  }
+  &.level8 {
+    background: #9f2ad0;
+  }
+  &.level9 {
+    background: #bd20ff;
+  }
+}
+.notice-box {
+  height: 30px;
+  margin: 5px;
+  font-size:12px;
+  overflow: hidden;
+  position: relative;
+  .join-text{
+    padding: 5px;
+    border-radius: 5px;
+    display: inline;
+    &.level0 {
+      background: #d1d1d17a;
+    }
+    &.level1 {
+      background: #8bf09380;
+    }
+    &.level2 {
+      background: #63d6707e;
+    }
+    &.level3 {
+      background: #5ac8b67a;
+    }
+    &.level4 {
+      background: #3b8ea977;
+    }
+    &.level5 {
+      background: #235c8a80;
+    }
+    &.level6 {
+      background: #3243b481;
+    }
+    &.level7 {
+      background: #612ad080;
+    }
+    &.level8 {
+      background: #9e2ad083;
+    }
+    &.level9 {
+      background: #bc20ff80;
+    }
+    
+  }
+}
+.notice-item {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+}
+// .notice-slide-enter-active,
+// .notice-slide-leave-active {
+//   transition: all 0.4s ease;
+// }
+.notice-slide-enter-active {transition: all 0.4s ease;}
+.notice-slide-leave-active {transition: all 0.3s linear;}
+.notice-slide-enter {
+  transform: translateY(35px);
+  opacity: 1;
+}
+.notice-slide-leave-to {
+  transform: translateY(-35px);
+  opacity: 0;
 }
 </style>

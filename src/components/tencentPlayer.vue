@@ -1,5 +1,9 @@
 <template>
   <div class="tencent_player_container">
+    <div class="button-container">
+      <button @click="changeQualitySwitcher('sd')">顺畅</button>
+      <button @click="changeQualitySwitcher('hd')">高清</button>
+    </div>
     <div class="danmu-container" :style="danmakuSystem.show ? 'opacity: 1' : 'opacity: 0'">
       <vue-danmaku
         ref="danmaku"
@@ -18,13 +22,18 @@
         </template>
       </vue-danmaku>
     </div>
-    <div id="videoContain">
-      <!-- <video id="player-container-id" preload="auto" playsinline webkit-playsinline></video> -->
-    </div>
+
+    <div id="videoContain" v-show="hdShow"></div>
+    <!-- <div id="videoContainSd" v-show="sdShow"></div> -->
+    
+    <!-- <VTcPlayer ref="tcPlayer" :options="options"  /> -->
+    <!-- <video id="player-container-id" width="414" height="270" preload="auto" playsinline webkit-playsinline></video> -->
+
     <div class="mute_btn" @click="unmute()" v-if="showUnmute">
       <div class="mute_btn_icon"></div>
       <div class="mute_btn_text">点击取消静音</div>
     </div>
+    
     <div class="layout-anchor-nostart-content" v-if="UpSowing">
       <div>
         <img
@@ -36,6 +45,7 @@
         >主播暂未开播</div>
       </div>
     </div>
+
     <div class="layout-anchor-nostart-content" v-if="TcPlayerUrlLoding">
       <div>
         <img
@@ -59,17 +69,17 @@ import { getRoomInfo } from "../../src/api/user.js";
 export default {
   name: "TcVideoPlayer",
   components: {
-    vueDanmaku
+    vueDanmaku,
   },
   props: {
     // info: {
     // 		type: Object,
     // 		default: {},
     // },
-    options: {
-      type: Object,
-      default: () => ({})
-    }
+    // options: {
+    //   type: Object,
+    //   default: () => ({})
+    // }
   },
   data() {
     return {
@@ -91,7 +101,11 @@ export default {
       TcPlayerUrlLoding: true, //数据加载前loding
       timer: null, //直播倒计时
       counttDown: 0, //开赛倒计时
-      urlPlayer: "" //直播链接
+      urlPlayer: "", //直播链接
+      sdVideo:"",
+      hdVideo:"",
+      sdShow:false,
+      hdShow:true,
     };
   },
   mounted() {
@@ -117,9 +131,21 @@ export default {
       let system = this.$store.state.danmakuSystem;
       this.config.channels = system == 3 ? 3 : system == 2 ? 6 : 10;
       return this.$store.state.danmakuSystem;
-    }
+    },
+    infos() {
+      return this.$store.state.infos;
+    },
   },
   methods: {
+    changeQualitySwitcher(type){
+      if(type === "sd"){
+        this.sdShow = false
+        this.hdShow = true
+      } else {
+        this.sdShow = true
+        this.hdShow = false
+      }
+    },
     // 获取直播详情
     getRoomInfo() {
       getRoomInfo({
@@ -131,6 +157,8 @@ export default {
             this.$store.dispatch("joinGroup", this.query.uid);
           }, 500);
           let info = res.data.info;
+          this.sdVideo = info.pull
+          this.hdVideo = info.pull_tc
           if (
             info.pull_tc &&
             info.starttime - info.servertime > 0 &&
@@ -145,14 +173,15 @@ export default {
             // this.counttDown=10
             return;
           } else if (info.islive != 1) {
-
             this.TcPlayerUrlLoding = false;
             this.counttDown = false;
             return (this.UpSowing = true); //主播未开播
           } else {
             this.TcPlayerUrlLoding = false;
             this.counttDown = false;
-            this.initTcPlayer(info.pull_tc); //已开播
+            // this.playVideo(info)
+            this.initTcPlayer(info); //已开播
+            // this.initTcSdPlayer(info.pull); //已开播
             return;
           }
         })
@@ -165,8 +194,9 @@ export default {
         }
       });
     },
-    initTcPlayer(url) {
-      if (url == "") return;
+
+    initTcPlayer(info) {
+      if (info.pull_tc == "") return;
       // sdk引入有顺序
       new Promise((resolve, reject) => {
         let link = document.createElement("link");
@@ -202,18 +232,134 @@ export default {
           video.setAttribute("id", "player-container-id");
           video.setAttribute("muted", true);
           video.setAttribute("playsinline", true);
+          video.setAttribute("controls", true);
           video.setAttribute("webkit-playsinline", true);
           video.style.width = "100%";
           video.style.minHeight = "500px";
           // video.setAttribute('autoplay',true)
           document.getElementById("videoContain").appendChild(video);
-          let _this = this;
           // 引入成功
-          script.onload = function() {
-            tcPlayer = TCPlayer("player-container-id", {
+          let _this = this;
+          _this.options = {}   
+          if(JSON.stringify(this.infos) !== "{}"){
+            let control = {
+              multiResolution:{
+                sources:{
+                  'SD':[ { src: info.clarity.sd } ],
+                  'HD':[ { src: info.clarity.hd }]
+                },
+                labels:{
+                  'SD':'流暢','HD':'高清',
+                },
+                showOrder:['SD','HD'],
+                defaultRes: 'SD'
+              },
               autoplay: true,
-              width: "1098" //播放器宽度
-              // height: "720", //播放器高度
+              width: "1098", //播放器宽度
+            }   
+            _this.options = control
+            _this.videoPlay = info.clarity.hd
+          }else {
+            let control = {
+              // // multiResolution:{
+              // //   sources:{
+              // //     'SD':[ { src: info.clarity.sd } ],
+              // //   },
+              // //   labels:{
+              // //     'SD':'流暢',
+              // //   },
+              // //   showOrder:['SD'],
+              // //   defaultRes: 'SD'
+              // // },
+              // autoplay: true,
+              width: "1098", //播放器宽度
+            }   
+            _this.options = control 
+            _this.videoPlay = info.clarity.sd
+          }
+          script.onload = function() {
+            tcPlayer = TCPlayer("player-container-id",  _this.options);
+            tcPlayer.src(_this.videoPlay);
+            // 音量改變時
+            tcPlayer.on("volumechange", function(event) {
+              let muted = tcPlayer.muted();
+              let valume = tcPlayer.volume();
+              if (muted || valume === 0){
+                _this.showUnmute = true;
+              } else {
+                _this.showUnmute = false;
+              }
+            });
+            tcPlayer.on("webrtcevent", event => {
+              if (event.data.code == 1010) {
+                tcPlayer.play();
+              }
+            });
+            tcPlayer.on("canplay", canplay => {
+              tcPlayer.play();
+            });
+            tcPlayer.on("resolutionswitching", event => {
+              console.log(event)
+              return 
+            });
+          };
+
+          // 引入失败
+          script.onerror = function() {
+          };
+        }
+      });
+    },
+
+    initTcSdPlayer(url) {
+      if (url == "") return;
+      // sdk引入有顺序
+      new Promise((resolve, reject) => {
+        let link = document.createElement("link");
+        link.href = "/sdk/player/tcplayer.min.css";
+        link.rel = "stylesheet";
+        document.getElementsByTagName("head")[0].appendChild(link);
+
+        // 创建script标签，引入外部文件
+        let script2 = document.createElement("script");
+        script2.type = "text/javascript";
+        script2.src = "/sdk/player/TXLivePlayer-1.2.0.min.js";
+        document.getElementsByTagName("head")[0].appendChild(script2);
+
+        let script1 = document.createElement("script");
+        script1.type = "text/javascript";
+        script1.src = "/sdk/player/hls.min.0.13.2m.js";
+        document.getElementsByTagName("head")[0].appendChild(script1);
+
+        let script3 = document.createElement("script");
+        script3.type = "text/javascript";
+        script3.src = "/sdk/player/flv.min.1.6.2.js";
+        document.getElementsByTagName("head")[0].appendChild(script3);
+        script2.onload = function() {
+          resolve(1);
+        };
+      }).then(data => {
+        if (data == 1) {
+          let script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "/sdk/player/tcplayer.v4.5.3.js";
+          document.getElementsByTagName("head")[0].appendChild(script);
+          const video = document.createElement("video");
+          video.setAttribute("id", "sd-player-container-id");
+          video.setAttribute("muted", true);
+          video.setAttribute("playsinline", true);
+          video.setAttribute("controls", true);
+          video.setAttribute("webkit-playsinline", true);
+          video.style.width = "100%";
+          video.style.minHeight = "500px";
+          // video.setAttribute('autoplay',true)
+          document.getElementById("videoContainSd").appendChild(video);
+          // 引入成功
+          let _this = this;
+          script.onload = function() {
+            tcPlayer = TCPlayer("sd-player-container-id", {
+              autoplay: true,
+              width: "1098", //播放器宽度
             });
             tcPlayer.src(url);
             // 音量改變時
@@ -240,7 +386,8 @@ export default {
           };
         }
       });
-    },
+    }, 
+
     // 解除靜音
     unmute() {
       tcPlayer.muted(false);
@@ -280,7 +427,7 @@ export default {
   min-height: 500px;
   background: #14092a;
   .video_bottom_logo {
-    z-index: 99;
+    z-index: 0;
     position: absolute;
     left: 20px;
     bottom: 20px;
@@ -298,7 +445,7 @@ export default {
     left: 0;
     right: 0;
     margin: 0 auto;
-    z-index: 4;
+    z-index: 0;
     width: 184px;
     height: 62px;
     border-radius: 4px;
@@ -320,5 +467,37 @@ export default {
       background-size: 100% 100%;
     }
   }
+}
+::v-deep.vjs-playback-rate{
+  display: none;
+}
+
+.button-container {
+  position: absolute;
+  z-index: 999;
+  button {
+    padding: 0 10px;
+    -webkit-appearance: none;
+    background: #006eff;
+    border: 0;
+    color: #fff;
+    height: 30px;
+    min-width: 24px;
+    font-size: 15px;
+    margin-right: 5px;
+    z-index: 99999999;
+    border-radius: 5px;
+    opacity: 0;
+    cursor: pointer;
+    &:nth-child(1){
+      background: #006eff;
+    }
+    &:nth-child(2){
+      background: #ff0000;
+    }
+  }
+}
+.button-container:hover button{
+  opacity: 1;
 }
 </style>

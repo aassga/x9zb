@@ -718,6 +718,9 @@
 </script>
 
 <style>
+.vjs-playback-rate{
+	display: none;
+}
 	.video-js .vjs-icon-placeholder {
 
 		width: 100%;
@@ -748,10 +751,10 @@
 
 	#dplayer .video_bottom_logo{
 		z-index: 99;
-		  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  width: 120px;
+		position: absolute;
+		left: 20px;
+		bottom: 20px;
+		width: 120px;
 	}
 
 	.slider {

@@ -6,17 +6,17 @@
   >
     <div class="chat-detail-main" ref="content-list">
       <div
-        v-for="(item, index) in newArr"
+        v-for="(item, index) in msgList"
         :key="index"
         :class="{ 'is-anchor': tabNumber === 2 }"
       >
-          <!-- v-if="
+        <div
+          v-if="
             !item.channel ||
             item.channel === channel ||
             (!channel && item.channel === '000') ||
             item.channel === 'null'
-          " -->
-        <div
+          "
           class="other-side"
         >
           <div class="msg-box">
@@ -27,49 +27,39 @@
                   'my-self': tabNumber === 2 && mySelf(item),
                 }"
               >
-                <img
-                  :src="hiImg"
-                  class="hi-tag"
-                  v-if="
-                    item.text ? item.text.indexOf('进入直播间') !== -1 : false
-                  "
-                />
-                <span class="anchor-tag" v-if="item.sender == uid">主播</span>
-                <span
-                  class="level-tag"
-                  :class="`level${item.sender_exp ? item.sender_exp : 0}`"
-                  v-if="
-                    item.sender_exp &&
-                    item.action !== 'gift' &&
-                    item.sender != uid
-                  "
-                  >Lv.{{ item.sender_exp ? item.sender_exp : 0 }}</span
-                >
-                <div
-                  class="text-name"
-                  :style="
-                    item.text.includes('进入直播间') ? 'color: #575757;' : ''
-                  "
-                >
-                  <span v-if="item.sender_nickname !== undefined">
-                    {{
-                      !item.text.includes("进入直播间") &&
-                      item.sender_nickname.length > 5
-                        ? item.sender_nickname.substr(0, 6) + "..."
-                        : item.sender_nickname
-                    }}
-                  </span>
-                  <span v-else-if="item.sender !== undefined">
-                    {{
-                      !item.text.includes("进入直播间") &&
-                      item.sender.length > 5
-                        ? "遊客" + item.sender.substr(0, 4) + "..."
-                        : "遊客" + item.sender
-                    }}
-                  </span>
-                  <span v-if="!item.text.includes('进入直播间')"> : </span>
-                </div>
-                <template v-if="item.pic && !item.text">
+                <template v-if="tabNumber !== 2 && item.type !==0">
+                  <div
+                    class="text-name"
+                    :style="
+                      item.text.includes('进入直播间') ? 'color: #575757;' : ''
+                    "
+                  >
+                    <span v-if="item.sender_nickname !== undefined">
+                      {{
+                        !item.text.includes("进入直播间") &&
+                        item.sender_nickname.length > 5
+                          ? item.sender_nickname.substr(0, 6) + "..."
+                          : item.sender_nickname
+                      }}
+                    </span>
+                    <span v-else-if="item.sender !== undefined">
+                      {{
+                        !item.text.includes("进入直播间") &&
+                        item.sender.length > 5
+                          ? "遊客" + item.sender.substr(0, 4) + "..."
+                          : "遊客" + item.sender
+                      }}
+                    </span>
+                    <span v-else>{{ item.text }}</span>
+                    <span v-if="!item.text.includes('进入直播间')"> : </span>
+                  </div>
+                </template>
+                <template v-if="tabNumber === 2 && !mySelf(item)">
+                  <div class="msg-avatar">
+                    <img class="avatar" :src="avatarImg(item)" />
+                  </div>
+                </template>
+                <template v-if="item.pic && !item.text ">
                   <el-image
                     fit="cover"
                     class="pic-info"
@@ -77,7 +67,7 @@
                     :src="item.pic"
                   />
                 </template>
-                <template v-if="item.pic && item.text">
+                <template v-if="item.pic && item.text && item.type !==0">
                   <div class="login-content" v-if="item.msg_type == '4'">
                     <img
                       class="b-play-btn"
@@ -86,20 +76,7 @@
                     />
                     {{ item.text }}
                   </div>
-                  <!-- <div
-                    v-else
-                    class="thumb-container"
-                    @click.stop="openLink(item.link)"
-                  >
-                    <img class="thumb-pic" :src="item.pic" />
-                    <div class="thumb-msg-box">
-                      <div class="thumb-title">{{ item.title }}</div>
-                      <br />
-                      <div class="thumb-text">{{ item.text }}</div>
-                    </div>
-                  </div> -->
                 </template>
- 
                 <template v-if="!item.pic && item.text">
                   <div
                     @click.stop="showControl(index, item)"
@@ -125,7 +102,9 @@
                           : ''
                       "
                     >
-                      <vue-markdown :anchor-attributes="linkAttrs" :source="item.text"></vue-markdown>
+                      <vue-markdown :anchor-attributes="linkAttrs">{{
+                        item.text
+                      }}</vue-markdown>
                       <!-- <span v-html="getText(item.text)"></span> -->
                       <i
                         v-if="item.isError && [0, 1].includes(tabNumber)"
@@ -149,7 +128,7 @@
               </div>
             </div>
             <div
-              v-if="item.pic && item.text"
+              v-if="item.pic && item.text && item.type !== 0"
               class="thumb-container"
               @click.stop="openLink(item.link)"
             >
@@ -200,16 +179,6 @@ export default {
       type: null,
     },
   },
-  watch:{
-    msgList(val){
-      if(val.length > 100){
-        this.newArr = val.slice(val.length - 100,val.length)
-        this.newArr = this.newArr 
-      }else{
-        this.newArr = val
-      }
-    }
-  },
   created() {
     this.uid = this.$route.query.id;
   },
@@ -231,7 +200,6 @@ export default {
       uid: "",
       showBottom: false,
       hiImg: require("./../assets/images/HiTag.png"),
-      newArr:[],
     };
   },
   methods: {
@@ -295,9 +263,9 @@ export default {
         reg,
         "<a style='text-decoration:underline;color:blue' target='_blank' href='$1'>$1</a>"
       );
-      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r\n/g, "<br>");
-      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\n/g, "<br>");
-      // str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\n/g, "<br>");
+      str = str.replace(/(^\s*)|(\s*$)/g, "").replace(/\r/g, "<br>");
       return str;
     },
     resend(item) {
@@ -359,7 +327,7 @@ export default {
 }
 ::v-deep.chat-detail-main {
   background: #fff;
-  padding: 0 10px 15px 10px;
+  padding: 0 10px 30px 10px;
   .system-tips {
     margin-top: -26px;
     font-size: 12px;

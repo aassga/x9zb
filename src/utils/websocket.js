@@ -23,6 +23,7 @@ export default {
       // this.ws.send('#');
       // let conditions = store.state.Counter.conditions;
       // if (!conditions) return;
+      this.heartbeat()
       let item = {
         info: "web",
         type: "register"
@@ -35,7 +36,6 @@ export default {
         // this.ws.send(JSON.stringify({type:"basketball"},'',''));
         this.ws.send(JSON.stringify({ type: "classify", classify_type: 1 }, '', ''));
       }
-
 
     }
     this.ws.onerror = () => {
@@ -51,11 +51,12 @@ export default {
     }//连接出错
     this.ws.onclose = function (e) {
       console.log('斷線')
+      this.ws = null
     }//连接上时回调
   },
   // 心跳
   heartbeat: function () {
-    // console.log('开始发送心跳!');
+    console.log('开始发送心跳!');
     let _this = this;
     setInterval(() => {
       _this.send(

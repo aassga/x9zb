@@ -1,0 +1,9 @@
+{
+  "name": "easy-front-vue-cli3",
+  "short_name": "easy-front-vue-cli3",
+  "icons": [],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#4DBA87"
+}

@@ -97,20 +97,21 @@
 										  </el-popover>
 										<el-popover
 										    placement="bottom"
-										    trigger="hover">
+												trigger="hover"
+										    >
 											<div class="player-header-phone-share">
 												<div class="big-title">手机扫码，随心所欲畅享直播</div>
 												<ul class="phone-box-ul">
-													<li class="phone-box-li">
+													<!-- <li class="phone-box-li">
 														<p class="phone-title">1.点击APP左上方<span style="color: red;">“扫一扫”</span></p><img class="phone-left-img"
 															src="../../assets/images/phone-home.png">
 														<p class="phone-left-foot">若未安装体育APP，可微信扫码或点击 “ 下载APP ”</p>
-													</li>
+													</li> -->
 													<li class="phone-box-li phone-box-li-right">
-														<p>2.扫描本房间二维码</p>
+														<!-- <p>2.扫描本房间二维码</p> -->
 														<div class="qrcode-bg">
 															<div id="appQRCode" >
-																<img style="width: 92px;height: 92px;" :src="system.android_qr_code" >
+																<q-rcode-page/>
 															</div>
 														</div>
 														<div class="appdown-btn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA3ZJREFUWAnVl81LFVEYh7smpZGELQxr0UgbQQgpWkSFkImtMiJqVwYt+hNcmS6CoIXLCKTMoLUohOTCXAa5qUWf3LxBRdkiqAwNvT2/uee9zsydmTtmBv3g8Zzzfp0zZ87cGXObMqpYLO4ntAeOwm7HNtqP8AFewAQ8zOVyP2nXLyatgV54A1n1g8Bb0LyuFVDgGDwD0zyd23AWDkIz7IBWOA79MAsmLWQAate8EJKuwC+Q3oF2YXOWQsS1wTiYpug0Zsn1Ywi+YZm0Q1CXOTkQSF4nfAbpFVS/JQTpyqUluBSo90ddanjwFKTHkHwxOHXPbdvXPbmtmJpNUABp1OyhFodOux24oZAzYUD8JDyHwwkhZTMx7aBDKXWUHdbBqEMm6cAlb5Ml0BL3WgnoRMCc2CVu0I/mVlQE4bDnvLfCmWAgZ60LaCDnk1tEl5XV1usXbh98gXvm+Nstv47fqDns6p6x+jV0TrvBBEHL5tigdszVPcWF59TXAo444wPXbmTzhOLzoHdJiybSAvaog/KlZuP+ssNFqr91M/jzagH2C6W32r+QzePPqwXolSotlJrwX+7VAHhha/KIWB3sa6BtjpPNU5qXwDxIrdFobJpcmgMv6Gdc8Rhi0+R3QdKP1JZgjvrYpkHq1lg7oI8JKW7FI9gLsBcekeTRxgqfat2BC7AC17nnS7RR2TyleUkcBqk/Gqkxdg/mFIDUes5e3gFswStfZnxRMVFh3wXyL8J230+nB6TZaIKN8VUsApstoJv+CEgq3mt50RbfZQWhybKPQT0syIrayo5IB190EfpCkux1mzq5yhE742fw2g+Vx6hvOGk85IgM8AcX4Se4P1kmP+liv9LuDJXGoO87e112hpyRAXHRRWSZfCt59rrvi5QsDQkYAEmfUV5skDPKD3NQdXKlEGePpnLqY2vjqIUpkHRfm2IDnRG/FnE+LUY+Yq6CpHN2IDWegEbQB6RUgPbUhBQnudp2u/IV+udSwlddBOo86ANS0rkYhIbViOo94nXg7OnQlWeb3EqTUAejYNKXjH7fD4H/HrdYa7HrR0bP+QyYdM/Tt90KxLUkd4DtBl1fOqSyjcF9mIaXoANp0qPWB/EHLm6yNBuFuuAmvIckLeLQl7L+twg/5ynFY7czKZ7Cim8BfUzopaIr1Ptd5Hn5fKf9v/Qb3at6cAh/O6kAAAAASUVORK5CYII="
@@ -118,7 +119,10 @@
 																<router-link to="/download" tag="a" target="_blank">
 																	<span class="appdown-btn-txt">下载APP</span>
 																</router-link>
-															</div>
+															
+
+														</div>
+														<p>点击或扫描二维码</p>
 													</li>
 												</ul>
 											</div>
@@ -328,6 +332,11 @@
 				></chatRoom>
 			</div>
 			<!-- ----------------------------------直接隐藏-------------------------- -->
+
+			<div class="home-anchor-ad layout-live-detail-left" @click="openLink(advertisingImgFour.advertising_url)" v-if="JSON.stringify(advertisingImgFour) !== '{}'">
+				<img :src="advertisingImgFour.img_address" alt="anchor-ad" />
+			</div>
+
 			<div class="layout-live-detail-left">
 				<!-- <div class="anchor-detail-live-recommend">
 					<div class="header">
@@ -599,7 +608,8 @@
 		reserveMatch,
 		getUserGiftList,
 		getReserveLiveList,
-		recordUsageTime
+		recordUsageTime,
+		getAdList
 	} from '../../api/user.js'
 	import {
 		getInfo,
@@ -611,7 +621,7 @@
 	} from '../../api/football.js'
 	import SVGA from 'svgaplayerweb';
 	import QRCode from 'qrcodejs2';
-	
+	import QRcodePage from "./../../components/qrCode.vue";
 	const Base64 = require('js-base64').Base64
 	export default {
 		components: {
@@ -622,13 +632,14 @@
 			chatRoom,
 			advertising,
 			downLoadModel,
+			QRcodePage
 		},
 		data() {
 			return {
 				showDownLoadModel:false,
 				timerNum:0,
 				timer:null,
-				url:'webrtc://pull.xinzhongjituan.com/live/sd-1-3757537',
+				// url:'webrtc://pull.xinzhongjituan.com/live/sd-1-3757537',
 				text:'1231231',
 				heat:0,//热度
 				num: 0, //偏移量
@@ -647,6 +658,7 @@
 				userData: {}, //主播用户信息
 				tabindex: 0,
 				liveList: [],
+				advertisingImgFour:{},
 				exponent: {},
 				offsetLeft: 0,
 				beibao:false,//
@@ -755,6 +767,7 @@
 			this.userPostList()
 			this.getUserGiftList()
 			this.getReserveLiveList()
+			this.getAdList()
 			// console.log(this.infos,'********************&&&&&&&&&&&&&&&&')
 			// console.log(window.location.href);
 			// this.creatQrCode(window.location.href)
@@ -840,7 +853,22 @@
 			// this.Iime()
 		},
 		methods: {
-
+			openLink(link) {
+				link !=="" ? window.open(link) :false
+			},
+			getAdList(){
+				let params = {
+					channel_code: getQueryString().channel_code || localStorage.getItem("channel") || "",
+					user_id: localStorage.getItem("userid")|| JSON.parse(localStorage.getItem("userInfo")).id
+				}
+				getAdList(params).then((res)=>{
+					res.data.forEach(el => {
+						if(el.ad_id === "004"){
+							this.advertisingImgFour = el
+						}
+        	});
+				})
+			},
 			// 开启websocket
 			init() {
 				//发起websocket连接
@@ -918,14 +946,14 @@
 			},
 			
 			// 处理svg
-			qrSrc(url){
+			// qrSrc(url){
 				
-				// return
+			// 	// return
 				
-				if (url === "") return "";
-				let b64 = Base64.encode(url)
-				return "data:image/svg+xml;base64," + b64;
-			},
+			// 	if (url === "") return "";
+			// 	let b64 = Base64.encode(url)
+			// 	return "data:image/svg+xml;base64," + b64;
+			// },
 			initMachineSVGA(item) {
 			    var mycanvas = document.getElementById("demoCanvas");
 				let _this = this;

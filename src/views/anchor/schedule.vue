@@ -244,6 +244,11 @@
 				scheduleFootindex:8
 			}
 		},
+		computed:{
+			getdateTimeDay(){
+				return (dateTime[dateIndex].day).slice(0,2)
+			}
+		},
 		mounted() {
 			this.get6Days()
 			// this.getScheduleMatch()
@@ -281,7 +286,7 @@
 			
 			// 预约赛事
 			getReserveMatch(item) {
-				if(JSON.stringify(this.infos) === '{}' || JSON.stringify(this.infos) === undefined){
+				if(JSON.parse(localStorage.getItem('userInfo')) === null){
 					return this.$store.state.user.showLoginMask = true
 				}
 				reserveMatch2({
@@ -330,7 +335,8 @@
 						// item.anchor = arr
 					})
 					this.count = res.data.total
-					this.list = [...this.list, ...res.data.data]
+					const set = new Set()
+					this.list = [...this.list, ...res.data.data].filter(item=>!set.has(item.sourceid)?set.add(item.sourceid):false) 
 					if (res.data.total > this.list.length) {
 						this.page++
 						this.loading = true
@@ -493,7 +499,6 @@
 					});
 				}
 				this.dateTime = arr;
-				console.log('dateTime',this.dateTime)
 				this.getScheduleMatch()
 			},
 		}
